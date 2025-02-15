@@ -17,14 +17,14 @@ body {
 
 /* Header Styles */
 .header {
-  background: ;
-  padding: 1rem;
+
+  padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
   max-width: 1200px;
-  margin: 0 auto;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -120,7 +120,7 @@ body {
 /* Features Section */
 .features {
   padding: 4rem 2rem;
-  background: white;
+  background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
 }
 
 .features h2 {
@@ -150,8 +150,9 @@ body {
 
 /* Blog Posts */
 .blog-posts {
+  background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
   padding: 4rem 2rem;
-  background: #f8f9ff;
+
 }
 
 .blog-posts h2 {
@@ -176,7 +177,7 @@ body {
 
 /* CTA Section */
 .cta {
-  background: linear-gradient(135deg, #e91e63 0%, #ff4081 100%);
+  background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
   padding: 6rem 2rem;
 }
 
@@ -210,7 +211,7 @@ body {
 
 /* Footer */
 .footer {
-  background: #1a202c;
+
   padding: 6rem 2rem 2rem;
 }
 
@@ -551,13 +552,13 @@ body {
 
 /* Login Styles */
 .login-container {
-  min-height: calc(100vh - 140px); /* Trừ đi chiều cao của header và footer */
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
+
   padding: 2rem;
-  margin-top: 80px; /* Thêm margin-top để tránh bị header che */
+  margin-top: 80px;
 }
 
 .login-content {

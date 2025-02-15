@@ -7,8 +7,8 @@ import BlogPosts from "./components/BlogPosts/BlogPosts";
 import CTA from "./components/CTA/CTA";
 import Footer from "./components/Footer/Footer";
 import Dashboard from "./components/Dashboard/dashboard";
-import Register from "./register/Register";
-import Login from "./Login/login";
+import Register from "./Register/Register";
+import Login from "./Login/Login";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 
