@@ -6,7 +6,7 @@ import Features from "./components/Features/Features";
 import BlogPosts from "./components/BlogPosts/BlogPosts";
 import CTA from "./components/CTA/CTA";
 import Footer from "./components/Footer/Footer";
-import Dashboard from "./Dashboard/dashboard";
+import Dashboard from "./components/Dashboard/dashboard";
 import Register from "./register/Register";
 import Login from "./Login/login";
 import Header from "./components/Header/Header";

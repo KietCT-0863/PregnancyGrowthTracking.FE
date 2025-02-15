@@ -1,16 +1,20 @@
-import React from "react";
+import "./Hero.scss"
 
 const Hero = () => {
+  const scrollToContent = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: "smooth",
+    })
+  }
+
   return (
     <section className="hero">
       <div className="hero-content">
         <h1>Đồng hành cùng mẹ bầu trên hành trình thiêng liêng</h1>
-        <p>
-          Ứng dụng thông minh giúp theo dõi thai kỳ, tư vấn dinh dưỡng và kết
-          nối cộng đồng mẹ bầu
-        </p>
+        <p>Ứng dụng thông minh giúp theo dõi thai kỳ, tư vấn dinh dưỡng và kết nối cộng đồng mẹ bầu</p>
         <div className="hero-buttons">
-          <button className="btn btn-primary">Bắt đầu ngay</button>
+          <button className="btn btn-primary">Bắt đầu ngay để theo dõi hành trình mang thai đầy kì diệu của mẹ </button>
           <button className="btn btn-outline">Tìm hiểu thêm</button>
         </div>
         <div className="hero-stats">
@@ -28,8 +32,12 @@ const Hero = () => {
           </div>
         </div>
       </div>
+      <div className="scroll-down" onClick={scrollToContent}>
+        <div className="arrow-down">↓</div>
+      </div>
     </section>
-  );
-};
+  )
+}
 
-export default Hero;
+export default Hero
+
