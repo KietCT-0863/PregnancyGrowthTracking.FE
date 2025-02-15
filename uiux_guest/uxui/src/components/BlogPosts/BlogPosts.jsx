@@ -1,31 +1,29 @@
-import "./BlogPosts.scss"
+import { useEffect, useState } from "react";
+import "./BlogPosts.scss";
 
 const BlogPosts = () => {
-  const posts = [
-    {
-      title: "10 thực phẩm tốt cho bà bầu",
-      excerpt: "Khám phá các thực phẩm giàu dinh dưỡng giúp thai nhi phát triển khỏe mạnh...",
-      icon: "🥗",
-    },
-    {
-      title: "Các bài tập an toàn cho mẹ bầu",
-      excerpt: "Tìm hiểu về các bài tập nhẹ nhàng giúp cải thiện sức khỏe trong thai kỳ...",
-      icon: "🧘‍♀️",
-    },
-    {
-      title: "Chuẩn bị tâm lý cho ngày vượt cạn",
-      excerpt: "Những lời khuyên hữu ích giúp bạn sẵn sàng cho ngày trọng đại...",
-      icon: "🤰",
-    },
-  ]
+  const [posts, setPosts] = useState([]);
+
+
+  useEffect(() => {
+    fetch("https://dummyjson.com/c/dc2a-9539-4d0d-ba9c") 
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+        console.log( data);
+      })
+      .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
+  }, []);
 
   return (
     <section className="blog-posts">
       <h2>Bài viết mới nhất</h2>
       <div className="posts-grid">
-        {posts.map((post, index) => (
-          <div key={index} className="post-card">
-            <div className="post-icon">{post.icon}</div>
+        {posts.map((post) => (
+          <div key={post.id} className="post-card">
+            <div className="post-icon">
+              <img src={post.image} alt={post.title} />
+            </div>
             <div className="post-content">
               <h3>{post.title}</h3>
               <p>{post.excerpt}</p>
@@ -35,8 +33,7 @@ const BlogPosts = () => {
         ))}
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default BlogPosts
-
+export default BlogPosts;
