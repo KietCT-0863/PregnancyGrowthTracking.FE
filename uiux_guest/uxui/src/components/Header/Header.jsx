@@ -2,11 +2,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { CiMedicalCase } from "react-icons/ci";
-import { GiFruitBowl } from "react-icons/gi";
-import { MdSportsGymnastics } from "react-icons/md";
+import { FaCalendarAlt } from "react-icons/fa";
 import { FaBlog } from "react-icons/fa6";
 import { MdAccountBox } from "react-icons/md";
 import { FaPlusSquare } from "react-icons/fa";
+import { FaNotesMedical } from "react-icons/fa";
+import { TiSocialInstagram } from "react-icons/ti";
 const Header = () => {
   const navigate = useNavigate();
 
@@ -26,10 +27,12 @@ const Header = () => {
 
 
         <nav className="nav-links">
-          <Link to="/dashboard"> <CiMedicalCase />    Bảng điều khiển </Link>
-          <Link to="/nutrition"> <GiFruitBowl /> Dinh dưỡng</Link>
-          <Link to="/exercise"> <MdSportsGymnastics /> Bài tập</Link>
+          <Link to="/dashboard"> <CiMedicalCase />    Theo dõi Thai Kỳ </Link>
+          <Link to="/calendar"> <FaCalendarAlt /> Lịch trình Thăm Khám</Link>
+          <Link to="/notes"> <FaNotesMedical /> Ghi Chú Bác Sỹ</Link>
           <Link to="/blog"> <FaBlog /> Blog</Link>
+          <Link to="/forum"> <TiSocialInstagram /> Cộng Đồng</Link>
+
         </nav>
 
         <div className="auth-buttons">
