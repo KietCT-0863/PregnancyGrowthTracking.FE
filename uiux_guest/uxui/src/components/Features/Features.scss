@@ -24,7 +24,8 @@ $light-bg: #fff9f9;
 }
 
 .features {
-background: linear-gradient(135deg, $light-bg, $secondary-color);
+    background: linear-gradient(135deg, $light-bg, $secondary-color);
+
   padding: 4rem 2rem;
   font-family: 'Nunito', sans-serif;
   position: relative;
@@ -41,18 +42,31 @@ background: linear-gradient(135deg, $light-bg, $secondary-color);
   }
 
   &::before {
-    background-color: $pastel-blue;
-    top: -150px;
-    left: -150px;
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: $accent-color; // Thay đổi để giống `.hero`
+    border-radius: 50%;
+    opacity: 0.3;
     animation: float 8s ease-in-out infinite;
   }
 
   &::after {
-    background-color: $soft-green;
-    bottom: -150px;
-    right: -150px;
-    animation: float 10s ease-in-out infinite reverse;
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 150px;
+    height: 150px;
+    background: $primary-color; // Thay đổi để giống `.hero`
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: float 6s ease-in-out infinite reverse;
   }
+
 
   h2 {
     font-family: 'Amatic SC', cursive;
