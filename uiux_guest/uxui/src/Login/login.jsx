@@ -1,30 +1,68 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { Mail, Lock, Loader } from "lucide-react"
+import { GoogleLogin } from "@react-oauth/google"
+import { jwtDecode } from "jwt-decode"
+import "./Login.scss"
+
 const Login = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  });
+  })
+  const [errors, setErrors] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
-    }));
-  };
+    }))
+    // Clear error when user starts typing
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }))
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Giả lập đăng nhập thành công
-    console.log("Form submitted:", formData);
-    // Chuyển hướng đến trang dashboard sau khi đăng nhập
-    navigate("/dashboard");
-  };
+  const validateForm = () => {
+    const newErrors = {}
+    if (!formData.email) newErrors.email = "Email is required"
+    if (!formData.password) newErrors.password = "Password is required"
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (validateForm()) {
+      setIsLoading(true)
+      try {
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        console.log("Form submitted:", formData)
+        navigate("/dashboard")
+      } catch (error) {
+        console.error("Login error:", error)
+        setErrors({ form: "An error occurred during login. Please try again." })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+  }
+
+  const handleGoogleLogin = async (credentialResponse) => {
+    try {
+      const decoded = jwtDecode(credentialResponse?.credential)
+      console.log("Google login successful:", decoded)
+      // Here you would typically send the token to your backend
+      // await api.post('/auth/google', { token: credentialResponse.credential });
+      navigate("/dashboard")
+    } catch (error) {
+      console.error("Google login error:", error)
+      setErrors({ form: "An error occurred during Google login. Please try again." })
+    }
+  }
 
   return (
     <div className="login-container">
@@ -38,6 +76,7 @@ const Login = () => {
         </div>
         <div className="login-form">
           <h1>Đăng nhập</h1>
+          {errors.form && <div className="error-message">{errors.form}</div>}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="email">Email</label>
@@ -53,6 +92,7 @@ const Login = () => {
                   placeholder="example@email.com"
                 />
               </div>
+              {errors.email && <div className="error-message">{errors.email}</div>}
             </div>
 
             <div className="form-group">
@@ -69,6 +109,7 @@ const Login = () => {
                   placeholder="********"
                 />
               </div>
+              {errors.password && <div className="error-message">{errors.password}</div>}
             </div>
 
             <div className="form-options">
@@ -81,28 +122,27 @@ const Login = () => {
               </Link>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Đăng nhập
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? <Loader className="spinner" /> : "Đăng nhập"}
             </button>
           </form>
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              const decoded = jwtDecode(credentialResponse?.credential);
-              //token gg o day ne
-              console.log(credentialResponse);
-            }}
-            onError={() => {
-              console.log("Login Failed");
-            }}
-          />
-          ;
+          <div className="google-login-container">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => {
+                console.log("Login Failed")
+                setErrors({ form: "Google login failed. Please try again." })
+              }}
+            />
+          </div>
           <p className="register-link">
             Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
           </p>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
+
