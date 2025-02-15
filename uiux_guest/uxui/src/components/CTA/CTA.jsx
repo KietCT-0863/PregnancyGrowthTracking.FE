@@ -4,7 +4,7 @@ const CTA = () => {
   return (
     <section className="cta">
       <div className="cta-content">
-        <h2>Sẵn sàng đồng hành cùng MẹBầu?</h2>
+        <h2>Sẵn sàng đồng hành cùng Mẹn Bầu</h2>
         <p>Đăng ký ngay hôm nay để nhận những thông tin hữu ích về thai kỳ</p>
         <div className="cta-form">
           <input type="email" placeholder="Nhập email của bạn" />

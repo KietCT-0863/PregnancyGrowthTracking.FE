@@ -1,20 +1,22 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import Features from "./components/Features";
-import BlogPosts from "./components/BlogPosts";
-import CTA from "./components/CTA";
-import Footer from "./components/Footer";
+
+
+import Features from "./components/Features/Features";
+import BlogPosts from "./components/BlogPosts/BlogPosts";
+import CTA from "./components/CTA/CTA";
+import Footer from "./components/Footer/Footer";
 import Dashboard from "./Dashboard/dashboard";
 import Register from "./register/Register";
 import Login from "./Login/login";
+import Header from "./components/Header/Header";
+import Hero from "./components/Hero/Hero";
 
 function App() {
-  return (
-    <Router>
+  return (<>
+  <Router>
       <div className="app">
-        <Header />
+       <Header />
         <Routes>
           <Route
             path="/"
@@ -33,7 +35,8 @@ function App() {
         </Routes>
         <Footer />
       </div>
-    </Router>
+    </Router></>
+    
   );
 }
 

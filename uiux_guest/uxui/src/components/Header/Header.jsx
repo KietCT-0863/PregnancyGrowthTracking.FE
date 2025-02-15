@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "./Header.scss";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -8,7 +9,7 @@ const Header = () => {
     <header className="header">
       <div className="header-container">
         <div className="logo">
-          <Link to="/">MẹBầu</Link>
+          <Link to="/">Mẹ Bầu</Link>
         </div>
         <nav className="nav-links">
           <Link to="/dashboard">Bảng điều khiển</Link>
@@ -17,11 +18,11 @@ const Header = () => {
           <Link to="/blog">Blog</Link>
         </nav>
         <div className="auth-buttons">
-          <Link to="/login" className="btn btn-secondary">
-            Đăng nhập
+          <Link to="/login" className="btn btn-primary">
+            Login
           </Link>
           <Link to="/register" className="btn btn-primary">
-            Đăng ký
+            Register
           </Link>
         </div>
       </div>
