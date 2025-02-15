@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+$footer-bg: #2c3e50;
+$footer-text: #ecf0f1;
+$accent-color: #e74c3c;
+$hover-color: #f39c12;
+$light-pink: #ffccd5;
+$pastel-purple: #e0c3fc;
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.footer {
+    background: linear-gradient(135deg, $light-pink, $pastel-purple);
+  color: $footer-text;
+  padding: 4rem 2rem 2rem;
+  font-family: "Amatic SC", serif;
+  color: #6a0572;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+
+  &::before, &::after {
+    content: '♥';
+    position: absolute;
+    font-size: 4rem;
+    opacity: 0.1;
+    color: $accent-color;
+  }
+
+  &::before {
+    top: 2rem;
+    left: 2rem;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  &::after {
+    bottom: 2rem;
+    right: 2rem;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-main {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .footer-brand {
+    .brand-name {
+      font-family: 'Dancing Script', cursive;
+      color: #6a0572;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+      font-size: 4.5rem;
+      color: $accent-color;
+      margin-bottom: 1rem;
+    }
+
+    .brand-description {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+
+      .social-link {
+        color: #6a0572;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+        font-size: 2.5rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: $hover-color;
+          transform: translateY(-3px);
+        }
+      }
+    }
+  }
+
+  .footer-section {
+    .section-title { font-size: 3.5rem;
+        font-size: 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      color: #6a0572;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s infinite;
+      
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        width: 30px;
+        height: 2px;
+        background-color: $accent-color;
+      }
+    }
+
+    .section-links, .contact-info {
+      list-style-type: none;
+      padding: 0;
+      
+
+      li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-link {
+        color: $footer-text;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        color: #6a0572;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+        font-size: 1.5rem;
+
+        &:hover {
+          color: $hover-color;
+          padding-left: 5px;
+        }
+      }
+    }
+  }
+
+  .footer-bottom {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba($footer-text, 0.1);
+    text-align: center;
+    font-size: 0.9rem;
+
+    p {
+      margin: 0.5rem 0;
+    }
+
+    .heart-icon {
+        color: #6a0572;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: pulse 2s infinite;
+      animation: pulse 1s infinite;
+      font-size: 1.5rem;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    .footer-main {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-section {
+      margin-bottom: 2rem;
+    }
+  }
+}
+
