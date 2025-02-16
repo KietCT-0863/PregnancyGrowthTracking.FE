@@ -1,68 +1,76 @@
-
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Mail, Lock, Loader } from "lucide-react"
-import { GoogleLogin } from "@react-oauth/google"
-import { jwtDecode } from "jwt-decode"
-import "./Login.scss"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Mail, Lock, Loader } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import "./Login.scss";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  })
-  const [errors, setErrors] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
-    }))
+    }));
     // Clear error when user starts typing
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }))
-  }
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
 
   const validateForm = () => {
-    const newErrors = {}
-    if (!formData.email) newErrors.email = "Email is required"
-    if (!formData.password) newErrors.password = "Password is required"
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    const newErrors = {};
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (validateForm()) {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        console.log("Form submitted:", formData)
-        navigate("/dashboard")
+        await login(formData);
+        const { user } = useAuth();
+        if (user.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } catch (error) {
-        console.error("Login error:", error)
-        setErrors({ form: "An error occurred during login. Please try again." })
+        console.error("Đăng nhập thất bại:", error);
+        setErrors({
+          form: "An error occurred during login. Please try again.",
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
-  }
+  };
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-      const decoded = jwtDecode(credentialResponse?.credential)
-      console.log("Google login successful:", decoded)
+      const decoded = jwtDecode(credentialResponse?.credential);
+      console.log("Google login successful:", decoded);
       // Here you would typically send the token to your backend
       // await api.post('/auth/google', { token: credentialResponse.credential });
-      navigate("/dashboard")
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Google login error:", error)
-      setErrors({ form: "An error occurred during Google login. Please try again." })
+      console.error("Google login error:", error);
+      setErrors({
+        form: "An error occurred during Google login. Please try again.",
+      });
     }
-  }
+  };
 
   return (
     <div className="login-container">
@@ -92,7 +100,9 @@ const Login = () => {
                   placeholder="example@email.com"
                 />
               </div>
-              {errors.email && <div className="error-message">{errors.email}</div>}
+              {errors.email && (
+                <div className="error-message">{errors.email}</div>
+              )}
             </div>
 
             <div className="form-group">
@@ -109,7 +119,9 @@ const Login = () => {
                   placeholder="********"
                 />
               </div>
-              {errors.password && <div className="error-message">{errors.password}</div>}
+              {errors.password && (
+                <div className="error-message">{errors.password}</div>
+              )}
             </div>
 
             <div className="form-options">
@@ -130,8 +142,8 @@ const Login = () => {
             <GoogleLogin
               onSuccess={handleGoogleLogin}
               onError={() => {
-                console.log("Login Failed")
-                setErrors({ form: "Google login failed. Please try again." })
+                console.log("Login Failed");
+                setErrors({ form: "Google login failed. Please try again." });
               }}
             />
           </div>
@@ -141,8 +153,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
-
+export default Login;
