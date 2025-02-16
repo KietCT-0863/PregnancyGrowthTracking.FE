@@ -1,11 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap');
+@import '../../styles/variables.scss';
 
-$footer-bg: #2c3e50;
-$footer-text: #ecf0f1;
-$accent-color: #e74c3c;
-$hover-color: #f39c12;
-$light-pink: #ffccd5;
-$pastel-purple: #e0c3fc;
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -14,18 +9,14 @@ $pastel-purple: #e0c3fc;
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
 }
 
 .footer {
-    background: linear-gradient(135deg, $light-pink, $pastel-purple);
-  color: $footer-text;
+  background: $gradient-primary;
+  color: $text-primary;
   padding: 4rem 2rem 2rem;
-  font-family: "Amatic SC", serif;
-  color: #6a0572;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  animation: pulse 2s infinite;
-  font-weight: bold;
+  font-family: $font-primary;
   position: relative;
   overflow: hidden;
 
@@ -34,7 +25,7 @@ $pastel-purple: #e0c3fc;
     position: absolute;
     font-size: 4rem;
     opacity: 0.1;
-    color: $accent-color;
+    color: $primary-pink;
   }
 
   &::before {
@@ -63,11 +54,9 @@ $pastel-purple: #e0c3fc;
   .footer-brand {
     .brand-name {
       font-family: 'Dancing Script', cursive;
-      color: #6a0572;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      animation: pulse 2s infinite;
+      color: $primary-pink;
+      text-shadow: $shadow-sm;
       font-size: 4.5rem;
-      color: $accent-color;
       margin-bottom: 1rem;
     }
 
@@ -75,6 +64,7 @@ $pastel-purple: #e0c3fc;
       font-size: 0.9rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
+      color: $text-secondary;
     }
 
     .social-links {
@@ -82,14 +72,12 @@ $pastel-purple: #e0c3fc;
       gap: 1rem;
 
       .social-link {
-        color: #6a0572;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        animation: pulse 2s infinite;
+        color: $text-primary;
         font-size: 2.5rem;
         transition: all 0.3s ease;
 
         &:hover {
-          color: $hover-color;
+          color: $primary-pink;
           transform: translateY(-3px);
         }
       }
@@ -97,14 +85,12 @@ $pastel-purple: #e0c3fc;
   }
 
   .footer-section {
-    .section-title { font-size: 3.5rem;
-        font-size: 1.5rem;
+    .section-title {
+      font-size: 1.5rem;
       margin-bottom: 1rem;
       position: relative;
-      color: #6a0572;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-      animation: pulse 2s infinite;
-      
+      color: $text-primary;
+      font-family: $font-secondary;
 
       &::after {
         content: '';
@@ -113,30 +99,26 @@ $pastel-purple: #e0c3fc;
         bottom: -5px;
         width: 30px;
         height: 2px;
-        background-color: $accent-color;
+        background-color: $primary-pink;
       }
     }
 
     .section-links, .contact-info {
       list-style-type: none;
       padding: 0;
-      
 
       li {
         margin-bottom: 0.5rem;
       }
 
       .footer-link {
-        color: $footer-text;
+        color: $text-secondary;
         text-decoration: none;
         transition: all 0.3s ease;
-        color: #6a0572;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        animation: pulse 2s infinite;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
 
         &:hover {
-          color: $hover-color;
+          color: $primary-pink;
           padding-left: 5px;
         }
       }
@@ -146,18 +128,17 @@ $pastel-purple: #e0c3fc;
   .footer-bottom {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid rgba($footer-text, 0.1);
+    border-top: 1px solid rgba($text-primary, 0.1);
     text-align: center;
     font-size: 0.9rem;
+    color: $text-secondary;
 
     p {
       margin: 0.5rem 0;
     }
 
     .heart-icon {
-        color: #6a0572;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-        animation: pulse 2s infinite;
+      color: $primary-pink;
       animation: pulse 1s infinite;
       font-size: 1.5rem;
       display: inline-block;

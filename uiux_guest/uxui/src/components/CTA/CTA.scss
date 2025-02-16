@@ -2,15 +2,10 @@
 
 $primary-pink: #d63384;
 $light-pink: #ffccd5;
-
+$pastel-purple: #e0c3fc;
 $pastel-blue: #8ec5fc;
 $soft-green: #c1f0c1;
 $text-color: #6a0572;
-$primary-color: #ff69b4;
-$secondary-color: #ffd1dc;
-$accent-color: #87cefa;
-
-$light-bg: #fff9f9;
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -23,7 +18,7 @@ $light-bg: #fff9f9;
 }
 
 .cta {
-    background: linear-gradient(135deg, $light-bg, $secondary-color);
+  background: linear-gradient(135deg, $pastel-purple, $pastel-blue);
   padding: 4rem 2rem;
   font-family: 'Nunito', sans-serif;
   position: relative;
@@ -40,14 +35,14 @@ $light-bg: #fff9f9;
   }
 
   &::before {
-    background: $accent-color;
+    background-color: $light-pink;
     top: -150px;
     left: -150px;
     animation: float 8s ease-in-out infinite;
   }
 
   &::after {
-    background: $primary-color;
+    background-color: $soft-green;
     bottom: -150px;
     right: -150px;
     animation: float 10s ease-in-out infinite reverse;

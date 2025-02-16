@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
@@ -11,12 +11,19 @@ import Register from "./Register/Register";
 import Login from "./Login/Login";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
+import UseTheme from "./hooks/UseTheme";
+import "./hooks/UseTheme.css";
 
 function App() {
+  const [theme,toggleTheme] = UseTheme();
   return (<>
   <Router>
       <div className="app">
-       <Header />
+      <button onClick={toggleTheme}>
+        {theme === "light" ? "🌙" : "☀️"} { theme === "light" ? "Dark" : "Light" } Mode
+       </button>
+       <Header  />
+      
         <Routes>
           <Route
             path="/"

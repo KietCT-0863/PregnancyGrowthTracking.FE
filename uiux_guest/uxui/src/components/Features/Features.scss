@@ -6,12 +6,6 @@ $pastel-purple: #e0c3fc;
 $pastel-blue: #8ec5fc;
 $soft-green: #c1f0c1;
 $text-color: #6a0572;
-$primary-color: #ff69b4;
-$secondary-color: #ffd1dc;
-$accent-color: #87cefa;
-$text-color: #333;
-$light-bg: #fff9f9;
-
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -24,8 +18,7 @@ $light-bg: #fff9f9;
 }
 
 .features {
-    background: linear-gradient(135deg, $light-bg, $secondary-color);
-
+  background: linear-gradient(135deg, $light-pink, $pastel-purple);
   padding: 4rem 2rem;
   font-family: 'Nunito', sans-serif;
   position: relative;
@@ -42,31 +35,18 @@ $light-bg: #fff9f9;
   }
 
   &::before {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -50px;
-    width: 200px;
-    height: 200px;
-    background: $accent-color; // Thay đổi để giống `.hero`
-    border-radius: 50%;
-    opacity: 0.3;
+    background-color: $pastel-blue;
+    top: -150px;
+    left: -150px;
     animation: float 8s ease-in-out infinite;
   }
 
   &::after {
-    content: '';
-    position: absolute;
-    bottom: -30px;
-    left: -30px;
-    width: 150px;
-    height: 150px;
-    background: $primary-color; // Thay đổi để giống `.hero`
-    border-radius: 50%;
-    opacity: 0.2;
-    animation: float 6s ease-in-out infinite reverse;
+    background-color: $soft-green;
+    bottom: -150px;
+    right: -150px;
+    animation: float 10s ease-in-out infinite reverse;
   }
-
 
   h2 {
     font-family: 'Amatic SC', cursive;
