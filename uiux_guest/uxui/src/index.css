@@ -280,6 +280,8 @@ body {
 .dashboard-container {
   padding: 2rem;
   max-width: 1400px;
+  background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
+  border-radius: 1rem;
   margin: 0 auto;
 }
 
