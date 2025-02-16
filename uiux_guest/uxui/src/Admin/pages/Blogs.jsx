@@ -1,4 +1,5 @@
-import React from "react";
+import { useEffect, useState } from "react";
+
 import {
   Container,
   Paper,
@@ -10,56 +11,46 @@ import {
   TableRow,
   Typography,
   IconButton,
-  Chip,
   Button,
   Box,
-} from "@mui/material";
-import { Edit, Delete, Visibility, PostAdd } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+} from "@mui/material"
+import { Edit, Delete, Visibility, PostAdd } from "@mui/icons-material"
+import { useNavigate } from "react-router-dom"
 import AdminLayout from "../Layout/AdminLayout";
 
+import "./blogs.scss"
+
 const Blogs = () => {
-  const navigate = useNavigate();
-  const blogs = [
-    {
-      id: 1,
-      title: "Top 10 xu hướng thời trang 2024",
-      author: "Nguyễn Văn A",
-      category: "Thời trang",
-      status: "Đã đăng",
-      date: "2024-01-20",
-      views: 1200,
-    },
-    {
-      id: 2,
-      title: "Cách phối đồ mùa đông",
-      author: "Trần Thị B",
-      category: "Thời trang",
-      status: "Nháp",
-      date: "2024-01-19",
-      views: 800,
-    },
-    // Thêm dữ liệu mẫu khác
-  ];
+  const navigate = useNavigate()
+const [blogs, setBlogs] = useState([]);
+
+useEffect(() => {
+  fetch("https://dummyjson.com/c/3eab-a9ac-417d-bcd5") 
+    .then((response) => response.json())
+    .then((data) => {
+      setBlogs(data);
+      console.log( data);
+    })
+    .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
+}, []);
 
   return (
     <AdminLayout>
-      <Container>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 4 }}>
+      <Container className="blogs-container">
+        {/* Header */}
+        <Box className="header fade-in">
           <Typography variant="h5">Quản Lý Bài Viết</Typography>
-          <Button
-            variant="contained"
-            startIcon={<PostAdd />}
-            onClick={() => navigate("/admin/blogs/create")}
-          >
+          <Button variant="contained" startIcon={<PostAdd />} onClick={() => navigate("/admin/blogs/create")}>
             Tạo bài viết mới
           </Button>
         </Box>
 
-        <TableContainer component={Paper}>
+        {/* Table */}
+        <TableContainer component={Paper} className="table-container fade-in">
           <Table>
             <TableHead>
               <TableRow>
+   
                 <TableCell>Tiêu đề</TableCell>
                 <TableCell>Tác giả</TableCell>
                 <TableCell>Danh mục</TableCell>
@@ -70,30 +61,30 @@ const Blogs = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {blogs.map((blog) => (
-                <TableRow key={blog.id}>
-                  <TableCell>{blog.title}</TableCell>
-                  <TableCell>{blog.author}</TableCell>
-                  <TableCell>{blog.category}</TableCell>
-                  <TableCell>{blog.date}</TableCell>
-                  <TableCell>{blog.views}</TableCell>
+              {blogs.map(({ id, title, author, category, date, views, status }) => (
+                <TableRow key={id}>
+                  <TableCell>{title}</TableCell>
+                  <TableCell>{author}</TableCell>
+                  <TableCell>{category}</TableCell>
+                  <TableCell>{date}</TableCell>
+                  <TableCell>{views}</TableCell>
                   <TableCell>
-                    <Chip
-                      label={blog.status}
-                      color={blog.status === "Đã đăng" ? "success" : "default"}
-                      size="small"
-                    />
+                    <span className={`status-chip ${status === "Đã đăng" ? "published" : "draft"}`}>
+                      {status}
+                    </span>
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton size="small">
-                      <Visibility />
-                    </IconButton>
-                    <IconButton size="small">
-                      <Edit />
-                    </IconButton>
-                    <IconButton size="small">
-                      <Delete />
-                    </IconButton>
+                    <div className="actions">
+                      <IconButton size="small">
+                        <Visibility />
+                      </IconButton>
+                      <IconButton size="small">
+                        <Edit />
+                      </IconButton>
+                      <IconButton size="small">
+                        <Delete />
+                      </IconButton>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -102,7 +93,7 @@ const Blogs = () => {
         </TableContainer>
       </Container>
     </AdminLayout>
-  );
-};
+  )
+}
 
-export default Blogs;
+export default Blogs
