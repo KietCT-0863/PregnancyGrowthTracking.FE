@@ -1,12 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminDashboard from "./Admin/admin";
-import Orders from "./Admin/pages/Orders";
-import Users from "./Admin/pages/Users";
-import Blogs from "./Admin/pages/Blogs";
-import Settings from "./Admin/pages/Settings";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 
 import Features from "./components/Features/Features";
 import BlogPage from "./components/BlogPage/BlogPage";
@@ -19,6 +13,7 @@ import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 
 function App() {
+<<<<<<< HEAD
   return (
     <AuthProvider>
       <Router>
@@ -73,6 +68,32 @@ function App() {
         </div>
       </Router>
     </AuthProvider>
+=======
+  return (<>
+  <Router>
+      <div className="app">
+       <Header />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <main>
+                <Hero />
+                <Features />
+                <BlogPosts />
+                <CTA />
+              </main>
+            }
+          />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router></>
+    
+>>>>>>> 33580e55b394c2adeab1dedf17b78d82e00ef21f
   );
 }
 
