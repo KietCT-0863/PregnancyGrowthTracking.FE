@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   Divider,
 } from "@mui/material";
-import AdminLayout from "../../Layout/AdminLayout";
+import AdminLayout from "../Layout/AdminLayout";
 
 const Settings = () => {
   return (

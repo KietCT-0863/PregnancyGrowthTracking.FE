@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import "./BlogPage.scss";
+import "./BlogPosts.scss";
 
-const BlogPage = () => {
-  const [blogPage, setBlogPgae] = useState([]);
+const BlogPosts = () => {
+  const [posts, setPosts] = useState([]);
 
 
   useEffect(() => {
     fetch("https://dummyjson.com/c/dc2a-9539-4d0d-ba9c") 
       .then((response) => response.json())
       .then((data) => {
-        setBlogPgae(data);
+        setPosts(data);
         console.log( data);
       })
       .catch((error) => console.error("Lỗi khi lấy dữ liệu:", error));
@@ -19,14 +19,14 @@ const BlogPage = () => {
     <section className="blog-posts">
       <h2>Bài viết mới nhất</h2>
       <div className="posts-grid">
-        {blogPage.map(({id, image, title, excerpt}) => (
-          <div key={id} className="post-card">
+        {posts.map((post) => (
+          <div key={post.id} className="post-card">
             <div className="post-icon">
-              <img src={image} alt={title} />
+              <img src={post.image} alt={post.title} />
             </div>
             <div className="post-content">
-              <h3>{title}</h3>
-              <p>{excerpt}</p>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
               <button className="read-more">Đọc tiếp</button>
             </div>
           </div>
@@ -36,4 +36,4 @@ const BlogPage = () => {
   );
 };
 
-export default  BlogPage;
+export default BlogPosts;
