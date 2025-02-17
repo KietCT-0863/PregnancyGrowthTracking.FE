@@ -8,13 +8,13 @@ import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    usernameOrEmail: "member1", // Giá trị mặc định từ API
+    password: "member123", // Giá trị mặc định từ API
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,38 +22,60 @@ const Login = () => {
       ...prevState,
       [name]: value,
     }));
-    // Clear error when user starts typing
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Xóa lỗi khi người dùng nhập
+    setErrors({});
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
-      try {
-        await login(formData);
-        const { user } = useAuth();
-        if (user.role === "admin") {
+    setIsLoading(true);
+    setErrors({});
+
+    // Kiểm tra dữ liệu trước khi gửi
+    if (!formData.usernameOrEmail || !formData.password) {
+      setErrors({ form: "Vui lòng nhập đầy đủ thông tin" });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const url =
+        "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Auth/Login";
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          usernameOrEmail: "member1",
+          password: "member123",
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Response:", data);
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        login(data.user);
+
+        if (data.user.role === "Admin") {
           navigate("/admin");
         } else {
           navigate("/dashboard");
         }
-      } catch (error) {
-        console.error("Đăng nhập thất bại:", error);
+      } else {
         setErrors({
-          form: "An error occurred during login. Please try again.",
+          form: data.message || "Tên đăng nhập hoặc mật khẩu không chính xác",
         });
-      } finally {
-        setIsLoading(false);
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      setErrors({
+        form: "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,13 +83,11 @@ const Login = () => {
     try {
       const decoded = jwtDecode(credentialResponse?.credential);
       console.log("Google login successful:", decoded);
-      // Here you would typically send the token to your backend
-      // await api.post('/auth/google', { token: credentialResponse.credential });
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
       setErrors({
-        form: "An error occurred during Google login. Please try again.",
+        form: "Đăng nhập bằng Google thất bại",
       });
     }
   };
@@ -77,32 +97,35 @@ const Login = () => {
       <div className="login-content">
         <div className="login-image">
           <img
-            src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b"
+            src="/images/pregnant-woman.jpg"
             alt="Pregnant woman"
             className="login-img"
           />
         </div>
         <div className="login-form">
           <h1>Đăng nhập</h1>
-          {errors.form && <div className="error-message">{errors.form}</div>}
+          {errors.form && (
+            <div
+              className="error-message"
+              style={{ color: "red", marginBottom: "1rem" }}
+            >
+              {errors.form}
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="usernameOrEmail">Tên đăng nhập</label>
               <div className="input-group">
                 <Mail className="input-icon" />
                 <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={formData.email}
+                  type="text"
+                  name="usernameOrEmail"
+                  id="usernameOrEmail"
+                  value={formData.usernameOrEmail}
                   onChange={handleChange}
-                  required
-                  placeholder="example@email.com"
+                  placeholder="member1"
                 />
               </div>
-              {errors.email && (
-                <div className="error-message">{errors.email}</div>
-              )}
             </div>
 
             <div className="form-group">
@@ -115,13 +138,9 @@ const Login = () => {
                   id="password"
                   value={formData.password}
                   onChange={handleChange}
-                  required
-                  placeholder="********"
+                  placeholder="member123"
                 />
               </div>
-              {errors.password && (
-                <div className="error-message">{errors.password}</div>
-              )}
             </div>
 
             <div className="form-options">
@@ -134,19 +153,30 @@ const Login = () => {
               </Link>
             </div>
 
-            <button type="submit" className="btn-primary" disabled={isLoading}>
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={isLoading}
+              style={{ width: "100%", marginTop: "1rem" }}
+            >
               {isLoading ? <Loader className="spinner" /> : "Đăng nhập"}
             </button>
           </form>
+
+          <div className="divider">
+            <span>Hoặc</span>
+          </div>
+
           <div className="google-login-container">
             <GoogleLogin
               onSuccess={handleGoogleLogin}
               onError={() => {
                 console.log("Login Failed");
-                setErrors({ form: "Google login failed. Please try again." });
+                setErrors({ form: "Đăng nhập bằng Google thất bại" });
               }}
             />
           </div>
+
           <p className="register-link">
             Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
           </p>

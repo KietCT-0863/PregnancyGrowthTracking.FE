@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./Admin/admin";
@@ -14,9 +14,11 @@ import CTA from "./components/CTA/CTA";
 import Footer from "./components/Footer/Footer";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Register from "./Register/Register";
-import Login from "./Login/Login";
+import Login from "./Login/login";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
+import Blog from "./features/blogs/Blogs";
+// import Home from "./components/Home/Home"; // Tạm thời comment lại
 
 function App() {
   return (
@@ -24,22 +26,9 @@ function App() {
       <Router>
         <div className="app">
           <Header />
-          <div style={{ padding: "20px", textAlign: "right" }}>
-            <Link
-              to="/admin"
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#1976d2",
-                color: "white",
-                textDecoration: "none",
-                borderRadius: "4px",
-                display: "inline-block",
-              }}
-            >
-              Truy cập Admin
-            </Link>
-          </div>
           <Routes>
+            {/* <Route path="/" element={<Home />} /> */}{" "}
+            {/* Tạm thời comment lại */}
             <Route
               path="/"
               element={
@@ -73,6 +62,7 @@ function App() {
             <Route path="/admin/settings" element={<Settings />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/blog" element={<Blog />} />
           </Routes>
         </div>
       </Router>

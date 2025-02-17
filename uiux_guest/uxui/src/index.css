@@ -17,7 +17,6 @@ body {
 
 /* Header Styles */
 .header {
-
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -152,7 +151,6 @@ body {
 .blog-posts {
   background: linear-gradient(135deg, #fff1f6 0%, #f8f9ff 100%);
   padding: 4rem 2rem;
-
 }
 
 .blog-posts h2 {
@@ -211,7 +209,6 @@ body {
 
 /* Footer */
 .footer {
-
   padding: 6rem 2rem 2rem;
 }
 
@@ -554,7 +551,6 @@ body {
 
 /* Login Styles */
 .login-container {
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -758,5 +754,129 @@ body {
 
   .login-form h1 {
     font-size: 2rem;
+  }
+}
+
+/* User Menu Styles */
+.user-menu {
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.user-info:hover {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-avatar-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e91e63;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.menu-icon {
+  color: #666;
+  transition: transform 0.3s ease;
+}
+
+.user-info:hover .menu-icon {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+  z-index: 1000;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+  animation: slideDown 0.2s ease;
+}
+
+.dropdown-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-header span {
+  display: block;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.dropdown-header strong {
+  display: block;
+  color: #333;
+  font-size: 1rem;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 0.5rem 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(233, 30, 99, 0.1);
+}
+
+.dropdown-item svg {
+  color: #e91e63;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -7,13 +7,23 @@ $soft-green: #c1f0c1;
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 .header {
@@ -23,8 +33,9 @@ $soft-green: #c1f0c1;
   position: relative;
   overflow: hidden;
 
-  &::before, &::after {
-    content: '';
+  &::before,
+  &::after {
+    content: "";
     position: absolute;
     width: 200px;
     height: 200px;
@@ -79,7 +90,7 @@ $soft-green: #c1f0c1;
     .logo-circle {
       width: 50px;
       height: 50px;
-      background-color: #FB9EC6;
+      background-color: #fb9ec6;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -105,7 +116,7 @@ $soft-green: #c1f0c1;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       transition: color 0.3s ease;
       margin-left: 10px;
-      
+
       &:hover {
         color: $primary-pink;
       }
@@ -134,13 +145,18 @@ $soft-green: #c1f0c1;
       overflow: hidden;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
         transition: all 0.5s;
       }
 
@@ -161,7 +177,7 @@ $soft-green: #c1f0c1;
     gap: 15px;
     flex-wrap: wrap;
     justify-content: center;
-    margin-right: -100px ;
+    margin-right: -100px;
     margin-bottom: -10px;
 
     .btn {
@@ -173,19 +189,24 @@ $soft-green: #c1f0c1;
       font-family: "Amatic SC", serif;
       transition: all 0.3s ease-in-out;
       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-      width: 120px; 
+      width: 120px;
       position: relative;
       overflow: hidden;
       text-align: center;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
         transition: all 0.5s;
       }
 
@@ -221,7 +242,7 @@ $soft-green: #c1f0c1;
       margin-bottom: 15px;
 
       .logo-text {
-        font-size: 30px; 
+        font-size: 30px;
       }
 
       .logo-circle {
@@ -241,7 +262,7 @@ $soft-green: #c1f0c1;
       gap: 15px;
       margin: 10px 0;
       width: 100%;
-      
+
       a {
         width: 100%;
         text-align: center;
@@ -256,11 +277,10 @@ $soft-green: #c1f0c1;
       width: 100%;
 
       .btn {
-        width: 100%; 
+        width: 100%;
         max-width: 200px;
         margin: 5px 0;
       }
     }
   }
 }
-
