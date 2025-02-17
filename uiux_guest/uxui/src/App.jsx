@@ -9,7 +9,7 @@ import Blogs from "./Admin/pages/Blogs";
 import Settings from "./Admin/pages/Settings";
 
 import Features from "./components/Features/Features";
-import BlogPosts from "./components/BlogPosts/BlogPosts";
+import BlogPage from "./components/BlogPage/BlogPage";
 import CTA from "./components/CTA/CTA";
 import Footer from "./components/Footer/Footer";
 import Dashboard from "./components/Dashboard/Dashboard";
@@ -46,7 +46,7 @@ function App() {
                 <main>
                   <Hero />
                   <Features />
-                  <BlogPosts />
+                  <BlogPage />
                   <CTA />
                 </main>
               }
@@ -67,12 +67,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/admin/orders" element={<Orders />} />
-            <Route path="/admin/users" element={<Users />} />
-            <Route path="/admin/blogs" element={<Blogs />} />
-            <Route path="/admin/settings" element={<Settings />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+  
           </Routes>
           <Footer />
         </div>
