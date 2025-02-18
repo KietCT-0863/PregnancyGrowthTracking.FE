@@ -12,12 +12,12 @@ import Features from "./components/Features/Features";
 import BlogPosts from "./components/BlogPosts/BlogPosts";
 import CTA from "./components/CTA/CTA";
 import Footer from "./components/Footer/Footer";
-import Dashboard from "./components/Dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import Register from "./Register/Register";
-import Login from "./Login/login";
+import Login from "./pages/Login/login";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
-import Blog from "./features/blogs/Blogs";
+import Blog from "./pages/blogs/Blogs";
 import ScrollToTop from "./components/ScrollToTop/SrollToTop";
 // import Home from "./components/Home/Home"; // Tạm thời comment lại
 
