@@ -1,91 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f39c12;
+  --text-color: #333;
+  --background-color: #f4f7fc;
+  --button-hover-color: #3a7bc8;
+}
+
+body {
+  background: linear-gradient(135deg, var(--background-color) 0%, #e6f2ff 100%);
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+}
+
 .blog-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 4rem 2rem;
 }
 
 .blog-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
+  animation: fadeInUp 1s ease-out;
 
   h1 {
-    font-size: 2.5rem;
-    color: #333;
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+   
     margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #6a0572;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   p {
-    color: #666;
-    font-size: 1.1rem;
+    color: #6a0572;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 }
 
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
 }
 
 .blog-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 1s ease-out;
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+
+    .blog-image img {
+      transform: scale(1.1);
+    }
   }
 
   .blog-image {
     width: 100%;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.5s ease;
     }
   }
 
   .blog-content {
-    padding: 1.5rem;
+    padding: 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 
     h2 {
-      font-size: 1.25rem;
-      color: #333;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #6a0572;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
       margin-bottom: 1rem;
+      font-weight: 700;
+      line-height: 1.4;
     }
 
     .blog-excerpt {
-      color: #666;
-      font-size: 0.9rem;
+      color: var(--text-color);
+      font-size: 1rem;
       line-height: 1.6;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      flex-grow: 1;
     }
 
     .blog-meta {
       display: flex;
       justify-content: space-between;
       color: #888;
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      color: #6a0572;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      span {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
     }
 
     .read-more {
       display: inline-block;
-      color: #e91e63;
+      color: var(--secondary-color);
       text-decoration: none;
-      font-weight: 500;
-      font-size: 0.9rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      align-self: flex-start;
+      font-family: 'Playfair Display', serif;
 
-      &:hover {
-        text-decoration: underline;
+      &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        bottom: -2px;
+        left: 0;
+        background-color: var(--secondary-color);
+        transform: scaleX(0);
+        transform-origin: bottom right;
+        transition: transform 0.3s ease;
+      }
+
+      &:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
       }
     }
   }
@@ -97,22 +166,26 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
+  font-family: 'Playfair Display', serif;
 
   .spinner {
     animation: spin 1s linear infinite;
-    color: #e91e63;
+    color: var(--primary-color);
     margin-bottom: 1rem;
   }
 
   p {
-    color: #666;
+    color: var(--text-color);
+    font-size: 1.1rem;
   }
 }
 
 .error-container {
   text-align: center;
   padding: 2rem;
-  color: #e91e63;
+  color: #e74c3c;
+  font-size: 1.1rem;
+  font-family: 'Playfair Display', serif;
 }
 
 @keyframes spin {
@@ -124,20 +197,117 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 992px) {
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .blog-container {
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
 
   .blog-header {
     margin-bottom: 2rem;
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
+    }
+
+    p {
+      font-size: 1rem;
     }
   }
 
-  .blog-grid {
-    grid-template-columns: 1fr;
+  .blog-card {
+    .blog-content {
+      padding: 1.5rem;
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      .blog-excerpt {
+        font-size: 0.9rem;
+      }
+    }
+  }
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    button {
+      width: 100%;
+    }
   }
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+
+  button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Playfair Display', serif;
+
+    &:hover {
+      background-color: var(--button-hover-color);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+      font-family: 'Playfair Display', serif;
+    }
+
+    &:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+  }
+
+  span {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+}
+

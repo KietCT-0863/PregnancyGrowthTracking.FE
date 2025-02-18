@@ -32,9 +32,7 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      <div className="scroll-down" onClick={scrollToContent}>
-        <div className="arrow-down">↓</div>
-      </div>
+
     </section>
   )
 }

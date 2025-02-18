@@ -18,6 +18,7 @@ import Login from "./Login/login";
 import Header from "./components/Header/Header";
 import Hero from "./components/Hero/Hero";
 import Blog from "./features/blogs/Blogs";
+import ScrollToTop from "./components/ScrollToTop/SrollToTop";
 // import Home from "./components/Home/Home"; // Tạm thời comment lại
 
 function App() {
@@ -66,7 +67,11 @@ function App() {
           </Routes>
         </div>
       </Router>
+      <ScrollToTop />
+      <Footer />
+   
     </AuthProvider>
+  
   );
 }
 

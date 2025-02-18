@@ -1,6 +1,12 @@
 import "./Features.scss"
 
 const Features = () => {
+    const scrollToContent = () => {
+    window.scrollTo({
+      top: window.innerHeight,
+      behavior: "smooth",
+    })
+  }
   const features = [
     {
       icon: "🤰",
@@ -46,6 +52,7 @@ const Features = () => {
           </div>
         ))}
       </div>
+
     </section>
   )
 }

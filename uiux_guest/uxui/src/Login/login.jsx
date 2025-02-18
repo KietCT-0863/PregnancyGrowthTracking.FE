@@ -10,8 +10,8 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    usernameOrEmail: "member1", // Giá trị mặc định từ API
-    password: "member123", // Giá trị mặc định từ API
+    usernameOrEmail: "",
+    password: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,6 @@ const Login = () => {
       ...prevState,
       [name]: value,
     }));
-    // Xóa lỗi khi người dùng nhập
     setErrors({});
   };
 
@@ -31,7 +30,6 @@ const Login = () => {
     setIsLoading(true);
     setErrors({});
 
-    // Kiểm tra dữ liệu trước khi gửi
     if (!formData.usernameOrEmail || !formData.password) {
       setErrors({ form: "Vui lòng nhập đầy đủ thông tin" });
       setIsLoading(false);
@@ -39,30 +37,51 @@ const Login = () => {
     }
 
     try {
-      const url =
-        "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Auth/Login";
+      const url = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Auth/Login";
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          usernameOrEmail: "member1",
-          password: "member123",
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
-      console.log("Response:", data);
-
+      
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        login(data.user);
-
+        
+        // Xác định role dựa trên response từ API
+        let userRole;
         if (data.user.role === "Admin") {
-          navigate("/admin");
+          userRole = "admin";
+        } else if (data.user.role === "VIP") {
+          userRole = "vip";
         } else {
-          navigate("/dashboard");
+          userRole = "non-vip";
+        }
+
+        // Lưu thông tin user với role
+        const userData = {
+          ...data.user,
+          role: userRole
+        };
+        
+        login(userData);
+
+        // Điều hướng dựa trên role
+        switch (userRole) {
+          case "admin":
+            navigate("/admin");
+            break;
+          case "vip":
+            navigate("/dashboard");
+            break;
+          case "non-vip":
+            navigate("/dashboard");
+            break;
+          default:
+            navigate("/");
         }
       } else {
         setErrors({
@@ -83,6 +102,15 @@ const Login = () => {
     try {
       const decoded = jwtDecode(credentialResponse?.credential);
       console.log("Google login successful:", decoded);
+      
+      // Mặc định user Google là non-vip
+      const userData = {
+        email: decoded.email,
+        name: decoded.name,
+        role: "non-vip"
+      };
+      
+      login(userData);
       navigate("/dashboard");
     } catch (error) {
       console.error("Google login error:", error);
@@ -123,7 +151,7 @@ const Login = () => {
                   id="usernameOrEmail"
                   value={formData.usernameOrEmail}
                   onChange={handleChange}
-                  placeholder="member1"
+                  placeholder="Nhập tên đăng nhập hoặc email"
                 />
               </div>
             </div>
@@ -138,7 +166,7 @@ const Login = () => {
                   id="password"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="member123"
+                  placeholder="Nhập mật khẩu"
                 />
               </div>
             </div>

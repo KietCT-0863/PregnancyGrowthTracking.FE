@@ -45,6 +45,14 @@ const CTA = () => {
           </div>
         </div>
       </div>
+      <div className="scroll-down" onClick={() => {
+        window.scrollTo({
+          top: window.innerHeight,
+          behavior: "smooth",
+        });
+      }}>
+
+      </div>
     </section>
   )
 }
