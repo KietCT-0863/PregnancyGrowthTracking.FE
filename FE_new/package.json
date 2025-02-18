@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "react-icons": "^5.4.0",
+    "vite": "^6.1.0"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.85.0"
+  }
+}
