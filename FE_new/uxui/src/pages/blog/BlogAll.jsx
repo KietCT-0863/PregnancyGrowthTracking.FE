@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Loader, Calendar, User } from 'lucide-react';
-import './BlogAll.scss';
+import { Loader, Calendar, User } from "lucide-react";
+import "./BlogAll.scss";
 
 const BlogAll = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,7 +13,7 @@ const BlogAll = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch('https://dummyjson.com/posts');
+        const response = await fetch("https://dummyjson.com/posts");
         if (!response.ok) {
           throw new Error("Không thể tải danh sách bài viết");
         }
@@ -106,7 +106,9 @@ const BlogAll = () => {
         <button onClick={handlePrevPage} disabled={currentPage === 1}>
           Trước
         </button>
-        <span>Trang {currentPage} / {totalPages}</span>
+        <span>
+          Trang {currentPage} / {totalPages}
+        </span>
         <button onClick={handleNextPage} disabled={currentPage === totalPages}>
           Sau
         </button>
