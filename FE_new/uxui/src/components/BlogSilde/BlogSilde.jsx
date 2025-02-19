@@ -29,10 +29,10 @@ const BlogSilde = () => {
     <section className="blog-posts">
       <h2>Bài viết mới nhất</h2>
       <Slider {...settings}>
-        {posts.map(({ image, title, excerpt, id }) => (
+        {posts.map(({  title, excerpt, id }) => (
           <div key={id} className="post-card">
             <div className="post-icon">
-              <img src={image} alt={title} />
+              <img src={`https://picsum.photos/seed/${posts.id}/1200/600`} alt={title}></img>
             </div>
             <div className="post-content">
               <h3>{title}</h3>

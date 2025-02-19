@@ -5,7 +5,8 @@ import "./App.css";
 function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+  <AppRoutes/>
+
     </AuthProvider>
   );
 }

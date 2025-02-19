@@ -113,6 +113,26 @@ $light-bg: #fff9f9;
         }
       }
     }
+
+    .btn-switch-layout {
+      background-color: #6a0572;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 30px;
+      border: none;
+      font-family: "Amatic SC", serif;
+      font-size: 1rem;
+      font-weight: 1000;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken(#6a0572, 10%);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(#6a0572, 0.4);
+      }
+    }
   }
 
   .hero-stats {

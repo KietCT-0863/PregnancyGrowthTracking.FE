@@ -8,53 +8,51 @@ import Guest from "../layout/Guest/Guest";
 import Register from "./pages/Register/Register";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
 import Layout from "../layout/Layout";
+import AdminLayout from "../layout/AdminLayout/AdminLayout";
+import Dashboard from "./pages/DashBoardAdmin/DashBoard";
+import UserManagement from "./pages/UserManagementAmin/UserManagement";
+import BlogManagement from "./pages/BlogManagement/BlogManagement";
 
-function AppRoutes() {
+// Hàm bọc các thành phần trong Layout
+const withLayout = (Component) => (
+  <Layout>
+    {Component}
+  </Layout>
+);
+
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Guest />}>
-        <Route index element={<Home />}></Route>
+        <Route index element={<Home />} />
       </Route>
 
-      <Route
-        path="/blog"
-        element={
-          <Layout>
-            <Blog />
-          </Layout>
-        }
-      >
-        <Route index element={<BlogAll />}></Route>
-        <Route path=":id" element={<BlogDetail />}></Route>
+      {/** Định nghĩa các route trong mảng **/}
+      { [
+        { path: "/blog", element: <Blog />, index: <BlogAll /> },
+        { path: "/basictracking", element: <BasicTracking /> },
+        { path: "/login", element: <Login /> },
+        { path: "/register", element: <Register /> },
+      ].map(({ path, element, index }) => (
+        <Route
+          key={path}
+          path={path}
+          element={withLayout(element)}
+        >
+          {index && <Route index element={index} />}
+          {path === "/blog" && <Route path=":id" element={<BlogDetail />} />}
+        </Route>
+      ))}
+
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="blogs" element={<BlogManagement />} />
       </Route>
 
-      <Route
-        path="/basictracking"
-        element={
-          <Layout>
-            <BasicTracking />
-          </Layout>
-        }
-      ></Route>
-      <Route
-        path="/login"
-        element={
-          <Layout>
-            <Login />
-          </Layout>
-        }
-      ></Route>
-      <Route
-        path="/register"
-        element={
-          <Layout>
-            <Register />
-          </Layout>
-        }
-      ></Route>
-      <Route path="*" element={<h1>Not Found</h1>}></Route>
+      <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
-}
+};
 
 export default AppRoutes;

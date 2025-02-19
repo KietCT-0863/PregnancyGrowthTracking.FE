@@ -5,10 +5,12 @@ import "./BlogAll.scss";
 
 const BlogAll = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 4;
+  const blogsPerPage = 6;
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredBlogs, setFilteredBlogs] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -30,11 +32,22 @@ const BlogAll = () => {
     fetchBlogs();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm) {
+      const results = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredBlogs(results);
+    } else {
+      setFilteredBlogs(blogs);
+    }
+  }, [searchTerm, blogs]);
+
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -70,6 +83,16 @@ const BlogAll = () => {
       <div className="blog-header">
         <h1>Blog</h1>
         <p>Chia sẻ kiến thức và kinh nghiệm về thai kỳ</p>
+      </div>
+
+      <div className="search-box">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Tìm kiếm theo tiêu đề..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="blog-grid">

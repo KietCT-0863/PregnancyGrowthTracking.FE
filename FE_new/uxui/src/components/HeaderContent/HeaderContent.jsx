@@ -1,10 +1,15 @@
 import "./HeaderContent.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import UserMenu from "../UserMenu/UserMenu";
 
 const HeaderContent = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSwitchLayout = () => {
+    navigate('/admin');
+  };
 
   return (
     <section className="hero">
@@ -19,6 +24,12 @@ const HeaderContent = () => {
             Bắt đầu ngay để theo dõi hành trình mang thai đầy kì diệu của mẹ{" "}
           </button>
           <button className="btn btn-outline">Tìm hiểu thêm</button>
+          <button 
+            className="btn btn-switch-layout"
+            onClick={handleSwitchLayout}
+          >
+            Chuyển đến Admin
+          </button>
         </div>
         <div className="hero-stats">
           <div className="stat-item">
