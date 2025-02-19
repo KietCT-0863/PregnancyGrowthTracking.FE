@@ -64,6 +64,42 @@ $light-bg: #fff9f9;
     line-height: 1.6;
     animation: fadeInUp 1s ease-out 0.3s both;
   }
+  
+  .layout-switcher {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+
+    .btn-switch-layout {
+      padding: 12px 24px;
+      border-radius: 30px;
+      border: none;
+      font-family: "Amatic SC", serif;
+      font-size: 1rem;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      // Admin layout button
+      background-color: #6a0572;
+      color: white;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(106, 5, 114, 0.4);
+      }
+
+      // Basic user layout button
+      &.basic {
+        background-color: #d63384;
+        
+        &:hover {
+          box-shadow: 0 4px 15px rgba(214, 51, 132, 0.4);
+        }
+      }
+    }
+  }
 
   .hero-buttons {
     display: flex;

@@ -1,0 +1,201 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.guest-blog-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease-out;
+
+  .blog-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    
+    h1 {
+      font-size: 2.5rem;
+      color: #d63384; // Thay đổi màu sắc theo theme guest
+      margin-bottom: 0.5rem;
+      animation: fadeIn 0.5s ease-out 0.2s both;
+    }
+    
+    p {
+      color: #666;
+      font-size: 1.1rem;
+      animation: fadeIn 0.5s ease-out 0.4s both;
+    }
+  }
+
+  .search-box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.5s ease-out 0.6s both;
+
+    .search-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 12px 20px;
+      border: 2px solid #d63384; // Thay đổi màu sắc theo theme guest
+      border-radius: 25px;
+      font-size: 16px;
+      transition: all 0.3s ease-in-out;
+      outline: none;
+
+      &:focus {
+        border-color: darken(#d63384, 10%);
+        box-shadow: 0 0 15px rgba(214, 51, 132, 0.3);
+        transform: scale(1.02);
+      }
+    }
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .blog-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+  }
+
+  .blog-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .blog-content {
+    padding: 1.5rem;
+    
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #333;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: #d63384; // Thay đổi màu sắc theo theme guest
+      }
+    }
+  }
+
+  .blog-excerpt {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .blog-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    
+    span {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .read-more {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #d63384; // Thay đổi màu sắc theo theme guest
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: darken(#d63384, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    animation: fadeIn 0.5s ease-out;
+    
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #d63384; // Thay đổi màu sắc theo theme guest
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      
+      &:hover:not(:disabled) {
+        background-color: darken(#d63384, 10%);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      }
+    }
+
+    span {
+      font-size: 1rem;
+      color: #666;
+    }
+  }
+}
+
+// Loading và Error styles
+.loading-container, .error-container {
+  text-align: center;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.loading-container {
+  .spinner {
+    animation: spin 1s linear infinite;
+    color: #d63384; // Thay đổi màu sắc theo theme guest
+  }
+}
+
+.error-container {
+  color: #dc3545;
+}

@@ -24,10 +24,10 @@ const NavBar = () => {
                                 style={{ maxHeight: '100px' }}
                                 navbarScroll
                             >
-                                <NavLink to="/basic_tracking" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>
+                                <NavLink to="/basictracking" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>
                                     Theo Dõi Thai Kỳ
                                 </NavLink>
-                                <NavLink to="/lich-trinh-tham-kham" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>
+                                <NavLink to="/calendar" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>
                                     Lịch Trình Thăm Khám
                                 </NavLink>
                                 <NavLink to="/ghi-chu-bac-si" className={({isActive}) => isActive ? 'nav-link active' : 'nav-link'}>

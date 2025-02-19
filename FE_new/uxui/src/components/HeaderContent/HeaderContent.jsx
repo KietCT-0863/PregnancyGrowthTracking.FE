@@ -8,7 +8,11 @@ const HeaderContent = () => {
   const navigate = useNavigate();
 
   const handleSwitchLayout = () => {
-    navigate('/admin');
+    if (user && !user.isVip) {
+      navigate('/basic-user/blog');
+    } else if (user && user.isVip) {
+      navigate('/admin');
+    }
   };
 
   return (
@@ -19,17 +23,33 @@ const HeaderContent = () => {
           Ứng dụng thông minh giúp theo dõi thai kỳ, tư vấn dinh dưỡng và kết
           nối cộng đồng mẹ bầu
         </p>
+        <div className="layout-switcher">
+          <button 
+            className="btn btn-switch-layout"
+            onClick={() => navigate('/admin')}
+          >
+            Xem Admin Layout
+          </button>
+          <button 
+            className="btn btn-switch-layout basic"
+            onClick={() => navigate('/basic-user/blog')}
+          >
+            Xem Basic User Layout
+          </button>
+        </div>
         <div className="hero-buttons">
           <button className="btn btn-primary">
             Bắt đầu ngay để theo dõi hành trình mang thai đầy kì diệu của mẹ{" "}
           </button>
           <button className="btn btn-outline">Tìm hiểu thêm</button>
-          <button 
-            className="btn btn-switch-layout"
-            onClick={handleSwitchLayout}
-          >
-            Chuyển đến Admin
-          </button>
+          {user && (
+            <button 
+              className="btn btn-switch-layout"
+              onClick={handleSwitchLayout}
+            >
+              {user.isVip ? 'Chuyển đến Admin' : 'Xem Blog & Cộng đồng'}
+            </button>
+          )}
         </div>
         <div className="hero-stats">
           <div className="stat-item">
@@ -50,12 +70,7 @@ const HeaderContent = () => {
             <UserMenu />
           ) : (
             <>
-              <Link to="/login" className="btn-login">
-                Đăng nhập
-              </Link>
-              <Link to="/register" className="btn-register">
-                Đăng ký
-              </Link>
+      
             </>
           )}
         </div>

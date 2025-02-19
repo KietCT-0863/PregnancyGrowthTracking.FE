@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../src/components/SideBar/SideBar";
-import { Box, Button } from "@mui/material";
+import { Box, Button, AppBar, Toolbar, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -17,14 +17,45 @@ const theme = createTheme({
 const AdminLayout = () => {
   const navigate = useNavigate();
 
-  // Thêm hàm xử lý quay lại Guest Layout
-  const handleBackToGuest = () => {
-    navigate('/');
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+        <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'primary.main', ml: '240px' }}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Admin Dashboard
+            </Typography>
+            {/* Thêm các nút chuyển đổi layout */}
+            <Button 
+              variant="contained" 
+              sx={{ 
+                mr: 2,
+                bgcolor: '#6a0572',
+                '&:hover': {
+                  bgcolor: '#4a0350'
+                }
+              }}
+              onClick={() => navigate('/basic-user/blog')}
+            >
+              Xem Basic User Layout
+            </Button>
+            <Button 
+              variant="outlined" 
+              sx={{ 
+                borderColor: '#d63384',
+                color: '#d63384',
+                '&:hover': {
+                  borderColor: '#b52b6f',
+                  bgcolor: 'rgba(214, 51, 132, 0.1)'
+                }
+              }}
+              onClick={() => navigate('/')}
+            >
+              Về trang chủ
+            </Button>
+          </Toolbar>
+        </AppBar>
+
         {/* Sidebar cố định bên trái */}
         <Sidebar />
         
@@ -41,23 +72,6 @@ const AdminLayout = () => {
         >
           {/* Để tránh content bị che bởi sidebar */}
           <Box sx={{ height: '64px' }} /> 
-          
-          {/* Thêm nút quay lại */}
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: '#d63384',
-              color: 'white',
-              mb: 2,
-              alignSelf: 'flex-start',
-              '&:hover': {
-                bgcolor: '#b52b6f'
-              }
-            }}
-            onClick={handleBackToGuest}
-          >
-            Quay lại trang chủ
-          </Button>
           
           <Outlet />
         </Box>
