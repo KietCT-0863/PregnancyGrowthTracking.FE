@@ -1,5 +1,5 @@
-import { FaFacebookF, FaInstagram, FaYoutube, FaHeart } from "react-icons/fa"
-import "./Footer.scss"
+import { FaFacebookF, FaInstagram, FaYoutube, FaHeart } from "react-icons/fa";
+import "./Footer.scss";
 import { CiMedicalCase } from "react-icons/ci";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaBlog } from "react-icons/fa6";
@@ -19,15 +19,49 @@ const footerSections = [
   {
     title: "Dịch vụ",
     links: [
-      { name: <><CiMedicalCase /> Theo dõi Thai Kỳ</>, url: "/dashboard" },
-      { name: <><FaCalendarAlt /> Lịch trình Thăm Khám</>, url: "/calendar" },
-      { name: <><FaNotesMedical /> Ghi Chú Bác Sỹ</>, url: "/notes" },
-      { name: <><FaBlog /> Blog</>, url: "/blog" },
-      { name: <><TiSocialInstagram /> Cộng Đồng</>, url: "/forum" },
-
+      {
+        name: (
+          <>
+            <CiMedicalCase /> Theo dõi Thai Kỳ
+          </>
+        ),
+        url: "/dashboard",
+      },
+      {
+        name: (
+          <>
+            <FaCalendarAlt /> Lịch trình Thăm Khám
+          </>
+        ),
+        url: "/calendar",
+      },
+      {
+        name: (
+          <>
+            <FaNotesMedical /> Ghi Chú Bác Sỹ
+          </>
+        ),
+        url: "/notes",
+      },
+      {
+        name: (
+          <>
+            <FaBlog /> Blog
+          </>
+        ),
+        url: "/blog",
+      },
+      {
+        name: (
+          <>
+            <TiSocialInstagram /> Cộng Đồng
+          </>
+        ),
+        url: "/forum",
+      },
     ],
   },
-]
+];
 
 const Footer = () => {
   return (
@@ -36,7 +70,9 @@ const Footer = () => {
         <div className="footer-main">
           <div className="footer-brand">
             <h3 className="brand-name">Mẹ Bầu</h3>
-            <p className="brand-description">Đồng hành cùng mẹ trên hành trình thiêng liêng nhất cuộc đời</p>
+            <p className="brand-description">
+              Đồng hành cùng mẹ trên hành trình thiêng liêng nhất cuộc đời
+            </p>
             <div className="social-links">
               <a href="#" className="social-link">
                 <FaFacebookF />
@@ -80,8 +116,7 @@ const Footer = () => {
         </p>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
-
+export default Footer;
