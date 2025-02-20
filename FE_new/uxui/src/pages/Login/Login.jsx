@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import authApi from "../../api/authApi";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Login.scss";
+import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    usernameOrEmail: "member1",
-    password: "member123",
+    usernameOrEmail: "",
+    password: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,13 +25,51 @@ const Login = () => {
         throw new Error("Vui lòng điền đầy đủ thông tin");
       }
 
-      await login({
+      const response = await login({
         usernameOrEmail: formData.usernameOrEmail,
         password: formData.password,
       });
 
-      navigate("/");
+      console.log("Login response in component:", response);
+
+      if (
+        response &&
+        (response.token || (response.data && response.data.token))
+      ) {
+        const token = response.token || response.data.token;
+        const decoded = jwtDecode(token);
+        const role =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        toast.success("Đăng nhập thành công!");
+
+        if (role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+      } else {
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+          const decoded = jwtDecode(storedToken);
+          const role =
+            decoded[
+              "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            ];
+          toast.success("Đăng nhập thành công!");
+
+          if (role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+        } else {
+          throw new Error("Đăng nhập thất bại: Không nhận được token");
+        }
+      }
     } catch (err) {
+      console.error("Login error:", err);
       if (err.response) {
         switch (err.response.status) {
           case 400:
@@ -116,11 +155,14 @@ const Login = () => {
             <Link to="/register" className="register-link">
               Đăng ký ngay
             </Link>
-            <button type="button" className="btn-back" onClick={() => navigate('/')}>
-    Quay lại trang chủ
-  </button>
+            <button
+              type="button"
+              className="btn-back"
+              onClick={() => navigate("/")}
+            >
+              Quay lại trang chủ
+            </button>
           </div>
-          
         </form>
       </div>
     </div>

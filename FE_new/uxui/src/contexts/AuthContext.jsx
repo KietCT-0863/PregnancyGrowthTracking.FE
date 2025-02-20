@@ -26,12 +26,27 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (credentials) => {
-    const response = await authApi.login(credentials);
-    if (response.token) {
-      localStorage.setItem("token", response.token);
-      setUser(response.user);
+    try {
+      const response = await authApi.login(credentials);
+      // Kiểm tra response trước khi xử lý
+      console.log("Login response:", response); // để debug
+
+      // Kiểm tra cấu trúc response
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+        setUser(response.user); // nếu có
+        return response;
+      } else if (response.data && response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        setUser(response.data.user); // nếu có
+        return response.data;
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (error) {
+      console.error("Login error in AuthContext:", error);
+      throw error;
     }
-    return response;
   };
 
   const logout = () => {

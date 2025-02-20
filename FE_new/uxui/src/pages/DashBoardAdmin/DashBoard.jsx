@@ -1,9 +1,18 @@
-import { Grid, Paper, Typography } from "@mui/material"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import { LineChart, Line } from "recharts"
-import { PieChart, Pie, Cell } from "recharts"
-import CountUp from "react-countup"
-import "./Dashboard.scss"
+import { Grid, Paper, Typography } from "@mui/material";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { LineChart, Line } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
+import CountUp from "react-countup";
+import "./Dashboard.scss";
 
 const Dashboard = () => {
   const revenueData = [
@@ -14,7 +23,7 @@ const Dashboard = () => {
     { month: "May", revenue: 56000000 },
     { month: "Jun", revenue: 55000000 },
     { month: "Jul", revenue: 40000000 },
-  ]
+  ];
 
   const userGrowthData = [
     { month: "Jan", users: 1000 },
@@ -24,16 +33,16 @@ const Dashboard = () => {
     { month: "May", users: 2100 },
     { month: "Jun", users: 2400 },
     { month: "Jul", users: 2700 },
-  ]
+  ];
 
   const postCategoryData = [
     { name: "Technology", value: 400 },
     { name: "Lifestyle", value: 300 },
     { name: "Business", value: 200 },
     { name: "Health", value: 100 },
-  ]
+  ];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <div className="dashboard">
@@ -104,7 +113,10 @@ const Dashboard = () => {
                   dataKey="value"
                 >
                   {postCategoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -133,8 +145,7 @@ const Dashboard = () => {
         </Grid>
       </Grid>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
-
+export default Dashboard;

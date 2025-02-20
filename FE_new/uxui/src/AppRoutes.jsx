@@ -19,6 +19,7 @@ import Community from "./pages/Community/Community";
 import BasicUserLayout from "../layout/BasicUserLayout/BasicUserLayout";
 import GuestBlogAll from "./pages/guest/blog/GuestBlogAll";
 import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
 
 import Footer from "./components/Footer/Footer";
 import BasicUserNavbar from "./components/BasicUserNavbar/BasicUserNavbar";
@@ -34,15 +35,22 @@ const AppRoutes = () => {
           <Route path=":id" element={<BlogDetail />} />
         </Route>
         <Route path="basictracking" element={<BasicTracking />} />
-        <Route path="calendar" element={<CalendarAll />} >
-        <Route path=":id" element={<CalendarHistory />} />
+        <Route path="calendar" element={<CalendarAll />}>
+          <Route path=":id" element={<CalendarHistory />} />
         </Route>
         <Route path="ghi-chu-bac-si" element={<DoctorNotes />} />
         <Route path="cong-dong" element={<Community />} />
       </Route>
 
-      {/* Route cho admin */} 
-      <Route path="/admin" element={<AdminLayout />}>
+      {/* Route cho admin - được bảo vệ */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedAdminRoute>
+            <AdminLayout />
+          </ProtectedAdminRoute>
+        }
+      >
         <Route index element={<Dashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="blogs" element={<BlogManagement />} />
@@ -63,7 +71,7 @@ const AppRoutes = () => {
           </>
         }
       >
-        <Route index element={<BasicUserLayout   />} />
+        <Route index element={<BasicUserLayout />} />
         <Route path="blog" element={<GuestBlogAll />} />
         <Route path="blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
