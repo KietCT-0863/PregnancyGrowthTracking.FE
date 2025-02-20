@@ -178,12 +178,12 @@ $text-color: #6a0572;
     }
   }
 
-  .btn-primary {
+  .btn-primary, .btn-back {
+    border-radius: 20px;
     font-family: 'Amatic SC', cursive;
     color: white;
     border: none;
     padding: 0.8rem;
-    border-radius: 20px;
     font-size: 1rem;
     font-weight: 600;
 
@@ -193,7 +193,6 @@ $text-color: #6a0572;
       background-color: darken($primary-pink, 10%);
       transform: translateY(-2px);
     }
-
   }
 
   .divider {

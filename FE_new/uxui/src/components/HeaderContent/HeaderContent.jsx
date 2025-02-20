@@ -1,5 +1,5 @@
 import "./HeaderContent.scss";
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import UserMenu from "../UserMenu/UserMenu";
 
@@ -32,7 +32,7 @@ const HeaderContent = () => {
           </button>
           <button 
             className="btn btn-switch-layout basic"
-            onClick={() => navigate('/basic-user/blog')}
+            onClick={() => navigate('/basic-user')}
           >
             Xem Basic User Layout
           </button>

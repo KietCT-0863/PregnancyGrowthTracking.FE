@@ -157,6 +157,9 @@ const Register = () => {
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? "Đang đăng ký..." : "Đăng ký"}
             </button>
+            <button type="button" className="btn-back" onClick={() => navigate('/')}>
+              Quay lại trang chủ
+            </button>
           </form>
 
           <div className="divider">

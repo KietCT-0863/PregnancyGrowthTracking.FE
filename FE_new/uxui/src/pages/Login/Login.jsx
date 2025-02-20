@@ -116,7 +116,11 @@ const Login = () => {
             <Link to="/register" className="register-link">
               Đăng ký ngay
             </Link>
+            <button type="button" className="btn-back" onClick={() => navigate('/')}>
+    Quay lại trang chủ
+  </button>
           </div>
+          
         </form>
       </div>
     </div>

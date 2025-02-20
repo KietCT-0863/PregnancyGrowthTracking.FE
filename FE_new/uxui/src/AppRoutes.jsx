@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import Home from "./pages/home";
 import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
@@ -7,7 +7,7 @@ import BlogDetail from "./pages/blog/BlogDetail";
 import Member from "../layout/Member/Member";
 import Register from "./pages/Register/Register";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
-import Layout from "../layout/Layout";
+import Layout from "../layout/Member/Member";
 import AdminLayout from "../layout/AdminLayout/AdminLayout";
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
 import UserManagement from "./pages/UserManagementAmin/UserManagement";
@@ -20,57 +20,50 @@ import BasicUserLayout from "../layout/BasicUserLayout/BasicUserLayout";
 import GuestBlogAll from "./pages/guest/blog/GuestBlogAll";
 import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 
-
-  // Hàm bọc các thành phần trong Layout
-  const withLayout = (Component) => (
-  <Layout>
-    {Component}
-  </Layout>
-);
+import Footer from "./components/Footer/Footer";
+import BasicUserNavbar from "./components/BasicUserNavbar/BasicUserNavbar";
 
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Route cho thành viên VIP */}
       <Route path="/" element={<Member />}>
         <Route index element={<Home />} />
-      
-
+        <Route path="blog" element={<Blog />}>
+          <Route index element={<BlogAll />} />
+          <Route path=":id" element={<BlogDetail />} />
+        </Route>
+        <Route path="basictracking" element={<BasicTracking />} />
+        <Route path="calendar" element={<CalendarAll />} >
+        <Route path=":id" element={<CalendarHistory />} />
+        </Route>
+        <Route path="ghi-chu-bac-si" element={<DoctorNotes />} />
+        <Route path="cong-dong" element={<Community />} />
       </Route>
 
-      {/** Định nghĩa các route trong mảng **/}
-      { [
-  { path: "/blog", element: <Blog />, index: <BlogAll /> },
-  { path: "/basictracking", element: <BasicTracking /> },
-  { path: "/login", element: <Login /> },
-  { path: "/register", element: <Register /> },
-  { path: "/calendar", element: <CalendarAll /> },
-  { path: "/ghi-chu-bac-si", element: <DoctorNotes /> },
-  { path: "/cong-dong", element: <Community /> },
-  
-
-].map(({ path, element, index }) => (
-  <Route
-    key={path}
-    path={path}
-    element={withLayout(element)}
-  >
-    {index && <Route index element={index} />}
-    {path === "/blog" && <Route path=":id" element={<BlogDetail />} />}
-    {path === "/calendar-history" && <Route path=":id" element={<CalendarHistory />} />}
-  </Route>
-))}
-
-
+      {/* Route cho admin */} 
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="blogs" element={<BlogManagement />} />
-
       </Route>
 
-      {/* Basic User routes */}
-      <Route path="/basic-user" element={<BasicUserLayout />}>
-        <Route index element={<Home />} />
+      {/* Route độc lập */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+
+      {/* Route cho basic user */}
+      <Route
+        path="/basic-user"
+        element={
+          <>
+            <BasicUserNavbar />
+            <Outlet />
+            <Footer />
+          </>
+        }
+      >
+        <Route index element={<BasicUserLayout   />} />
         <Route path="blog" element={<GuestBlogAll />} />
         <Route path="blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
@@ -78,6 +71,7 @@ const AppRoutes = () => {
         <Route path="contact" element={<h1>Liên hệ</h1>} />
       </Route>
 
+      {/* Route 404 Not Found */}
       <Route path="*" element={<h1>Not Found</h1>} />
     </Routes>
   );
