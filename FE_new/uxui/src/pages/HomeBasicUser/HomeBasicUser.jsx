@@ -1,13 +1,20 @@
-import { Outlet, useNavigate } from "react-router-dom"
-import { Box, Button, AppBar, Toolbar, Typography, Container } from "@mui/material"
-import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { Outlet, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import BasicUserNavbar from "../../components/BasicUserNavbar/BasicUserNavbar"
-import FeatureContent from "../../components/FeatureContent/FeatureContent"
-import BlogSlideBasicUser from "../../components/BlogSildeBasicUser/BlogSildeBasicUser"
-import FooterContent from "../../components/FooterContent/FooterContent"
+import BasicUserNavbar from "../../components/BasicUserNavbar/BasicUserNavbar";
+import FeatureContent from "../../components/FeatureContent/FeatureContent";
+import BlogSlideBasicUser from "../../components/BlogSildeBasicUser/BlogSildeBasicUser";
+import FooterContent from "../../components/FooterContent/FooterContent";
 
-import "./BasicUserLayout.css"
+import "./BasicUserLayout.css";
 
 const theme = createTheme({
   palette: {
@@ -18,20 +25,30 @@ const theme = createTheme({
       default: "#f8f9fa",
     },
   },
-})
+});
 
 const HomeBasicUser = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "background.default" }}>
-        <AppBar position="fixed" sx={{ bgcolor: "white", color: "primary.main" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+          bgcolor: "background.default",
+        }}
+      >
+        <AppBar
+          position="fixed"
+          sx={{ bgcolor: "white", color: "primary.main" }}
+        >
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Tài khoản cơ bản
             </Typography>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{
                 mr: 2,
@@ -44,8 +61,8 @@ const HomeBasicUser = () => {
               onClick={() => navigate("/admin")}
             >
               Xem Admin Layout
-            </Button>
-            <Button
+            </Button> */}
+            {/* <Button
               variant="outlined"
               sx={{
                 borderColor: "#d63384",
@@ -59,7 +76,7 @@ const HomeBasicUser = () => {
               onClick={() => navigate("/")}
             >
               Về trang chủ
-            </Button>
+            </Button> */}
           </Toolbar>
         </AppBar>
 
@@ -86,8 +103,7 @@ const HomeBasicUser = () => {
         <FooterContent />
       </Box>
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export default HomeBasicUser
-
+export default HomeBasicUser;

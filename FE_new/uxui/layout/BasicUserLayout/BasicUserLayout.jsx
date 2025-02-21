@@ -1,13 +1,13 @@
 import HomeBasicUser from "../../src/pages/HomeBasicUser/HomeBasicUser";
+import BasicUserNavbar from "../../src/components/BasicUserNavbar/BasicUserNavbar";
 
 const BasicUserLayout = () => {
   return (
-<>
-
-<HomeBasicUser/>
-</>
+    <>
+      <BasicUserNavbar />
+      <HomeBasicUser />
+    </>
   );
 };
 
 export default BasicUserLayout;
-

@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Calendar as CalendarIcon, Plus, Search, Clock, Tag } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Plus,
+  Search,
+  Clock,
+  Tag,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import "./CalendarAll.scss";
 
@@ -33,16 +39,16 @@ const CalendarAll = () => {
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDayOfMonth = new Date(year, month, 1).getDay();
-    
+
     const days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(null);
     }
-    
+
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(new Date(year, month, i));
     }
-    
+
     return days;
   };
 
@@ -53,7 +59,7 @@ const CalendarAll = () => {
       ...newEvent,
       createdAt: new Date().toISOString(),
     };
-    
+
     setEvents([...events, event]);
     setShowAddModal(false);
     setNewEvent({
@@ -65,20 +71,25 @@ const CalendarAll = () => {
     });
   };
 
-  const filteredEvents = events.filter(event => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || event.category === selectedCategory;
+  const filteredEvents = events.filter((event) => {
+    const matchesSearch = event.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "all" || event.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   // Thêm hàm điều hướng tháng
   const navigateMonth = (direction) => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1));
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1)
+    );
   };
 
   // Format tháng và năm hiện tại
   const formatMonthYear = (date) => {
-    return date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" });
   };
 
   return (
@@ -86,11 +97,14 @@ const CalendarAll = () => {
       <div className="calendar-header">
         <h1>Lịch thai kỳ</h1>
         <div className="header-actions">
-          <Link to="/calendar-history" className="history-btn">
+          <Link to="/member/calendar-history" className="history-btn">
             <Clock size={20} />
             Lịch sử
           </Link>
-          <button className="add-event-btn" onClick={() => setShowAddModal(true)}>
+          <button
+            className="add-event-btn"
+            onClick={() => setShowAddModal(true)}
+          >
             <Plus size={20} />
             Thêm sự kiện
           </button>
@@ -120,30 +134,37 @@ const CalendarAll = () => {
           className="category-filter"
         >
           <option value="all">Tất cả danh mục</option>
-          {categories.map(cat => (
-            <option key={cat.id} value={cat.id}>{cat.label}</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.label}
+            </option>
           ))}
         </select>
       </div>
 
       <div className="calendar-grid">
-        {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map(day => (
-          <div key={day} className="calendar-day-header">{day}</div>
+        {["CN", "T2", "T3", "T4", "T5", "T6", "T7"].map((day) => (
+          <div key={day} className="calendar-day-header">
+            {day}
+          </div>
         ))}
-        
+
         {getDaysInMonth(currentDate).map((day, index) => (
           <div
             key={index}
-            className={`calendar-day ${day === null ? 'empty' : ''} ${
-              day?.toDateString() === new Date().toDateString() ? 'today' : ''
+            className={`calendar-day ${day === null ? "empty" : ""} ${
+              day?.toDateString() === new Date().toDateString() ? "today" : ""
             }`}
           >
             {day && (
               <>
                 <span className="day-number">{day.getDate()}</span>
                 {filteredEvents
-                  .filter(event => new Date(event.date).toDateString() === day.toDateString())
-                  .map(event => (
+                  .filter(
+                    (event) =>
+                      new Date(event.date).toDateString() === day.toDateString()
+                  )
+                  .map((event) => (
                     <Link
                       to={`/calendar/${event.id}`}
                       key={event.id}
@@ -167,42 +188,56 @@ const CalendarAll = () => {
                 type="text"
                 placeholder="Tiêu đề"
                 value={newEvent.title}
-                onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, title: e.target.value })
+                }
                 required
               />
-              
+
               <input
                 type="date"
                 value={newEvent.date}
-                onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, date: e.target.value })
+                }
                 required
               />
-              
+
               <input
                 type="time"
                 value={newEvent.time}
-                onChange={(e) => setNewEvent({...newEvent, time: e.target.value})}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, time: e.target.value })
+                }
                 required
               />
-              
+
               <select
                 value={newEvent.category}
-                onChange={(e) => setNewEvent({...newEvent, category: e.target.value})}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, category: e.target.value })
+                }
                 required
               >
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.label}</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.label}
+                  </option>
                 ))}
               </select>
-              
+
               <textarea
                 placeholder="Ghi chú"
                 value={newEvent.notes}
-                onChange={(e) => setNewEvent({...newEvent, notes: e.target.value})}
+                onChange={(e) =>
+                  setNewEvent({ ...newEvent, notes: e.target.value })
+                }
               />
-              
+
               <div className="modal-actions">
-                <button type="button" onClick={() => setShowAddModal(false)}>Hủy</button>
+                <button type="button" onClick={() => setShowAddModal(false)}>
+                  Hủy
+                </button>
                 <button type="submit">Lưu</button>
               </div>
             </form>

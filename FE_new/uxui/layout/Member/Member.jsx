@@ -1,15 +1,15 @@
-import NavBar from "../../src/components/NavBar/NavBar";
-import Footer from "../../src/components/Footer/Footer";
+import Navbar from "../../src/components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
-
-const Layout = () => {
+import Home from "../../src/pages/HomeBasicUser/HomeBasicUser";
+import Footer from "../../src/components/Footer/Footer";
+const Member = () => {
   return (
     <>
-      <NavBar />
-      <Outlet />
-
+      <Navbar />
+      <Home />
       <Footer />
     </>
   );
 };
-export default Layout;
+
+export default Member;

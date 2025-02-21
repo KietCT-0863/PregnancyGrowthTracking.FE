@@ -1,5 +1,5 @@
 import "./HeaderContent.scss";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import UserMenu from "../UserMenu/UserMenu";
 
@@ -9,9 +9,9 @@ const HeaderContent = () => {
 
   const handleSwitchLayout = () => {
     if (user && !user.isVip) {
-      navigate('/basic-user/blog');
+      navigate("/basic-user/blog");
     } else if (user && user.isVip) {
-      navigate('/admin');
+      navigate("/admin");
     }
   };
 
@@ -24,18 +24,18 @@ const HeaderContent = () => {
           nối cộng đồng mẹ bầu
         </p>
         <div className="layout-switcher">
-          <button 
+          {/* <button 
             className="btn btn-switch-layout"
             onClick={() => navigate('/admin')}
-          >
-            Xem Admin Layout
-          </button>
-          <button 
+          > */}
+          {/* Xem Admin Layout */}
+          {/* </button> */}
+          {/* <button
             className="btn btn-switch-layout basic"
-            onClick={() => navigate('/basic-user')}
+            onClick={() => navigate("/basic-user")}
           >
             Xem Basic User Layout
-          </button>
+          </button> */}
         </div>
         <div className="hero-buttons">
           <button className="btn btn-primary">
@@ -43,11 +43,11 @@ const HeaderContent = () => {
           </button>
           <button className="btn btn-outline">Tìm hiểu thêm</button>
           {user && (
-            <button 
+            <button
               className="btn btn-switch-layout"
               onClick={handleSwitchLayout}
             >
-              {user.isVip ? 'Chuyển đến Admin' : 'Xem Blog & Cộng đồng'}
+              {user.isVip ? "Chuyển đến Admin" : "Xem Blog & Cộng đồng"}
             </button>
           )}
         </div>
@@ -65,15 +65,7 @@ const HeaderContent = () => {
             <span className="stat-label">Chuyên gia tư vấn</span>
           </div>
         </div>
-        <div className="auth-buttons">
-          {user ? (
-            <UserMenu />
-          ) : (
-            <>
-      
-            </>
-          )}
-        </div>
+        <div className="auth-buttons">{user ? <UserMenu /> : <></>}</div>
       </div>
     </section>
   );

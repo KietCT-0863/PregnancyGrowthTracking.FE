@@ -34,7 +34,7 @@ const BlogAll = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      const results = blogs.filter(blog =>
+      const results = blogs.filter((blog) =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBlogs(results);
@@ -117,7 +117,7 @@ const BlogAll = () => {
                   {`Tác giả ${userId}`}
                 </span>
               </div>
-              <Link to={`/blog/${id}`} className="read-more">
+              <Link to={`/member/blog/${id}`} className="read-more">
                 Đọc thêm
               </Link>
             </div>

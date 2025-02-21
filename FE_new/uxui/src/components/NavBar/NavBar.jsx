@@ -71,7 +71,7 @@ const NavBar = () => {
                   </NavLink>
                 )}
                 <NavLink
-                  to="/basictracking"
+                  to="/member/basic-tracking"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
@@ -79,7 +79,7 @@ const NavBar = () => {
                   Theo Dõi Thai Kỳ
                 </NavLink>
                 <NavLink
-                  to="/calendar"
+                  to="/member/calendar"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
@@ -87,7 +87,7 @@ const NavBar = () => {
                   Lịch Trình Thăm Khám
                 </NavLink>
                 <NavLink
-                  to="/ghi-chu-bac-si"
+                  to="/member/doctor-notes"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
@@ -95,7 +95,7 @@ const NavBar = () => {
                   Ghi Chú Bác Sĩ
                 </NavLink>
                 <NavLink
-                  to="/blog"
+                  to="/member/blog"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
@@ -103,7 +103,7 @@ const NavBar = () => {
                   Blog
                 </NavLink>
                 <NavLink
-                  to="/cong-dong"
+                  to="/member/community"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }

@@ -1,34 +1,34 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useParams, NavLink } from "react-router-dom"
-import { Loader, Calendar, User, ArrowLeft } from "lucide-react"
-import "./BlogDetail.scss"
+import { useEffect, useState } from "react";
+import { useParams, NavLink } from "react-router-dom";
+import { Loader, Calendar, User, ArrowLeft } from "lucide-react";
+import "./BlogDetail.scss";
 
 const BlogDetail = () => {
-  const [post, setPost] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { id } = useParams()
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`https://dummyjson.com/posts/${id}`)
+        const response = await fetch(`https://dummyjson.com/posts/${id}`);
         if (!response.ok) {
-          throw new Error("Không thể tải bài viết")
+          throw new Error("Không thể tải bài viết");
         }
-        const data = await response.json()
-        setPost(data)
-        setLoading(false)
+        const data = await response.json();
+        setPost(data);
+        setLoading(false);
       } catch (err) {
-        setError(err.message)
-        setLoading(false)
+        setError(err.message);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchPost()
-  }, [id])
+    fetchPost();
+  }, [id]);
 
   if (loading) {
     return (
@@ -36,7 +36,7 @@ const BlogDetail = () => {
         <Loader className="spinner" />
         <p>Đang tải bài viết...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -44,19 +44,22 @@ const BlogDetail = () => {
       <div className="error-container">
         <p>Có lỗi xảy ra: {error}</p>
       </div>
-    )
+    );
   }
 
-  if (!post) return null
+  if (!post) return null;
 
   return (
     <div className="blog-detail">
       <div className="blog-detail-header">
-        <NavLink to="/blog" className="back-button">
+        <NavLink to="/member/blog" className="back-button">
           <ArrowLeft />
         </NavLink>
         <div className="blog-detail-image">
-          <img src={`https://picsum.photos/seed/${post.id}/1200/600`} alt={post.title} />
+          <img
+            src={`https://picsum.photos/seed/${post.id}/1200/600`}
+            alt={post.title}
+          />
         </div>
         <h1>{post.title}</h1>
         <div className="blog-detail-meta">
@@ -82,8 +85,7 @@ const BlogDetail = () => {
         <p>{post.body}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BlogDetail
-
+export default BlogDetail;

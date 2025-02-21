@@ -38,16 +38,18 @@ const Login = () => {
       ) {
         const token = response.token || response.data.token;
         const decoded = jwtDecode(token);
-        const role =
+        const userRole =
           decoded[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
         toast.success("Đăng nhập thành công!");
 
-        if (role === "admin") {
+        if (userRole === "guest") {
+          navigate("/basic-user");
+        } else if (userRole === "admin") {
           navigate("/admin");
         } else {
-          navigate("/");
+          navigate("/member");
         }
       } else {
         const storedToken = localStorage.getItem("token");
