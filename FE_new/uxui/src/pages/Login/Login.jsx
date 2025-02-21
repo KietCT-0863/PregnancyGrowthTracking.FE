@@ -30,18 +30,10 @@ const Login = () => {
         password: formData.password,
       });
 
-      console.log("Login response in component:", response);
-
-      if (
-        response &&
-        (response.token || (response.data && response.data.token))
-      ) {
+      if (response && (response.token || (response.data && response.data.token))) {
         const token = response.token || response.data.token;
         const decoded = jwtDecode(token);
-        const userRole =
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ];
+        const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
         toast.success("Đăng nhập thành công!");
 
         if (userRole === "guest") {
@@ -55,10 +47,7 @@ const Login = () => {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
           const decoded = jwtDecode(storedToken);
-          const role =
-            decoded[
-              "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-            ];
+          const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
           toast.success("Đăng nhập thành công!");
 
           if (role === "admin") {
@@ -106,16 +95,27 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <div className="leaves">
+        {[...Array(15)].map((_, index) => (
+          <div key={index} className="leaf"></div>
+        ))}
+      </div>
+      
+      <div className="wave-container">
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+      </div>
+
       <div className="login-box">
         <div className="login-header">
           <h1>Đăng nhập</h1>
-          {/* TODO: Thêm logo của bạn ở đây */}
           <img src="/logo.png" alt="Logo" className="logo" />
         </div>
 
         {error && <div className="error-message">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="glass-effect">
           <div className="form-group">
             <label htmlFor="usernameOrEmail">Email hoặc tên đăng nhập</label>
             <input
@@ -149,14 +149,22 @@ const Login = () => {
           </div>
 
           <button type="submit" className="btn-primary" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : "Đăng nhập"}
+            {isLoading ? (
+              <>
+                <span className="spinner"></span>
+                <span>Đang xử lý...</span>
+              </>
+            ) : (
+              "Đăng nhập"
+            )}
           </button>
 
           <div className="register-prompt">
-            Chưa có tài khoản?{" "}
-            <Link to="/register" className="register-link">
-              Đăng ký ngay
-            </Link>
+            <p>Chưa có tài khoản? {" "}
+              <Link to="/register" className="register-link">
+                Đăng ký ngay
+              </Link>
+            </p>
             <button
               type="button"
               className="btn-back"

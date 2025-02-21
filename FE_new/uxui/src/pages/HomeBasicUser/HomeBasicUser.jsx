@@ -10,12 +10,9 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import BasicUserNavbar from "../../components/BasicUserNavbar/BasicUserNavbar";
-import FeatureContent from "../../components/FeatureContent/FeatureContent";
 import BlogSlideBasicUser from "../../components/BlogSildeBasicUser/BlogSildeBasicUser";
 import FooterContent from "../../components/FooterContent/FooterContent";
-
 import "./BasicUserLayout.css";
-
 const theme = createTheme({
   palette: {
     primary: {
@@ -94,7 +91,7 @@ const HomeBasicUser = () => {
           >
             <Container maxWidth="lg">
               <Outlet />
-              <FeatureContent className="fade-in" />
+      
               <BlogSlideBasicUser className="slide-in" />
             </Container>
           </Box>

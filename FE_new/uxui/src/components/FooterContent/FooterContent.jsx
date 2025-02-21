@@ -1,6 +1,10 @@
 "use client"
 
+  import React from "react"
+
 import { useState } from "react"
+import { motion } from "framer-motion"
+import { Facebook, Instagram, Twitter } from "lucide-react"
 import "./FooterContent.scss"
 
 const FooterContent = () => {
@@ -8,54 +12,72 @@ const FooterContent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle form submission here
     console.log("Email submitted:", email)
     setEmail("")
   }
 
-  return (
-    <section className="cta">
-      <div className="cta-content">
-        <h2>Sẵn sàng đồng hành cùng Mẹ Bầu</h2>
-        <p>Đăng ký ngay hôm nay để nhận những thông tin hữu ích về thai kỳ</p>
-        <form className="cta-form" onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Nhập email của bạn"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <button type="submit" className="btn btn-light">
-            Đăng ký ngay
-          </button>
-        </form>
-        <div className="cta-benefits">
-          <div className="benefit-item">
-            <span className="benefit-icon">✓</span>
-            <span className="benefit-text">Hoàn toàn miễn phí</span>
-          </div>
-          <div className="benefit-item">
-            <span className="benefit-icon">✓</span>
-            <span className="benefit-text">Hủy đăng ký bất cứ lúc nào</span>
-          </div>
-          <div className="benefit-item">
-            <span className="benefit-icon">✓</span>
-            <span className="benefit-text">Tư vấn 24/7</span>
-          </div>
-        </div>
-      </div>
-      <div className="scroll-down" onClick={() => {
-        window.scrollTo({
-          top: window.innerHeight,
-          behavior: "smooth",
-        });
-      }}>
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        delayChildren: 0.3,
+        staggerChildren: 0.2,
+      },
+    },
+  }
 
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+    },
+  }
+
+  return (
+    <footer className="footer-content">
+      <div className="footer-container">
+        <motion.div className="footer-grid" variants={containerVariants} initial="hidden" animate="visible">
+          <motion.div className="footer-section newsletter" variants={itemVariants}>
+            <h3>Đăng ký nhận tin</h3>
+            <p>Nhận thông tin mới nhất về sức khỏe mẹ và bé</p>
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <input
+                  type="email"
+                  placeholder="Email của bạn"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <button type="submit" className="btn-submit">
+                  Đăng ký
+                </button>
+              </div>
+            </form>
+          </motion.div>
+          <motion.div className="footer-section social" variants={itemVariants}>
+            <h3>Kết nối với chúng tôi</h3>
+            <div className="social-icons">
+              <a href="#" aria-label="Facebook">
+                <Facebook />
+              </a>
+              <a href="#" aria-label="Instagram">
+                <Instagram />
+              </a>
+              <a href="#" aria-label="Twitter">
+                <Twitter />
+              </a>
+            </div>
+          </motion.div>
+        </motion.div>
+       
       </div>
-    </section>
+    </footer>
   )
 }
 
-export default FooterContent;
+export default FooterContent
 

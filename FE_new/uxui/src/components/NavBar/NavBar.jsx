@@ -1,164 +1,143 @@
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { toast } from "react-toastify";
+"use client"
 
-const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate();
+import { useState, useEffect } from "react"
+import { Link, useLocation } from "react-router-dom"
+import { jwtDecode } from "jwt-decode"
+import {
+  FaBabyCarriage,
+  FaCalendarAlt,
+  FaNotesMedical,
+  FaBlog,
+  FaUsers,
+  FaUserCircle,
+  FaSignOutAlt,
+} from "react-icons/fa"
+import "./NavBar.scss"
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserInfo(decoded);
-        setIsLoggedIn(true);
-        setIsAdmin(
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ] === "admin"
-        );
-      } catch (error) {
-        console.error("Token decode error:", error);
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
-        setUserInfo(null);
-        setIsAdmin(false);
-      }
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    setIsAdmin(false);
-    toast.success("Đăng xuất thành công!");
-    navigate("/");
-  };
+const NavLink = ({ to, children, icon }) => {
+  const location = useLocation()
+  const isActive = location.pathname === to
 
   return (
-    <>
-      <Container>
-        <Navbar expand="lg" className="bg-body-tertiary" bg="light">
-          <Container fluid>
-            <NavLink to="/" className="navbar-brand">
-              <img src="/logo.png" alt="Mẹ Bầu" height="40" />
-              Mẹ Bầu
+    <Link to={to} className={`nav-link ${isActive ? "active" : ""}`}>
+      {icon}
+      <span>{children}</span>
+    </Link>
+  )
+}
+
+const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userInfo, setUserInfo] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (token) {
+      try {
+        const decoded = jwtDecode(token)
+        setUserInfo(decoded)
+        setIsLoggedIn(true)
+        setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
+      } catch (error) {
+        console.error("Token decode error:", error)
+        localStorage.removeItem("token")
+        setIsLoggedIn(false)
+        setUserInfo(null)
+        setIsAdmin(false)
+      }
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    setIsLoggedIn(false)
+    setUserInfo(null)
+    setIsAdmin(false)
+  }
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="nav-section logo-section">
+          <Link to="/" className="navbar-logo">
+            <img src="/Logo bau-02.png" alt="Mẹ Bầu" className="navbar-logo-image" />
+            <span className="navbar-logo-text">Mẹ Bầu</span>
+          </Link>
+        </div>
+
+        <div className="nav-section menu-section">
+          {isAdmin && (
+            <div className="nav-item">
+              <NavLink to="/admin" icon={<FaUserCircle className="nav-icon" />}>
+                Quản trị
+              </NavLink>
+            </div>
+          )}
+          <div className="nav-item">
+            <NavLink to="/member/basic-tracking" icon={<FaBabyCarriage className="nav-icon" />}>
+              Theo Dõi Thai Kỳ
             </NavLink>
-            <Navbar.Toggle aria-controls="navbarScroll" />
-            <Navbar.Collapse id="navbarScroll">
-              <Nav
-                className="me-auto my-2 my-lg-0"
-                style={{ maxHeight: "100px" }}
-                navbarScroll
-              >
-                {isAdmin && (
-                  <NavLink
-                    to="/admin"
-                    className={({ isActive }) =>
-                      isActive ? "nav-link active" : "nav-link"
-                    }
-                  >
-                    Quản trị
-                  </NavLink>
-                )}
-                <NavLink
-                  to="/member/basic-tracking"
-                  className={({ isActive }) =>
-                    isActive ? "nav-link active" : "nav-link"
-                  }
-                >
-                  Theo Dõi Thai Kỳ
-                </NavLink>
-                <NavLink
-                  to="/member/calendar"
-                  className={({ isActive }) =>
-                    isActive ? "nav-link active" : "nav-link"
-                  }
-                >
-                  Lịch Trình Thăm Khám
-                </NavLink>
-                <NavLink
-                  to="/member/doctor-notes"
-                  className={({ isActive }) =>
-                    isActive ? "nav-link active" : "nav-link"
-                  }
-                >
-                  Ghi Chú Bác Sĩ
-                </NavLink>
-                <NavLink
-                  to="/member/blog"
-                  className={({ isActive }) =>
-                    isActive ? "nav-link active" : "nav-link"
-                  }
-                >
-                  Blog
-                </NavLink>
-                <NavLink
-                  to="/member/community"
-                  className={({ isActive }) =>
-                    isActive ? "nav-link active" : "nav-link"
-                  }
-                >
-                  Cộng Đồng
-                </NavLink>
-              </Nav>
-              <div>
-                {!isLoggedIn ? (
-                  <>
-                    <NavLink
-                      to="/login"
-                      className={({ isActive }) =>
-                        isActive
-                          ? "btn btn-outline-primary me-2 active"
-                          : "btn btn-outline-primary me-2"
-                      }
-                    >
-                      Đăng Nhập
-                    </NavLink>
-                    <NavLink
-                      to="/register"
-                      className={({ isActive }) =>
-                        isActive ? "btn btn-primary active" : "btn btn-primary"
-                      }
-                    >
-                      Đăng Ký
-                    </NavLink>
-                  </>
-                ) : (
-                  <>
-                    <NavDropdown
-                      title={userInfo?.name || "Người dùng"}
-                      id="nav-dropdown"
-                      className="me-2"
-                    >
-                      <NavDropdown.Item disabled>
-                        <small>
-                          <div>Ngày sinh: {userInfo?.birthDate}</div>
-                          <div>Email: {userInfo?.email}</div>
-                        </small>
-                      </NavDropdown.Item>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </NavDropdown.Item>
-                    </NavDropdown>
-                  </>
-                )}
-              </div>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-      </Container>
-    </>
-  );
-};
-export default NavBar;
+          </div>
+          <div className="nav-item">
+            <NavLink to="/member/calendar" icon={<FaCalendarAlt className="nav-icon" />}>
+              Lịch Trình Thăm Khám
+            </NavLink>
+          </div>
+          <div className="nav-item">
+            <NavLink to="/member/doctor-notes" icon={<FaNotesMedical className="nav-icon" />}>
+              Ghi Chú Bác Sĩ
+            </NavLink>
+          </div>
+          <div className="nav-item">
+            <NavLink to="/member/blog" icon={<FaBlog className="nav-icon" />}>
+              Blog
+            </NavLink>
+          </div>
+          <div className="nav-item">
+            <NavLink to="/member/community" icon={<FaUsers className="nav-icon" />}>
+              Cộng Đồng
+            </NavLink>
+          </div>
+        </div>
+
+        <div className="nav-section auth-section">
+          {!isLoggedIn ? (
+            <>
+              <Link to="/login" className="btn btn-login">
+                Đăng Nhập
+              </Link>
+              <Link to="/register" className="btn btn-register">
+                Đăng Ký
+              </Link>
+            </>
+          ) : (
+            <div className="user-menu">
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="user-menu-button">
+                <FaUserCircle className="user-icon" />
+                <span>{userInfo?.name || "Người dùng"}</span>
+              </button>
+              {isDropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="user-info">
+                    <div>Ngày sinh: {userInfo?.birthDate}</div>
+                    <div>Email: {userInfo?.email}</div>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <button onClick={handleLogout} className="logout-button">
+                    <FaSignOutAlt className="logout-icon" />
+                    Đăng xuất
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+export default Navbar
+

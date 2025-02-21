@@ -1,182 +1,151 @@
 @import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Nunito:wght@400;600;700&display=swap');
 
-$primary-pink: #d63384;
-$light-pink: #ffccd5;
-$pastel-purple: #e0c3fc;
-$pastel-blue: #8ec5fc;
-$soft-green: #c1f0c1;
+// Synchronized color variables
+$primary-color: #ffc2d1;
+$secondary-color: #ffebf2;
+$background: #fff9f9;
+$accent-color: #8ec5fc;
 $text-color: #6a0572;
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.cta {
-  background: linear-gradient(135deg, $pastel-purple, $pastel-blue);
-  padding: 4rem 2rem;
+.footer-content {
+  background: linear-gradient(135deg, $secondary-color, $background);
+  padding: 4rem 0 2rem;
   font-family: 'Nunito', sans-serif;
-  position: relative;
-  overflow: hidden;
+  color: $text-color;
 
-  &::before, &::after {
-    content: '';
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    opacity: 0.1;
-    z-index: 0;
-  }
-
-  &::before {
-    background-color: $light-pink;
-    top: -150px;
-    left: -150px;
-    animation: float 8s ease-in-out infinite;
-  }
-
-  &::after {
-    background-color: $soft-green;
-    bottom: -150px;
-    right: -150px;
-    animation: float 10s ease-in-out infinite reverse;
-  }
-
-  &:hover {
-    background: linear-gradient(135deg, darken($pastel-purple, 5%), darken($pastel-blue, 5%));
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
-
-  .cta-content {
-    max-width: 800px;
+  .footer-container {
+    max-width: 1200px;
     margin: 0 auto;
-    text-align: center;
-    position: relative;
-    z-index: 1;
+    padding: 0 2rem;
   }
 
-  h2 {
-    font-family: 'Amatic SC', cursive;
-    color: $text-color;
-    font-size: 4rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  p {
-    color: darken($text-color, 15%);
-    font-size: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .cta-form {
+  .footer-grid {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 2rem;
     margin-bottom: 2rem;
+  }
 
-    input[type="email"] {
-      padding: 0.8rem 1rem;
-      font-size: 1rem;
-      border: 1px solid $primary-pink;
-      border-radius: 25px 0 0 25px;
-      width: 60%;
-      max-width: 300px;
-      outline: none;
-      transition: all 0.3s ease;
-      background-color: #fff;
+  .footer-section {
+    flex: 1;
 
-      &:focus {
-        box-shadow: 0 0 0 2px $primary-pink;
+    h3 {
+      font-family: 'Amatic SC', cursive;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: $text-color;
+    }
+
+    p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    &.newsletter {
+      .input-group {
+        display: flex;
+        margin-top: 1rem;
+
+        input {
+          flex-grow: 1;
+          padding: 0.75rem 1rem;
+          border: 1px solid $primary-color;
+          border-radius: 25px 0 0 25px;
+          font-size: 0.9rem;
+          outline: none;
+
+          &:focus {
+            box-shadow: 0 0 0 2px rgba($primary-color, 0.3);
+          }
+        }
+
+        .btn-submit {
+          background-color: $primary-color;
+          border: none;
+          border-radius: 0 25px 25px 0;
+          padding: 0.75rem 1.5rem;
+          color: $text-color;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+
+          &:hover {
+            background-color: darken($primary-color, 10%);
+          }
+        }
       }
     }
 
-    .btn {
-      padding: 0.8rem 1.5rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 0 25px 25px 0;
-      background-color: darken($primary-pink, 5%);
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    &.social {
+      .social-icons {
+        display: flex;
+        gap: 1rem;
 
-      &:hover {
-        background-color: darken($primary-pink, 10%);
-        transform: translateY(-2px);
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          background-color: $primary-color;
+          border-radius: 50%;
+          color: $text-color;
+          font-size: 1.2rem;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background-color: $accent-color;
+            transform: translateY(-3px);
+          }
+        }
       }
     }
   }
 
-  .cta-benefits {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-
-    .benefit-item {
-      display: flex;
-      align-items: center;
-      font-size: 1rem;
-      color: lighten($text-color, 10%);
-      transition: all 0.3s ease;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .benefit-icon {
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
-        color: $primary-pink;
-      }
-
-      .benefit-text {
-        text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
-      }
-    }
+  .footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba($text-color, 0.1);
+    font-size: 0.8rem;
   }
 }
 
 @media (max-width: 768px) {
-  .cta {
-    padding: 3rem 1rem;
+  .footer-content {
+    padding: 3rem 0 1rem;
 
-    h2 {
-      font-size: 2.5rem;
-    }
-
-    p {
-      font-size: 1rem;
-    }
-
-    .cta-form {
+    .footer-grid {
       flex-direction: column;
-      align-items: center;
+    }
 
-      input[type="email"] {
-        width: 100%;
-        max-width: none;
-        border-radius: 25px;
-        margin-bottom: 1rem;
+    .footer-section {
+      text-align: center;
+
+      &.newsletter {
+        .input-group {
+          flex-direction: column;
+          align-items: center;
+
+          input {
+            width: 100%;
+            border-radius: 25px;
+            margin-bottom: 1rem;
+          }
+
+          .btn-submit {
+            width: 100%;
+            border-radius: 25px;
+          }
+        }
       }
 
-      .btn {
-        width: 100%;
-        border-radius: 25px;
-        padding: 1rem;
+      &.social {
+        .social-icons {
+          justify-content: center;
+        }
       }
-    }
-
-    .cta-benefits {
-      flex-direction: column;
-      align-items: center;
     }
   }
 }

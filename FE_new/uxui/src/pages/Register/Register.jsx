@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
@@ -128,48 +126,72 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <div className="register-content">
-        <div className="register-image">
-          <img src="/images/pregnant-woman.jpg" alt="Pregnant woman" className="register-img" />
-        </div>
-        <div className="register-form">
+      <div className="leaves">
+        {[...Array(15)].map((_, index) => (
+          <div key={index} className="leaf"></div>
+        ))}
+      </div>
+      
+      <div className="wave-container">
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+      </div>
+
+      <div className="register-box">
+        <div className="register-header">
           <h1>Đăng ký tài khoản</h1>
-          {error && <div className="error-message">{error}</div>}
-          <form onSubmit={handleSubmit}>
-            {formFields.map((field) => (
-              <div key={field.name} className="form-group">
-                <label htmlFor={field.name}>{field.label}</label>
-                <div className="input-group">
-                  <field.icon className="input-icon" />
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    id={field.name}
-                    value={formData[field.name] || ""}
-                    onChange={handleChange}
-                    required={field.required}
-                    placeholder={field.placeholder}
-                    disabled={loading}
-                  />
-                </div>
+          <img src="/logo.png" alt="Logo" className="logo" />
+        </div>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <form onSubmit={handleSubmit} className="glass-effect">
+          {formFields.map((field) => (
+            <div key={field.name} className="form-group">
+              <label htmlFor={field.name}>{field.label}</label>
+              <div className="input-group">
+                <field.icon className="input-icon" />
+                <input
+                  type={field.type}
+                  name={field.name}
+                  id={field.name}
+                  value={formData[field.name] || ""}
+                  onChange={handleChange}
+                  required={field.required}
+                  placeholder={field.placeholder}
+                  disabled={loading}
+                />
               </div>
-            ))}
-            <button type="submit" className="btn-primary" disabled={loading}>
-              {loading ? "Đang đăng ký..." : "Đăng ký"}
-            </button>
-            <button type="button" className="btn-back" onClick={() => navigate('/')}>
+            </div>
+          ))}
+
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                <span>Đang xử lý...</span>
+              </>
+            ) : (
+              "Đăng ký"
+            )}
+          </button>
+
+          <div className="login-prompt">
+            <p>Đã có tài khoản? {" "}
+              <Link to="/login" className="login-link">
+                Đăng nhập
+              </Link>
+            </p>
+            <button
+              type="button"
+              className="btn-back"
+              onClick={() => navigate("/")}
+            >
               Quay lại trang chủ
             </button>
-          </form>
-
-          <div className="divider">
-            <span>Hoặc</span>
           </div>
-
-          <p className="login-link">
-            Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
-          </p>
-        </div>
+        </form>
       </div>
     </div>
   )

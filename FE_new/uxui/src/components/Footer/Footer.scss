@@ -1,6 +1,13 @@
-@import '../../styles/variables.scss';
-
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+
+// Define variables
+$primary-color: #ffc2d1;
+$secondary-color: #ffebf2;
+$background: #fff9f9;
+$text-color: #6a0572;
+$font-primary: 'Nunito', sans-serif;
+$font-secondary: 'Amatic SC', cursive;
+$shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -13,19 +20,20 @@
 }
 
 .footer {
-  background: $gradient-primary;
-  color: $text-primary;
+  background: linear-gradient(135deg, $secondary-color, $background);
+  color: $text-color;
   padding: 4rem 2rem 2rem;
   font-family: $font-primary;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
 
   &::before, &::after {
     content: '♥';
     position: absolute;
     font-size: 4rem;
     opacity: 0.1;
-    color: $primary-pink;
+    color: $primary-color;
   }
 
   &::before {
@@ -43,6 +51,7 @@
   .footer-content {
     max-width: 1200px;
     margin: 0 auto;
+    background: linear-gradient(135deg, $secondary-color, $background);
   }
 
   .footer-main {
@@ -54,17 +63,22 @@
   .footer-brand {
     .brand-name {
       font-family: 'Dancing Script', cursive;
-      color: $primary-pink;
+      color: $primary-color;
       text-shadow: $shadow-sm;
       font-size: 4.5rem;
       margin-bottom: 1rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
     }
 
     .brand-description {
       font-size: 0.9rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
-      color: $text-secondary;
+      color: $text-color;
     }
 
     .social-links {
@@ -72,13 +86,21 @@
       gap: 1rem;
 
       .social-link {
-        color: $text-primary;
-        font-size: 2.5rem;
+        color: $text-color;
+        font-size: 1.5rem;
         transition: all 0.3s ease;
 
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
         &:hover {
-          color: $primary-pink;
-          transform: translateY(-3px);
+          color: $background;
+          background-color: $primary-color;
         }
       }
     }
@@ -89,7 +111,7 @@
       font-size: 1.5rem;
       margin-bottom: 1rem;
       position: relative;
-      color: $text-primary;
+      color: $text-color;
       font-family: $font-secondary;
 
       &::after {
@@ -99,7 +121,12 @@
         bottom: -5px;
         width: 30px;
         height: 2px;
-        background-color: $primary-pink;
+        background-color: $primary-color;
+        transition: width 0.3s ease;
+      }
+
+      &:hover::after {
+        width: 50px;
       }
     }
 
@@ -112,14 +139,20 @@
       }
 
       .footer-link {
-        color: $text-secondary;
+        color: $text-color;
         text-decoration: none;
         transition: all 0.3s ease;
-        font-size: 1.2rem;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+
+        .link-icon {
+          margin-right: 0.5rem;
+          color: $primary-color;
+        }
 
         &:hover {
-          color: $primary-pink;
-          padding-left: 5px;
+          color: $primary-color;
         }
       }
     }
@@ -128,19 +161,19 @@
   .footer-bottom {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid rgba($text-primary, 0.1);
+    border-top: 1px solid rgba($text-color, 0.1);
     text-align: center;
     font-size: 0.9rem;
-    color: $text-secondary;
+    color: $text-color;
 
     p {
       margin: 0.5rem 0;
     }
 
     .heart-icon {
-      color: $primary-pink;
+      color: $primary-color;
       animation: pulse 1s infinite;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       display: inline-block;
       vertical-align: middle;
     }
@@ -155,6 +188,12 @@
 
     .footer-section {
       margin-bottom: 2rem;
+    }
+
+    .footer-brand {
+      .brand-name {
+        font-size: 3.5rem;
+      }
     }
   }
 }
