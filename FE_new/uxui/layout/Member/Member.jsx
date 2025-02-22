@@ -1,13 +1,8 @@
-import Navbar from "../../src/components/Navbar/Navbar";
-import { Outlet } from "react-router-dom";
-import Home from "../../src/pages/HomeBasicUser/HomeBasicUser";
-import Footer from "../../src/components/Footer/Footer";
+import HomeMember from "../../src/pages/HomeMember/HomeMember";
 const Member = () => {
   return (
     <>
-      <Navbar />
-      <Home />
-      <Footer />
+<HomeMember />
     </>
   );
 };

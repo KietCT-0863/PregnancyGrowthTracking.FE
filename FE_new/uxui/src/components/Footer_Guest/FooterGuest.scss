@@ -65,6 +65,11 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .footer-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
     .brand-name {
       font-family: 'Dancing Script', cursive;
       color: $primary-color;
@@ -73,6 +78,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       margin: 0 auto;
       transition: all 0.3s ease;
       text-align: center;
+      width: 100%;
 
       &:hover {
         transform: scale(1.05);

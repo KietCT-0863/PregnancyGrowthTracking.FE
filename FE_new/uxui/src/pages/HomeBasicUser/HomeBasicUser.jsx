@@ -2,7 +2,7 @@
 
 import "./BasicUserLayout.css";
 import BlogSildeGuest from "../../components/BlogSildeGuest/BlogSildeGuest";
-
+import VipBenefits from "../../components/VipBenefit/VipBenefit";
 
 
 const HomeBasicUser = () => {
@@ -10,7 +10,7 @@ const HomeBasicUser = () => {
     <>
     
     <BlogSildeGuest />
-      
+    <VipBenefits />
     </>
   );
 };

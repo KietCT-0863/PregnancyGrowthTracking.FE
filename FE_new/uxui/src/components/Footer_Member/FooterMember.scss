@@ -22,7 +22,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
 .footer {
   background: linear-gradient(135deg, $secondary-color, $background);
   color: $text-color;
-  padding: 4rem 2rem 2rem;
+
   font-family: $font-primary;
   position: relative;
   overflow: hidden;
@@ -49,16 +49,17 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .footer-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: linear-gradient(135deg, $secondary-color, $background);
+    padding: 0;
   }
 
   .footer-main {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    align-items: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    grid-template-columns: 2fr repeat(3, 1fr);
+   
   }
 
   .footer-brand {
@@ -67,8 +68,9 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       color: $primary-color;
       text-shadow: $shadow-sm;
       font-size: 4.5rem;
-      margin-bottom: 1rem;
+      margin: 0 auto;
       transition: all 0.3s ease;
+      text-align: center;
 
       &:hover {
         transform: scale(1.05);
@@ -78,13 +80,14 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
     .brand-description {
       font-size: 0.9rem;
       line-height: 1.6;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       color: $text-color;
     }
 
     .social-links {
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
+      justify-content: center;
 
       .social-link {
         color: $text-color;
@@ -98,6 +101,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
         justify-content: center;
         border-radius: 50%;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin: auto;
 
         &:hover {
           color: $background;
@@ -105,12 +109,15 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
       }
     }
+    margin-bottom: 0.3rem;
   }
 
   .footer-section {
+    margin-bottom: 0.3rem;
+
     .section-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
       position: relative;
       color: $text-color;
       font-family: $font-secondary;
@@ -136,7 +143,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       padding: 0;
 
       li {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.1rem;
       }
 
       .footer-link {
@@ -174,11 +181,11 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .footer-bottom {
-    margin-top: 3rem;
-    padding-top: 2rem;
+    margin-top: 0.5rem;
+    padding-top: 0.3rem;
     border-top: 1px solid rgba($text-color, 0.1);
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.6rem;
     color: $text-color;
 
     p {
@@ -212,22 +219,20 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
-.footer-section, .footer-brand {
-  min-height: 300px; // Đặt độ cao tối thiểu cho mỗi phần
-}
-
 @media (max-width: 768px) {
-  .footer-main {
-    grid-template-columns: 1fr;
-  }
+  .footer {
+    .footer-main {
+      grid-template-columns: 1fr;
+    }
 
-  .footer-section {
-    margin-bottom: 2rem;
-  }
+    .footer-section {
+      margin-bottom: 2rem;
+    }
 
-  .footer-brand {
-    .brand-name {
-      font-size: 3.5rem;
+    .footer-brand {
+      .brand-name {
+        font-size: 3.5rem;
+      }
     }
   }
 }

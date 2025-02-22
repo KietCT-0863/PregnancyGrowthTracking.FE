@@ -1,7 +1,10 @@
-import { Outlet, useNavigate } from "react-router-dom";
+
 import { useEffect } from "react";
 import "./PublicLayout.scss"
 import { toast } from "react-toastify";
+import { Outlet, useNavigate } from "react-router-dom";
+import HomePublic from "../../src/pages/HomePublic/HomePublic";
+
 
 const PublicLayout = () => {
   const navigate = useNavigate();
@@ -30,7 +33,7 @@ const PublicLayout = () => {
 
   return (
     <>
-      <Outlet />
+    <HomePublic />
     </>
   );
 };

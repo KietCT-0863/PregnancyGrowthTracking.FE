@@ -1,7 +1,7 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout/PublicLayout";
 // import Navbar from "../components/Navbar/Navbar";
-import Home from "./pages/home";
+import HomePublic from "./pages/HomePublic/HomePublic";
 import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
 import BlogAll from "./pages/blog/BlogAll";
@@ -22,9 +22,7 @@ import GuestBlogAll from "./pages/guest/blog/GuestBlogAll";
 import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
 import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
-import Footer from "./components/Footer/Footer";
-
-import Navbar from "./components/Navbar/Navbar";
+import Member from "../layout/Member/Member";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import FAQ from "./pages/FAQ/FAQ";
 import FAQDetail from "./pages/FAQ/FAQDetail";
@@ -35,12 +33,24 @@ import FooterGuest from "./components/Footer_Guest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
 import PaymentForm from "./pages/VipChoose/Payment";
 import Bill from "./pages/VipChoose/Bill";
+import NavbarMember from "./components/NavBarMember/NavBarMember";
+import FooterMember from "./components/Footer_Member/FooterMember";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Route công khai - không cần đăng nhập */}
-      <Route path="/" element={<PublicLayout />}>
-        <Route index element={<Home />} />
+      <Route path="/" 
+      element={<>
+      <Navbar />
+      <div style={{ margin: '20px 0' }} />
+        <Outlet />
+        <div style={{ margin: '20px 0' }} />
+        <Footer />
+      </>}
+      >
+        <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -56,19 +66,22 @@ const AppRoutes = () => {
         path="/member"
         element={
           <ProtectedBasicUserRoute>
-            <Navbar />
+            <NavbarMember />
+            <div style={{ margin: '20px 0' }} />
             <Outlet />
-            <Footer />
+            <div style={{ margin: '20px 0' }} />
+            <FooterMember />
           </ProtectedBasicUserRoute>
         }
       >
+        <Route index element={<Member />} />
         <Route path="/member/blog" element={<Blog />}>
           <Route index element={<BlogAll />} />
           <Route path=":id" element={<BlogDetail />} />
         </Route>
         <Route path="/member/basic-tracking" element={<BasicTracking />} />
         <Route path="/member/calendar" element={<CalendarAll />}>
-          <Route path=":id" element={<CalendarHistory />} />
+          <Route path="/member/calendar/:id" element={<CalendarHistory />} />
         </Route>
         <Route path="/member/doctor-notes" element={<DoctorNotes />} />
         <Route path="/member/community" element={<Community />} />
@@ -95,7 +108,9 @@ const AppRoutes = () => {
           <ProtectedBasicUserRoute>
             <>
               <NavBarGuest />
+               <div style={{ margin: '20px 0' }} />
               <Outlet />
+              <div style={{ margin: '20px 0' }} />
               <FooterGuest />
             </>
           </ProtectedBasicUserRoute>

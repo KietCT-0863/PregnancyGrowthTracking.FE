@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../src/components/SideBar/SideBar";
 import { Box, Button, AppBar, Toolbar, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
 
 const theme = createTheme({
   palette: {
@@ -14,8 +15,31 @@ const theme = createTheme({
   },
 });
 
+
+const handleLogout = () => {
+  localStorage.removeItem("token")
+  setIsLoggedIn(false)
+  setUserInfo(null)
+  setIsAdmin(false)
+  navigate('/login')
+}
+
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Example of fetching user info, adjust according to your actual data fetching logic
+  useEffect(() => {
+    // Fetch user info from API or context/store
+    const fetchUserInfo = async () => {
+      const userData = await getUserInfo(); // Define getUserInfo or use actual data fetching logic
+      setUserInfo(userData);
+    };
+
+    fetchUserInfo();
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -49,9 +73,9 @@ const AdminLayout = () => {
                   bgcolor: 'rgba(214, 51, 132, 0.1)'
                 }
               }}
-              onClick={() => navigate('/')}
+              onClick={handleLogout}
             >
-              Về trang chủ
+              Đăng xuất
             </Button>
           </Toolbar>
         </AppBar>

@@ -1,5 +1,5 @@
 "use client"
-import { RiVipCrown2Line } from "react-icons/ri";
+
 import { useState, useEffect } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode"
@@ -12,7 +12,7 @@ import {
   FaUserCircle,
   FaSignOutAlt,
 } from "react-icons/fa"
-import "./NavBarGuest.scss"
+import "./NavBarMember.scss"
 
 const NavLink = ({ to, children, icon }) => {
   const location = useLocation()
@@ -26,7 +26,7 @@ const NavLink = ({ to, children, icon }) => {
   )
 }
 
-const Navbar = () => {
+const NavbarMember = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -41,7 +41,6 @@ const Navbar = () => {
         setUserInfo(decoded)
         setIsLoggedIn(true)
         setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
-        localStorage.setItem('userName', decoded.name);
       } catch (error) {
         console.error("Token decode error:", error)
         localStorage.removeItem("token")
@@ -64,7 +63,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="nav-section logo-section">
-          <Link to="/basic-user" className="navbar-logo">
+          <Link to="/member" className="navbar-logo">
             <img src="/Logo bau-02.png" alt="Mẹ Bầu" className="navbar-logo-image" />
             <span className="navbar-logo-text">Mẹ Bầu</span>
           </Link>
@@ -94,12 +93,12 @@ const Navbar = () => {
             </NavLink>
           </div>
           <div className="nav-item">
-            <NavLink to="/basic-user/blog" icon={<FaBlog className="nav-icon" />}>
+            <NavLink to="/member/blog" icon={<FaBlog className="nav-icon" />}>
               Blog
             </NavLink>
           </div>
           <div className="nav-item">
-            <NavLink to="/basic-user/community" icon={<FaUsers className="nav-icon" />}>
+            <NavLink to="/member/community" icon={<FaUsers className="nav-icon" />}>
               Cộng Đồng
             </NavLink>
           </div>
@@ -117,18 +116,10 @@ const Navbar = () => {
             </>
           ) : (
             <div className="user-menu">
-              <div className="user-actions" style={{ display: 'flex', alignItems: 'center' }}>
-      
-                <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="user-menu-button">
-                  <FaUserCircle className="user-icon" />
-                  <span>{userInfo?.name || "Người dùng"}</span>
-                  <div className="user-menu">
-                  <button className="btn btn-vip" onClick={() => navigate('/basic-user/choose-vip')}>
-                    Đăng ký VIP <RiVipCrown2Line />
-                  </button>
-                </div>
-                </button>
-              </div>
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="user-menu-button">
+                <FaUserCircle className="user-icon" />
+                <span>{userInfo?.name || "Người dùng"}</span>
+              </button>
               {isDropdownOpen && (
                 <div className="user-dropdown">
                   <div className="user-info">
@@ -150,5 +141,5 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default NavbarMember
 
