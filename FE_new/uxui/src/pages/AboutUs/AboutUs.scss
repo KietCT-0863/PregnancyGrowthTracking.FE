@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fff9f9;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+.about-us {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: 4rem;
+    
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      color: #ff6b81;
+      margin-bottom: 1rem;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: #666;
+      animation: fadeInUp 1s ease-out 0.3s both;
+    }
+  }
+
+  section {
+    margin-bottom: 4rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: #ff6b81;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #444;
+    }
+  }
+
+  .mission-section, .commitment-section {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .team-section {
+    .team-icons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 2rem;
+
+      .team-icon {
+        text-align: center;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: translateY(-10px);
+        }
+
+        svg {
+          color: #ff6b81;
+          margin-bottom: 1rem;
+        }
+
+        span {
+          display: block;
+          font-size: 1rem;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  .commitment-section {
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+
+      li {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+        position: relative;
+
+        &::before {
+          content: '✓';
+          position: absolute;
+          left: 0;
+          color: #ff6b81;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  .testimonials {
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .testimonial-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      position: static;
+      width: 300px;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .back-to-home {
+    text-align: center;
+    margin-top: 4rem;
+  }
+}
+
+.testimonial-card {
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .testimonial-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 1rem;
+    }
+
+    .name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .role {
+      font-size: 0.875rem;
+      color: #666;
+    }
+  }
+
+  .testimonial-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #444;
+  }
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid #ff6b81;
+  color: #ff6b81;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #ff6b81;
+    color: #fff;
+  }
+
+  .icon {
+    margin-right: 0.5rem;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .about-us {
+    padding: 2rem 1rem;
+
+    .hero-section {
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+
+    section {
+      h2 {
+        font-size: 2rem;
+      }
+    }
+
+    .team-section {
+      .team-icons {
+        flex-direction: column;
+        align-items: center;
+
+        .team-icon {
+          margin-bottom: 2rem;
+        }
+      }
+    }
+
+    .testimonials {
+      .testimonial-card {
+        width: 100%;
+      }
+    }
+  }
+}
+

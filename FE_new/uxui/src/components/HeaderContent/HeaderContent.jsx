@@ -3,13 +3,24 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../contexts/AuthContext"
 import UserMenu from "../UserMenu/UserMenu"
-import { Baby, Heart, Calendar, Book, Users, ChevronDown } from "lucide-react"
-import { motion } from "framer-motion"
+import { Baby, Heart, Calendar, Book, Users, ChevronDown, Bell, Search, MessageCircle, Sun, Moon } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react"
 import "./HeaderContent.scss"
 
-const   HeaderContent = () => {
+const HeaderContent = ({ isDarkMode }) => {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [activeSection, setActiveSection] = useState("main")
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   const handleSwitchLayout = () => {
     if (user && !user.isVip) {
@@ -25,30 +36,35 @@ const   HeaderContent = () => {
       title: "Theo dõi thai kỳ",
       description: "Cập nhật thông tin và theo dõi sự phát triển của thai nhi hàng tuần",
       direction: "left",
+      color: "#ffc2d1",
     },
     {
       icon: <Heart className="feature-icon" />,
       title: "Tư vấn dinh dưỡng",
       description: "Chế độ dinh dưỡng phù hợp cho từng giai đoạn thai kỳ",
       direction: "right",
+      color: "#ff9a9e",
     },
     {
       icon: <Calendar className="feature-icon" />,
       title: "Lịch khám thai",
       description: "Quản lý lịch khám và nhắc nhở định kỳ",
       direction: "left",
+      color: "#fad0c4",
     },
     {
       icon: <Book className="feature-icon" />,
       title: "Kiến thức hữu ích",
       description: "Thư viện bài viết phong phú về mang thai và chăm sóc em bé",
       direction: "right",
+      color: "#a18cd1",
     },
     {
       icon: <Users className="feature-icon" />,
       title: "Cộng đồng",
       description: "Kết nối với các mẹ bầu khác và chia sẻ kinh nghiệm",
       direction: "left",
+      color: "#fbc2eb",
     },
   ]
 
@@ -61,15 +77,67 @@ const   HeaderContent = () => {
     { src: "/6.png", alt: "Baby Item 4", position: "bottom" },
     { src: "/7.png", alt: "Baby Item 5", position: "left" },
     { src: "/8.png", alt: "Baby Item 6", position: "right" },
+
+  ]
+
+  const quickActions = [
+    {
+      icon: <Bell />,
+      label: "Thông báo",
+      action: () => setActiveSection("notifications"),
+    },
+    {
+      icon: <Search />,
+      label: "Tìm kiếm",
+      action: () => setIsSearchOpen(true),
+    },
+    {
+      icon: <MessageCircle />,
+      label: "Trò chuyện",
+      action: () => navigate("/chat"),
+    },
   ]
 
   return (
-    <section className="hero-section">
-      <div className="water-effect">
-        <div className="water-wave wave1"></div>
-        <div className="water-wave wave2"></div>
-        <div className="water-wave wave3"></div>
+    <section className={`hero ${isDarkMode ? "dark-mode" : ""}`}>
+      <div className="hero-background">
+        <div className="wave wave1"></div>
+        <div className="wave wave2"></div>
+        <div className="wave wave3"></div>
       </div>
+
+      <div className="quick-actions">
+        {quickActions.map((action, index) => (
+          <motion.button
+            key={index}
+            className="quick-action-btn"
+            onClick={action.action}
+            whileHover={{ y: -5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {action.icon}
+            <span className="quick-action-label">{action.label}</span>
+          </motion.button>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {isSearchOpen && (
+          <motion.div
+            className="search-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="search-container">
+              <input type="text" placeholder="Tìm kiếm..." autoFocus className="search-input" />
+              <button className="close-search" onClick={() => setIsSearchOpen(false)}>
+                ×
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="hero-content">
         <motion.div
@@ -81,15 +149,29 @@ const   HeaderContent = () => {
           <h1>Đồng hành cùng mẹ bầu trên hành trình thiêng liêng</h1>
           <p>Ứng dụng thông minh giúp theo dõi thai kỳ, tư vấn dinh dưỡng và kết nối cộng đồng mẹ bầu</p>
 
+          <div className="current-time">{currentTime.toLocaleTimeString()}</div>
+
           <div className="hero-buttons">
-            <button className="btn btn-primary">
+            <motion.button 
+              className="btn btn-primary" 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }} 
+              onClick={() => navigate("/login")}
+            >
               Bắt đầu ngay để theo dõi hành trình mang thai đầy kì diệu của mẹ
-            </button>
-            <button className="btn btn-outline">Tìm hiểu thêm</button>
+            </motion.button>
+            <motion.button className="btn btn-outline" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              Tìm hiểu thêm
+            </motion.button>
             {user && (
-              <button className="btn btn-switch-layout" onClick={handleSwitchLayout}>
+              <motion.button
+                className="btn btn-switch-layout"
+                onClick={handleSwitchLayout}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 {user.isVip ? "Chuyển đến Admin" : "Xem Blog & Cộng đồng"}
-              </button>
+              </motion.button>
             )}
           </div>
 
@@ -133,7 +215,7 @@ const   HeaderContent = () => {
             >
               <div className="water-drop"></div>
               <div className="feature-content">
-                <div className="feature-icon-wrapper">
+                <div className="feature-icon-wrapper" style={{ backgroundColor: feature.color }}>
                   {feature.icon}
                   <div className="icon-ripple"></div>
                 </div>
@@ -159,40 +241,38 @@ const   HeaderContent = () => {
           <ChevronDown size={30} />
         </motion.div>
       </div>
+
       <div className="floating-items-container">
-        {floatingItems.map((item, index) => {
-          console.log(`Rendering floating item: ${item.src}`) // Debug log
-          return (
-            <motion.img
-              key={index}
-              src={item.src}
-              alt={item.alt}
-              className={`floating-item floating-item-${index + 1}`}
-              initial={
-                item.position === "left"
-                  ? { x: "-100%", opacity: 0 }
-                  : item.position === "right"
-                    ? { x: "100%", opacity: 0 }
-                    : { y: "100%", opacity: 0 }
-              }
-              animate={{
-                x: 0,
-                y: 0,
-                opacity: 1,
-                transition: {
-                  duration: 1.5,
-                  delay: index * 0.2,
-                  type: "spring",
-                  stiffness: 50,
-                },
-              }}
-              whileHover={{
-                scale: 1.1,
-                transition: { duration: 0.3 },
-              }}
-            />
-          )
-        })}
+        {floatingItems.map((item, index) => (
+          <motion.img
+            key={index}
+            src={item.src}
+            alt={item.alt}
+            className={`floating-item floating-item-${index + 1}`}
+            initial={
+              item.position === "left"
+                ? { x: "-100%", opacity: 0 }
+                : item.position === "right"
+                  ? { x: "100%", opacity: 0 }
+                  : { y: "100%", opacity: 0 }
+            }
+            animate={{
+              x: 0,
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 1.5,
+                delay: index * 0.2,
+                type: "spring",
+                stiffness: 50,
+              },
+            }}
+            whileHover={{
+              scale: 1.1,
+              transition: { duration: 0.3 },
+            }}
+          />
+        ))}
       </div>
     </section>
   )

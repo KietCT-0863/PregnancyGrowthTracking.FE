@@ -7,13 +7,14 @@ import { FaNotesMedical } from "react-icons/fa"
 import { TiSocialInstagram } from "react-icons/ti"
 import { motion } from "framer-motion"
 import "./Footer.scss"
+import { Link } from "react-router-dom"
 
 const footerSections = [
   {
     title: "Liên kết",
     links: [
       { name: "Về chúng tôi", url: "/about" },
-      { name: "Blog", url: "/blog" },
+      { name: "Blog", url: "/member/blog" },
       { name: "Liên hệ", url: "/contact" },
       { name: "FAQ", url: "/faq" },
     ],
@@ -24,27 +25,27 @@ const footerSections = [
       {
         name: "Theo dõi Thai Kỳ",
         icon: <CiMedicalCase />,
-        url: "/dashboard",
+        url: "/member/basic-tracking",
       },
       {
         name: "Lịch trình Thăm Khám",
         icon: <FaCalendarAlt />,
-        url: "/calendar",
+        url: "/member/calendar",
       },
       {
         name: "Ghi Chú Bác Sỹ",
         icon: <FaNotesMedical />,
-        url: "/notes",
+        url: "/member/doctor-notes",
       },
       {
         name: "Blog",
         icon: <FaBlog />,
-        url: "/blog",
+        url: "/member/blog",
       },
       {
         name: "Cộng Đồng",
         icon: <TiSocialInstagram />,
-        url: "/forum",
+        url: "/member/community",
       },
     ],
   },
@@ -104,9 +105,23 @@ const Footer = () => {
           >
             <h3 className="section-title">Liên hệ</h3>
             <ul className="contact-info">
-              <li>Email: contact@mebau.vn</li>
-              <li>Hotline: 1900 xxxx</li>
-              <li>Địa chỉ: Hà Nội, Việt Nam</li>
+              <li>
+                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                  Email: KhangDGSE184442@fpt.edu.vn
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                  Hotline: 0383989481
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                Địa chỉ: 874/44/21 Đoàn Văn Bơ, Phường 16, Quận 4, Hồ Chí Minh, Vietnam
+                </Link> </li>
+              <li>
+      
+              </li>
             </ul>
           </motion.div>
         </div>
@@ -117,7 +132,7 @@ const Footer = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
       >
-        <p>&copy; 2024 Mẹ Bầu. Tất cả quyền được bảo lưu.</p>
+        <p>&copy; 2025 Mẹ Bầu. Tất cả quyền được bảo lưu.</p>
         <p>
           Made with <FaHeart className="heart-icon" /> in Vietnam
         </p>

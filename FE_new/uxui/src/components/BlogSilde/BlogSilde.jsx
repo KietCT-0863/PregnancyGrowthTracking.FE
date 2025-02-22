@@ -6,12 +6,13 @@ import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import "./BlogSilde.scss"
 import { Link } from "react-router-dom"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react"
 import { motion } from "framer-motion"
 
 const BlogSlide = () => {
   const [posts, setPosts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [viewMode, setViewMode] = useState("slider") // 'slider' or 'grid'
 
   useEffect(() => {
     fetch("https://dummyjson.com/posts")
@@ -42,7 +43,7 @@ const BlogSlide = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 8,
+    slidesToShow: 4,
     slidesToScroll: 1,
     prevArrow: <CustomPrevArrow />,
     nextArrow: <CustomNextArrow />,
@@ -74,6 +75,29 @@ const BlogSlide = () => {
     ],
   }
 
+  const PostCard = ({ title, body, id }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -10 }}
+    >
+      <div className="post-card">
+        <div className="post-icon">
+          <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
+        </div>
+        <div className="post-content">
+          <h3>{title}</h3>
+          <p>{body.substring(0, 100)}...</p>
+          <Link to={`/blog/${id}`} className="read-more">
+            Đọc thêm
+            <span className="ripple"></span>
+          </Link>
+        </div>
+      </div>
+    </motion.div>
+  )
+
   return (
     <section className="blog-posts">
       <div className="blog-background">
@@ -82,9 +106,22 @@ const BlogSlide = () => {
         <div className="wave wave3"></div>
       </div>
 
-      <h1 className="blog-title">
-        Bài viết mới nhất
-      </h1>
+      <div className="blog-header">
+        <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          Bài viết mới nhất
+        </motion.h2>
+        <div className="view-toggle">
+          <button
+            className={`toggle-btn ${viewMode === "slider" ? "active" : ""}`}
+            onClick={() => setViewMode("slider")}
+          >
+            <List size={20} />
+          </button>
+          <button className={`toggle-btn ${viewMode === "grid" ? "active" : ""}`} onClick={() => setViewMode("grid")}>
+            <Grid size={20} />
+          </button>
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="loading-cards">
@@ -100,32 +137,18 @@ const BlogSlide = () => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : viewMode === "slider" ? (
         <Slider {...settings}>
-          {posts.map(({ title, body, id }) => (
-            <motion.div
-              key={id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ y: -10 }}
-            >
-              <div className="post-card">
-                <div className="post-icon">
-                  <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
-                </div>
-                <div className="post-content">
-                  <h3>{title}</h3>
-                  <p>{body.substring(0, 100)}...</p>
-                  <Link to={`/blog/${id}`} className="read-more">
-                    Đọc thêm
-                    <span className="ripple"></span>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
+          {posts.map((post) => (
+            <PostCard key={post.id} {...post} />
           ))}
         </Slider>
+      ) : (
+        <div className="posts-grid">
+          {posts.map((post) => (
+            <PostCard key={post.id} {...post} />
+          ))}
+        </div>
       )}
     </section>
   )

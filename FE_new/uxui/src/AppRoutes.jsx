@@ -25,15 +25,26 @@ import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/Protec
 import Footer from "./components/Footer/Footer";
 import BasicUserNavbar from "./components/BasicUserNavbar/BasicUserNavbar";
 import Navbar from "./components/Navbar/Navbar";
+import AboutUs from "./pages/AboutUs/AboutUs";
+import FAQ from "./pages/FAQ/FAQ";
+import FAQDetail from "./pages/FAQ/FAQDetail";
+import FAQAll from "./pages/FAQ/FAQAll";
+import Contact from "./pages/Contact/Contact";
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Route công khai - không cần đăng nhập */}
       <Route path="/" element={<PublicLayout />}>
         <Route index element={<Home />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/contact" element={<Contact />} />
       </Route>
+      <Route path="/faq" element={<FAQ />}>
+          <Route index element={<FAQAll />} />
+          <Route path=":id" element={<FAQDetail />} />
+        </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
       <Route

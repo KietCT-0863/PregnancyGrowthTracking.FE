@@ -33,14 +33,16 @@ $text-color: #6a0572;
     h3 {
       font-family: 'Amatic SC', cursive;
       font-size: 2rem;
-      margin-bottom: 1rem;
+      margin: 0 auto;
       color: $text-color;
+      text-align: center;
     }
 
     p {
       font-size: 0.9rem;
       line-height: 1.6;
-      margin-bottom: 1rem;
+      margin: 1rem;
+      text-align: center;
     }
 
     &.newsletter {

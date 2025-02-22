@@ -58,20 +58,7 @@ const FooterContent = () => {
               </div>
             </form>
           </motion.div>
-          <motion.div className="footer-section social" variants={itemVariants}>
-            <h3>Kết nối với chúng tôi</h3>
-            <div className="social-icons">
-              <a href="#" aria-label="Facebook">
-                <Facebook />
-              </a>
-              <a href="#" aria-label="Instagram">
-                <Instagram />
-              </a>
-              <a href="#" aria-label="Twitter">
-                <Twitter />
-              </a>
-            </div>
-          </motion.div>
+        
         </motion.div>
        
       </div>

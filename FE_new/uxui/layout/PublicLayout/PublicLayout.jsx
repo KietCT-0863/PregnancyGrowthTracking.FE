@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import Navbar from "../../src/components/Navbar/Navbar";
+import "./PublicLayout.scss"
 import { toast } from "react-toastify";
 
 const PublicLayout = () => {

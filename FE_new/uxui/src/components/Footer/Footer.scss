@@ -155,6 +155,20 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
           color: $primary-color;
         }
       }
+
+      .contact-info {
+        li {
+          a {
+            color: $text-color;
+            text-decoration: none;
+            transition: all 0.3s ease;
+
+            &:hover {
+              color: $primary-color;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -176,6 +190,23 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       font-size: 1.2rem;
       display: inline-block;
       vertical-align: middle;
+    }
+  }
+  .footer-link {
+    color: $text-color; // Đảm bảo màu chữ đồng bộ
+    text-decoration: none; // Loại bỏ gạch chân
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+
+    .link-icon {
+      margin-right: 0.5rem;
+      color: $primary-color;
+    }
+
+    &:hover {
+      color: $primary-color;
     }
   }
 }

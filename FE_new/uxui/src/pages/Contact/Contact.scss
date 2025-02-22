@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+
+// Variables
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$accent-color: #70a1ff;
+$text-color: #2f3542;
+$background: #f8f9fa;
+
+// Animation Keyframes
+@keyframes waterWave {
+  0% { transform: translate(-50%, 0) rotate(0deg); }
+  50% { transform: translate(-50%, -2%) rotate(180deg); }
+  100% { transform: translate(-50%, 0) rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.contact-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $background, $secondary-color);
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+
+  .contact-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+
+    .wave {
+      position: absolute;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 43%;
+      animation: waterWave 15s infinite linear;
+
+      &1 { top: -50%; animation-duration: 20s; }
+      &2 { top: -55%; animation-delay: -5s; animation-duration: 17s; }
+      &3 { top: -60%; animation-delay: -8s; animation-duration: 15s; }
+    }
+  }
+
+  .contact-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+
+    .contact-title {
+      font-family: 'Playfair Display', serif;
+      color: $text-color;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background: $primary-color;
+        margin: 1rem auto 0;
+      }
+    }
+
+    .branch {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .branch-title {
+        font-family: 'Amatic SC', cursive;
+        color: $primary-color;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .address {
+        font-family: 'Roboto', sans-serif;
+        color: $text-color;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+
+        svg {
+          margin-right: 0.5rem;
+          color: $primary-color;
+        }
+      }
+
+      .map {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+    }
+
+    .contact-info {
+      text-align: center;
+      margin-top: 2rem;
+
+      .phone-number,
+      .email {
+        font-family: 'Roboto', sans-serif;
+        color: $text-color;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          margin-right: 0.5rem;
+          color: $primary-color;
+        }
+      }
+
+      .email-link {
+        color: $accent-color;
+        text-decoration: none;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: darken($accent-color, 10%);
+        }
+      }
+    }
+
+    .back-link-container {
+      text-align: center;
+      margin-top: 2rem;
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: $primary-color;
+        text-decoration: none;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: darken($primary-color, 10%);
+          transform: translateX(-5px);
+        }
+
+        svg {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-page {
+    padding: 1rem;
+
+    .contact-container {
+      padding: 1.5rem;
+
+      .contact-title {
+        font-size: 2rem;
+      }
+
+      .branch {
+        padding: 1rem;
+
+        .branch-title {
+          font-size: 1.5rem;
+        }
+
+        .address {
+          font-size: 0.9rem;
+        }
+
+        .map {
+          height: 250px;
+        }
+      }
+
+      .contact-info {
+        .phone-number,
+        .email {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}
+
