@@ -23,13 +23,18 @@ import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
 import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
 import Footer from "./components/Footer/Footer";
-import BasicUserNavbar from "./components/BasicUserNavbar/BasicUserNavbar";
+
 import Navbar from "./components/Navbar/Navbar";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import FAQ from "./pages/FAQ/FAQ";
 import FAQDetail from "./pages/FAQ/FAQDetail";
 import FAQAll from "./pages/FAQ/FAQAll";
 import Contact from "./pages/Contact/Contact";
+import NavBarGuest from "./components/NavBar_Guest/NavBarGuest";
+import FooterGuest from "./components/Footer_Guest/FooterGuest";
+import ChooseVip from "./pages/VipChoose/ChooseVip";
+import PaymentForm from "./pages/VipChoose/Payment";
+import Bill from "./pages/VipChoose/Bill";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -89,19 +94,20 @@ const AppRoutes = () => {
         element={
           <ProtectedBasicUserRoute>
             <>
-              <BasicUserNavbar />
+              <NavBarGuest />
               <Outlet />
-              <Footer />
+              <FooterGuest />
             </>
           </ProtectedBasicUserRoute>
         }
       >
         <Route index element={<BasicUserLayout />} />
-        <Route path="blog" element={<GuestBlogAll />} />
-        <Route path="blog/:id" element={<GuestBlogDetail />} />
+        <Route path="/basic-user/blog" element={<GuestBlogAll />} />
+        <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
-        <Route path="about" element={<h1>Về chúng tôi</h1>} />
-        <Route path="contact" element={<h1>Liên hệ</h1>} />
+        <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
+        <Route path="/basic-user/payment" element={<PaymentForm />} />
+        <Route path="/basic-user/bill" element={<Bill />} />
       </Route>
 
       {/* Route 404 Not Found */}

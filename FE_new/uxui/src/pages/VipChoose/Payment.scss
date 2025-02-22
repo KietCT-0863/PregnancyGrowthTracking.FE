@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$text-color: #2f3542;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$input-background: #f1f3f5;
+$shadow-color: rgba(0, 0, 0, 0.1);
+
+.payment-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $background-color;
+  padding: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.payment-form-container {
+  background-color: $card-background;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px $shadow-color;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+
+  .back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: none;
+    border: none;
+    color: $text-color;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+
+    svg {
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    color: $text-color;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+  }
+
+  .payment-form {
+    .form-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+
+      label {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $primary-color;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        border: 1px solid $input-background;
+        border-radius: 10px;
+        background-color: $input-background;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+        }
+      }
+
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+      }
+    }
+
+    .selected-package {
+      display: flex;
+      align-items: center;
+      background-color: $secondary-color;
+      color: $text-color;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+
+      svg {
+        margin-right: 0.5rem;
+        color: $primary-color;
+      }
+
+      span {
+        font-weight: 500;
+      }
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 1rem;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (max-width: 768px) {
+  .payment-form-container {
+    padding: 1.5rem;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .payment-form {
+      .form-group {
+        input,
+        select {
+          font-size: 0.9rem;
+        }
+      }
+
+      button[type="submit"] {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
