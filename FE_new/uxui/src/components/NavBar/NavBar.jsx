@@ -11,14 +11,9 @@ import {
   FaUsers,
   FaUserCircle,
   FaSignOutAlt,
-<<<<<<< HEAD
 } from "react-icons/fa";
 import "./NavBar.scss";
-=======
-} from "react-icons/fa"
-import "./NavBar.scss"
-import userService from "../../api/services/userService"
->>>>>>> 371fbd189c69d2a2bf6098c30a1f19f197a293d3
+import userService from "../../api/services/userService";
 
 const NavLink = ({ to, children, icon }) => {
   const location = useLocation();
@@ -33,67 +28,38 @@ const NavLink = ({ to, children, icon }) => {
 };
 
 const Navbar = () => {
-<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserInfo(decoded);
-        setIsLoggedIn(true);
-        setIsAdmin(
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ] === "admin"
-        );
-      } catch (error) {
-        console.error("Token decode error:", error);
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
-        setUserInfo(null);
-        setIsAdmin(false);
-      }
-    }
-  }, []);
-=======
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userInfo, setUserInfo] = useState(null)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        setIsLoading(true)
-        const userData = await userService.getCurrentUser()
-        setUserInfo(userData)
-        setIsLoggedIn(true)
-        setIsAdmin(userData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
+        setIsLoading(true);
+        const userData = await userService.getCurrentUser();
+        setUserInfo(userData);
+        setIsLoggedIn(true);
+        setIsAdmin(userData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin");
       } catch (err) {
-        setError(err.message)
-        console.error("Error fetching user info:", err)
-        localStorage.removeItem("token")
-        setIsLoggedIn(false)
-        setUserInfo(null)
-        setIsAdmin(false)
+        setError(err.message);
+        console.error("Error fetching user info:", err);
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+        setUserInfo(null);
+        setIsAdmin(false);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (token) {
-      fetchUserInfo()
+      fetchUserInfo();
     }
-  }, [])
->>>>>>> 371fbd189c69d2a2bf6098c30a1f19f197a293d3
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
