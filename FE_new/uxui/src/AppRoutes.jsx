@@ -31,8 +31,6 @@ import Contact from "./pages/Contact/Contact";
 import NavBarGuest from "./components/NavBar_Guest/NavBarGuest";
 import FooterGuest from "./components/Footer_Guest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
-import PaymentForm from "./pages/VipChoose/Payment";
-import Bill from "./pages/VipChoose/Bill";
 import NavbarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/Footer_Member/FooterMember";
 import Navbar from "./components/Navbar/Navbar";
@@ -124,8 +122,6 @@ const AppRoutes = () => {
         <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
-        <Route path="/basic-user/payment" element={<PaymentForm />} />
-        <Route path="/basic-user/bill" element={<Bill />} />
       </Route>
 
       {/* Route 404 Not Found */}

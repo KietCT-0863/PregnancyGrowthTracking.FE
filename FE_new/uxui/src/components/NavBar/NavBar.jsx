@@ -11,8 +11,14 @@ import {
   FaUsers,
   FaUserCircle,
   FaSignOutAlt,
+<<<<<<< HEAD
 } from "react-icons/fa";
 import "./NavBar.scss";
+=======
+} from "react-icons/fa"
+import "./NavBar.scss"
+import userService from "../../api/services/userService"
+>>>>>>> 371fbd189c69d2a2bf6098c30a1f19f197a293d3
 
 const NavLink = ({ to, children, icon }) => {
   const location = useLocation();
@@ -27,6 +33,7 @@ const NavLink = ({ to, children, icon }) => {
 };
 
 const Navbar = () => {
+<<<<<<< HEAD
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -53,6 +60,40 @@ const Navbar = () => {
       }
     }
   }, []);
+=======
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userInfo, setUserInfo] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setIsLoading(true)
+        const userData = await userService.getCurrentUser()
+        setUserInfo(userData)
+        setIsLoggedIn(true)
+        setIsAdmin(userData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
+      } catch (err) {
+        setError(err.message)
+        console.error("Error fetching user info:", err)
+        localStorage.removeItem("token")
+        setIsLoggedIn(false)
+        setUserInfo(null)
+        setIsAdmin(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    const token = localStorage.getItem("token")
+    if (token) {
+      fetchUserInfo()
+    }
+  }, [])
+>>>>>>> 371fbd189c69d2a2bf6098c30a1f19f197a293d3
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -143,15 +184,25 @@ const Navbar = () => {
               </button>
               {isDropdownOpen && (
                 <div className="user-dropdown">
-                  <div className="user-info">
-                    <div>Ngày sinh: {userInfo?.birthDate}</div>
-                    <div>Email: {userInfo?.email}</div>
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  <button onClick={handleLogout} className="logout-button">
-                    <FaSignOutAlt className="logout-icon" />
-                    Đăng xuất
-                  </button>
+                  {isLoading ? (
+                    <div>Loading...</div>
+                  ) : error ? (
+                    <div>Error: {error}</div>
+                  ) : userInfo ? (
+                    <div>
+                      <div className="user-info">
+                        <p>Email: {userInfo.email}</p>
+                        <p>Role: {userInfo.role}</p>
+                      </div>
+                      <div className="dropdown-divider"></div>
+                      <button onClick={handleLogout} className="logout-button">
+                        <FaSignOutAlt className="logout-icon" />
+                        Đăng xuất
+                      </button>
+                    </div>
+                  ) : (
+                    <div>Please login</div>
+                  )}
                 </div>
               )}
             </div>
