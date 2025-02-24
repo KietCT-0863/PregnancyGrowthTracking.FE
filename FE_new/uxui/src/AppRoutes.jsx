@@ -41,14 +41,17 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Route công khai - không cần đăng nhập */}
-      <Route path="/" 
-      element={<>
-      <Navbar />
-      <div style={{ margin: '20px 0' }} />
-        <Outlet />
-        <div style={{ margin: '20px 0' }} />
-        <Footer />
-      </>}
+      <Route
+        path="/"
+        element={
+          <>
+            <Navbar />
+            <div style={{ margin: "20px 0" }} />
+            <Outlet />
+            <div style={{ margin: "20px 0" }} />
+            <Footer />
+          </>
+        }
       >
         <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
@@ -57,9 +60,9 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/faq" element={<FAQ />}>
-          <Route index element={<FAQAll />} />
-          <Route path=":id" element={<FAQDetail />} />
-        </Route>
+        <Route index element={<FAQAll />} />
+        <Route path=":id" element={<FAQDetail />} />
+      </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
       <Route
@@ -67,9 +70,9 @@ const AppRoutes = () => {
         element={
           <ProtectedBasicUserRoute>
             <NavbarMember />
-            <div style={{ margin: '20px 0' }} />
+            <div style={{ margin: "20px 0" }} />
             <Outlet />
-            <div style={{ margin: '20px 0' }} />
+            <div style={{ margin: "20px 0" }} />
             <FooterMember />
           </ProtectedBasicUserRoute>
         }
@@ -108,9 +111,9 @@ const AppRoutes = () => {
           <ProtectedBasicUserRoute>
             <>
               <NavBarGuest />
-               <div style={{ margin: '20px 0' }} />
+              <div style={{ margin: "20px 0" }} />
               <Outlet />
-              <div style={{ margin: '20px 0' }} />
+              <div style={{ margin: "20px 0" }} />
               <FooterGuest />
             </>
           </ProtectedBasicUserRoute>

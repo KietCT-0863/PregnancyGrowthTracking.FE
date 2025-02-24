@@ -30,10 +30,16 @@ const Login = () => {
         password: formData.password,
       });
 
-      if (response && (response.token || (response.data && response.data.token))) {
+      if (
+        response &&
+        (response.token || (response.data && response.data.token))
+      ) {
         const token = response.token || response.data.token;
         const decoded = jwtDecode(token);
-        const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        const userRole =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
         toast.success("Đăng nhập thành công!");
 
         if (userRole === "guest") {
@@ -47,7 +53,10 @@ const Login = () => {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
           const decoded = jwtDecode(storedToken);
-          const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+          const role =
+            decoded[
+              "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+            ];
           toast.success("Đăng nhập thành công!");
 
           if (role === "admin") {
@@ -100,7 +109,7 @@ const Login = () => {
           <div key={index} className="leaf"></div>
         ))}
       </div>
-      
+
       <div className="wave-container">
         <div className="wave"></div>
         <div className="wave"></div>
@@ -110,7 +119,7 @@ const Login = () => {
       <div className="login-box">
         <div className="login-header">
           <h1>Đăng nhập</h1>
-          <img src="/logo.png" alt="Logo" className="logo" />
+          <img src="/public/Logo bau-02.png" alt="Logo" className="logo" />
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -160,7 +169,8 @@ const Login = () => {
           </button>
 
           <div className="register-prompt">
-            <p>Chưa có tài khoản? {" "}
+            <p>
+              Chưa có tài khoản?{" "}
               <Link to="/register" className="register-link">
                 Đăng ký ngay
               </Link>
