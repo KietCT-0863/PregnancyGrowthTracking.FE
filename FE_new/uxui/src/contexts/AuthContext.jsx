@@ -1,10 +1,14 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import authApi from "../api/authApi";
+import authService from "../api/services/authService";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData) : null;
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,24 +31,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await authApi.login(credentials);
-      // Kiểm tra response trước khi xử lý
-      console.log("Login response:", response); // để debug
-
-      // Kiểm tra cấu trúc response
-      if (response && response.token) {
-        localStorage.setItem("token", response.token);
-        setUser(response.user); // nếu có
-        return response;
-      } else if (response.data && response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        setUser(response.data.user); // nếu có
-        return response.data;
-      } else {
-        throw new Error("Invalid response format");
-      }
+      const response = await authService.login(credentials);
+      const userData = {
+        userName: response.userName,
+        email: response.email,
+        role: response.role,
+        userId: response.userId
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
+      setUser(userData);
+      return response;
     } catch (error) {
-      console.error("Login error in AuthContext:", error);
       throw error;
     }
   };

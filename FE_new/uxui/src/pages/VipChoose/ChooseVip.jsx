@@ -5,18 +5,52 @@ import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Check, Star, Clock } from "lucide-react"
 import "./ChooseVip.scss"
+import paymentService from "../../api/services/paymentService"
+import { toast } from "react-toastify"
 
 const ChooseVip = () => {
   const [selectedVip, setSelectedVip] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSelectVip = (vip) => {
     setSelectedVip(vip)
   }
 
-  const handleNavigateToPayment = () => {
-    const userName = localStorage.getItem('userName') || "Người dùng";
-    navigate("/basic-user/payment", { state: { vipPackage: selectedVip, userName } })
+  const handleNavigateToPayment = async () => {
+    try {
+      setIsLoading(true)
+      const userData = localStorage.getItem('userData')
+      
+      if (!userData) {
+        toast.error("Vui lòng đăng nhập để tiếp tục")
+        return
+      }
+
+      const user = JSON.parse(userData)
+      
+      // Chuẩn bị data gửi lên API
+      const paymentData = {
+        name: user.userName,
+        userId: user.userId
+      }
+
+      // Gọi API tạo payment
+      const response = await paymentService.createPayment(paymentData)
+      
+      // Kiểm tra response và chuyển hướng
+      if (response && response.paymentUrl) {
+        window.location.href = response.paymentUrl // Chuyển hướng đến trang thanh toán VNPay
+      } else {
+        throw new Error("Không nhận được URL thanh toán")
+      }
+
+    } catch (error) {
+      console.error("Payment error:", error)
+      toast.error("Có lỗi xảy ra khi tạo thanh toán")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const vipOptions = [
@@ -77,11 +111,11 @@ const ChooseVip = () => {
       <motion.button
         className="payment-button"
         onClick={handleNavigateToPayment}
-        disabled={!selectedVip}
+        disabled={!selectedVip || isLoading}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
-        Tiếp tục thanh toán
+        {isLoading ? "Đang xử lý..." : "Tiếp tục thanh toán"}
       </motion.button>
     </div>
   )

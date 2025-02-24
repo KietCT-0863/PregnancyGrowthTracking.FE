@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import "./Login.scss";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+import authService from "../../api/services/authService";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,14 +26,15 @@ const Login = () => {
         throw new Error("Vui lòng điền đầy đủ thông tin");
       }
 
-      const response = await login({
-        usernameOrEmail: formData.usernameOrEmail,
-        password: formData.password,
-      });
+      const response = await authService.login(formData);
+      
+      console.log('Login response:', response);
+      
+      const storedUserData = localStorage.getItem('userData');
+      console.log('Stored user data:', storedUserData);
 
-      if (response && (response.token || (response.data && response.data.token))) {
-        const token = response.token || response.data.token;
-        const decoded = jwtDecode(token);
+      if (response && response.token) {
+        const decoded = jwtDecode(response.token);
         const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
         toast.success("Đăng nhập thành công!");
 
@@ -44,20 +46,7 @@ const Login = () => {
           navigate("/member");
         }
       } else {
-        const storedToken = localStorage.getItem("token");
-        if (storedToken) {
-          const decoded = jwtDecode(storedToken);
-          const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-          toast.success("Đăng nhập thành công!");
-
-          if (role === "admin") {
-            navigate("/admin");
-          } else {
-            navigate("/");
-          }
-        } else {
-          throw new Error("Đăng nhập thất bại: Không nhận được token");
-        }
+        throw new Error("Đăng nhập thất bại: Không nhận được token");
       }
     } catch (err) {
       console.error("Login error:", err);
