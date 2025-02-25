@@ -1,6 +1,6 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout/PublicLayout";
-import Navbar from "./components/NavBar/NavBar";
+// import Navbar from "../components/Navbar/Navbar";
 import HomePublic from "./pages/HomePublic/HomePublic";
 import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
@@ -33,9 +33,8 @@ import FooterGuest from "./components/Footer_Guest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
 import NavbarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/Footer_Member/FooterMember";
+import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
-import BlogCreate from "./pages/BlogManagement/BlogCreate";
-import BlogChange from "./pages/BlogManagement/BlogChange";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -99,12 +98,8 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="/admin/users" element={<UserManagement />} />
-        <Route path="/admin/blogs" element={<BlogManagement />} />
-        <Route path="/admin/create" element={<BlogCreate />} />
-        <Route path="/admin/change/:id" element={<BlogChange />} />
-       
-
+        <Route path="users" element={<UserManagement />} />
+        <Route path="blogs" element={<BlogManagement />} />
       </Route>
 
       {/* Route cho basic user - cần đăng nhập */}
