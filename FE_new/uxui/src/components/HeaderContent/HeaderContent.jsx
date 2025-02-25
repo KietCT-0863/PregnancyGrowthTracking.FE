@@ -163,7 +163,7 @@ const HeaderContent = ({ isDarkMode }) => {
             <motion.button className="btn btn-outline" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               Tìm hiểu thêm
             </motion.button>
-            {user && (
+            {/* {user && (
               <motion.button
                 className="btn btn-switch-layout"
                 onClick={handleSwitchLayout}
@@ -172,7 +172,7 @@ const HeaderContent = ({ isDarkMode }) => {
               >
                 {user.isVip ? "Chuyển đến Admin" : "Xem Blog & Cộng đồng"}
               </motion.button>
-            )}
+            )} */}
           </div>
 
           <div className="hero-stats">

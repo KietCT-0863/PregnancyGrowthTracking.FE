@@ -141,7 +141,7 @@ const Register = () => {
       <div className="register-box">
         <div className="register-header">
           <h1>Đăng ký tài khoản</h1>
-          <img src="/logo.png" alt="Logo" className="logo" />
+          <img src="/Logo bau-02.png" alt="Logo" className="logo" />
         </div>
 
         {error && <div className="error-message">{error}</div>}

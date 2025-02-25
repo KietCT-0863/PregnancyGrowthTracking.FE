@@ -1,0 +1,346 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+// Variables
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$text-color: #2f3542;
+$background-color: #f8f9fa;
+$card-background: #ffffff;
+$border-color: #e9ecef;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+  }
+}
+
+// Keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Global Styles
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  line-height: 1.6;
+}
+
+.blog-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  animation: fadeIn 0.5s ease-out;
+
+  .blog-header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    h1 {
+      font-size: 2.5rem;
+      color: $primary-color;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: lighten($text-color, 20%);
+    }
+  }
+}
+
+// Blog Grid
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+
+  .blog-card {
+    background-color: $card-background;
+    border-radius: 15px;
+    overflow: hidden;
+    @include card-shadow;
+    animation: slideUp 0.5s ease-out;
+
+    .blog-image {
+      height: 200px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .blog-content {
+      padding: 1.5rem;
+
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: $primary-color;
+      }
+
+      .blog-excerpt {
+        font-size: 0.9rem;
+        color: lighten($text-color, 10%);
+        margin-bottom: 1rem;
+      }
+
+      .blog-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        color: lighten($text-color, 30%);
+        margin-bottom: 1rem;
+
+        span {
+          display: flex;
+          align-items: center;
+
+          svg {
+            margin-right: 0.3rem;
+          }
+        }
+      }
+
+      .read-more {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: $primary-color;
+        color: white;
+        text-decoration: none;
+        border-radius: 20px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
+      }
+    }
+  }
+}
+
+// Blog Detail
+.blog-detail {
+  background-color: $card-background;
+  border-radius: 15px;
+  padding: 2rem;
+  @include card-shadow;
+  animation: slideUp 0.5s ease-out;
+
+  .blog-detail-header {
+    position: relative;
+    margin-bottom: 2rem;
+
+    .back-button {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      padding: 0.5rem;
+      @include flex-center;
+      text-decoration: none;
+      color: $primary-color;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $primary-color;
+        color: white;
+      }
+    }
+
+    .blog-detail-image {
+      height: 400px;
+      overflow: hidden;
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: $primary-color;
+      margin-bottom: 1rem;
+    }
+
+    .blog-detail-meta {
+      display: flex;
+      justify-content: space-between;
+      color: lighten($text-color, 30%);
+      font-size: 0.9rem;
+
+      span {
+        display: flex;
+        align-items: center;
+
+        svg {
+          margin-right: 0.3rem;
+        }
+      }
+    }
+  }
+
+  .blog-detail-content {
+    .blog-detail-tags {
+      margin-bottom: 1.5rem;
+
+      .tag {
+        display: inline-block;
+        background-color: $secondary-color;
+        color: $primary-color;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+  }
+}
+
+// Pagination
+.pagination {
+  @include flex-center;
+  margin-top: 3rem;
+
+  button {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    margin: 0 1rem;
+    font-weight: 500;
+  }
+}
+
+// Search Box
+.search-box {
+  margin-bottom: 2rem;
+
+  .search-input {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid $border-color;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+    }
+  }
+}
+
+// Loading and Error States
+.loading-container,
+.error-container {
+  @include flex-center;
+  flex-direction: column;
+  min-height: 300px;
+
+  .spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: $primary-color;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .blog-container {
+    padding: 1rem;
+  }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .blog-detail {
+    padding: 1rem;
+
+    .blog-detail-header {
+      .blog-detail-image {
+        height: 250px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}

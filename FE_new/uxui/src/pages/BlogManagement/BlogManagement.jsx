@@ -14,7 +14,9 @@ import {
   Container,
   Pagination,
   CircularProgress,
+  Button,
 } from "@mui/material"
+import { Link } from "react-router-dom"
 import "./BlogManagement.scss"
 
 const BlogManagement = () => {
@@ -40,52 +42,65 @@ const BlogManagement = () => {
   const displayedPosts = posts.slice((page - 1) * postsPerPage, page * postsPerPage)
 
   return (
-    <Container maxWidth="lg" className="blog-container">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom className="blog-title">
+    <Container maxWidth="lg" className="blog-management">
+      <Box className="blog-header">
+        <Typography variant="h4" component="h1" className="blog-title">
           Danh sách bài viết
         </Typography>
-        {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <TableContainer component={Paper} className="table-container">
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Tiêu đề</TableCell>
-                    <TableCell>Lượt xem</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {displayedPosts.map(({ id, title, views }) => (
-                    <TableRow key={id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }} className="table-row">
-                      <TableCell component="th" scope="row">
-                        {id}
-                      </TableCell>
-                      <TableCell>{title}</TableCell>
-                      <TableCell>{views}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-              <Pagination
-                count={Math.ceil(posts.length / postsPerPage)}
-                page={page}
-                onChange={handleChangePage}
-                color="primary"
-                size="large"
-                className="pagination"
-              />
-            </Box>
-          </>
-        )}
+        <Link to="/admin/create" className="create-blog-link">
+          <Button variant="contained" color="primary" className="create-blog-button">
+            Tạo blog mới
+          </Button>
+        </Link>
       </Box>
+      {loading ? (
+        <Box className="loading-container">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <TableContainer component={Paper} className="table-container">
+            <Table aria-label="blog posts table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Tiêu đề</TableCell>
+                  <TableCell>Lượt xem</TableCell>
+                  <TableCell>Hành động</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {displayedPosts.map(({ id, title, views }) => (
+                  <TableRow key={id} className="table-row">
+                    <TableCell component="th" scope="row">
+                      {id}
+                    </TableCell>
+                    <TableCell>{title}</TableCell>
+                    <TableCell>{views}</TableCell>
+                    <TableCell>
+                      <Link to={`/admin/blogs/change/${id}`} className="edit-link">
+                        <Button variant="outlined" color="primary" className="edit-button">
+                          Chỉnh sửa
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box className="pagination-container">
+            <Pagination
+              count={Math.ceil(posts.length / postsPerPage)}
+              page={page}
+              onChange={handleChangePage}
+              color="primary"
+              size="large"
+              className="pagination"
+            />
+          </Box>
+        </>
+      )}
     </Container>
   )
 }

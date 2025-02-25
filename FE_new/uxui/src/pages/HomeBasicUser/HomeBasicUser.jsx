@@ -8,7 +8,7 @@ import VipBenefits from "../../components/VipBenefit/VipBenefit";
 const HomeBasicUser = () => {
   return (
     <>
-    
+   
     <BlogSildeGuest />
     <VipBenefits />
     </>

@@ -36,19 +36,25 @@ import FooterMember from "./components/Footer_Member/FooterMember";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import GrowthStandardList from './components/GrowthStandard/GrowthStandardList';
+import BlogChange from './pages/BlogManagement/BlogChange'
+import BlogCreate from "./pages/BlogManagement/BlogCreate"
+import PaymentResult from "./pages/Payment/PaymentResult";
 
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Route công khai - không cần đăng nhập */}
-      <Route path="/" 
-      element={<>
-      <Navbar />
-      <div style={{ margin: '20px 0' }} />
-        <Outlet />
-        <div style={{ margin: '20px 0' }} />
-        <Footer />
-      </>}
+      <Route
+        path="/"
+        element={
+          <>
+            <Navbar />
+            <div style={{ margin: "20px 0" }} />
+            <Outlet />
+            <div style={{ margin: "20px 0" }} />
+            <Footer />
+          </>
+        }
       >
         <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
@@ -57,9 +63,9 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/faq" element={<FAQ />}>
-          <Route index element={<FAQAll />} />
-          <Route path=":id" element={<FAQDetail />} />
-        </Route>
+        <Route index element={<FAQAll />} />
+        <Route path=":id" element={<FAQDetail />} />
+      </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
       <Route
@@ -67,9 +73,9 @@ const AppRoutes = () => {
         element={
           <ProtectedBasicUserRoute>
             <NavbarMember />
-            <div style={{ margin: '20px 0' }} />
+            <div style={{ margin: "20px 0" }} />
             <Outlet />
-            <div style={{ margin: '20px 0' }} />
+            <div style={{ margin: "20px 0" }} />
             <FooterMember />
           </ProtectedBasicUserRoute>
         }
@@ -97,8 +103,10 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="users" element={<UserManagement />} />
-        <Route path="blogs" element={<BlogManagement />} />
+        <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/blogs" element={<BlogManagement />} />
+        <Route path ="/admin/create" element={<BlogCreate/>}/> 
+        <Route path="/admin/blogs/change/:id"  element={<BlogChange/>}/> 
         <Route path="growth-standard" element={<GrowthStandardList />} />
       </Route>
 
@@ -109,9 +117,9 @@ const AppRoutes = () => {
           <ProtectedBasicUserRoute>
             <>
               <NavBarGuest />
-               <div style={{ margin: '20px 0' }} />
+              <div style={{ margin: "20px 0" }} />
               <Outlet />
-              <div style={{ margin: '20px 0' }} />
+              <div style={{ margin: "20px 0" }} />
               <FooterGuest />
             </>
           </ProtectedBasicUserRoute>
@@ -122,6 +130,7 @@ const AppRoutes = () => {
         <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
+        <Route path="/basic-user/payment-result" element={<PaymentResult />} />
       </Route>
 
       {/* Route 404 Not Found */}

@@ -17,6 +17,7 @@ const GuestBlogDetail = () => {
           throw new Error("Không thể tải bài viết")
         }
         const data = await response.json()
+
         setPost(data)
         setLoading(false)
       } catch (err) {

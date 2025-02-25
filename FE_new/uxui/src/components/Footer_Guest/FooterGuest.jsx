@@ -1,14 +1,17 @@
-"use client"
+"use client";
 
-import { FaFacebookF, FaInstagram, FaYoutube, FaHeart, FaCalendarAlt } from "react-icons/fa"
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaHeart,
+  FaCalendarAlt,
+} from "react-icons/fa";
 
-import { motion } from "framer-motion"
-import "./FooterGuest.scss"
-import { Link } from "react-router-dom"
+import { motion } from "framer-motion";
+import "./FooterGuest.scss";
 
-const footerSections = [
- 
-]
+const footerSections = [];
 
 const Footer = () => {
   return (
@@ -22,15 +25,29 @@ const Footer = () => {
             transition={{ duration: 0.5 }}
           >
             <h3 className="brand-name">Mẹ Bầu</h3>
-            <p className="brand-description">Đồng hành cùng mẹ trên hành trình thiêng liêng nhất cuộc đời</p>
+            <p className="brand-description">
+              Đồng hành cùng mẹ trên hành trình thiêng liêng nhất cuộc đời
+            </p>
             <div className="social-links">
-              <motion.a href="#" className="social-link" whileHover={{ scale: 1.2 }}>
+              <motion.a
+                href="#"
+                className="social-link"
+                whileHover={{ scale: 1.2 }}
+              >
                 <FaFacebookF />
               </motion.a>
-              <motion.a href="#" className="social-link" whileHover={{ scale: 1.2 }}>
+              <motion.a
+                href="#"
+                className="social-link"
+                whileHover={{ scale: 1.2 }}
+              >
                 <FaInstagram />
               </motion.a>
-              <motion.a href="#" className="social-link" whileHover={{ scale: 1.2 }}>
+              <motion.a
+                href="#"
+                className="social-link"
+                whileHover={{ scale: 1.2 }}
+              >
                 <FaYoutube />
               </motion.a>
             </div>
@@ -46,9 +63,15 @@ const Footer = () => {
               <h3 className="section-title">{section.title}</h3>
               <ul className="section-links">
                 {section.links.map((link, linkIndex) => (
-                  <motion.li key={linkIndex} className="link-item" whileHover={{ x: 5 }}>
+                  <motion.li
+                    key={linkIndex}
+                    className="link-item"
+                    whileHover={{ x: 5 }}
+                  >
                     <a href={link.url} className="footer-link">
-                      {link.icon && <span className="link-icon">{link.icon}</span>}
+                      {link.icon && (
+                        <span className="link-icon">{link.icon}</span>
+                      )}
                       {link.name}
                     </a>
                   </motion.li>
@@ -56,7 +79,6 @@ const Footer = () => {
               </ul>
             </motion.div>
           ))}
-
         </div>
       </div>
       <motion.div
@@ -71,8 +93,7 @@ const Footer = () => {
         </p>
       </motion.div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
-
+export default Footer;

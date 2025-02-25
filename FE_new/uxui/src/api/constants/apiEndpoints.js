@@ -16,6 +16,7 @@ export const ENDPOINTS = {
     DETAIL: (id) => `/Blog/${id}`
   },
   PAYMENT: {
-    CREATE: "/Payment/create-payment"
+    CREATE: "/Payment/create-payment",
+    CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`
   }
 }; 
