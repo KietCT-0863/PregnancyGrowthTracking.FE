@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 $primary-color: #ff6b81;
 $secondary-color: #ffdde1;
@@ -7,7 +7,7 @@ $background-color: #f8f9fa;
 $border-color: #e9ecef;
 
 .doctor-notes-container {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -69,184 +69,184 @@ $border-color: #e9ecef;
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 3000;
+    z-index: 2000;
   }
-  .modal-content {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 
-    h2 {
-      color: $primary-color;
-      margin-bottom: 1.5rem;
-    }
+      h2 {
+        color: $primary-color;
+        margin-bottom: 1.5rem;
+      }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-
-      .form-group {
+      form {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
 
-        label {
-          font-weight: 500;
-          color: $text-color;
-        }
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
 
-        input,
-        textarea,
-        select {
-          padding: 0.75rem;
-          border: 1px solid $border-color;
-          border-radius: 10px;
-          font-size: 1rem;
-          color: $text-color;
-          transition: all 0.3s ease;
+          label {
+            font-weight: 500;
+            color: $text-color;
+          }
 
-          &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+          input,
+          textarea,
+          select {
+            padding: 0.75rem;
+            border: 1px solid $border-color;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: $text-color;
+            transition: all 0.3s ease;
+
+            &:focus {
+              outline: none;
+              border-color: $primary-color;
+              box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+            }
+          }
+
+          textarea {
+            resize: vertical;
+            min-height: 100px;
           }
         }
 
-        textarea {
-          resize: vertical;
-          min-height: 100px;
+        .form-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 1rem;
+          margin-top: 1rem;
+
+          button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &[type="submit"] {
+              background-color: $primary-color;
+              color: white;
+
+              &:hover {
+                background-color: darken($primary-color, 10%);
+              }
+            }
+
+            &[type="button"] {
+              background-color: $border-color;
+              color: $text-color;
+
+              &:hover {
+                background-color: darken($border-color, 10%);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .history-modal {
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+
+        .history-item {
+          background-color: white;
+          padding: 1.5rem;
+          border-radius: 15px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+          h3 {
+            color: $primary-color;
+            margin-bottom: 1rem;
+          }
+
+          p {
+            margin-bottom: 0.5rem;
+          }
+
+          .image-gallery {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+
+            img {
+              width: 100px;
+              height: 100px;
+              object-fit: cover;
+              border-radius: 10px;
+            }
+          }
         }
       }
 
-      .form-actions {
+      .history-navigation {
         display: flex;
-        justify-content: flex-end;
+        justify-content: center;
         gap: 1rem;
         margin-top: 1rem;
 
         button {
-          padding: 0.75rem 1.5rem;
+          background-color: $secondary-color;
+          color: $text-color;
           border: none;
-          border-radius: 10px;
-          font-size: 1rem;
-          font-weight: 500;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
           transition: all 0.3s ease;
 
-          &[type="submit"] {
-            background-color: $primary-color;
-            color: white;
-
-            &:hover {
-              background-color: darken($primary-color, 10%);
-            }
+          &:hover {
+            background-color: darken($secondary-color, 10%);
           }
 
-          &[type="button"] {
-            background-color: $border-color;
-            color: $text-color;
-
-            &:hover {
-              background-color: darken($border-color, 10%);
-            }
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
           }
         }
       }
-    }
-  }
 
-  .history-modal {
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-
-      .history-item {
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-
-        h3 {
-          color: $primary-color;
-          margin-bottom: 1rem;
-        }
-
-        p {
-          margin-bottom: 0.5rem;
-        }
-
-        .image-gallery {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1rem;
-          overflow-x: auto;
-          padding-bottom: 0.5rem;
-
-          img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-          }
-        }
-      }
-    }
-
-    .history-navigation {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-
-      button {
-        background-color: $secondary-color;
-        color: $text-color;
+      .close-history {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
         border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        font-size: 1.5rem;
+        color: $text-color;
         cursor: pointer;
         transition: all 0.3s ease;
 
         &:hover {
-          background-color: darken($secondary-color, 10%);
+          color: $primary-color;
         }
-
-        &:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-      }
-    }
-
-    .close-history {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      color: $text-color;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover {
-        color: $primary-color;
       }
     }
   }
-}
 
 @media (max-width: 768px) {
   .doctor-notes-container {
@@ -281,3 +281,4 @@ $border-color: #e9ecef;
     }
   }
 }
+

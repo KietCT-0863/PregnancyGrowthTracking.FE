@@ -13,6 +13,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa"
 import "./NavBar.scss"
+import userService from "../../api/services/userService"
 
 const NavLink = ({ to, children, icon }) => {
   const location = useLocation()
@@ -31,22 +32,32 @@ const Navbar = () => {
   const [userInfo, setUserInfo] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
+    const fetchUserInfo = async () => {
       try {
-        const decoded = jwtDecode(token)
-        setUserInfo(decoded)
+        setIsLoading(true)
+        const userData = await userService.getCurrentUser()
+        setUserInfo(userData)
         setIsLoggedIn(true)
-        setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
-      } catch (error) {
-        console.error("Token decode error:", error)
+        setIsAdmin(userData["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin")
+      } catch (err) {
+        setError(err.message)
+        console.error("Error fetching user info:", err)
         localStorage.removeItem("token")
         setIsLoggedIn(false)
         setUserInfo(null)
         setIsAdmin(false)
+      } finally {
+        setIsLoading(false)
       }
+    }
+
+    const token = localStorage.getItem("token")
+    if (token) {
+      fetchUserInfo()
     }
   }, [])
 
@@ -120,15 +131,25 @@ const Navbar = () => {
               </button>
               {isDropdownOpen && (
                 <div className="user-dropdown">
-                  <div className="user-info">
-                    <div>Ngày sinh: {userInfo?.birthDate}</div>
-                    <div>Email: {userInfo?.email}</div>
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  <button onClick={handleLogout} className="logout-button">
-                    <FaSignOutAlt className="logout-icon" />
-                    Đăng xuất
-                  </button>
+                  {isLoading ? (
+                    <div>Loading...</div>
+                  ) : error ? (
+                    <div>Error: {error}</div>
+                  ) : userInfo ? (
+                    <div>
+                      <div className="user-info">
+                        <p>Email: {userInfo.email}</p>
+                        <p>Role: {userInfo.role}</p>
+                      </div>
+                      <div className="dropdown-divider"></div>
+                      <button onClick={handleLogout} className="logout-button">
+                        <FaSignOutAlt className="logout-icon" />
+                        Đăng xuất
+                      </button>
+                    </div>
+                  ) : (
+                    <div>Please login</div>
+                  )}
                 </div>
               )}
             </div>
@@ -140,3 +161,4 @@ const Navbar = () => {
 }
 
 export default Navbar
+

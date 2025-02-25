@@ -1,152 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
 // Variables
 $primary-color: #3f51b5;
-$secondary-color: #f5f5f5;
+$secondary-color: #f50057;
+$background-color: #f5f5f5;
 $text-color: #333;
-$border-color: #e0e0e0;
-$hover-color: #eef2ff;
-$transition-duration: 0.3s;
+$shadow-color: rgba(0, 0, 0, 0.1);
 
-.blog-management {
-  font-family: 'Roboto', sans-serif;
-  color: $text-color;
-  padding: 2rem 0;
+// Mixins
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}
 
-  .blog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    
-    .blog-title {
-      font-weight: 500;
-      color: $primary-color;
-      transition: color $transition-duration ease;
+@mixin box-shadow($shadow...) {
+  box-shadow: $shadow;
+}
 
-      &:hover {
-        color: darken($primary-color, 10%);
-      }
-    }
+// Keyframes
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    .create-blog-button {
-      transition: all $transition-duration ease;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
+// Styles
+.blog-container {
+  font-family: 'Poppins', sans-serif;
+  background-color: $background-color;
+  border-radius: 12px;
+  padding: 30px;
+  @include box-shadow(0 10px 20px $shadow-color);
+  @include transition;
+  animation: fadeIn 0.5s ease-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    @include box-shadow(0 15px 30px rgba(0, 0, 0, 0.15));
+  }
+}
+
+.blog-title {
+  color: $primary-color;
+  text-align: center;
+  margin-bottom: 40px !important;
+  font-weight: 600 !important;
+  font-size: 2.5rem !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 1px;
+}
+
+.table-container {
+  overflow: hidden;
+  border-radius: 12px !important;
+  @include transition;
+  background-color: white;
+
+  &:hover {
+    @include box-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
+  }
+
+  .MuiTableHead-root {
+    background-color: $primary-color;
+
+    .MuiTableCell-head {
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
   }
 
-  .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-  }
-
-  .table-container {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: box-shadow $transition-duration ease;
+  .table-row {
+    @include transition(background-color);
 
     &:hover {
-      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      background-color: rgba($primary-color, 0.05) !important;
     }
 
-    table {
-      border-collapse: separate;
-      border-spacing: 0;
-
-      th, td {
-        border: none;
-        padding: 16px;
-        text-align: left;
-      }
-
-      th {
-        background-color: $secondary-color;
-        font-weight: 500;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-      }
-
-      .table-row {
-        transition: background-color $transition-duration ease;
-
-        &:hover {
-          background-color: $hover-color;
-        }
-
-        td {
-          border-bottom: 1px solid $border-color;
-        }
-
-        &:last-child td {
-          border-bottom: none;
-        }
-      }
-
-      .edit-button {
-        transition: all $transition-duration ease;
-
-        &:hover {
-          background-color: $primary-color;
-          color: white;
-        }
-      }
+    .MuiTableCell-body {
+      color: $text-color;
+      font-weight: 400;
     }
   }
+}
 
-  .pagination-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
+.pagination {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
 
-    .pagination {
-      .MuiPaginationItem-root {
-        transition: all $transition-duration ease;
+  .MuiPaginationItem-root {
+    @include transition;
+    color: $primary-color;
 
-        &:hover {
-          background-color: $hover-color;
-        }
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+      transform: scale(1.1);
+    }
 
-        &.Mui-selected {
-          background-color: $primary-color;
-          color: white;
+    &.Mui-selected {
+      background-color: $primary-color;
+      color: white;
 
-          &:hover {
-            background-color: darken($primary-color, 10%);
-          }
-        }
+      &:hover {
+        background-color: darken($primary-color, 10%);
       }
     }
   }
 }
 
-@media (max-width: 600px) {
-  .blog-management {
-    .blog-header {
-      flex-direction: column;
-      align-items: flex-start;
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 
-      .blog-title {
-        margin-bottom: 1rem;
-      }
-    }
-
-    .table-container {
-      overflow-x: auto;
-
-      table {
-        th, td {
-          padding: 12px;
-        }
-      }
-    }
+  .MuiCircularProgress-root {
+    color: $secondary-color;
+    animation: pulse 2s infinite;
   }
 }
 

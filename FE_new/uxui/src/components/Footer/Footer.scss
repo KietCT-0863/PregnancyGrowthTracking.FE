@@ -1,32 +1,22 @@
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
 // Define variables
 $primary-color: #ffc2d1;
 $secondary-color: #ffebf2;
 $background: #fff9f9;
 $text-color: #6a0572;
-$font-primary: "Nunito", sans-serif;
-$font-secondary: "Amatic SC", cursive;
+$font-primary: 'Nunito', sans-serif;
+$font-secondary: 'Amatic SC', cursive;
 $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
 
 @keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .footer {
@@ -38,9 +28,8 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
 
-  &::before,
-  &::after {
-    content: "♥";
+  &::before, &::after {
+    content: '♥';
     position: absolute;
     font-size: 4rem;
     opacity: 0.1;
@@ -62,25 +51,19 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   .footer-content {
     max-width: 1200px;
     margin: 0 auto;
+    background: linear-gradient(135deg, $secondary-color, $background);
   }
 
   .footer-main {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     align-items: start;
   }
 
-  .footer-brand,
-  .footer-section {
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-  }
-
   .footer-brand {
     .brand-name {
-      font-family: "Dancing Script", cursive;
+      font-family: 'Dancing Script', cursive;
       color: $primary-color;
       text-shadow: $shadow-sm;
       font-size: 4.5rem;
@@ -107,6 +90,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
         color: $text-color;
         font-size: 1.5rem;
         transition: all 0.3s ease;
+
         width: 40px;
         height: 40px;
         display: flex;
@@ -132,7 +116,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       font-family: $font-secondary;
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         bottom: -5px;
@@ -147,34 +131,45 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       }
     }
 
-    .section-links,
-    .contact-info {
+    .section-links, .contact-info {
       list-style-type: none;
       padding: 0;
-      flex-grow: 1;
 
       li {
         margin-bottom: 0.5rem;
       }
-    }
-  }
 
-  .footer-link,
-  .contact-link {
-    color: $text-color;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
+      .footer-link {
+        color: $text-color;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
 
-    .link-icon {
-      margin-right: 0.5rem;
-      color: $primary-color;
-    }
+        .link-icon {
+          margin-right: 0.5rem;
+          color: $primary-color;
+        }
 
-    &:hover {
-      color: $primary-color;
+        &:hover {
+          color: $primary-color;
+        }
+      }
+
+      .contact-info {
+        li {
+          a {
+            color: $text-color;
+            text-decoration: none;
+            transition: all 0.3s ease;
+
+            &:hover {
+              color: $primary-color;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -198,24 +193,42 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
       vertical-align: middle;
     }
   }
-}
+  .footer-link {
+    color: $text-color; // Đảm bảo màu chữ đồng bộ
+    text-decoration: none; // Loại bỏ gạch chân
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
 
-@media (max-width: 768px) {
-  .footer {
-    .footer-main {
-      grid-template-columns: 1fr;
+    .link-icon {
+      margin-right: 0.5rem;
+      color: $primary-color;
     }
 
-    .footer-section,
-    .footer-brand {
-      min-height: auto;
-      margin-bottom: 2rem;
-    }
-
-    .footer-brand {
-      .brand-name {
-        font-size: 3.5rem;
-      }
+    &:hover {
+      color: $primary-color;
     }
   }
 }
+
+.footer-section, .footer-brand {
+  min-height: 300px; // Đặt độ cao tối thiểu cho mỗi phần
+}
+
+@media (max-width: 768px) {
+  .footer-main {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-section {
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand {
+    .brand-name {
+      font-size: 3.5rem;
+    }
+  }
+}
+

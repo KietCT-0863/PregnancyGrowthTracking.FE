@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Nunito:wght@400;600;700&display=swap");
 
 // Variables
-$primary-pink: #ffb6c1;
-$secondary-pink: #fff0f5;
-$accent-pink: #ffe4e1;
-$text-color: #4a4a4a;
-$error-color: #ff69b4;
+$primary-pink: #FFB6C1;
+$secondary-pink: #FFF0F5;
+$accent-pink: #FFE4E1;
+$text-color: #4A4A4A;
+$error-color: #FF69B4;
 $glass-bg: rgba(255, 255, 255, 0.85);
 $glass-border: rgba(255, 182, 193, 0.3);
 
@@ -32,8 +32,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
 }
 
 @keyframes floating {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
@@ -68,7 +67,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
   position: relative;
   overflow: hidden;
   padding: 40px;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 // Wave Effect
@@ -117,8 +116,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
   position: absolute;
   width: 40px;
   height: 40px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FFB6C1' d='M12,3c0,0-6.186,5.34-6.186,11.51c0,3.264,2.768,5.918,6.186,5.918s6.186-2.654,6.186-5.918C18.186,8.34,12,3,12,3z'/%3E%3C/svg%3E")
-    no-repeat center center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FFB6C1' d='M12,3c0,0-6.186,5.34-6.186,11.51c0,3.264,2.768,5.918,6.186,5.918s6.186-2.654,6.186-5.918C18.186,8.34,12,3,12,3z'/%3E%3C/svg%3E") no-repeat center center;
   animation: falling 10s linear infinite;
   opacity: 0.6;
 
@@ -139,7 +137,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
   @include glass-effect;
   z-index: 1;
   animation: floating 6s ease-in-out infinite;
-
+  
   .login-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -148,13 +146,13 @@ $glass-border: rgba(255, 182, 193, 0.3);
       color: $text-color;
       font-size: 3rem;
       margin-bottom: 1.5rem;
-      font-family: "Nunito", sans-serif;
+      font-family: 'Nunito', sans-serif;
       text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
     }
 
     .logo {
-      max-width: 100px;
-
+      max-width: 150px;
+      margin-bottom: 1.5rem;
       filter: drop-shadow(2px 2px 4px rgba(255, 182, 193, 0.3));
       animation: floating 4s ease-in-out infinite;
     }
@@ -237,11 +235,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
 .btn-primary {
   width: 100%;
   padding: 1.2rem;
-  background: linear-gradient(
-    45deg,
-    $primary-pink,
-    lighten($primary-pink, 10%)
-  );
+  background: linear-gradient(45deg, $primary-pink, lighten($primary-pink, 10%));
   color: $text-color;
   border: none;
   border-radius: 15px;

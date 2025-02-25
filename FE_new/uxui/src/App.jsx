@@ -5,6 +5,7 @@ import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdmin
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GrowthStandardList from './components/GrowthStandard/GrowthStandardList';
 
 function App() {
   return (

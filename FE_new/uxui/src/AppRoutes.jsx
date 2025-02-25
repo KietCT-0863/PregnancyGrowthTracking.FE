@@ -35,21 +35,20 @@ import NavbarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/Footer_Member/FooterMember";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import GrowthStandardList from './components/GrowthStandard/GrowthStandardList';
+
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Route công khai - không cần đăng nhập */}
-      <Route
-        path="/"
-        element={
-          <>
-            <Navbar />
-            <div style={{ margin: "20px 0" }} />
-            <Outlet />
-            <div style={{ margin: "20px 0" }} />
-            <Footer />
-          </>
-        }
+      <Route path="/" 
+      element={<>
+      <Navbar />
+      <div style={{ margin: '20px 0' }} />
+        <Outlet />
+        <div style={{ margin: '20px 0' }} />
+        <Footer />
+      </>}
       >
         <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
@@ -58,9 +57,9 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/faq" element={<FAQ />}>
-        <Route index element={<FAQAll />} />
-        <Route path=":id" element={<FAQDetail />} />
-      </Route>
+          <Route index element={<FAQAll />} />
+          <Route path=":id" element={<FAQDetail />} />
+        </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
       <Route
@@ -68,9 +67,9 @@ const AppRoutes = () => {
         element={
           <ProtectedBasicUserRoute>
             <NavbarMember />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: '20px 0' }} />
             <Outlet />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: '20px 0' }} />
             <FooterMember />
           </ProtectedBasicUserRoute>
         }
@@ -100,6 +99,7 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="blogs" element={<BlogManagement />} />
+        <Route path="growth-standard" element={<GrowthStandardList />} />
       </Route>
 
       {/* Route cho basic user - cần đăng nhập */}
@@ -109,9 +109,9 @@ const AppRoutes = () => {
           <ProtectedBasicUserRoute>
             <>
               <NavBarGuest />
-              <div style={{ margin: "20px 0" }} />
+               <div style={{ margin: '20px 0' }} />
               <Outlet />
-              <div style={{ margin: "20px 0" }} />
+              <div style={{ margin: '20px 0' }} />
               <FooterGuest />
             </>
           </ProtectedBasicUserRoute>

@@ -59,7 +59,7 @@ const AdminLayout = () => {
                   bgcolor: '#4a0350'
                 }
               }}
-              onClick={() => navigate('/basic-user')}
+              onClick={() => navigate('/basic-user/blog')}
             >
               Xem Basic User Layout
             </Button>

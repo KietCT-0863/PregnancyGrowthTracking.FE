@@ -1,18 +1,20 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+  import React from "react"
 
-import "./FooterContent.scss";
+import { useState } from "react"
+import { motion } from "framer-motion"
+import { Facebook, Instagram, Twitter } from "lucide-react"
+import "./FooterContent.scss"
 
 const FooterContent = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("")
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Email submitted:", email);
-    setEmail("");
-  };
+    e.preventDefault()
+    console.log("Email submitted:", email)
+    setEmail("")
+  }
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -24,7 +26,7 @@ const FooterContent = () => {
         staggerChildren: 0.2,
       },
     },
-  };
+  }
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -32,21 +34,13 @@ const FooterContent = () => {
       y: 0,
       opacity: 1,
     },
-  };
+  }
 
   return (
     <footer className="footer-content">
       <div className="footer-container">
-        <motion.div
-          className="footer-grid"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div
-            className="footer-section newsletter"
-            variants={itemVariants}
-          >
+        <motion.div className="footer-grid" variants={containerVariants} initial="hidden" animate="visible">
+          <motion.div className="footer-section newsletter" variants={itemVariants}>
             <h3>Đăng ký nhận tin</h3>
             <p>Nhận thông tin mới nhất về sức khỏe mẹ và bé</p>
             <form onSubmit={handleSubmit}>
@@ -64,10 +58,13 @@ const FooterContent = () => {
               </div>
             </form>
           </motion.div>
+        
         </motion.div>
+       
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default FooterContent;
+export default FooterContent
+

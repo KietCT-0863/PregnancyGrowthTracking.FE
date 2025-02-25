@@ -1,12 +1,18 @@
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { FaHome, FaUsers, FaBlog } from 'react-icons/fa';
+import TimelineIcon from '@mui/icons-material/Timeline';
 
 const Sidebar = () => {
   const menuItems = [
     { text: 'Dashboard', icon: <FaHome />, path: '/admin' },
     { text: 'Quản lý người dùng', icon: <FaUsers />, path: '/admin/users' },
     { text: 'Quản lý bài viết', icon: <FaBlog />, path: '/admin/blogs' },
+    {
+      text: 'Growth Standard',
+      path: '/admin/growth-standard',
+      icon: <TimelineIcon />
+    }
   ];
 
   return (
