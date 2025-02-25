@@ -72,6 +72,63 @@
         color: $primary-pink;
       }
     }
+
+    .measurement-guide {
+      background: #f3e5f5;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+
+      p {
+        color: #7b1fa2;
+        font-weight: 500;
+        margin-bottom: 0.8rem;
+      }
+
+      .guide-note {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 0.8rem;
+        border-radius: 6px;
+        text-align: center;
+        margin-top: 1rem;
+        font-size: 0.95rem;
+        border: 1px dashed #4caf50;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          color: #9c27b0;
+          padding: 0.4rem 0;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          &:before {
+            content: "•";
+            color: #e91e63;
+            font-weight: bold;
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+
+    .btn--disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      background: #9e9e9e;
+
+      &:hover {
+        background: #9e9e9e;
+        transform: none;
+      }
+    }
   }
 
   &__features {
@@ -295,6 +352,414 @@
     &__feature-card,
     &__tip {
       padding: 1.5rem;
+    }
+  }
+}
+
+.children-history {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .no-history {
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #666;
+    font-style: italic;
+  }
+
+  .history-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+
+    .history-item {
+      background: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .child-info {
+        h4 {
+          font-size: 1.2rem;
+          color: #2c3e50;
+          margin-bottom: 1rem;
+        }
+
+        .info-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.8rem;
+
+          span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+
+            svg {
+              color: #4CAF50;
+            }
+
+            &:hover {
+              background: #e9ecef;
+            }
+
+            &.stats {
+              color: #4CAF50;
+              cursor: pointer;
+              font-weight: 500;
+
+              &:hover {
+                background: #E8F5E9;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .children-history {
+    padding: 1rem;
+
+    .history-list {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.edit-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.edit-popup-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+
+  h2 {
+    text-align: center;
+    color: $text-color;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-color;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: $primary-pink;
+      transform: rotate(90deg);
+    }
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: $text-color;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-pink;
+        box-shadow: 0 0 0 2px rgba($primary-pink, 0.1);
+      }
+    }
+  }
+
+  .btn--primary {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .due-date-preview {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #fce4ec;
+    border-radius: 8px;
+    color: #e91e63;
+    font-weight: 500;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .pregnancy-info {
+    background: #f3e5f5;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+
+    p {
+      margin: 0.5rem 0;
+      color: #7b1fa2;
+      font-weight: 500;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+// Cập nhật styles cho history-item
+.history-item {
+  cursor: pointer !important;
+
+  .child-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h4 {
+      margin: 0;
+    }
+
+    .edit-button {
+      background: none;
+      border: none;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $primary-pink;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: darken($primary-pink, 10%);
+        transform: translateY(-2px);
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  .info-details {
+    .pregnancy-week {
+      color: $primary-pink !important;
+      font-weight: 500;
+    }
+
+    .warning {
+      color: #ff6b6b !important;
+      background: #fff5f5 !important;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+
+      svg {
+        color: #ff6b6b !important;
+      }
+    }
+
+    .due-date {
+      color: #e91e63 !important;
+      font-weight: 500;
+      background: #fce4ec !important;
+
+      svg {
+        color: #e91e63 !important;
+      }
+
+      &:hover {
+        background: #f8bbd0 !important;
+      }
+    }
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  &.selected {
+    border: 2px solid $primary-pink;
+    background: #fff9f9;
+    
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba($primary-pink, 0.2);
+    }
+
+    .child-info h4 {
+      color: $primary-pink;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.stats-container {
+  margin-top: 0.5rem;
+  
+  .stats-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .stat {
+      background: #f1f8e9;
+      padding: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #558b2f;
+      text-align: center;
+      
+      &:hover {
+        background: #dcedc8;
+      }
+    }
+  }
+
+  .update-stats-button {
+    width: 100%;
+    padding: 0.5rem;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #43a047;
+      transform: translateY(-2px);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.edit-popup-content {
+  .form-group {
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+      }
+
+      &::placeholder {
+        color: #999;
+        font-style: italic;
+      }
     }
   }
 }

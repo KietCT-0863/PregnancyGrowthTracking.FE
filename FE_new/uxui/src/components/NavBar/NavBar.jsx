@@ -115,7 +115,7 @@ const Navbar = () => {
             </NavLink>
           </div>
           <div className="nav-item">
-            <NavLink to="/member/blog" icon={<FaBlog className="nav-icon" />}>
+            <NavLink to="/blog" icon={<FaBlog className="nav-icon" />}>
               Blog
             </NavLink>
           </div>

@@ -1,6 +1,5 @@
 import { Routes, Route, Outlet } from "react-router-dom";
-import PublicLayout from "../layout/PublicLayout/PublicLayout";
-// import Navbar from "../components/Navbar/Navbar";
+
 import HomePublic from "./pages/HomePublic/HomePublic";
 import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
@@ -37,6 +36,9 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import BlogCreate from "./pages/BlogManagement/BlogCreate";
 import BlogChange from "./pages/BlogManagement/BlogChange";
+import BlogPublic from "./pages/BlogPublic/index";
+import BlogAllPublic from "./pages/BlogPublic/BlogAll";
+import BlogDetailPublic from "./pages/BlogPublic/BlogDetail";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -55,6 +57,11 @@ const AppRoutes = () => {
       >
         <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/blog" element={<BlogPublic />}>
+          <Route index element={<BlogAllPublic />} />
+          <Route path=":id" element={<BlogDetailPublic />} />
+        </Route>
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
