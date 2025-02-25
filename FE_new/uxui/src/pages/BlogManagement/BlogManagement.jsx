@@ -78,7 +78,7 @@ const BlogManagement = () => {
                     <TableCell>{title}</TableCell>
                     <TableCell>{views}</TableCell>
                     <TableCell>
-                      <Link to={`/admin/change/${id}`} className="edit-link">
+                      <Link to={`/admin/blogs/change/${id}`} className="edit-link">
                         <Button variant="outlined" color="primary" className="edit-button">
                           Chỉnh sửa
                         </Button>

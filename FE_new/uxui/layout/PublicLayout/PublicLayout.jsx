@@ -4,6 +4,7 @@ import "./PublicLayout.scss"
 import { toast } from "react-toastify";
 import {  useNavigate } from "react-router-dom";
 import HomePublic from "../../src/pages/HomePublic/HomePublic";
+import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
 
 const PublicLayout = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const PublicLayout = () => {
 
   return (
     <>
- 
+ <ChatAI/>
     <HomePublic />
     </>
   );

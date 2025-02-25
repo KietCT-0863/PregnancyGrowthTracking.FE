@@ -99,7 +99,7 @@ const Login = () => {
       <div className="login-box">
         <div className="login-header">
           <h1>Đăng nhập</h1>
-          <img src="/public/Logo bau-02.png" alt="Logo" className="logo" />
+          <img src="/Logo bau-02.png" alt="Logo" className="logo" />
         </div>
 
         {error && <div className="error-message">{error}</div>}

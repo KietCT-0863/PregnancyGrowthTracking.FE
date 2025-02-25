@@ -17,6 +17,15 @@ const paymentService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  checkPaymentResult: async (transactionNo) => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.PAYMENT.CHECK_RESULT(transactionNo));
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
