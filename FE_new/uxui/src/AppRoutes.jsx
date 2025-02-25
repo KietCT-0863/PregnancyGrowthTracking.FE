@@ -1,6 +1,6 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import PublicLayout from "../layout/PublicLayout/PublicLayout";
-// import Navbar from "../components/Navbar/Navbar";
+import Navbar from "./components/NavBar/NavBar";
 import HomePublic from "./pages/HomePublic/HomePublic";
 import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
@@ -33,7 +33,6 @@ import FooterGuest from "./components/Footer_Guest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
 import NavbarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/Footer_Member/FooterMember";
-import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import BlogCreate from "./pages/BlogManagement/BlogCreate";
 import BlogChange from "./pages/BlogManagement/BlogChange";
