@@ -17,12 +17,12 @@ const ProtectedMemberRoute = ({ children }) => {
       decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
     // Chỉ cho phép role member truy cập
-    if (userRole === "member") {
+    if (userRole === "vip") {
       return children;
     }
 
     // Chuyển hướng các role khác về trang phù hợp
-    if (userRole === "guest") {
+    if (userRole === "member") {
       toast.error("Bạn cần nâng cấp tài khoản để truy cập tính năng này!");
       return <Navigate to="/basic-user" />;
     } else if (userRole === "admin") {

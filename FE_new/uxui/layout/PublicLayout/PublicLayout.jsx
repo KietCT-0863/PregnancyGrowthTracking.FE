@@ -1,8 +1,7 @@
-
 import { useEffect } from "react";
-import "./PublicLayout.scss"
+import "./PublicLayout.scss";
 import { toast } from "react-toastify";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import HomePublic from "../../src/pages/HomePublic/HomePublic";
 import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
 
@@ -33,8 +32,7 @@ const PublicLayout = () => {
 
   return (
     <>
- <ChatAI/>
-    <HomePublic />
+      <HomePublic />
     </>
   );
 };

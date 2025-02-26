@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import { Loader, Calendar, User, ArrowLeft, Baby, Weight, Activity } from "lucide-react";
+import {
+  Loader,
+  Calendar,
+  User,
+  ArrowLeft,
+  Baby,
+  Weight,
+  Activity,
+} from "lucide-react";
 import "./BlogDetail.scss";
 
 const BlogDetailPublic = () => {
@@ -10,53 +18,6 @@ const BlogDetailPublic = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
-
-  // Mock data cho lịch sử đứa trẻ (sau này sẽ được thay thế bằng API call)
-  const [childHistory] = useState([
-    {
-      id: 1,
-      name: "Nguyễn Văn A",
-      gender: "male",
-      createdAt: "2024-03-15T08:00:00.000Z",
-      stats: {
-        weight: "3.5kg",
-        height: "50cm"
-      }
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      gender: "female",
-      createdAt: "2024-03-14T09:30:00.000Z",
-      stats: {
-        weight: "3.2kg",
-        height: "48cm"
-      }
-    }
-  ]);
-
-  const getChildFeatures = (child) => [
-    {
-      icon: Baby,
-      title: child.name,
-      description: child.gender === 'male' ? 'Nam' : 'Nữ',
-    },
-    {
-      icon: Calendar,
-      title: "Ngày tạo",
-      description: new Date(child.createdAt).toLocaleDateString('vi-VN'),
-    },
-    {
-      icon: Weight,
-      title: "Chỉ số",
-      description: `${child.stats.weight} - ${child.stats.height}`,
-    },
-    {
-      icon: Activity,
-      title: "Hoạt động",
-      description: "Xem chi tiết",
-    },
-  ];
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -130,35 +91,6 @@ const BlogDetailPublic = () => {
           ))}
         </div>
         <p>{post.body}</p>
-      </div>
-
-      {/* Phần hiển thị lịch sử đứa trẻ */}
-      <div className="children-history-section">
-        <h2>Lịch sử theo dõi trẻ</h2>
-        <div className="children-profiles">
-          {childHistory.length === 0 ? (
-            <div className="no-profiles">
-              <Baby size={48} />
-              <p>Chưa có hồ sơ trẻ nào được tạo</p>
-            </div>
-          ) : (
-            <div className="profiles-grid">
-              {childHistory.map((child) => (
-                <div key={child.id} className="profile-card">
-                  <div className="profile-features">
-                    {getChildFeatures(child).map((feature, index) => (
-                      <div key={index} className="feature-item">
-                        <feature.icon className="feature-icon" />
-                        <h3>{feature.title}</h3>
-                        <p>{feature.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

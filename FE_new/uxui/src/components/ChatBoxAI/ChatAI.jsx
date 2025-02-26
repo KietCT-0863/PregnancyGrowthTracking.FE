@@ -5,10 +5,10 @@ import ChatForm from "./ChatForm";
 import ChatMessage from "./ChatMessage";
 import { useRef, useEffect } from "react";
 import { companyInfo } from "../../companyInfo";
-    const ChatAI = () => {
+const ChatAI = () => {
   const [chatHistory, setChatHistory] = useState([
     {
-      hideInChat : true,
+      hideInChat: true,
       role: "model",
       text: companyInfo,
     },
@@ -48,8 +48,7 @@ import { companyInfo } from "../../companyInfo";
         .trim();
       updateChatHistory(apiResponseText);
     } catch (error) {
-      updateChatHistory(error.message , true);
-
+      updateChatHistory(error.message, true);
     }
   };
   useEffect(() => {
@@ -60,20 +59,38 @@ import { companyInfo } from "../../companyInfo";
   }, [chatHistory]);
   return (
     <div className={`container ${showChatbot ? "show-chatbox" : ""}`}>
-      <button  onClick={() => setShowChatbox((prev) => !prev)} id="chatbot-toggler">
-        <span className="material-symbols-rounded"><ChatboxIcon style={{width: "50px", height: "50px" , color: "white" ,backgroundColor: "white"}} /></span>
-        <span className="material-symbols-rounded"><ChatboxIcon style={{width: "50px", height: "50px" , color: "white" ,backgroundColor: "white"}} /></span>
+      <button
+        onClick={() => setShowChatbox((prev) => !prev)}
+        id="chatbot-toggler"
+      >
+        <span className="material-symbols-rounded">
+          <ChatboxIcon
+            style={{
+              width: "50px",
+              height: "50px",
+              color: "white",
+              backgroundColor: "white",
+            }}
+          />
+        </span>
+        <span className="material-symbols-rounded">
+          <ChatboxIcon
+            style={{
+              width: "50px",
+              height: "50px",
+              color: "white",
+              backgroundColor: "white",
+            }}
+          />
+        </span>
       </button>
       <div className="chatboot-popup">
         {/* header */}
         <div className="chat-header">
           <div className="header-info">
-            <ChatboxIcon />
-            <h2 className="logo-text">Chatbot</h2>
+            <h2 className="logo-text">Chatbot </h2>
           </div>
-          <button className="material-symbols-rounded">
-          
-          </button>
+          <button className="material-symbols-rounded"></button>
         </div>
         {/* body */}
         <div className="chat-body" ref={chatBodyRef}>

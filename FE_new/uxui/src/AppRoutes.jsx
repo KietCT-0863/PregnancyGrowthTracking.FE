@@ -34,19 +34,14 @@ import NavbarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/Footer_Member/FooterMember";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
-<<<<<<< HEAD
 import BlogCreate from "./pages/BlogManagement/BlogCreate";
 import BlogChange from "./pages/BlogManagement/BlogChange";
 import BlogPublic from "./pages/BlogPublic/index";
 import BlogAllPublic from "./pages/BlogPublic/BlogAll";
 import BlogDetailPublic from "./pages/BlogPublic/BlogDetail";
-=======
-import GrowthStandardList from './components/GrowthStandard/GrowthStandardList';
-import BlogChange from './pages/BlogManagement/BlogChange'
-import BlogCreate from "./pages/BlogManagement/BlogCreate"
+import GrowthStandardList from "./components/GrowthStandard/GrowthStandardList";
 import PaymentResult from "./pages/Payment/PaymentResult";
-
->>>>>>> 60cfcae5d361665ec32e599e210626a853a99fd2
+import ChatAI from "./components/ChatBoxAI/ChatAI";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -59,6 +54,7 @@ const AppRoutes = () => {
             <div style={{ margin: "20px 0" }} />
             <Outlet />
             <div style={{ margin: "20px 0" }} />
+            <ChatAI />
             <Footer />
           </>
         }
@@ -69,7 +65,7 @@ const AppRoutes = () => {
           <Route index element={<BlogAllPublic />} />
           <Route path=":id" element={<BlogDetailPublic />} />
         </Route>
-        
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
@@ -77,6 +73,29 @@ const AppRoutes = () => {
       <Route path="/faq" element={<FAQ />}>
         <Route index element={<FAQAll />} />
         <Route path=":id" element={<FAQDetail />} />
+      </Route>
+      {/* Route cho basic user - cần đăng nhập */}
+      <Route
+        path="/basic-user"
+        element={
+          <ProtectedBasicUserRoute>
+            <>
+              <NavBarGuest />
+              <div style={{ margin: "20px 0" }} />
+              <Outlet />
+              <div style={{ margin: "20px 0" }} />
+              <ChatAI />
+              <FooterGuest />
+            </>
+          </ProtectedBasicUserRoute>
+        }
+      >
+        <Route index element={<BasicUserLayout />} />
+        <Route path="/basic-user/blog" element={<GuestBlogAll />} />
+        <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
+        <Route path="community" element={<Community />} />
+        <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
+        <Route path="/basic-user/payment-result" element={<PaymentResult />} />
       </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
@@ -88,6 +107,7 @@ const AppRoutes = () => {
             <div style={{ margin: "20px 0" }} />
             <Outlet />
             <div style={{ margin: "20px 0" }} />
+            <ChatAI />
             <FooterMember />
           </ProtectedBasicUserRoute>
         }
@@ -117,32 +137,9 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/blogs" element={<BlogManagement />} />
-        <Route path ="/admin/create" element={<BlogCreate/>}/> 
-        <Route path="/admin/blogs/change/:id"  element={<BlogChange/>}/> 
+        <Route path="/admin/create" element={<BlogCreate />} />
+        <Route path="/admin/blogs/change/:id" element={<BlogChange />} />
         <Route path="growth-standard" element={<GrowthStandardList />} />
-      </Route>
-
-      {/* Route cho basic user - cần đăng nhập */}
-      <Route
-        path="/basic-user"
-        element={
-          <ProtectedBasicUserRoute>
-            <>
-              <NavBarGuest />
-              <div style={{ margin: "20px 0" }} />
-              <Outlet />
-              <div style={{ margin: "20px 0" }} />
-              <FooterGuest />
-            </>
-          </ProtectedBasicUserRoute>
-        }
-      >
-        <Route index element={<BasicUserLayout />} />
-        <Route path="/basic-user/blog" element={<GuestBlogAll />} />
-        <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
-        <Route path="community" element={<Community />} />
-        <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
-        <Route path="/basic-user/payment-result" element={<PaymentResult />} />
       </Route>
 
       {/* Route 404 Not Found */}

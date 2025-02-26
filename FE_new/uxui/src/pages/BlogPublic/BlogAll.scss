@@ -1,11 +1,21 @@
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .blog-container {
@@ -18,14 +28,14 @@
 .blog-header {
   text-align: center;
   margin-bottom: 2rem;
-  
+
   h1 {
     font-size: 2.5rem;
     color: #333;
     margin-bottom: 0.5rem;
     animation: fadeIn 0.5s ease-out 0.2s both;
   }
-  
+
   p {
     color: #666;
     font-size: 1.1rem;
@@ -69,13 +79,13 @@
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   animation: fadeIn 0.5s ease-out;
-  
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -83,7 +93,7 @@
   width: 100%;
   height: 200px;
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -98,7 +108,7 @@
 
 .blog-content {
   padding: 1.5rem;
-  
+
   h2 {
     font-size: 1.25rem;
     margin-bottom: 1rem;
@@ -123,7 +133,7 @@
   color: #888;
   font-size: 0.9rem;
   margin-bottom: 1rem;
-  
+
   span {
     display: flex;
     align-items: center;
@@ -139,11 +149,38 @@
   text-decoration: none;
   border-radius: 4px;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: #0056b3;
     transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.search-and-sort {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.sort-box {
+  min-width: 150px;
+}
+
+.sort-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
   }
 }
 
@@ -153,7 +190,7 @@
   align-items: center;
   justify-content: center;
   min-height: 300px;
-  
+
   .spinner {
     animation: spin 1s linear infinite;
   }
@@ -179,7 +216,7 @@
   gap: 1rem;
   margin-top: 2rem;
   animation: fadeIn 0.5s ease-out;
-  
+
   button {
     padding: 0.5rem 1rem;
     background-color: #007bff;
@@ -188,16 +225,16 @@
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    
+
     &:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-    
+
     &:hover:not(:disabled) {
       background-color: #0056b3;
       transform: translateY(-2px);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
   }
 
@@ -228,4 +265,3 @@
   transform: translateY(-20px);
   transition: opacity 300ms, transform 300ms;
 }
-

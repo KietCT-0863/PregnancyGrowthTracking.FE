@@ -17,20 +17,20 @@ const ProtectedBasicUserRoute = ({ children }) => {
       decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
     // Nếu là guest, tự động chuyển hướng đến /basic-user
-    if (userRole === "guest" && window.location.pathname === "/") {
+    if (userRole === "member" && window.location.pathname === "/") {
       return <Navigate to="/basic-user" />;
     }
 
     // Nếu là guest và đang ở /basic-user hoặc các route con của nó, cho phép truy cập
     if (
-      userRole === "guest" &&
+      userRole === "member" &&
       window.location.pathname.startsWith("/basic-user")
     ) {
       return children;
     }
 
     // Nếu không phải guest, cho phép truy cập các route khác
-    if (userRole !== "guest") {
+    if (userRole !== "member") {
       return children;
     }
 

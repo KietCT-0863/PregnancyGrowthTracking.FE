@@ -1,14 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { FaHistory, FaPlus, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa"
-import "./DoctorNotes.scss"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaHistory,
+  FaPlus,
+  FaTimes,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
+import "./DoctorNotes.scss";
 
 const DoctorNotes = () => {
-  const [notes, setNotes] = useState([])
-  const [showForm, setShowForm] = useState(false)
-  const [showHistory, setShowHistory] = useState(false)
+  const [notes, setNotes] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [currentNote, setCurrentNote] = useState({
     date: "",
     doctorName: "",
@@ -18,8 +25,7 @@ const DoctorNotes = () => {
     nextAppointment: "",
     notes: "",
     images: [],
-  })
-  const [currentHistoryPage, setCurrentHistoryPage] = useState(0)
+  });
 
   // Giả lập dữ liệu lịch sử
   const mockHistory = [
@@ -43,29 +49,46 @@ const DoctorNotes = () => {
       prescription: "Viên sắt, Vitamin tổng hợp",
       nextAppointment: "2024-03-15",
       notes: "Cần bổ sung thêm thực phẩm giàu sắt",
-      images: ["https://example.com/image2.jpg", "https://example.com/image3.jpg"],
+      images: [
+        "https://example.com/image2.jpg",
+        "https://example.com/image3.jpg",
+      ],
     },
-  ]
+  ];
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setCurrentNote((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files)
+    const files = Array.from(e.target.files);
     setCurrentNote((prev) => ({
       ...prev,
       images: [...prev.images, ...files],
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    setNotes((prev) => [...prev, { ...currentNote, id: Date.now() }])
+    e.preventDefault();
+    console.log("Thông tin ghi chú mới:", currentNote);
+
+    if (isEditing) {
+      setNotes((prev) =>
+        prev.map((note) =>
+          note.id === editingId ? { ...currentNote, id: editingId } : note
+        )
+      );
+      setIsEditing(false);
+      setEditingId(null);
+    } else {
+      const newNote = { ...currentNote, id: Date.now() };
+      console.log("Danh sách ghi chú sau khi thêm:", [...notes, newNote]);
+      setNotes((prev) => [...prev, newNote]);
+    }
     setCurrentNote({
       date: "",
       doctorName: "",
@@ -75,21 +98,16 @@ const DoctorNotes = () => {
       nextAppointment: "",
       notes: "",
       images: [],
-    })
-    setShowForm(false)
-  }
+    });
+    setShowForm(false);
+  };
 
-  const nextHistoryPage = () => {
-    if ((currentHistoryPage + 1) * 3 < mockHistory.length) {
-      setCurrentHistoryPage(currentHistoryPage + 1)
-    }
-  }
-
-  const prevHistoryPage = () => {
-    if (currentHistoryPage > 0) {
-      setCurrentHistoryPage(currentHistoryPage - 1)
-    }
-  }
+  const handleEdit = (note) => {
+    setCurrentNote(note);
+    setIsEditing(true);
+    setEditingId(note.id);
+    setShowForm(true);
+  };
 
   return (
     <div className="doctor-notes-container">
@@ -111,19 +129,17 @@ const DoctorNotes = () => {
         >
           <FaPlus /> Thêm Ghi Chú Mới
         </motion.button>
-        <motion.button
-          className="view-history-btn"
-          onClick={() => setShowHistory(true)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <FaHistory /> Xem Lịch Sử
-        </motion.button>
       </div>
 
       <AnimatePresence>
         {showForm && (
-          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ zIndex: 1000 }}>
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ zIndex: 9999 }}
+          >
             <motion.div
               className="modal-content"
               initial={{ scale: 0.8, y: -50 }}
@@ -209,10 +225,20 @@ const DoctorNotes = () => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="images">Hình ảnh</label>
-                  <input type="file" id="images" multiple onChange={handleImageUpload} accept="image/*" />
+                  <input
+                    type="file"
+                    id="images"
+                    multiple
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                  />
                 </div>
                 <div className="form-actions">
-                  <motion.button type="submit" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     Lưu Ghi Chú
                   </motion.button>
                   <motion.button
@@ -230,86 +256,51 @@ const DoctorNotes = () => {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showHistory && (
-          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div
-              className="modal-content history-modal"
-              initial={{ scale: 0.8, y: -50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: -50 }}
-            >
-              <h2>Lịch Sử Khám</h2>
-              <div className="history-list">
-                {mockHistory.slice(currentHistoryPage * 3, (currentHistoryPage + 1) * 3).map((note) => (
-                  <motion.div
-                    key={note.id}
-                    className="history-item"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <h3>
-                      {note.date} - {note.hospital}
-                    </h3>
-                    <p>
-                      <strong>Bác sĩ:</strong> {note.doctorName}
-                    </p>
-                    <p>
-                      <strong>Chẩn đoán:</strong> {note.diagnosis}
-                    </p>
-                    <p>
-                      <strong>Đơn thuốc:</strong> {note.prescription}
-                    </p>
-                    <p>
-                      <strong>Ghi chú:</strong> {note.notes}
-                    </p>
-                    <p>
-                      <strong>Lịch hẹn kế tiếp:</strong> {note.nextAppointment}
-                    </p>
-                    {note.images.length > 0 && (
-                      <div className="image-gallery">
-                        {note.images.map((img, index) => (
-                          <img key={index} src={img || "/placeholder.svg"} alt={`Ảnh ${index + 1}`} />
-                        ))}
-                      </div>
-                    )}
-                  </motion.div>
+      <div className="notes-list">
+        {notes.map((note) => (
+          <motion.div
+            key={note.id}
+            className="note-item"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            onClick={() => handleEdit(note)}
+            style={{ cursor: "pointer" }}
+          >
+            <h3>
+              {note.date} - {note.hospital}
+            </h3>
+            <p>
+              <strong>Bác sĩ:</strong> {note.doctorName}
+            </p>
+            <p>
+              <strong>Chẩn đoán:</strong> {note.diagnosis}
+            </p>
+            <p>
+              <strong>Đơn thuốc:</strong> {note.prescription}
+            </p>
+            <p>
+              <strong>Ghi chú:</strong> {note.notes}
+            </p>
+            <p>
+              <strong>Lịch hẹn kế tiếp:</strong> {note.nextAppointment}
+            </p>
+            {note.images.length > 0 && (
+              <div className="image-gallery">
+                {note.images.map((img, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(img)}
+                    alt={`Ảnh ${index + 1}`}
+                  />
                 ))}
               </div>
-              <div className="history-navigation">
-                <motion.button
-                  onClick={prevHistoryPage}
-                  disabled={currentHistoryPage === 0}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FaChevronLeft />
-                </motion.button>
-                <motion.button
-                  onClick={nextHistoryPage}
-                  disabled={(currentHistoryPage + 1) * 3 >= mockHistory.length}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <FaChevronRight />
-                </motion.button>
-              </div>
-              <motion.button
-                className="close-history"
-                onClick={() => setShowHistory(false)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <FaTimes />
-              </motion.button>
-            </motion.div>
+            )}
           </motion.div>
-        )}
-      </AnimatePresence>
+        ))}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default DoctorNotes
-
+export default DoctorNotes;

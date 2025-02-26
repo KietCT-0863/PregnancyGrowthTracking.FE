@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const userData = localStorage.getItem('userData');
+    const userData = localStorage.getItem("userData");
     return userData ? JSON.parse(userData) : null;
   });
   const [loading, setLoading] = useState(true);
@@ -36,9 +36,9 @@ export const AuthProvider = ({ children }) => {
         userName: response.userName,
         email: response.email,
         role: response.role,
-        userId: response.userId
+        userId: response.userId,
       };
-      localStorage.setItem('userData', JSON.stringify(userData));
+      localStorage.setItem("userData", JSON.stringify(userData));
       setUser(userData);
       return response;
     } catch (error) {
