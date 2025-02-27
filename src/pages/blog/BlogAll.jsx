@@ -12,35 +12,26 @@ const BlogAll = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [sortOption, setSortOption] = useState("newest");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/posts");
+        const response = await fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog");
         if (!response.ok) {
           throw new Error("Không thể tải danh sách bài viết");
         }
         const data = await response.json();
-        // Thêm trường createdAt và views giả lập cho mỗi bài viết
-        const blogsWithExtra = data.posts.map((post) => ({
-          ...post,
-          createdAt: new Date(
-            2024 - Math.floor(Math.random() * 2),
-            Math.floor(Math.random() * 12),
-            Math.floor(Math.random() * 28)
-          ).toISOString(),
-          views: Math.floor(Math.random() * 1000),
-        }));
-        setBlogs(blogsWithExtra);
+        setBlogs(data);
 
-        // Tạo danh sách tags duy nhất
-        const allTags = blogsWithExtra.reduce((tags, post) => {
-          return [...tags, ...(post.tags || [])];
+        // Tạo danh sách categories duy nhất từ tất cả bài viết
+        const allCategories = data.reduce((acc, post) => {
+          const postCategories = post.categories?.map(cat => cat.categoryName) || [];
+          return [...acc, ...postCategories];
         }, []);
-        const uniqueTags = [...new Set(allTags)];
-        setAvailableTags(uniqueTags);
+        const uniqueCategories = [...new Set(allCategories)];
+        setAvailableCategories(uniqueCategories);
       } catch (err) {
         console.error("Error fetching blogs:", err);
         setError(err.message);
@@ -81,10 +72,12 @@ const BlogAll = () => {
         );
       }
 
-      // Lọc theo tags
-      if (selectedTags.length > 0) {
+      // Lọc theo categories
+      if (selectedCategories.length > 0) {
         results = results.filter((blog) =>
-          selectedTags.every((tag) => blog.tags?.includes(tag))
+          selectedCategories.every((category) => 
+            blog.categories?.some(cat => cat.categoryName === category)
+          )
         );
       }
 
@@ -94,13 +87,13 @@ const BlogAll = () => {
     };
 
     filterAndSortBlogs();
-  }, [searchTerm, blogs, sortOption, selectedTags]);
+  }, [searchTerm, blogs, sortOption, selectedCategories]);
 
-  const handleTagClick = (tag) => {
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag]
+  const handleCategoryClick = (category) => {
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((c) => c !== category)
+        : [...prevCategories, category]
     );
     setCurrentPage(1);
   };
@@ -174,22 +167,22 @@ const BlogAll = () => {
         </div>
 
         <div className="tags-container">
-          {availableTags.map((tag) => (
+          {availableCategories.map((category) => (
             <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
+              key={category}
+              onClick={() => handleCategoryClick(category)}
               className={`tag-button ${
-                selectedTags.includes(tag) ? "active" : ""
+                selectedCategories.includes(category) ? "active" : ""
               }`}
             >
-              {tag}
+              {category}
             </button>
           ))}
         </div>
       </div>
 
       <div className="blog-grid">
-        {currentBlogs.map(({ id, title, body, userId, createdAt, views }) => (
+        {currentBlogs.map(({ id, title, body }) => (
           <div key={id} className="blog-card">
             <div className="blog-image">
               <img
@@ -203,15 +196,10 @@ const BlogAll = () => {
               <div className="blog-meta">
                 <span className="blog-date">
                   <Calendar size={16} />
-                  {new Date(createdAt).toLocaleDateString("vi-VN")}
+                  {new Date().toLocaleDateString("vi-VN")}
                 </span>
-                <span className="blog-author">
-                  <User size={16} />
-                  {`Tác giả ${userId}`}
-                </span>
-                <span className="blog-views">👁️ {views} lượt xem</span>
               </div>
-              <Link to={`/member/blog/${id}`} className="read-more">
+              <Link to={`/blog/${id}`} className="read-more">
                 Đọc thêm
               </Link>
             </div>

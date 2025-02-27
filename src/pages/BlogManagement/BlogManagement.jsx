@@ -25,37 +25,28 @@ const BlogManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [availableTags, setAvailableTags] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const postsPerPage = 5;
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/posts");
+        const response = await fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog");
         if (!response.ok) throw new Error("Không thể tải danh sách bài viết");
         const data = await response.json();
 
-        // Thêm trường createdAt và views giả lập
-        const postsWithExtra = data.posts.map((post) => ({
-          ...post,
-          createdAt: new Date(
-            2024 - Math.floor(Math.random() * 2),
-            Math.floor(Math.random() * 12),
-            Math.floor(Math.random() * 28)
-          ).toISOString(),
-          views: Math.floor(Math.random() * 1000),
-        }));
-        setPosts(postsWithExtra);
+        setPosts(data);
 
-        // Tạo danh sách tags duy nhất
-        const allTags = postsWithExtra.reduce((tags, post) => {
-          return [...tags, ...(post.tags || [])];
+        // Tạo danh sách categories duy nhất
+        const allCategories = data.reduce((acc, post) => {
+          const postCategories = post.categories?.map(cat => cat.categoryName) || [];
+          return [...acc, ...postCategories];
         }, []);
-        const uniqueTags = [...new Set(allTags)];
-        setAvailableTags(uniqueTags);
-        setFilteredPosts(postsWithExtra);
+        const uniqueCategories = [...new Set(allCategories)];
+        setAvailableCategories(uniqueCategories);
+        setFilteredPosts(data);
       } catch (error) {
         console.error("Error fetching posts:", error);
       } finally {
@@ -77,8 +68,6 @@ const BlogManagement = () => {
         return sorted.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-      case "popular":
-        return sorted.sort((a, b) => b.views - a.views);
       default:
         return sorted;
     }
@@ -95,27 +84,29 @@ const BlogManagement = () => {
         );
       }
 
-      // Lọc theo tags
-      if (selectedTags.length > 0) {
+      // Lọc theo categories
+      if (selectedCategories.length > 0) {
         results = results.filter((post) =>
-          selectedTags.every((tag) => post.tags?.includes(tag))
+          selectedCategories.every((category) => 
+            post.categories?.some(cat => cat.categoryName === category)
+          )
         );
       }
 
       // Sắp xếp kết quả
       results = sortPosts(results);
       setFilteredPosts(results);
-      setPage(1); // Reset về trang 1 khi filter thay đổi
+      setPage(1);
     };
 
     filterAndSortPosts();
-  }, [searchTerm, posts, sortOption, selectedTags]);
+  }, [searchTerm, posts, sortOption, selectedCategories]);
 
-  const handleTagClick = (tag) => {
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag]
+  const handleCategoryClick = (category) => {
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((c) => c !== category)
+        : [...prevCategories, category]
     );
   };
 
@@ -163,20 +154,19 @@ const BlogManagement = () => {
             <option value="newest">Mới nhất</option>
             <option value="a-z">A đến Z</option>
             <option value="z-a">Z đến A</option>
-            <option value="popular">Phổ biến nhất</option>
           </select>
         </Box>
 
-        <Box className="tags-container">
-          {availableTags.map((tag) => (
+        <Box className="categories-container">
+          {availableCategories.map((category) => (
             <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
-              className={`tag-button ${
-                selectedTags.includes(tag) ? "active" : ""
+              key={category}
+              onClick={() => handleCategoryClick(category)}
+              className={`category-button ${
+                selectedCategories.includes(category) ? "active" : ""
               }`}
             >
-              {tag}
+              #{category}
             </button>
           ))}
         </Box>
@@ -195,25 +185,23 @@ const BlogManagement = () => {
                   <TableCell>ID</TableCell>
                   <TableCell>Tiêu đề</TableCell>
                   <TableCell>Ngày tạo</TableCell>
-                  <TableCell>Lượt xem</TableCell>
-                  <TableCell>Tags</TableCell>
+                  <TableCell>Categories</TableCell>
                   <TableCell>Hành động</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {displayedPosts.map(({ id, title, createdAt, views, tags }) => (
+                {displayedPosts.map(({ id, title, createdAt, categories }) => (
                   <TableRow key={id} className="table-row">
                     <TableCell>{id}</TableCell>
                     <TableCell>{title}</TableCell>
                     <TableCell>
                       {new Date(createdAt).toLocaleDateString("vi-VN")}
                     </TableCell>
-                    <TableCell>{views}</TableCell>
                     <TableCell>
-                      <div className="table-tags">
-                        {tags.map((tag) => (
-                          <span key={tag} className="tag-chip">
-                            {tag}
+                      <div className="table-categories">
+                        {categories?.map((cat) => (
+                          <span key={cat.categoryName} className="category-chip">
+                            #{cat.categoryName}
                           </span>
                         ))}
                       </div>

@@ -15,10 +15,15 @@ const BlogSlide = () => {
   const [viewMode, setViewMode] = useState("slider") // 'slider' or 'grid'
 
   useEffect(() => {
-    fetch("https://dummyjson.com/posts")
+    fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog")
       .then((response) => response.json())
       .then((data) => {
-        setPosts(data.posts)
+        // Sắp xếp bài viết theo thời gian tạo mới nhất
+        const sortedPosts = data.sort((a, b) => 
+          new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        // Chỉ lấy 8 bài viết mới nhất
+        setPosts(sortedPosts.slice(0, 8));
         setIsLoading(false)
       })
       .catch((error) => {
@@ -75,7 +80,7 @@ const BlogSlide = () => {
     ],
   }
 
-  const PostCard = ({ title, body, id }) => (
+  const PostCard = ({ title, body, id, categories }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -89,6 +94,16 @@ const BlogSlide = () => {
         <div className="post-content">
           <h3>{title}</h3>
           <p>{body.substring(0, 100)}...</p>
+          {categories && categories.length > 0 && (
+            <div className="post-categories">
+              {categories.map((cat, index) => (
+                <span key={cat.categoryName} className="category-tag">
+                  #{cat.categoryName}
+                  {index < categories.length - 1 ? ' ' : ''}
+                </span>
+              ))}
+            </div>
+          )}
           <Link to={`/blog/${id}`} className="read-more">
             Đọc thêm
             <span className="ripple"></span>

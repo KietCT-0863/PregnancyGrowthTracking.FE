@@ -10,27 +10,29 @@ const BlogPublic = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [sortOption, setSortOption] = useState("newest");
-  const [availableTags, setAvailableTags] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("https://dummyjson.com/posts");
+        const response = await fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog");
         if (!response.ok) {
           throw new Error("Không thể tải danh sách bài viết");
         }
         const data = await response.json();
-        setBlogs(data.posts);
+        setBlogs(data);
+        console.log(data);
 
-        // Tạo danh sách tags duy nhất từ tất cả bài viết
-        const allTags = data.posts.reduce((tags, post) => {
-          return [...tags, ...(post.tags || [])];
+        // Tạo danh sách categories duy nhất từ tất cả bài viết
+        const allCategories = data.reduce((acc, post) => {
+          const postCategories = post.categories?.map(cat => cat.categoryName) || [];
+          return [...acc, ...postCategories];
         }, []);
-        const uniqueTags = [...new Set(allTags)];
-        setAvailableTags(uniqueTags);
+        const uniqueCategories = [...new Set(allCategories)];
+        setAvailableCategories(uniqueCategories);
       } catch (err) {
         console.error("Error fetching blogs:", err);
         setError(err.message);
@@ -53,10 +55,12 @@ const BlogPublic = () => {
         );
       }
 
-      // Lọc theo tags
-      if (selectedTags.length > 0) {
+      // Lọc theo categories
+      if (selectedCategories.length > 0) {
         results = results.filter((blog) =>
-          selectedTags.every((tag) => blog.tags?.includes(tag))
+          selectedCategories.every((category) => 
+            blog.categories?.some(cat => cat.categoryName === category)
+          )
         );
       }
 
@@ -64,7 +68,7 @@ const BlogPublic = () => {
     };
 
     filterBlogs();
-  }, [searchTerm, blogs, sortOption, selectedTags]);
+  }, [searchTerm, blogs, sortOption, selectedCategories]);
 
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
@@ -102,11 +106,11 @@ const BlogPublic = () => {
     }
   };
 
-  const handleTagClick = (tag) => {
-    setSelectedTags((prevTags) =>
-      prevTags.includes(tag)
-        ? prevTags.filter((t) => t !== tag)
-        : [...prevTags, tag]
+  const handleCategoryClick = (category) => {
+    setSelectedCategories((prevCategories) =>
+      prevCategories.includes(category)
+        ? prevCategories.filter((c) => c !== category)
+        : [...prevCategories, category]
     );
     setCurrentPage(1);
   };
@@ -162,22 +166,22 @@ const BlogPublic = () => {
         </div>
 
         <div className="tags-container">
-          {availableTags.map((tag) => (
+          {availableCategories.map((category) => (
             <button
-              key={tag}
-              onClick={() => handleTagClick(tag)}
+              key={category}
+              onClick={() => handleCategoryClick(category)}
               className={`tag-button ${
-                selectedTags.includes(tag) ? "active" : ""
+                selectedCategories.includes(category) ? "active" : ""
               }`}
             >
-              {tag}
+              {category}
             </button>
           ))}
         </div>
       </div>
 
       <div className="blog-grid">
-        {currentBlogs.map(({ id, title, body, userId }) => (
+        {currentBlogs.map(({ id, title, body }) => (
           <div key={id} className="blog-card">
             <div className="blog-image">
               <img
@@ -193,10 +197,7 @@ const BlogPublic = () => {
                   <Calendar size={16} />
                   {new Date().toLocaleDateString("vi-VN")}
                 </span>
-                <span className="blog-author">
-                  <User size={16} />
-                  {`Tác giả ${userId}`}
-                </span>
+               
               </div>
               <Link to={`/blog/${id}`} className="read-more">
                 Đọc thêm
