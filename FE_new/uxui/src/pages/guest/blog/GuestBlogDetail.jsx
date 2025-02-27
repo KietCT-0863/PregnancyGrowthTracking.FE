@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react"
-import { useParams, Link } from "react-router-dom"
-import { Loader, Calendar, User, ArrowLeft } from "lucide-react"
-import "./GuestBlogDetail.scss"
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Loader, Calendar, User, ArrowLeft } from "lucide-react";
+import "./GuestBlogDetail.scss";
 
 const GuestBlogDetail = () => {
-  const [post, setPost] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { id } = useParams()
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`https://dummyjson.com/posts/${id}`)
+        const response = await fetch(`https://dummyjson.com/posts/${id}`);
         if (!response.ok) {
-          throw new Error("Không thể tải bài viết")
+          throw new Error("Không thể tải bài viết");
         }
-        const data = await response.json()
+        const data = await response.json();
 
-        setPost(data)
-        setLoading(false)
+        setPost(data);
+        setLoading(false);
       } catch (err) {
-        setError(err.message)
-        setLoading(false)
+        setError(err.message);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchPost()
-  }, [id])
+    fetchPost();
+  }, [id]);
 
   if (loading) {
     return (
@@ -35,7 +35,7 @@ const GuestBlogDetail = () => {
         <Loader className="spinner" />
         <p>Đang tải bài viết...</p>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -43,10 +43,10 @@ const GuestBlogDetail = () => {
       <div className="error-container">
         <p>Có lỗi xảy ra: {error}</p>
       </div>
-    )
+    );
   }
 
-  if (!post) return null
+  if (!post) return null;
 
   return (
     <div className="guest-blog-detail">
@@ -56,7 +56,10 @@ const GuestBlogDetail = () => {
           Quay lại
         </Link>
         <div className="blog-detail-image">
-          <img src={`https://picsum.photos/seed/${post.id}/1200/600`} alt={post.title} />
+          <img
+            src={`https://picsum.photos/seed/${post.id}/1200/600`}
+            alt={post.title}
+          />
         </div>
         <h1>{post.title}</h1>
         <div className="blog-detail-meta">
@@ -75,14 +78,14 @@ const GuestBlogDetail = () => {
         <div className="blog-detail-tags">
           {post.tags.map((tag, index) => (
             <span key={index} className="tag">
-              #{tag}
+              {tag}
             </span>
           ))}
         </div>
         <p>{post.body}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GuestBlogDetail 
+export default GuestBlogDetail;

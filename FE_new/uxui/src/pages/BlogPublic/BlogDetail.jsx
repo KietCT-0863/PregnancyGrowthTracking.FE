@@ -86,7 +86,7 @@ const BlogDetailPublic = () => {
         <div className="blog-detail-tags">
           {post.tags.map((tag, index) => (
             <span key={index} className="tag">
-              #{tag}
+              {tag}
             </span>
           ))}
         </div>

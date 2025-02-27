@@ -177,7 +177,7 @@ const GuestBlogAll = () => {
                 selectedTags.includes(tag) ? "active" : ""
               }`}
             >
-              #{tag}
+              {tag}
             </button>
           ))}
         </div>

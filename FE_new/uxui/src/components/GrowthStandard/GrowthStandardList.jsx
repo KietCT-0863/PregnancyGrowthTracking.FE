@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -10,11 +10,11 @@ import {
   Button,
   Box,
   Typography,
-  CircularProgress
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import GrowthStandardForm from './GrowthStandardForm';
+  CircularProgress,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import GrowthStandardForm from "./GrowthStandardForm";
 
 const GrowthStandardList = () => {
   const [standards, setStandards] = useState([]);
@@ -26,25 +26,28 @@ const GrowthStandardList = () => {
   const fetchStandards = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token'); // Lấy token từ localStorage
-      
-      const response = await fetch('https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/GrowthStandard', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const token = localStorage.getItem("token"); // Lấy token từ localStorage
+
+      const response = await fetch(
+        "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/GrowthStandard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        throw new Error("Failed to fetch data");
       }
 
       const data = await response.json();
       setStandards(data);
       setError(null);
     } catch (error) {
-      console.error('Error fetching growth standards:', error);
-      setError('Không thể tải dữ liệu. Vui lòng thử lại sau.');
+      console.error("Error fetching growth standards:", error);
+      setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
@@ -72,7 +75,14 @@ const GrowthStandardList = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "400px",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -80,7 +90,7 @@ const GrowthStandardList = () => {
 
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', color: 'error.main', mt: 2 }}>
+      <Box sx={{ textAlign: "center", color: "error.main", mt: 2 }}>
         {error}
       </Box>
     );
@@ -88,19 +98,15 @@ const GrowthStandardList = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
         <Typography variant="h5">Quản lý Growth Standard</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAdd}
-        >
+        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
           Thêm mới
         </Button>
       </Box>
 
       {standards.length === 0 ? (
-        <Typography sx={{ textAlign: 'center', mt: 2 }}>
+        <Typography sx={{ textAlign: "center", mt: 2 }}>
           Chưa có dữ liệu
         </Typography>
       ) : (
@@ -150,4 +156,4 @@ const GrowthStandardList = () => {
   );
 };
 
-export default GrowthStandardList; 
+export default GrowthStandardList;

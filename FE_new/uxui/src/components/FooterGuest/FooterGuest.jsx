@@ -1,13 +1,19 @@
 "use client";
 
-import { FaFacebookF, FaInstagram, FaYoutube, FaHeart } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaHeart,
+  FaCalendarAlt,
+} from "react-icons/fa";
 
 import { motion } from "framer-motion";
-import "./FooterMember.scss";
+import "./FooterGuest.scss";
 
 const footerSections = [];
 
-const FooterMember = () => {
+const FooterGuest = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
@@ -90,4 +96,4 @@ const FooterMember = () => {
   );
 };
 
-export default FooterMember;
+export default FooterGuest;

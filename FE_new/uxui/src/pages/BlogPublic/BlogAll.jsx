@@ -170,7 +170,7 @@ const BlogPublic = () => {
                 selectedTags.includes(tag) ? "active" : ""
               }`}
             >
-              #{tag}
+              {tag}
             </button>
           ))}
         </div>

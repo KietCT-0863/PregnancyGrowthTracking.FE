@@ -182,7 +182,7 @@ const BlogAll = () => {
                 selectedTags.includes(tag) ? "active" : ""
               }`}
             >
-              #{tag}
+              {tag}
             </button>
           ))}
         </div>

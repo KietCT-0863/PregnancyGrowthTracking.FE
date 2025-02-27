@@ -9,11 +9,11 @@ import {
 } from "react-icons/fa";
 
 import { motion } from "framer-motion";
-import "./FooterGuest.scss";
+import "./FooterMember.scss";
 
 const footerSections = [];
 
-const Footer = () => {
+const FooterMember = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
@@ -96,4 +96,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default FooterMember;

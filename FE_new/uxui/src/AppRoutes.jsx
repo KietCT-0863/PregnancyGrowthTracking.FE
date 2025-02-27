@@ -27,12 +27,12 @@ import FAQ from "./pages/FAQ/FAQ";
 import FAQDetail from "./pages/FAQ/FAQDetail";
 import FAQAll from "./pages/FAQ/FAQAll";
 import Contact from "./pages/Contact/Contact";
-import NavBarGuest from "./components/NavBar_Guest/NavBarGuest";
-import FooterGuest from "./components/Footer_Guest/FooterGuest";
+import NavBarGuest from "./components/NavBarGuest/NavBarGuest";
+import FooterGuest from "./components/FooterGuest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
-import NavbarMember from "./components/NavBarMember/NavBarMember";
-import FooterMember from "./components/Footer_Member/FooterMember";
-import Navbar from "./components/Navbar/Navbar";
+import NavBarMember from "./components/NavBarMember/NavBarMember";
+import FooterMember from "./components/FooterMember/FooterMember";
+import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import BlogCreate from "./pages/BlogManagement/BlogCreate";
 import BlogChange from "./pages/BlogManagement/BlogChange";
@@ -50,7 +50,7 @@ const AppRoutes = () => {
         path="/"
         element={
           <>
-            <Navbar />
+            <NavBar />
             <div style={{ margin: "20px 0" }} />
             <Outlet />
             <div style={{ margin: "20px 0" }} />
@@ -103,7 +103,7 @@ const AppRoutes = () => {
         path="/member"
         element={
           <ProtectedBasicUserRoute>
-            <NavbarMember />
+            <NavBarMember />
             <div style={{ margin: "20px 0" }} />
             <Outlet />
             <div style={{ margin: "20px 0" }} />

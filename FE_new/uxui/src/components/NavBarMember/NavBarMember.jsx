@@ -26,7 +26,7 @@ const NavLink = ({ to, children, icon }) => {
   );
 };
 
-const NavbarMember = () => {
+const NavBarMember = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -165,4 +165,4 @@ const NavbarMember = () => {
   );
 };
 
-export default NavbarMember;
+export default NavBarMember;

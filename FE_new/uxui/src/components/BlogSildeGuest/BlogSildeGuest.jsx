@@ -1,43 +1,49 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Slider from "react-slick"
-import "slick-carousel/slick/slick.css"
-import "slick-carousel/slick/slick-theme.css"
-import "./BlogSildeGuest.scss"
-import { Link } from "react-router-dom"
-import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react"
-import { motion } from "framer-motion"
+import { useEffect, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./BlogSildeGuest.scss";
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react";
+import { motion } from "framer-motion";
 
-const BlogSlide = () => {
-  const [posts, setPosts] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [viewMode, setViewMode] = useState("slider") // 'slider' or 'grid'
+const BlogSildeGuest = () => {
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState("slider"); // 'slider' or 'grid'
 
   useEffect(() => {
     fetch("https://dummyjson.com/posts")
       .then((response) => response.json())
       .then((data) => {
-        setPosts(data.posts)
-        setIsLoading(false)
+        setPosts(data.posts);
+        setIsLoading(false);
       })
       .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu:", error)
-        setIsLoading(false)
-      })
-  }, [])
+        console.error("Lỗi khi lấy dữ liệu:", error);
+        setIsLoading(false);
+      });
+  }, []);
 
   const CustomPrevArrow = (props) => (
-    <button className="slick-arrow slick-prev custom-arrow" onClick={props.onClick}>
+    <button
+      className="slick-arrow slick-prev custom-arrow"
+      onClick={props.onClick}
+    >
       <ChevronLeft size={24} />
     </button>
-  )
+  );
 
   const CustomNextArrow = (props) => (
-    <button className="slick-arrow slick-next custom-arrow" onClick={props.onClick}>
+    <button
+      className="slick-arrow slick-next custom-arrow"
+      onClick={props.onClick}
+    >
       <ChevronRight size={24} />
     </button>
-  )
+  );
 
   const settings = {
     dots: true,
@@ -73,7 +79,7 @@ const BlogSlide = () => {
         },
       },
     ],
-  }
+  };
 
   const PostCard = ({ title, body, id }) => (
     <motion.div
@@ -96,7 +102,7 @@ const BlogSlide = () => {
         </div>
       </div>
     </motion.div>
-  )
+  );
 
   return (
     <section className="blog-posts">
@@ -107,7 +113,11 @@ const BlogSlide = () => {
       </div>
 
       <div className="blog-header">
-        <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
           Bài viết mới nhất
         </motion.h2>
         <div className="view-toggle">
@@ -117,7 +127,10 @@ const BlogSlide = () => {
           >
             <List size={20} />
           </button>
-          <button className={`toggle-btn ${viewMode === "grid" ? "active" : ""}`} onClick={() => setViewMode("grid")}>
+          <button
+            className={`toggle-btn ${viewMode === "grid" ? "active" : ""}`}
+            onClick={() => setViewMode("grid")}
+          >
             <Grid size={20} />
           </button>
         </div>
@@ -151,8 +164,7 @@ const BlogSlide = () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default BlogSlide
-
+export default BlogSildeGuest;
