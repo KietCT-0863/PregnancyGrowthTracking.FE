@@ -1,7 +1,7 @@
 "use client";
-import { RiVipCrown2Line } from "react-icons/ri";
+
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import {
   FaBabyCarriage,
@@ -12,7 +12,7 @@ import {
   FaUserCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
-import "./NavBarGuest.scss";
+import "./Navbar.scss";
 
 const NavLink = ({ to, children, icon }) => {
   const location = useLocation();
@@ -26,12 +26,11 @@ const NavLink = ({ to, children, icon }) => {
   );
 };
 
-const NavBarGuest = () => {
+const NavBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,7 +44,6 @@ const NavBarGuest = () => {
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ] === "admin"
         );
-        localStorage.setItem("userName", decoded.name);
       } catch (error) {
         console.error("Token decode error:", error);
         localStorage.removeItem("token");
@@ -61,14 +59,13 @@ const NavBarGuest = () => {
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsAdmin(false);
-    navigate("/");
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="nav-section logo-section">
-          <Link to="/basic-user" className="navbar-logo">
+          <Link to="/" className="navbar-logo">
             <img
               src="/Logo bau-02.png"
               alt="Mẹ Bầu"
@@ -111,16 +108,13 @@ const NavBarGuest = () => {
             </NavLink>
           </div>
           <div className="nav-item">
-            <NavLink
-              to="/basic-user/blog"
-              icon={<FaBlog className="nav-icon" />}
-            >
+            <NavLink to="/blog" icon={<FaBlog className="nav-icon" />}>
               Blog
             </NavLink>
           </div>
           <div className="nav-item">
             <NavLink
-              to="/basic-user/community"
+              to="/member/community"
               icon={<FaUsers className="nav-icon" />}
             >
               Cộng Đồng
@@ -140,26 +134,13 @@ const NavBarGuest = () => {
             </>
           ) : (
             <div className="user-menu">
-              <div
-                className="user-actions"
-                style={{ display: "flex", alignItems: "center" }}
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="user-menu-button"
               >
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="user-menu-button"
-                >
-                  <FaUserCircle className="user-icon" />
-                  <span>{userInfo?.name || "Người dùng"}</span>
-                  <div className="user-menu">
-                    <button
-                      className="btn btn-vip"
-                      onClick={() => navigate("/basic-user/choose-vip")}
-                    >
-                      Đăng ký VIP <RiVipCrown2Line />
-                    </button>
-                  </div>
-                </button>
-              </div>
+                <FaUserCircle className="user-icon" />
+                <span>{userInfo?.name || "Người dùng"}</span>
+              </button>
               {isDropdownOpen && (
                 <div className="user-dropdown">
                   <div className="user-info">
@@ -181,4 +162,4 @@ const NavBarGuest = () => {
   );
 };
 
-export default NavBarGuest;
+export default NavBar;
