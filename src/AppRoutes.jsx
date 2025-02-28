@@ -5,7 +5,6 @@ import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
 import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
-
 import Register from "./pages/Register/Register";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
 import AdminLayout from "../layout/AdminLayout/AdminLayout";

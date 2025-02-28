@@ -10,9 +10,9 @@ const BlogAll = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [filteredBlogs, setFilteredBlogs] = useState([]);
   const [sortOption, setSortOption] = useState("newest");
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [availableCategories, setAvailableCategories] = useState([]);
 
   useEffect(() => {
@@ -25,16 +25,20 @@ const BlogAll = () => {
           throw new Error("Không thể tải danh sách bài viết");
         }
         const data = await response.json();
-        setBlogs(data);
-
-        // Tạo danh sách categories duy nhất từ tất cả bài viết
-        const allCategories = data.reduce((acc, post) => {
-          const postCategories =
-            post.categories?.map((cat) => cat.categoryName) || [];
-          return [...acc, ...postCategories];
-        }, []);
-        const uniqueCategories = [...new Set(allCategories)];
-        setAvailableCategories(uniqueCategories);
+        setBlogs(data.posts);
+        
+        const allCategories = data.posts.reduce((acc, post) => {
+          if (post.categories && Array.isArray(post.categories)) {
+            post.categories.forEach(category => {
+              if (typeof category === 'string') {
+                acc.add(category);
+              }
+            });
+          }
+          return acc;
+        }, new Set());
+        
+        setAvailableCategories([...allCategories]);
       } catch (err) {
         console.error("Error fetching blogs:", err);
         setError(err.message);
@@ -45,6 +49,50 @@ const BlogAll = () => {
 
     fetchBlogs();
   }, []);
+
+  useEffect(() => {
+    const filterBlogs = () => {
+      let results = [...blogs];
+
+      // Lọc theo search term
+      if (searchTerm) {
+        results = results.filter((blog) =>
+          blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      // Sửa lại logic lọc theo categories
+      if (selectedCategories.length > 0) {
+        results = results.filter((blog) =>
+          blog.categories?.some(category => 
+            selectedCategories.includes(category)
+          )
+        );
+      }
+
+      setFilteredBlogs(sortBlogs(results));
+    };
+
+    filterBlogs();
+  }, [searchTerm, blogs, sortOption, selectedCategories]);
+
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const sortBlogs = (blogsToSort) => {
     const sorted = [...blogsToSort];
@@ -64,34 +112,6 @@ const BlogAll = () => {
     }
   };
 
-  useEffect(() => {
-    const filterAndSortBlogs = () => {
-      let results = [...blogs];
-
-      // Lọc theo search term
-      if (searchTerm) {
-        results = results.filter((blog) =>
-          blog.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      // Lọc theo categories
-      if (selectedCategories.length > 0) {
-        results = results.filter((blog) =>
-          selectedCategories.every((category) =>
-            blog.categories?.some((cat) => cat.categoryName === category)
-          )
-        );
-      }
-
-      // Sắp xếp kết quả
-      results = sortBlogs(results);
-      setFilteredBlogs(results);
-    };
-
-    filterAndSortBlogs();
-  }, [searchTerm, blogs, sortOption, selectedCategories]);
-
   const handleCategoryClick = (category) => {
     setSelectedCategories((prevCategories) =>
       prevCategories.includes(category)
@@ -99,24 +119,6 @@ const BlogAll = () => {
         : [...prevCategories, category]
     );
     setCurrentPage(1);
-  };
-
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-
-  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
   };
 
   if (loading) {
@@ -170,9 +172,9 @@ const BlogAll = () => {
         </div>
 
         <div className="tags-container">
-          {availableCategories.map((category) => (
+          {availableCategories.map((category, index) => (
             <button
-              key={category}
+              key={index}
               onClick={() => handleCategoryClick(category)}
               className={`tag-button ${
                 selectedCategories.includes(category) ? "active" : ""
@@ -202,7 +204,7 @@ const BlogAll = () => {
                   {new Date().toLocaleDateString("vi-VN")}
                 </span>
               </div>
-              <Link to={`/blog/${id}`} className="read-more">
+              <Link to={`/member/blog/${id}`} className="read-more">
                 Đọc thêm
               </Link>
             </div>

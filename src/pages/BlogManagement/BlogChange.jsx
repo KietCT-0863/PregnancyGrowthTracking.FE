@@ -1,341 +1,188 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Editor } from "@tinymce/tinymce-react";
 import { ToastContainer, toast } from "react-toastify";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Chip,
+  Paper
+} from '@mui/material';
 import "./BlogChange.scss";
 
-const BlogChange = () => {
+const API_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
+
+const AVAILABLE_CATEGORIES = [
+  "french", "fiction", "english", "history", "magical",
+  "american", "mystery", "crime", "love", "classic"
+];
+
+const EDITOR_CONFIG = {
+  plugins: ["anchor", "autolink", "charmap", "lists", "media", "table"],
+  toolbar: "undo redo | blocks | bold italic | link image | align | lists",
+  height: 400
+};
+
+const BlogChange = ({ open, onClose }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  
   const [post, setPost] = useState({
     title: "",
     body: "",
     categories: [],
-    image: "",
+    image: ""
   });
-  const [isTitleEditorVisible, setIsTitleEditorVisible] = useState(false);
-  const [isBodyEditorVisible, setIsBodyEditorVisible] = useState(false);
-  const [availableCategories] = useState([
-    "french",
-    "fiction",
-    "english",
-    "history",
-    "magical",
-    "american",
-    "mystery",
-    "crime",
-    "love",
-    "classic",
-  ]);
-
-  const editorConfig = {
-    plugins: [
-      "anchor",
-      "autolink",
-      "charmap",
-      "codesample",
-      "emoticons",
-      "image",
-      "link",
-      "lists",
-      "media",
-      "searchreplace",
-      "table",
-      "visualblocks",
-      "wordcount",
-      "checklist",
-      "mediaembed",
-      "casechange",
-      "export",
-      "formatpainter",
-      "pageembed",
-      "a11ychecker",
-      "tinymcespellchecker",
-      "permanentpen",
-      "powerpaste",
-      "advtable",
-      "advcode",
-      "editimage",
-      "advtemplate",
-      "ai",
-      "mentions",
-      "tinycomments",
-      "tableofcontents",
-      "footnotes",
-      "mergetags",
-      "autocorrect",
-      "typography",
-      "inlinecss",
-    ],
-    toolbar:
-      "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
-    tinycomments_mode: "embedded",
-    tinycomments_author: "Author name",
-  };
 
   useEffect(() => {
-    // Fetch the blog post by ID
-    fetch(
-      `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        // Tìm bài viết có id tương ứng
-        const blogPost = data.find((post) => post.id === parseInt(id));
+    const fetchBlog = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(API_URL, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error("Không thể tải dữ liệu");
+        
+        const { posts } = await response.json();
+        const blogPost = posts.find(post => post.id === parseInt(id));
 
         if (blogPost) {
+          const formattedCategories = blogPost.categories?.map(cat => 
+            typeof cat === 'string' ? cat : cat.categoryName
+          ) || [];
+
           setPost({
-            title: blogPost.title,
-            body: blogPost.body,
-            categories: blogPost.categories || [],
-            image: blogPost.image || "",
+            title: blogPost.title || "",
+            body: blogPost.body || "",
+            categories: formattedCategories,
+            image: blogPost.image || ""
           });
-        } else {
-          toast.info("Tạo bài viết mới");
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching blog:", error);
+      } catch (error) {
+        console.error("Error:", error);
         toast.error("Không thể tải thông tin bài viết!");
-      });
+      }
+    };
+
+    if (id) fetchBlog();
   }, [id]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  
+  console.log(post);
+  const handleSubmit = async () => {
     try {
-      const response = await fetch(
-        `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: id,
-            title: post.title,
-            body: post.body,
-            categories: post.categories.map((cat) => ({ categoryName: cat })),
-          }),
-        }
+      const token = localStorage.getItem('token');
+      
+      const formattedCategories = post.categories.map(cat => 
+        typeof cat === 'string' ? cat : cat.categoryName
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const requestBody = {
+        id: parseInt(id),
+        title: post.title || "",
+        body: post.body || "",
+        categories: formattedCategories,
+        image: post.image || "",
+      };
 
+      console.log('Request body:', requestBody);
+
+      const response = await fetch(API_URL, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        throw new Error(errorData.message || 'Lỗi server');
+      }
+      
       toast.success("Cập nhật bài viết thành công!");
-      setTimeout(() => {
-        navigate("/admin/blogs");
-      }, 2000);
+      setTimeout(() => navigate("/admin/blogs"), 2000);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Đã xảy ra lỗi khi cập nhật bài viết!");
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      toast.success("Xóa bài viết thành công!");
-      navigate("/admin/blogs");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Đã xảy ra lỗi khi xóa bài viết!");
+      toast.error(`Lỗi: ${error.message}`);
     }
   };
 
   const handleCategoryToggle = (category) => {
-    setPost((prevPost) => {
-      const currentCategories = prevPost.categories.map((cat) =>
-        typeof cat === "string" ? cat : cat.categoryName
-      );
-
-      if (currentCategories.includes(category)) {
-        // Remove category
-        const newCategories = currentCategories.filter(
-          (cat) => cat !== category
-        );
-        return {
-          ...prevPost,
-          categories: newCategories.map((cat) => ({ categoryName: cat })),
-        };
-      } else {
-        // Add category
-        const newCategories = [...currentCategories, category];
-        return {
-          ...prevPost,
-          categories: newCategories.map((cat) => ({ categoryName: cat })),
-        };
-      }
-    });
-  };
-
-  const handleSave = async () => {
-    try {
-      // Nếu có id, sử dụng PUT để cập nhật bản nháp
-      // Nếu không có id, sử dụng POST để tạo mới
-      const url = id
-        ? `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog/${id}`
-        : "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
-
-      const method = id ? "PUT" : "POST";
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...(id && { id: id }), // Chỉ thêm id nếu là cập nhật
-          title: post.title,
-          body: post.body,
-          categories: post.categories.map((cat) =>
-            typeof cat === "string" ? { categoryName: cat } : cat
-          ),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      toast.success(
-        id ? "Lưu bản nháp thành công!" : "Tạo bài viết mới thành công!"
-      );
-      setTimeout(() => {
-        navigate("/admin/blogs");
-      }, 2000);
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error(
-        id
-          ? "Đã xảy ra lỗi khi lưu bản nháp!"
-          : "Đã xảy ra lỗi khi tạo bài viết mới!"
-      );
-    }
+    setPost(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category]
+    }));
   };
 
   return (
-    <div className="blog-change-container">
-      <h1>{id ? "Chỉnh sửa Blog" : "Tạo Blog Mới"}</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Tiêu đề:</label>
-          {isTitleEditorVisible ? (
+    <Dialog open={true} maxWidth="md" fullWidth>
+      <DialogTitle>Chỉnh sửa Blog</DialogTitle>
+      
+      <DialogContent>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
+          <Box>
+            <h4>Tiêu đề</h4>
             <Editor
               apiKey="wd7qyd7yuks718m18g7067mk6ko2px16rtu4zekc8rmxp3hp"
-              initialValue={post.title}
+              value={post.title}
               init={{
-                ...editorConfig,
-                min_height: 100,
-                max_height: 200,
-                menubar: false,
+                ...EDITOR_CONFIG,
+                height: 100,
+                menubar: false
               }}
-              onEditorChange={(content) => setPost({ ...post, title: content })}
-              onBlur={() => setIsTitleEditorVisible(false)}
+              onEditorChange={(content) => setPost(prev => ({ ...prev, title: content }))}
             />
-          ) : (
-            <div
-              className="editor-placeholder"
-              onClick={() => setIsTitleEditorVisible(true)}
-            >
-              {post.title || "Nhấp vào đây để thêm tiêu đề..."}
-            </div>
-          )}
-        </div>
+          </Box>
 
-        <div className="form-group">
-          <label>Nội dung:</label>
-          {isBodyEditorVisible ? (
+          <Box>
+            <h4>Nội dung</h4>
             <Editor
               apiKey="wd7qyd7yuks718m18g7067mk6ko2px16rtu4zekc8rmxp3hp"
-              initialValue={post.body}
-              init={{
-                ...editorConfig,
-                height: 500,
-              }}
-              onEditorChange={(content) => setPost({ ...post, body: content })}
-              onBlur={() => setIsBodyEditorVisible(false)}
+              value={post.body}
+              init={EDITOR_CONFIG}
+              onEditorChange={(content) => setPost(prev => ({ ...prev, body: content }))}
             />
-          ) : (
-            <div
-              className="editor-placeholder"
-              onClick={() => setIsBodyEditorVisible(true)}
-            >
-              {post.body || "Nhấp vào đây để thêm nội dung..."}
-            </div>
-          )}
-        </div>
+          </Box>
 
-        <div className="form-group">
-          <label>Danh mục:</label>
-          <div className="categories-container">
-            {availableCategories.map((category) => (
-              <button
-                type="button"
-                key={category}
-                onClick={() => handleCategoryToggle(category)}
-                className={`category-button ${
-                  post.categories.some(
-                    (cat) =>
-                      (typeof cat === "string" ? cat : cat.categoryName) ===
-                      category
-                  )
-                    ? "active"
-                    : ""
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
+          <Box>
+            <h4>Danh mục</h4>
+            <Paper sx={{ p: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {AVAILABLE_CATEGORIES.map(category => (
+                <Chip
+                  key={category}
+                  label={category}
+                  onClick={() => handleCategoryToggle(category)}
+                  color={post.categories.includes(category) ? "primary" : "default"}
+                  clickable
+                />
+              ))}
+            </Paper>
+          </Box>
+        </Box>
+      </DialogContent>
 
-        <div className="button-group">
-          {!id ? (
-            <button type="button" onClick={handleSave} className="save-button">
-              Lưu bài viết
-            </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={handleSave}
-                className="save-button"
-              >
-                Lưu bản nháp
-              </button>
-              <button type="submit" className="submit-button">
-                Cập nhật bài viết
-              </button>
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="delete-button"
-              >
-                Xóa bài viết
-              </button>
-            </>
-          )}
-        </div>
-      </form>
+      <DialogActions>
+        <Button onClick={() => navigate("/admin/blogs")}>
+          Hủy
+        </Button>
+        <Button onClick={handleSubmit} variant="contained" color="primary">
+          Cập nhật
+        </Button>
+      </DialogActions>
+
       <ToastContainer />
-    </div>
+    </Dialog>
   );
 };
 

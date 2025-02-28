@@ -29,7 +29,7 @@ const BlogDetailPublic = () => {
           throw new Error("Không thể tải bài viết");
         }
         const data = await response.json();
-        const selectedPost = data.find((post) => post.id === parseInt(id));
+        const selectedPost = data.posts.find((posts) => posts.id === parseInt(id));
         if (!selectedPost) {
           throw new Error("Không tìm thấy bài viết");
         }
@@ -93,7 +93,7 @@ const BlogDetailPublic = () => {
         <div className="blog-detail-tags">
           {post.categories.map((category, index) => (
             <span key={index} className="tag">
-              {category.categoryName}
+             # {category}
             </span>
           ))}
         </div>

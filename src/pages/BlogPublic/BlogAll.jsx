@@ -26,12 +26,19 @@ const BlogPublic = () => {
         }
         const data = await response.json();
         setBlogs(data.posts);
-
-        const allCategories = data.posts.flatMap(
-          (post) => post.categories?.map((cat) => cat.categoryName) || []
-        );
-        const uniqueCategories = [...new Set(allCategories)];
-        setAvailableCategories(uniqueCategories);
+        
+        const allCategories = data.posts.reduce((acc, post) => {
+          if (post.categories && Array.isArray(post.categories)) {
+            post.categories.forEach(category => {
+              if (typeof category === 'string') {
+                acc.add(category);
+              }
+            });
+          }
+          return acc;
+        }, new Set());
+        
+        setAvailableCategories([...allCategories]);
       } catch (err) {
         console.error("Error fetching blogs:", err);
         setError(err.message);
@@ -54,11 +61,11 @@ const BlogPublic = () => {
         );
       }
 
-      // Lọc theo categories
+      // Sửa lại logic lọc theo categories
       if (selectedCategories.length > 0) {
         results = results.filter((blog) =>
-          selectedCategories.every((category) =>
-            blog.categories?.some((cat) => cat.categoryName === category)
+          blog.categories?.some(category => 
+            selectedCategories.includes(category)
           )
         );
       }
@@ -165,9 +172,9 @@ const BlogPublic = () => {
         </div>
 
         <div className="tags-container">
-          {availableCategories.map((category) => (
+          {availableCategories.map((category, index) => (
             <button
-              key={category}
+              key={index}
               onClick={() => handleCategoryClick(category)}
               className={`tag-button ${
                 selectedCategories.includes(category) ? "active" : ""

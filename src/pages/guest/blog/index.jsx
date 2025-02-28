@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-const BlogPublic = () => {
+const BlogGuest = () => {
   return (
     <div className="blog-container">
       <Outlet />
@@ -8,4 +8,4 @@ const BlogPublic = () => {
   );
 };
 
-export default BlogPublic;
+export default BlogGuest;

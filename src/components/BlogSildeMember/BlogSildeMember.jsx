@@ -1,54 +1,54 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import "./BlogSildeMember.scss";
-import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react"
+import Slider from "react-slick"
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
+import "./BlogSildeMember.scss"
+import { Link } from "react-router-dom"
+import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react"
+import { motion } from "framer-motion"
 
 const BlogSlideMember = () => {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("slider"); // 'slider' or 'grid'
+  const [posts, setPosts] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [viewMode, setViewMode] = useState("slider")
 
   useEffect(() => {
-    fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog")
-      .then((response) => response.json())
-      .then((data) => {
-        // Sắp xếp bài viết theo thời gian tạo mới nhất
-        const sortedPosts = data.sort((a, b) => 
-          new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        // Chỉ lấy 8 bài viết mới nhất
-        setPosts(sortedPosts.slice(0, 8));
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-        setIsLoading(false);
-      });
-  }, []);
+    const fetchPosts = async () => {
+      try {
+        const response = await fetch(
+          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
+        )
+        if (!response.ok) throw new Error("Không thể tải bài viết")
+        const data = await response.json()
+        const sortedPosts = data.posts
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 8)
+        setPosts(sortedPosts)
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-  const CustomPrevArrow = (props) => (
-    <button
-      className="slick-arrow slick-prev custom-arrow"
-      onClick={props.onClick}
-    >
-      <ChevronLeft size={24} />
-    </button>
-  );
+    fetchPosts()
+  }, [])
 
-  const CustomNextArrow = (props) => (
+  const CustomArrow = ({ direction, onClick }) => (
     <button
-      className="slick-arrow slick-next custom-arrow"
-      onClick={props.onClick}
+      className={`custom-arrow ${direction}`}
+      onClick={onClick}
+      aria-label={`${direction === 'prev' ? 'Previous' : 'Next'} slide`}
     >
-      <ChevronRight size={24} />
+      {direction === 'prev' ? (
+        <ChevronLeft size={24} />
+      ) : (
+        <ChevronRight size={24} />
+      )}
     </button>
-  );
+  )
 
   const settings = {
     dots: true,
@@ -56,35 +56,30 @@ const BlogSlideMember = () => {
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-    prevArrow: <CustomPrevArrow />,
-    nextArrow: <CustomNextArrow />,
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
+    prevArrow: <CustomArrow direction="prev" />,
+    nextArrow: <CustomArrow direction="next" />,
     responsive: [
       {
+        breakpoint: 1440,
+        settings: { slidesToShow: 4 }
+      },
+      {
         breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
+        settings: { slidesToShow: 3 }
       },
       {
         breakpoint: 768,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
+        settings: { slidesToShow: 2 }
       },
       {
         breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+        settings: { slidesToShow: 1 }
+      }
+    ]
+  }
 
   const PostCard = ({ title, body, id, categories }) => (
     <motion.div
@@ -92,39 +87,53 @@ const BlogSlideMember = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       whileHover={{ y: -10 }}
+      className="post-card"
     >
-      <div className="post-card">
-        <div className="post-icon">
-          <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
-        </div>
-        <div className="post-content">
-          <h3>{title}</h3>
-          <p>{body.substring(0, 100)}...</p>
-          {categories && categories.length > 0 && (
-            <div className="post-categories">
-              {categories.map((cat, index) => (
-                <span key={cat.categoryName} className="category-tag">
-                  #{cat.categoryName}
-                  {index < categories.length - 1 ? ' ' : ''}
-                </span>
-              ))}
-            </div>
-          )}
-          <Link to={`/member/blog/${id}`} className="read-more">
-            Đọc thêm
-            <span className="ripple"></span>
-          </Link>
-        </div>
+      <div className="post-icon">
+        <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
+      </div>
+      <div className="post-content">
+        <h3>{title}</h3>
+        <p>{body.substring(0, 100)}...</p>
+        {categories?.length > 0 && (
+          <div className="post-categories">
+            {categories.map((category, index) => (
+              <span key={index} className="category-tag">
+                #{category}
+              </span>
+            ))}
+          </div>
+        )}
+        <Link to={`/member/blog/${id}`} className="read-more">
+          Đọc thêm
+          <span className="ripple"></span>
+        </Link>
       </div>
     </motion.div>
-  );
+  )
+
+  const renderLoading = () => (
+    <div className="loading-cards">
+      {[...Array(4)].map((_, index) => (
+        <div key={index} className="post-card skeleton">
+          <div className="post-icon skeleton-image" />
+          <div className="post-content">
+            <div className="skeleton-title" />
+            <div className="skeleton-text" />
+            <div className="skeleton-text" />
+            <div className="skeleton-button" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
 
   return (
     <section className="blog-posts">
       <div className="blog-background">
-        <div className="wave wave1"></div>
-        <div className="wave wave2"></div>
-        <div className="wave wave3"></div>
+        <div className="wave wave1" />
+        <div className="wave wave2" />
+        <div className="wave wave3" />
       </div>
 
       <div className="blog-header">
@@ -152,19 +161,7 @@ const BlogSlideMember = () => {
       </div>
 
       {isLoading ? (
-        <div className="loading-cards">
-          {[1, 2, 3, 4].map((index) => (
-            <div key={index} className="post-card skeleton">
-              <div className="post-icon skeleton-image"></div>
-              <div className="post-content">
-                <div className="skeleton-title"></div>
-                <div className="skeleton-text"></div>
-                <div className="skeleton-text"></div>
-                <div className="skeleton-button"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+        renderLoading()
       ) : viewMode === "slider" ? (
         <Slider {...settings}>
           {posts.map((post) => (
@@ -179,7 +176,8 @@ const BlogSlideMember = () => {
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default BlogSlideMember;
+export default BlogSlideMember
+

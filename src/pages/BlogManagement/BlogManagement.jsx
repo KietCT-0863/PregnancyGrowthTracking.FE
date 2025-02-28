@@ -19,230 +19,228 @@ import {
 import { Link } from "react-router-dom";
 import "./BlogManagement.scss";
 
-const BlogManagement = () => {
-  const [posts, setPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("newest");
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [availableCategories, setAvailableCategories] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
-  const postsPerPage = 5;
+const API_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
+const POSTS_PER_PAGE = 5;
 
+const BlogManagement = () => {
+  // State Management
+  const [state, setState] = useState({
+    posts: [],
+    filteredPosts: [],
+    availableCategories: [],
+    loading: true,
+    page: 1,
+    searchTerm: "",
+    sortOption: "newest",
+    selectedCategories: []
+  });
+
+  // Fetch Data
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
-        );
+        const response = await fetch(API_URL);
         if (!response.ok) throw new Error("Không thể tải danh sách bài viết");
 
-        const data = await response.json();
-        setPosts(data);
+        const { posts } = await response.json();
+        const categories = extractCategories(posts);
 
-        // Tạo danh sách categories duy nhất
-        const allCategories = data.reduce((acc, post) => {
-          const postCategories =
-            post.categories?.map((cat) => cat.categoryName) || [];
-          return [...acc, ...postCategories];
-        }, []);
-        const uniqueCategories = [...new Set(allCategories)];
-        setAvailableCategories(uniqueCategories);
-        setFilteredPosts(data);
+        setState(prev => ({
+          ...prev,
+          posts,
+          filteredPosts: posts,
+          availableCategories: categories,
+          loading: false
+        }));
       } catch (error) {
         console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
+        setState(prev => ({ ...prev, loading: false }));
       }
     };
 
     fetchPosts();
   }, []);
+  console.log(state.posts);
 
-  const sortPosts = (postsToSort) => {
-    const sorted = [...postsToSort];
-    switch (sortOption) {
-      case "a-z":
-        return sorted.sort((a, b) => a.title.localeCompare(b.title));
-      case "z-a":
-        return sorted.sort((a, b) => b.title.localeCompare(a.title));
-      case "newest":
-        return sorted.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-      default:
-        return sorted;
-    }
+  // Filter and Sort Posts
+  useEffect(() => {
+    const filtered = filterAndSortPosts();
+    setState(prev => ({ ...prev, filteredPosts: filtered, page: 1 }));
+  }, [state.posts, state.searchTerm, state.sortOption, state.selectedCategories]);
+
+  // Helper Functions
+  const extractCategories = (posts) => {
+    const categoriesSet = posts.reduce((acc, post) => {
+      post.categories?.forEach(category => {
+        if (typeof category === 'string') acc.add(category);
+      });
+      return acc;
+    }, new Set());
+    return [...categoriesSet];
   };
 
-  useEffect(() => {
-    const filterAndSortPosts = () => {
-      let results = [...posts];
+  const filterAndSortPosts = () => {
+    let results = [...state.posts];
 
-      // Lọc theo search term
-      if (searchTerm) {
-        results = results.filter((post) =>
-          post.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
+    if (state.searchTerm) {
+      results = results.filter(post => 
+        post.title.toLowerCase().includes(state.searchTerm.toLowerCase())
+      );
+    }
 
-      // Lọc theo categories
-      if (selectedCategories.length > 0) {
-        results = results.filter((post) =>
-          selectedCategories.every((category) =>
-            post.categories?.some((cat) => cat.categoryName === category)
-          )
-        );
-      }
+    if (state.selectedCategories.length) {
+      results = results.filter(post =>
+        post.categories?.some(cat => state.selectedCategories.includes(cat))
+      );
+    }
 
-      // Sắp xếp kết quả
-      results = sortPosts(results);
-      setFilteredPosts(results);
-      setPage(1);
+    return sortPosts(results);
+  };
+
+  const sortPosts = (posts) => {
+    const sortMethods = {
+      "a-z": (a, b) => a.title.localeCompare(b.title),
+      "z-a": (a, b) => b.title.localeCompare(a.title),
+      "newest": (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     };
 
-    filterAndSortPosts();
-  }, [searchTerm, posts, sortOption, selectedCategories]);
+    return [...posts].sort(sortMethods[state.sortOption] || sortMethods.newest);
+  };
+
+  // Event Handlers
+  const handleStateChange = (key, value) => {
+    setState(prev => ({ ...prev, [key]: value }));
+  };
 
   const handleCategoryClick = (category) => {
-    setSelectedCategories((prevCategories) =>
-      prevCategories.includes(category)
-        ? prevCategories.filter((c) => c !== category)
-        : [...prevCategories, category]
+    setState(prev => ({
+      ...prev,
+      selectedCategories: prev.selectedCategories.includes(category)
+        ? prev.selectedCategories.filter(c => c !== category)
+        : [...prev.selectedCategories, category]
+    }));
+  };
+
+  // Render Components
+  const renderHeader = () => (
+    <Box className="blog-header">
+      <Typography variant="h4" component="h1" className="blog-title">
+        Danh sách bài viết
+      </Typography>
+      <Link to="/admin/create" className="create-blog-link">
+        <Button variant="contained" color="primary">
+          Tạo blog mới
+        </Button>
+      </Link>
+    </Box>
+  );
+
+  const renderFilters = () => (
+    <Box className="search-filter-container">
+      <Box className="search-and-sort">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Tìm kiếm theo tiêu đề..."
+          value={state.searchTerm}
+          onChange={e => handleStateChange('searchTerm', e.target.value)}
+        />
+        <select
+          value={state.sortOption}
+          onChange={e => handleStateChange('sortOption', e.target.value)}
+          className="sort-select"
+        >
+          <option value="newest">Mới nhất</option>
+          <option value="a-z">A đến Z</option>
+          <option value="z-a">Z đến A</option>
+        </select>
+      </Box>
+      <Box className="categories-container">
+        {state.availableCategories.map(category => (
+          <button
+            key={category}
+            onClick={() => handleCategoryClick(category)}
+            className={`category-button ${
+              state.selectedCategories.includes(category) ? "active" : ""
+            }`}
+          >
+            #{category}
+          </button>
+        ))}
+      </Box>
+    </Box>
+  );
+
+  const renderTable = () => {
+    const displayedPosts = state.filteredPosts.slice(
+      (state.page - 1) * POSTS_PER_PAGE,
+      state.page * POSTS_PER_PAGE
+    );
+
+    return (
+      <TableContainer component={Paper} className="table-container">
+        <Table aria-label="blog posts table">
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Tiêu đề</TableCell>
+              <TableCell>Ngày tạo</TableCell>
+              <TableCell>Categories</TableCell>
+              <TableCell>Hành động</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {displayedPosts.map(({ id, title, createdAt, categories }) => (
+              <TableRow key={id}>
+                <TableCell>{id}</TableCell>
+                <TableCell>{title}</TableCell>
+                <TableCell>{new Date(createdAt).toLocaleDateString("vi-VN")}</TableCell>
+                <TableCell>
+                  <div className="table-categories">
+                    {categories?.map((category, index) => (
+                      <span key={index} className="category-chip">
+                        #{category}
+                      </span>
+                    ))}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Link to={`/admin/blogs/change/${id}`}>
+                    <Button variant="outlined" color="primary">
+                      Chỉnh sửa
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     );
   };
 
-  const handleChangePage = (event, value) => {
-    setPage(value);
-  };
-
-  const displayedPosts = filteredPosts.slice(
-    (page - 1) * postsPerPage,
-    page * postsPerPage
-  );
+  if (state.loading) {
+    return (
+      <Box className="loading-container">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="lg" className="blog-management">
-      <Box className="blog-header">
-        <Typography variant="h4" component="h1" className="blog-title">
-          Danh sách bài viết
-        </Typography>
-        <Link to="/admin/create" className="create-blog-link">
-          <Button
-            variant="contained"
-            color="primary"
-            className="create-blog-button"
-          >
-            Tạo blog mới
-          </Button>
-        </Link>
+      {renderHeader()}
+      {renderFilters()}
+      {renderTable()}
+      <Box className="pagination-container">
+        <Pagination
+          count={Math.ceil(state.filteredPosts.length / POSTS_PER_PAGE)}
+          page={state.page}
+          onChange={(_, value) => handleStateChange('page', value)}
+          color="primary"
+          size="large"
+        />
       </Box>
-
-      <Box className="search-filter-container">
-        <Box className="search-and-sort">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Tìm kiếm theo tiêu đề..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          <select
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-            className="sort-select"
-          >
-            <option value="newest">Mới nhất</option>
-            <option value="a-z">A đến Z</option>
-            <option value="z-a">Z đến A</option>
-          </select>
-        </Box>
-
-        <Box className="categories-container">
-          {availableCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => handleCategoryClick(category)}
-              className={`category-button ${
-                selectedCategories.includes(category) ? "active" : ""
-              }`}
-            >
-              #{category}
-            </button>
-          ))}
-        </Box>
-      </Box>
-
-      {loading ? (
-        <Box className="loading-container">
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-          <TableContainer component={Paper} className="table-container">
-            <Table aria-label="blog posts table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Tiêu đề</TableCell>
-                  <TableCell>Ngày tạo</TableCell>
-                  <TableCell>Categories</TableCell>
-                  <TableCell>Hành động</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {displayedPosts.map(({ id, title, createdAt, categories }) => (
-                  <TableRow key={id} className="table-row">
-                    <TableCell>{id}</TableCell>
-                    <TableCell>{title}</TableCell>
-                    <TableCell>
-                      {new Date(createdAt).toLocaleDateString("vi-VN")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="table-categories">
-                        {categories?.map((cat) => (
-                          <span
-                            key={cat.categoryName}
-                            className="category-chip"
-                          >
-                            #{cat.categoryName}
-                          </span>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Link
-                        to={`/admin/blogs/change/${id}`}
-                        className="edit-link"
-                      >
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          className="edit-button"
-                        >
-                          Chỉnh sửa
-                        </Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box className="pagination-container">
-            <Pagination
-              count={Math.ceil(filteredPosts.length / postsPerPage)}
-              page={page}
-              onChange={handleChangePage}
-              color="primary"
-              size="large"
-              className="pagination"
-            />
-          </Box>
-        </>
-      )}
     </Container>
   );
 };
