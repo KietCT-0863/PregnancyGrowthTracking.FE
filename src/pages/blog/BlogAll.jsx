@@ -18,7 +18,9 @@ const BlogAll = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog");
+        const response = await fetch(
+          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
+        );
         if (!response.ok) {
           throw new Error("Không thể tải danh sách bài viết");
         }
@@ -27,7 +29,8 @@ const BlogAll = () => {
 
         // Tạo danh sách categories duy nhất từ tất cả bài viết
         const allCategories = data.reduce((acc, post) => {
-          const postCategories = post.categories?.map(cat => cat.categoryName) || [];
+          const postCategories =
+            post.categories?.map((cat) => cat.categoryName) || [];
           return [...acc, ...postCategories];
         }, []);
         const uniqueCategories = [...new Set(allCategories)];
@@ -75,8 +78,8 @@ const BlogAll = () => {
       // Lọc theo categories
       if (selectedCategories.length > 0) {
         results = results.filter((blog) =>
-          selectedCategories.every((category) => 
-            blog.categories?.some(cat => cat.categoryName === category)
+          selectedCategories.every((category) =>
+            blog.categories?.some((cat) => cat.categoryName === category)
           )
         );
       }

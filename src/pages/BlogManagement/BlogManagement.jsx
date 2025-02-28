@@ -33,15 +33,18 @@ const BlogManagement = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog");
+        const response = await fetch(
+          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
+        );
         if (!response.ok) throw new Error("Không thể tải danh sách bài viết");
-        const data = await response.json();
 
+        const data = await response.json();
         setPosts(data);
 
         // Tạo danh sách categories duy nhất
         const allCategories = data.reduce((acc, post) => {
-          const postCategories = post.categories?.map(cat => cat.categoryName) || [];
+          const postCategories =
+            post.categories?.map((cat) => cat.categoryName) || [];
           return [...acc, ...postCategories];
         }, []);
         const uniqueCategories = [...new Set(allCategories)];
@@ -87,8 +90,8 @@ const BlogManagement = () => {
       // Lọc theo categories
       if (selectedCategories.length > 0) {
         results = results.filter((post) =>
-          selectedCategories.every((category) => 
-            post.categories?.some(cat => cat.categoryName === category)
+          selectedCategories.every((category) =>
+            post.categories?.some((cat) => cat.categoryName === category)
           )
         );
       }
@@ -200,7 +203,10 @@ const BlogManagement = () => {
                     <TableCell>
                       <div className="table-categories">
                         {categories?.map((cat) => (
-                          <span key={cat.categoryName} className="category-chip">
+                          <span
+                            key={cat.categoryName}
+                            className="category-chip"
+                          >
                             #{cat.categoryName}
                           </span>
                         ))}

@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, NavLink } from "react-router-dom";
-import { Loader, Calendar, User, ArrowLeft } from "lucide-react";
+import {
+  Loader,
+  Calendar,
+  User,
+  ArrowLeft,
+  Baby,
+  Weight,
+  Activity,
+} from "lucide-react";
 import "./BlogDetail.scss";
 
 const BlogDetail = () => {
@@ -14,12 +22,19 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`https://dummyjson.com/posts/${id}`);
+        const response = await fetch(
+          `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog`
+        );
         if (!response.ok) {
           throw new Error("Không thể tải bài viết");
         }
         const data = await response.json();
-        setPost(data);
+        const selectedPost = data.find((post) => post.id === parseInt(id));
+        if (!selectedPost) {
+          throw new Error("Không tìm thấy bài viết");
+        }
+        setPost(selectedPost);
+        console.log(selectedPost);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -67,18 +82,14 @@ const BlogDetail = () => {
             <Calendar size={16} />
             {new Date().toLocaleDateString("vi-VN")}
           </span>
-          <span className="blog-author">
-            <User size={16} />
-            {`Tác giả ${post.userId}`}
-          </span>
         </div>
       </div>
 
       <div className="blog-detail-content">
         <div className="blog-detail-tags">
-          {post.tags.map((tag, index) => (
+          {post.categories.map((category, index) => (
             <span key={index} className="tag">
-              {tag}
+              #{category.categoryName}
             </span>
           ))}
         </div>

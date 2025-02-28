@@ -22,12 +22,19 @@ const BlogDetailPublic = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`https://dummyjson.com/posts/${id}`);
+        const response = await fetch(
+          `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog`
+        );
         if (!response.ok) {
           throw new Error("Không thể tải bài viết");
         }
         const data = await response.json();
-        setPost(data);
+        const selectedPost = data.find((post) => post.id === parseInt(id));
+        if (!selectedPost) {
+          throw new Error("Không tìm thấy bài viết");
+        }
+        setPost(selectedPost);
+        console.log(selectedPost);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -84,9 +91,9 @@ const BlogDetailPublic = () => {
 
       <div className="blog-detail-content">
         <div className="blog-detail-tags">
-          {post.tags.map((tag, index) => (
+          {post.categories.map((category, index) => (
             <span key={index} className="tag">
-              {tag}
+              {category.categoryName}
             </span>
           ))}
         </div>
