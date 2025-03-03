@@ -15,15 +15,6 @@ const theme = createTheme({
   },
 });
 
-
-const handleLogout = () => {
-  localStorage.removeItem("token")
-  setIsLoggedIn(false)
-  setUserInfo(null)
-  setIsAdmin(false)
-  navigate('/login')
-}
-
 const AdminLayout = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState(null);
@@ -41,36 +32,49 @@ const AdminLayout = () => {
     fetchUserInfo();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUserInfo(null);
+    setIsAdmin(false);
+    navigate('/login');
+  };
+
+  const handleViewBasicUser = () => {
+    navigate('/basic-user');
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <AppBar position="fixed" sx={{ bgcolor: 'white', color: 'primary.main', ml: '240px' }}>
+      <Box sx={{ display: 'flex' }}>
+        <AppBar position="fixed">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Admin Dashboard
             </Typography>
-            {/* Thêm các nút chuyển đổi layout */}
             <Button 
-              variant="contained" 
+              variant="outlined"
               sx={{ 
+                borderColor: '#fff',
+                color: '#fff',
                 mr: 2,
-                bgcolor: '#6a0572',
                 '&:hover': {
-                  bgcolor: '#4a0350'
+                  borderColor: '#fff',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)'
                 }
               }}
-              onClick={() => navigate('/basic-user')}
+              onClick={handleViewBasicUser}
             >
-              Xem Basic User Layout
+              Xem trang Basic User
             </Button>
             <Button 
-              variant="outlined" 
+              variant="outlined"
               sx={{ 
-                borderColor: '#d63384',
-                color: '#d63384',
+                borderColor: '#fff',
+                color: '#fff',
                 '&:hover': {
-                  borderColor: '#b52b6f',
-                  bgcolor: 'rgba(214, 51, 132, 0.1)'
+                  borderColor: '#fff',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)'
                 }
               }}
               onClick={handleLogout}
@@ -80,10 +84,8 @@ const AdminLayout = () => {
           </Toolbar>
         </AppBar>
 
-        {/* Sidebar cố định bên trái */}
         <Sidebar />
         
-        {/* Content chính */}
         <Box 
           component="main" 
           sx={{ 
@@ -94,9 +96,7 @@ const AdminLayout = () => {
             flexDirection: 'column'
           }}
         >
-          {/* Để tránh content bị che bởi sidebar */}
-          <Box sx={{ height: '64px' }} /> 
-          
+          <Box sx={{ height: '64px' }} />
           <Outlet />
         </Box>
       </Box>

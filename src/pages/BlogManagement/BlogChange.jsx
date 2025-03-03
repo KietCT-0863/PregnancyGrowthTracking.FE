@@ -13,6 +13,7 @@ import {
   Paper
 } from '@mui/material';
 import "./BlogChange.scss";
+import blogService from "../../api/services/blogService";
 
 const API_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
 
@@ -34,40 +35,30 @@ const BlogChange = ({ open, onClose }) => {
   const [post, setPost] = useState({
     title: "",
     body: "",
-    categories: [],
-    image: ""
+    categories: []
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(API_URL, {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
+        setIsLoading(true);
+        const data = await blogService.getBlogById(id);
         
-        if (!response.ok) throw new Error("Không thể tải dữ liệu");
-        
-        const { posts } = await response.json();
-        const blogPost = posts.find(post => post.id === parseInt(id));
-
-        if (blogPost) {
-          const formattedCategories = blogPost.categories?.map(cat => 
+        setPost({
+          title: data.title || "",
+          body: data.body || "",
+          categories: data.categories?.map(cat => 
             typeof cat === 'string' ? cat : cat.categoryName
-          ) || [];
-
-          setPost({
-            title: blogPost.title || "",
-            body: blogPost.body || "",
-            categories: formattedCategories,
-            image: blogPost.image || ""
-          });
-        }
+          ) || []
+        });
       } catch (error) {
         console.error("Error:", error);
-        toast.error("Không thể tải thông tin bài viết!");
+        toast.error(error.message);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -75,44 +66,30 @@ const BlogChange = ({ open, onClose }) => {
   }, [id]);
   
   console.log(post);
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      
-      const formattedCategories = post.categories.map(cat => 
-        typeof cat === 'string' ? cat : cat.categoryName
-      );
+      setIsSubmitting(true);
 
-      const requestBody = {
-        id: parseInt(id),
-        title: post.title || "",
-        body: post.body || "",
-        categories: formattedCategories,
-        image: post.image || "",
-      };
-
-      console.log('Request body:', requestBody);
-
-      const response = await fetch(API_URL, {
-        method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-        throw new Error(errorData.message || 'Lỗi server');
+      // Kiểm tra id có tồn tại
+      if (!id) {
+        toast.error("Không tìm thấy ID bài viết!");
+        return;
       }
+
+      const response = await blogService.updateBlog(id, {
+        title: post.title,
+        body: post.body,
+        categories: post.categories
+      });
       
       toast.success("Cập nhật bài viết thành công!");
-      setTimeout(() => navigate("/admin/blogs"), 2000);
+      setTimeout(() => navigate("/admin/blogs"), 1500);
     } catch (error) {
-      console.error("Error:", error);
-      toast.error(`Lỗi: ${error.message}`);
+      console.error("Error updating blog:", error);
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -176,7 +153,7 @@ const BlogChange = ({ open, onClose }) => {
         <Button onClick={() => navigate("/admin/blogs")}>
           Hủy
         </Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
+        <Button onClick={handleSubmit} variant="contained" color="primary" disabled={isSubmitting}>
           Cập nhật
         </Button>
       </DialogActions>

@@ -1,20 +1,9 @@
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box, Toolbar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { FaHome, FaUsers, FaBlog } from 'react-icons/fa';
-import TimelineIcon from '@mui/icons-material/Timeline';
+import { Dashboard, People, BarChart } from '@mui/icons-material';
 
 const Sidebar = () => {
-  const menuItems = [
-    { text: 'Dashboard', icon: <FaHome />, path: '/admin' },
-    { text: 'Quản lý người dùng', icon: <FaUsers />, path: '/admin/users' },
-    { text: 'Quản lý bài viết', icon: <FaBlog />, path: '/admin/blogs' },
-    {
-      text: 'Growth Standard',
-      path: '/admin/growth-standard',
-      icon: <TimelineIcon />
-    }
-  ];
-
   return (
     <Drawer
       variant="permanent"
@@ -24,32 +13,39 @@ const Sidebar = () => {
         '& .MuiDrawer-paper': {
           width: 240,
           boxSizing: 'border-box',
-          bgcolor: 'white',
-          borderRight: '1px solid rgba(0, 0, 0, 0.12)',
         },
       }}
     >
-      <Box sx={{ overflow: 'auto', mt: 8 }}>
+      <Toolbar />
+      <Box sx={{ overflow: 'auto' }}>
         <List>
-          {menuItems.map((item) => (
-            <ListItem 
-              button 
-              key={item.text} 
-              component={Link} 
-              to={item.path}
-              sx={{
-                '&:hover': {
-                  bgcolor: 'rgba(214, 51, 132, 0.1)',
-                },
-                mb: 1
-              }}
-            >
-              <ListItemIcon sx={{ color: 'primary.main' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItem>
-          ))}
+          <ListItem button component={Link} to="/admin">
+            <ListItemIcon>
+              <Dashboard />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          
+          <ListItem button component={Link} to="/admin/users">
+            <ListItemIcon>
+              <People />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý người dùng" />
+          </ListItem>
+
+          <ListItem button component={Link} to="/admin/growth-standard">
+            <ListItemIcon>
+              <BarChart />
+            </ListItemIcon>
+            <ListItemText primary="Tiêu chuẩn tăng trưởng" />
+          </ListItem>
+
+          <ListItem button component={Link} to="/admin/blogs">
+            <ListItemIcon>
+              <FaBlog />
+            </ListItemIcon>
+            <ListItemText primary="Quản lý bài viết" />
+          </ListItem>
         </List>
       </Box>
     </Drawer>

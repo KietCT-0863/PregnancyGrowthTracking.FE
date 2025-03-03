@@ -18,10 +18,12 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Response interceptor 
+// Response interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -34,6 +36,23 @@ axiosInstance.interceptors.response.use(
       // Clear token and redirect to login
       localStorage.removeItem("token");
       window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
+    // Thêm xử lý lỗi server
+    if (error.response?.status === 500) {
+      return Promise.reject({
+        message: "Lỗi server, vui lòng thử lại sau",
+        ...error
+      });
+    }
+
+    // Thêm xử lý timeout
+    if (error.code === 'ECONNABORTED') {
+      return Promise.reject({
+        message: "Yêu cầu đã hết thời gian, vui lòng thử lại",
+        ...error
+      });
     }
 
     return Promise.reject(error);

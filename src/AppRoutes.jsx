@@ -1,26 +1,17 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 
 import HomePublic from "./pages/HomePublic/HomePublic";
-import Blog from "./pages/blog/index";
 import Login from "./pages/Login/Login";
-import BlogAll from "./pages/blog/BlogAll";
-import BlogDetail from "./pages/blog/BlogDetail";
 import Register from "./pages/Register/Register";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
 import AdminLayout from "../layout/AdminLayout/AdminLayout";
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
 import UserManagement from "./pages/UserManagementAmin/UserManagement";
-import BlogManagement from "./pages/BlogManagement/BlogManagement";
 import CalendarAll from "./pages/Calender/CalendarAll";
 import DoctorNotes from "./pages/DoctorNotes/DoctorNotes";
 import CalendarHistory from "./pages/Calender/CalendarHistory";
 import Community from "./pages/Community/Community";
 import BasicUserLayout from "../layout/BasicUserLayout/BasicUserLayout";
-import GuestBlogAll from "./pages/guest/blog/GuestBlogAll";
-import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
-import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
-import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
-import Member from "../layout/Member/Member";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import FAQ from "./pages/FAQ/FAQ";
 import FAQDetail from "./pages/FAQ/FAQDetail";
@@ -33,14 +24,14 @@ import NavBarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/FooterMember/FooterMember";
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
-import BlogCreate from "./pages/BlogManagement/BlogCreate";
-import BlogChange from "./pages/BlogManagement/BlogChange";
-import BlogPublic from "./pages/BlogPublic/index";
-import BlogAllPublic from "./pages/BlogPublic/BlogAll";
-import BlogDetailPublic from "./pages/BlogPublic/BlogDetail";
 import GrowthStandardList from "./components/GrowthStandard/GrowthStandardList";
 import PaymentResult from "./pages/Payment/PaymentResult";
 import ChatAI from "./components/ChatBoxAI/ChatAI";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
+import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
+import Member from "../layout/Member/Member";
+import BlogManagement from "./pages/BlogManagement/BlogManagement";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -60,11 +51,6 @@ const AppRoutes = () => {
       >
         <Route index element={<HomePublic />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/blog" element={<BlogPublic />}>
-          <Route index element={<BlogAllPublic />} />
-          <Route path=":id" element={<BlogDetailPublic />} />
-        </Route>
-
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
@@ -90,8 +76,6 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<BasicUserLayout />} />
-        <Route path="/basic-user/blog" element={<GuestBlogAll />} />
-        <Route path="/basic-user/blog/:id" element={<GuestBlogDetail />} />
         <Route path="community" element={<Community />} />
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
         <Route path="/basic-user/payment-result" element={<PaymentResult />} />
@@ -112,10 +96,6 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Member />} />
-        <Route path="/member/blog" element={<Blog />}>
-          <Route index element={<BlogAll />} />
-          <Route path=":id" element={<BlogDetail />} />
-        </Route>
         <Route path="/member/basic-tracking" element={<BasicTracking />} />
         <Route path="/member/calendar" element={<CalendarAll />}>
           <Route path="/member/calendar/:id" element={<CalendarHistory />} />
@@ -136,8 +116,6 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/blogs" element={<BlogManagement />} />
-        <Route path="/admin/create" element={<BlogCreate />} />
-        <Route path="/admin/blogs/change/:id" element={<BlogChange />} />
         <Route path="growth-standard" element={<GrowthStandardList />} />
       </Route>
 
