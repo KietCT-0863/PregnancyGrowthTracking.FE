@@ -1,7 +1,12 @@
 import { useState } from "react"
-import { Calendar, Users, Baby, TrendingUp, Apple, Dumbbell, User, X, AlertCircle, Ruler } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Bar } from "react-chartjs-2"
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js"
+import { Baby, Calendar, Edit2, X, ChevronRight, AlertCircle, Heart, Activity, Scale, Ruler } from "lucide-react"
 import "./BasicTracking.scss"
-import { FaS } from "react-icons/fa6"
+
+// Register ChartJS components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const mockUser = {
   name: "Nguyễn Thị A",
@@ -12,11 +17,11 @@ const mockUser = {
 
 // Hàm tính ngày dự sinh dựa vào tuần thai
 const calculateDueDate = (pregnancyWeek) => {
-  const today = new Date();
-  const weeksRemaining = 40 - pregnancyWeek; // 40 tuần là thời gian thai kỳ đủ
-  const dueDate = new Date(today.getTime() + (weeksRemaining * 7 * 24 * 60 * 60 * 1000));
-  return dueDate;
-};
+  const today = new Date()
+  const weeksRemaining = 40 - pregnancyWeek
+  const dueDate = new Date(today.getTime() + weeksRemaining * 7 * 24 * 60 * 60 * 1000)
+  return dueDate
+}
 
 // Mock data cho lịch sử đứa trẻ
 const mockChildren = [
@@ -26,92 +31,104 @@ const mockChildren = [
     gender: "male",
     pregnancyWeek: 24,
     stats: {
-      weight: "3.5kg",
-      height: "50cm"
-    }
+      HC: "220",
+      AC: "200",
+      FL: "45",
+      EFW: "650",
+    },
   },
   {
     id: 2,
     name: "Nguyễn Thị Bình",
     gender: "female",
-    pregnancyWeek: 8,
+    pregnancyWeek: 28,
     stats: {
-      weight: "3.2kg",
-      height: "48cm"
-    }
-  }
-].map(child => ({
+      HC: "240",
+      AC: "220",
+      FL: "52",
+      EFW: "850",
+    },
+  },
+].map((child) => ({
   ...child,
-  dueDate: calculateDueDate(child.pregnancyWeek)
-}));
+  dueDate: calculateDueDate(child.pregnancyWeek),
+}))
 
 const BasicTracking = () => {
-  const [weight, setWeight] = useState(1)
-  const [height, setHeight] = useState(1)
-  const [bmi, setBmi] = useState(false)
   const [childrenHistory, setChildrenHistory] = useState(mockChildren)
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false)
   const [selectedChild, setSelectedChild] = useState(null)
   const [isUpdateStatsOpen, setIsUpdateStatsOpen] = useState(false)
   const [editForm, setEditForm] = useState({
     name: "",
-    pregnancyWeek: 0
+    pregnancyWeek: 0,
   })
   const [statsForm, setStatsForm] = useState({
     HC: "",
     AC: "",
     FL: "",
-    EFW: ""
+    EFW: "",
   })
 
-  const handleOnChangeWeight = (e) => {
-    setWeight(e.target.value)
-  }
-  
-  const handleOnChangeHeight = (e) => {
-    setHeight(e.target.value)
-  }
-
-  const handleUpdateGrowth = () => {
-    setBmi(!bmi)
-    alert("Cập nhật thành công!")
+  const chartData = {
+    labels: ["HC (mm)", "AC (mm)", "FL (mm)", "EFW (g)"],
+    datasets: childrenHistory.map((child) => ({
+      label: child.name,
+      data: [child.stats.HC || 0, child.stats.AC || 0, child.stats.FL || 0, child.stats.EFW || 0],
+      backgroundColor: child.id === 1 ? "rgba(255, 107, 129, 0.5)" : "rgba(112, 161, 255, 0.5)",
+      borderColor: child.id === 1 ? "rgb(255, 107, 129)" : "rgb(112, 161, 255)",
+      borderWidth: 1,
+    })),
   }
 
-  const handleOnClose = () => {
-    setBmi(false)
-  }
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString('vi-VN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const handleChildSelect = (child) => {
-    if (child.pregnancyWeek >= 12) {
-      setSelectedChild(child);
-      setStatsForm({
-        HC: child.stats.HC || "",
-        AC: child.stats.AC || "",
-        FL: child.stats.FL || "",
-        EFW: child.stats.EFW || ""
-      });
-      setIsUpdateStatsOpen(true);
-    }
-  }
-
-  const handleUpdateStats = () => {
-    if (selectedChild) {
-      setStatsForm({
-        HC: selectedChild.stats.HC || "",
-        AC: selectedChild.stats.AC || "",
-        FL: selectedChild.stats.FL || "",
-        EFW: selectedChild.stats.EFW || ""
-      });
-      setIsUpdateStatsOpen(true);
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      },
+      title: {
+        display: true,
+        text: "Biểu đồ chỉ số thai nhi",
+        font: {
+          size: 16,
+          family: "'Inter', sans-serif",
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          display: true,
+          color: "rgba(0, 0, 0, 0.1)"
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
+          }
+        }
+      }
     }
   }
 
@@ -119,343 +136,313 @@ const BasicTracking = () => {
     setSelectedChild(child)
     setEditForm({
       name: child.name,
-      pregnancyWeek: child.pregnancyWeek
+      pregnancyWeek: child.pregnancyWeek,
     })
     setIsEditPopupOpen(true)
   }
 
-  const handleEditClose = () => {
-    setIsEditPopupOpen(false)
-    setSelectedChild(null)
-    setEditForm({
-      name: "",
-      pregnancyWeek: 0
-    })
-  }
-
-  const handleEditChange = (e) => {
-    const { name, value } = e.target
-    setEditForm(prev => ({
-      ...prev,
-      [name]: value
-    }))
+  const handleStatsClick = (child) => {
+    if (child.pregnancyWeek >= 12) {
+      setSelectedChild(child)
+      setStatsForm(child.stats)
+      setIsUpdateStatsOpen(true)
+    }
   }
 
   const handleEditSubmit = (e) => {
     e.preventDefault()
     if (selectedChild) {
-      const updatedChildren = childrenHistory.map(child => {
+      const updatedChildren = childrenHistory.map((child) => {
         if (child.id === selectedChild.id) {
-          const newPregnancyWeek = parseInt(editForm.pregnancyWeek);
+          const newPregnancyWeek = Number(editForm.pregnancyWeek)
+          const dueDate = new Date()
+          dueDate.setDate(dueDate.getDate() + (40 - newPregnancyWeek) * 7)
           return {
             ...child,
             name: editForm.name,
             pregnancyWeek: newPregnancyWeek,
-            dueDate: calculateDueDate(newPregnancyWeek)
+            dueDate,
           }
         }
         return child
       })
       setChildrenHistory(updatedChildren)
-      handleEditClose()
+      setIsEditPopupOpen(false)
     }
   }
 
-  const handleUpdateStatsSubmit = (e) => {
-    e.preventDefault();
+  const handleStatsSubmit = (e) => {
+    e.preventDefault()
     if (selectedChild) {
-      const updatedChildren = childrenHistory.map(child => {
+      const updatedChildren = childrenHistory.map((child) => {
         if (child.id === selectedChild.id) {
           return {
             ...child,
-            stats: {
-              ...child.stats,
-              HC: statsForm.HC || child.stats.HC,
-              AC: statsForm.AC || child.stats.AC,
-              FL: statsForm.FL || child.stats.FL,
-              EFW: statsForm.EFW || child.stats.EFW
-            }
+            stats: statsForm,
           }
         }
-        return child;
-      });
-      setChildrenHistory(updatedChildren);
-      setIsUpdateStatsOpen(false);
-      setSelectedChild(null);
-      setStatsForm({
-        HC: "",
-        AC: "",
-        FL: "",
-        EFW: ""
-      });
-      alert("Cập nhật thông số thành công!");
+        return child
+      })
+      setChildrenHistory(updatedChildren)
+      setIsUpdateStatsOpen(false)
     }
-  };
-
-  const handleStatsChange = (e) => {
-    const { name, value } = e.target;
-    setStatsForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleStatsClose = () => {
-    setIsUpdateStatsOpen(false);
-    setSelectedChild(null);
-    setStatsForm({
-      HC: "",
-      AC: "",
-      FL: "",
-      EFW: ""
-    });
-  };
+  }
 
   return (
-    <div className="dashboard">
-      <div className="dashboard__welcome">
-        <h1>Xin chào, {mockUser.name}!</h1>
-        <p>Chúc bạn có một ngày tuyệt vời cùng Mẹ Bầu</p>
-      </div>
+    <div className="pregnancy-monitor">
+      <motion.div
+        className="monitor-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h1>Theo dõi thai kỳ</h1>
+        <p>Theo dõi sự phát triển của thai nhi</p>
+      </motion.div>
 
-      <div className="dashboard__stats">
-        <div className="dashboard__card">
-          <h2>
-            <Baby className="icon" />
-            Thông tin thai kỳ
-          </h2>
-          <p>
-            Tuần thai: <span>{mockUser.weeksPregant}</span>
-          </p>
-          <p>
-            Ngày dự sinh: <span>{mockUser.dueDate}</span>
-          </p>
-          <button className="btn btn--primary">
-            <TrendingUp className="icon" />
-            Xem biểu đồ tăng trưởng
-          </button>
-        </div>
-
-        <div className="dashboard__card">
-          <h2>
-            <Ruler className="icon" />
-            Hướng dẫn cập nhật chỉ số
-          </h2>
-          <div className="measurement-guide">
-            <p>Các chỉ số siêu âm cần cập nhật:</p>
-            <ul>
-              <li>HC - Chu vi đầu (mm)</li>
-              <li>AC - Chu vi bụng (mm)</li>
-              <li>FL - Chiều dài xương đùi (mm)</li>
-              <li>EFW - Ước tính cân nặng (gram)</li>
-            </ul>
-            <p className="guide-note">Click vào hồ sơ trẻ bên dưới để cập nhật các chỉ số</p>
+      <div className="monitor-content">
+        <motion.div
+          className="chart-section"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="chart-container">
+            <Bar data={chartData} options={chartOptions} height={300} />
           </div>
-        </div>
-      </div>
+          <div className="chart-legend">
+            <h3>Chú thích chỉ số</h3>
+            <div className="legend-grid">
+              <div className="legend-item">
+                <div className="legend-marker hc"></div>
+                <span>HC - Chu vi đầu</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-marker ac"></div>
+                <span>AC - Chu vi bụng</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-marker fl"></div>
+                <span>FL - Chiều dài xương đùi</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-marker efw"></div>
+                <span>EFW - Ước tính cân nặng</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
-      <div className="children-history">
-        <h3>Lịch sử hồ sơ đứa trẻ</h3>
-        {childrenHistory.length === 0 ? (
-          <p className="no-history">Chưa có hồ sơ trẻ nào được tạo</p>
-        ) : (
-          <div className="history-list">
-            {childrenHistory.map((child) => (
-              <div 
-                key={child.id} 
-                className={`history-item ${selectedChild?.id === child.id ? 'selected' : ''}`}
-                onClick={() => handleChildSelect(child)}
+        <motion.div
+          className="children-section"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <h2>Danh sách theo dõi</h2>
+          <div className="children-grid">
+            {childrenHistory.map((child, index) => (
+              <motion.div
+                key={child.id}
+                className="child-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <div className="child-info">
-                  <div className="child-header">
-                    <h4>{child.name}</h4>
-                    <button 
-                      className="edit-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEditClick(child);
-                      }}
-                    >
-                      <X className="icon" />
-                      Chỉnh sửa
-                    </button>
-                  </div>
-                  <div className="info-details" onClick={() => handleChildSelect(child)}>
-                    <span className="gender">
-                      <User size={16} />
-                      {child.gender === 'male' ? 'Nam' : 'Nữ'}
-                    </span>
-                    <span className="pregnancy-week">
+                <div className="card-header">
+                  <h3>{child.name}</h3>
+                  <button className="edit-button" onClick={() => handleEditClick(child)}>
+                    <Edit2 size={16} />
+                  </button>
+                </div>
+
+                <div className="card-content">
+                  <div className="info-grid">
+                    <div className="info-item">
                       <Baby size={16} />
-                      Tuần thai: {child.pregnancyWeek}
-                    </span>
-                    <span className="due-date">
+                      <span>{child.gender === "male" ? "Nam" : "Nữ"}</span>
+                    </div>
+                    <div className="info-item">
+                      <Activity size={16} />
+                      <span>Tuần {child.pregnancyWeek}</span>
+                    </div>
+                    <div className="info-item">
                       <Calendar size={16} />
-                      Ngày dự sinh: {formatDate(child.dueDate)}
-                    </span>
-                    {child.pregnancyWeek < 12 ? (
-                      <span className="warning">
-                        <AlertCircle size={16} />
-                        Thai nhi quá nhỏ để tính toán chỉ số
+                      <span>
+                        {child.dueDate.toLocaleDateString("vi-VN", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
                       </span>
-                    ) : (
-                      <div className="stats-container">
-                        <div className="stats-info">
-                          {child.stats.HC && (
-                            <span className="stat">HC: {child.stats.HC}</span>
-                          )}
-                          {child.stats.AC && (
-                            <span className="stat">AC: {child.stats.AC}</span>
-                          )}
-                          {child.stats.FL && (
-                            <span className="stat">FL: {child.stats.FL}</span>
-                          )}
-                          {child.stats.EFW && (
-                            <span className="stat">EFW: {child.stats.EFW}</span>
-                          )}
+                    </div>
+                  </div>
+
+                  {child.pregnancyWeek < 12 ? (
+                    <div className="warning-message">
+                      <AlertCircle size={16} />
+                      <span>Thai nhi chưa đủ tuần tuổi để đo chỉ số</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="stats-grid">
+                        <div className="stat-item">
+                          <Ruler className="stat-icon" />
+                          <div className="stat-content">
+                            <span className="stat-label">HC</span>
+                            <span className="stat-value">{child.stats.HC}</span>
+                          </div>
+                        </div>
+                        <div className="stat-item">
+                          <Heart className="stat-icon" />
+                          <div className="stat-content">
+                            <span className="stat-label">AC</span>
+                            <span className="stat-value">{child.stats.AC}</span>
+                          </div>
+                        </div>
+                        <div className="stat-item">
+                          <Scale className="stat-icon" />
+                          <div className="stat-content">
+                            <span className="stat-label">FL</span>
+                            <span className="stat-value">{child.stats.FL}</span>
+                          </div>
+                        </div>
+                        <div className="stat-item">
+                          <Activity className="stat-icon" />
+                          <div className="stat-content">
+                            <span className="stat-label">EFW</span>
+                            <span className="stat-value">{child.stats.EFW}</span>
+                          </div>
                         </div>
                       </div>
-                    )}
-                  </div>
+
+                      <button className="update-stats-button" onClick={() => handleStatsClick(child)}>
+                        <Ruler size={16} />
+                        <span>Cập nhật chỉ số</span>
+                        <ChevronRight size={16} />
+                      </button>
+                    </>
+                  )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        )}
+        </motion.div>
       </div>
 
-      {/* Popup cập nhật thông số */}
-      {isUpdateStatsOpen && (
-        <div className="edit-popup-overlay">
-          <div className="edit-popup-content">
-            <button className="close-button" onClick={handleStatsClose}>
-              <X size={24} />
-            </button>
-            <h2>Cập nhật thông số siêu âm</h2>
-            {selectedChild && (
-              <div className="pregnancy-info">
-                <p>Trẻ: {selectedChild.name}</p>
-                <p>Tuần thai: {selectedChild.pregnancyWeek}</p>
-              </div>
-            )}
-            <form onSubmit={handleUpdateStatsSubmit}>
-              <div className="form-group">
-                <label htmlFor="HC">HC - Chu vi đầu (mm):</label>
-                <input
-                  type="number"
-                  id="HC"
-                  name="HC"
-                  value={statsForm.HC}
-                  onChange={handleStatsChange}
-                  placeholder="Nhập chu vi đầu"
-                  min="0"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="AC">AC - Chu vi bụng (mm):</label>
-                <input
-                  type="number"
-                  id="AC"
-                  name="AC"
-                  value={statsForm.AC}
-                  onChange={handleStatsChange}
-                  placeholder="Nhập chu vi bụng"
-                  min="0"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="FL">FL - Chiều dài xương đùi (mm):</label>
-                <input
-                  type="number"
-                  id="FL"
-                  name="FL"
-                  value={statsForm.FL}
-                  onChange={handleStatsChange}
-                  placeholder="Nhập chiều dài xương đùi"
-                  min="0"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="EFW">EFW - Ước tính cân nặng (gram):</label>
-                <input
-                  type="number"
-                  id="EFW"
-                  name="EFW"
-                  value={statsForm.EFW}
-                  onChange={handleStatsChange}
-                  placeholder="Nhập ước tính cân nặng"
-                  min="0"
-                />
-              </div>
-              <button type="submit" className="btn btn--primary">
-                <Ruler className="icon" />
-                Lưu thông số
+      <AnimatePresence>
+        {isEditPopupOpen && (
+          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              className="modal-content"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <button className="close-button" onClick={() => setIsEditPopupOpen(false)}>
+                <X size={24} />
               </button>
-            </form>
-          </div>
-        </div>
-      )}
+              <h2>Chỉnh sửa thông tin</h2>
+              <form onSubmit={handleEditSubmit}>
+                <div className="form-group">
+                  <label htmlFor="name">Tên thai nhi</label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="pregnancyWeek">Tuần thai</label>
+                  <input
+                    type="number"
+                    id="pregnancyWeek"
+                    value={editForm.pregnancyWeek}
+                    onChange={(e) => setEditForm({ ...editForm, pregnancyWeek: Number(e.target.value) })}
+                    min="0"
+                    max="42"
+                    required
+                  />
+                </div>
+                <button type="submit" className="submit-button">
+                  Lưu thay đổi
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
 
-      {/* Popup chỉnh sửa thông tin */}
-      {isEditPopupOpen && (
-        <div className="edit-popup-overlay">
-          <div className="edit-popup-content">
-            <button className="close-button" onClick={handleEditClose}>
-              <X size={24} />
-            </button>
-            <h2>Chỉnh sửa thông tin</h2>
-            <form onSubmit={handleEditSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Tên trẻ:</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={editForm.name}
-                  onChange={handleEditChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="pregnancyWeek">Tuần thai:</label>
-                <input
-                  type="number"
-                  id="pregnancyWeek"
-                  name="pregnancyWeek"
-                  value={editForm.pregnancyWeek}
-                  onChange={handleEditChange}
-                  min="0"
-                  max="42"
-                  required
-                />
-              </div>
-              {editForm.pregnancyWeek && (
-                <div className="due-date-preview">
-                  Ngày dự sinh: {formatDate(calculateDueDate(parseInt(editForm.pregnancyWeek)))}
+        {isUpdateStatsOpen && (
+          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div
+              className="modal-content"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+            >
+              <button className="close-button" onClick={() => setIsUpdateStatsOpen(false)}>
+                <X size={24} />
+              </button>
+              <h2>Cập nhật chỉ số</h2>
+              {selectedChild && (
+                <div className="selected-child-info">
+                  <h3>{selectedChild.name}</h3>
+                  <p>Tuần thai: {selectedChild.pregnancyWeek}</p>
                 </div>
               )}
-              <button type="submit" className="btn btn--primary">
-                Lưu thay đổi
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      <div className="dashboard__tip">
-        <h2>Mẹo của ngày</h2>
-        <div className="dashboard__tip-content">
-          <img
-            src="https://images.unsplash.com/photo-1490645935967-10de6ba17061"
-            alt="Healthy Food"
-            className="tip-image"
-          />
-          <div>
-            <h3>Ăn nhiều rau xanh</h3>
-            <p>Rau xanh giàu folate, sắt và các vitamin cần thiết cho sự phát triển của thai nhi.</p>
-          </div>
-        </div>
-      </div>
+              <form onSubmit={handleStatsSubmit}>
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="HC">HC - Chu vi đầu (mm)</label>
+                    <input
+                      type="number"
+                      id="HC"
+                      value={statsForm.HC}
+                      onChange={(e) => setStatsForm({ ...statsForm, HC: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="AC">AC - Chu vi bụng (mm)</label>
+                    <input
+                      type="number"
+                      id="AC"
+                      value={statsForm.AC}
+                      onChange={(e) => setStatsForm({ ...statsForm, AC: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="FL">FL - Chiều dài xương đùi (mm)</label>
+                    <input
+                      type="number"
+                      id="FL"
+                      value={statsForm.FL}
+                      onChange={(e) => setStatsForm({ ...statsForm, FL: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="EFW">EFW - Ước tính cân nặng (g)</label>
+                    <input
+                      type="number"
+                      id="EFW"
+                      value={statsForm.EFW}
+                      onChange={(e) => setStatsForm({ ...statsForm, EFW: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" className="submit-button">
+                  Lưu chỉ số
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

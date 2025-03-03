@@ -1,0 +1,350 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+
+// Variables
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$text-color: #2f3542;
+$background-color: #fff9f9;
+$white: #ffffff;
+$shadow-color: rgba($primary-color, 0.2);
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Add animations
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+// Mixins
+@mixin card-shadow {
+  box-shadow: 0 4px 15px $shadow-color;
+}
+
+@mixin hover-shadow {
+  box-shadow: 0 8px 25px rgba($primary-color, 0.2);
+}
+
+.pregnancy-timeline {
+  padding: 2rem;
+  background-color: $background-color;
+  font-family: 'Inter', sans-serif;
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    color: $primary-color;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, $primary-color, transparent);
+    }
+  }
+
+  .timeline-note {
+    background: linear-gradient(135deg, $white, $secondary-color);
+    border-left: 4px solid $primary-color;
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    border-radius: 10px;
+    max-width: 800px;
+    @include card-shadow;
+
+    p {
+      margin: 0;
+      color: $text-color;
+      font-style: italic;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+  }
+
+  .timeline-container-wrapper {
+    position: relative;
+    margin: 2rem 0;
+    padding: 0 3rem;
+
+    .scroll-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+      color: $white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+      z-index: 10;
+      transition: $transition;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+        animation: bounce 1s infinite;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &.left { left: 0; }
+      &.right { right: 0; }
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .timeline-scroll-container {
+    overflow-x: auto;
+    position: relative;
+    padding: 2rem 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $secondary-color;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $primary-color;
+      border-radius: 4px;
+    }
+
+    .timeline-cards {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 2rem;
+      scroll-snap-align: start;
+    }
+  }
+
+  .timeline-progress-bar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, $secondary-color, transparent);
+    margin: 0 2rem;
+    z-index: 1;
+
+    .progress-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(90deg, $primary-color, lighten($primary-color, 10%));
+      box-shadow: 0 0 10px rgba($primary-color, 0.3);
+      width: var(--scroll-progress, 0%);
+      transition: width 0.3s ease;
+    }
+
+    .progress-dot {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: $primary-color;
+      box-shadow: 0 0 0 4px rgba($primary-color, 0.2);
+      animation: pulse 2s infinite;
+      z-index: 2;
+    }
+  }
+
+
+  .timeline-card {
+    flex: 0 0 350px;
+    scroll-snap-align: start;
+    margin-bottom: 1rem;
+    background: $white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba($primary-color, 0.1);
+    overflow: hidden;
+    transition: $transition;
+    animation: slideIn 0.3s ease-out;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba($primary-color, 0.15);
+    }
+
+    &.expanded {
+      flex: 0 0 450px;
+      animation: pulse 0.3s ease-out;
+
+      .timeline-card-header {
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+        color: $white;
+
+        .period {
+          color: $white;
+        }
+
+        .expand-icon {
+          color: $white;
+        }
+      }
+    }
+
+    .timeline-card-header {
+      padding: 1.25rem;
+      background: $white;
+      cursor: pointer;
+      transition: $transition;
+      position: relative;
+
+      &:hover {
+        background: $secondary-color;
+      }
+
+      .header-content {
+        .period {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: $primary-color;
+          display: block;
+          margin-bottom: 0.5rem;
+        }
+
+        h3 {
+          margin: 0 0 0.5rem;
+          font-size: 1.2rem;
+          color: $text-color;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: lighten($text-color, 20%);
+          line-height: 1.5;
+        }
+      }
+
+      .expand-icon {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: $primary-color;
+        transition: $transition;
+      }
+    }
+
+    .timeline-card-details {
+      background: $white;
+      overflow: hidden;
+
+      .details-section {
+        padding: 1rem 1.25rem;
+        border-top: 1px solid $secondary-color;
+
+        h4 {
+          color: $primary-color;
+          margin: 0 0 0.8rem;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: $text-color;
+          line-height: 1.6;
+        }
+
+        ul {
+          margin: 0;
+          padding-left: 1.5rem;
+          list-style-type: none;
+
+          li {
+            position: relative;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: $text-color;
+            line-height: 1.6;
+
+            &::before {
+              content: '';
+              position: absolute;
+              left: -1.5rem;
+              top: 0.5rem;
+              width: 6px;
+              height: 6px;
+              border-radius: 50%;
+              background: $primary-color;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .pregnancy-timeline {
+    padding: 1rem;
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    .timeline-container-wrapper {
+      padding: 0 2rem;
+    }
+
+    .timeline-card {
+      flex: 0 0 300px;
+
+      &.expanded {
+        flex: 0 0 350px;
+      }
+    }
+  }
+}
+

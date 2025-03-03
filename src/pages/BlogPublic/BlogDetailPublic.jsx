@@ -11,7 +11,7 @@ import {
   Weight,
   Activity,
 } from "lucide-react";
-import "./BlogDetail.scss";
+import "./BlogAllPublic.scss";
 
 const BlogDetailPublic = () => {
   const [post, setPost] = useState(null);

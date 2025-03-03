@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Loader, Calendar, User } from "lucide-react";
-import "./BlogAll.scss";
+import "./BlogAllPublic.scss";
 
-const BlogPublic = () => {
+const BlogAllPublic = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 6;
   const [blogs, setBlogs] = useState([]);
@@ -227,4 +227,4 @@ const BlogPublic = () => {
   );
 };
 
-export default BlogPublic;
+export default BlogAllPublic;
