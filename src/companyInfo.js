@@ -83,4 +83,98 @@ Like, Share, Comment: Hệ thống hỗ trợ thả tim, bình luận và chia s
 Nhóm thảo luận: Mẹ bầu có thể tham gia vào các chủ đề thảo luận như chăm sóc thai kỳ, dinh dưỡng, nuôi con, hoặc bất kỳ mối quan tâm nào khác.
 Thông báo & Cập nhật: Nhận thông báo khi có người tương tác với bài viết của mình hoặc khi có chủ đề mới trong nhóm mà mẹ bầu quan tâm.
 Với Cộng đồng, mẹ bầu sẽ không còn cảm thấy đơn độc trên hành trình mang thai, mà luôn có những người bạn đồng hành sẵn sàng lắng nghe, chia sẻ và hỗ trợ! 💖
+
+
+1. Làm thế nào để đăng ký tài khoản?
+   Bạn có thể đăng ký bằng cách nhấn vào 'Đăng ký' trên trang chủ và điền thông tin yêu cầu.
+
+2. Làm sao để nâng cấp lên VIP?
+   Bạn cần vào 'Nâng cấp VIP', chọn gói phù hợp và thanh toán theo hướng dẫn.
+
+3. Tôi quên mật khẩu, phải làm sao?
+   Nhấn vào 'Quên mật khẩu' trên trang đăng nhập và làm theo hướng dẫn để đặt lại mật khẩu.
+
+4. Tôi có thể xem nội dung gì nếu không có VIP?
+   Bạn có thể xem Blog và Community. Các tính năng khác yêu cầu đăng ký VIP.
+
+5. VIP có những quyền lợi gì?
+   VIP có thể truy cập toàn bộ nội dung, bao gồm tài liệu độc quyền, tính năng nâng cao và hỗ trợ ưu tiên.
+
+6. Làm thế nào để hủy gói VIP?
+   Vào cài đặt tài khoản, chọn 'Quản lý gói VIP' và làm theo hướng dẫn để hủy.
+
+7. Tôi có thể hoàn tiền sau khi mua VIP không?
+   Bạn có thể yêu cầu hoàn tiền trong vòng 7 ngày nếu chưa sử dụng dịch vụ.
+
+8. Tôi có thể sử dụng tài khoản trên nhiều thiết bị không?
+   Có, nhưng không được chia sẻ tài khoản với người khác.
+
+9. Làm sao để liên hệ hỗ trợ?
+   Liên hệ qua email hỗ trợ hoặc gửi yêu cầu trực tiếp từ trang 'Hỗ trợ khách hàng'.
+
+10. Có ưu đãi nào cho thành viên mới không?
+    Có, chúng tôi thường có các chương trình ưu đãi cho người dùng mới, kiểm tra trên trang khuyến mãi.
+
+11. Làm thế nào để xóa tài khoản?
+    Gửi yêu cầu xóa tài khoản trong cài đặt hoặc liên hệ hỗ trợ để được hướng dẫn.
+
+12. Tôi có thể đổi email đăng ký không?
+    Vào cài đặt tài khoản và thay đổi email sau khi xác minh danh tính.
+
+13. Hệ thống có hỗ trợ thanh toán qua ví điện tử không?
+    Có, chúng tôi hỗ trợ MoMo, ZaloPay và VNPay.
+
+14. Làm sao để nhận thông báo về cập nhật mới?
+    Bật thông báo trong cài đặt hoặc đăng ký nhận email thông báo từ chúng tôi.
+
+15. Tôi có thể dùng thử VIP trước khi mua không?
+    Hiện tại không có bản dùng thử VIP nhưng bạn có thể xem các nội dung miễn phí trước khi quyết định nâng cấp.
+
+16. Một tài khoản có thể sử dụng được bao lâu?
+    Tài khoản có thể sử dụng vĩnh viễn trừ khi bị vi phạm chính sách.
+
+17. Tôi có thể đổi mật khẩu ở đâu?
+    Vào 'Cài đặt tài khoản' và chọn 'Đổi mật khẩu'.
+
+18. Có chương trình giới thiệu bạn bè không?
+    Có, bạn có thể tham gia chương trình giới thiệu để nhận phần thưởng.
+
+19. Tôi có thể đăng nhập bằng Google hoặc Facebook không?
+    Có, chúng tôi hỗ trợ đăng nhập qua Google và Facebook.
+
+20. Tôi có thể thay đổi tên hiển thị không?
+    Có, bạn có thể thay đổi tên hiển thị trong phần cài đặt tài khoản.
+
+21. Làm sao để cập nhật thông tin cá nhân?
+    Vào phần 'Cài đặt tài khoản' để chỉnh sửa thông tin cá nhân.
+
+22. Có thể đặt câu hỏi riêng tư cho admin không?
+    Có, bạn có thể gửi tin nhắn riêng cho admin trong mục hỗ trợ.
+
+23. Tôi có thể xem lịch sử thanh toán không?
+    Có, bạn có thể kiểm tra lịch sử thanh toán trong phần tài khoản.
+
+24. Có bao nhiêu gói VIP để lựa chọn?
+    Hiện tại chúng tôi có 3 gói VIP: 1 tháng, 6 tháng và 12 tháng.
+
+25. Có thể tạm ngưng VIP mà không hủy không?
+    Hiện tại, chúng tôi chưa hỗ trợ tính năng tạm ngưng gói VIP.
+
+26. Dữ liệu cá nhân của tôi có được bảo mật không?
+    Có, chúng tôi tuân thủ chính sách bảo vệ dữ liệu và không chia sẻ thông tin cá nhân với bên thứ ba.
+
+27. Có thể sử dụng tài khoản trên máy tính và điện thoại không?
+    Có, bạn có thể đăng nhập trên cả hai thiết bị.
+
+28. Có thể sử dụng song song tài khoản trên hai trình duyệt khác nhau không?
+    Bạn có thể đăng nhập trên nhiều trình duyệt nhưng không nên chia sẻ tài khoản.
+
+29. Tôi có thể thay đổi phương thức thanh toán sau khi đăng ký VIP không?
+    Có, bạn có thể thay đổi phương thức thanh toán trong cài đặt tài khoản.
+
+30. Có thể đăng ký VIP bằng thẻ ngân hàng không?
+    Có, chúng tôi hỗ trợ thanh toán qua thẻ Visa, Mastercard và ATM nội địa.
+
+
+
 `;
