@@ -19,5 +19,16 @@ export const ENDPOINTS = {
   PAYMENT: {
     CREATE: "/Payment/create-payment",
     CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`
+  },
+  FOETUS: {
+    LIST: "/Foetus",
+    DETAIL: (id) => `/Foetus/${id}`,
+    CREATE: "/Foetus/Create",
+    DELETE: (id) => `/Foetus/${id}`
+  },
+  GROWTHDATA: {
+    GET_BY_FOETUS: (foetusId) => `/GrowthData/GetByFoetusId?foetusId=${foetusId}`,
+    CREATE: '/GrowthData/Create',
+    UPDATE: (growthDataId) => `/GrowthData/Update?growthDataId=${growthDataId}`
   }
 }; 

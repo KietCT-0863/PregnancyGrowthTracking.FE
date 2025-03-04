@@ -1,11 +1,11 @@
 import BlogSildeMember from "../../components/BlogSildeMember/BlogSildeMember";
-import AddChild from "../../components/AddChild/AddChild";
+import FoetusList from "../../components/FoetusList/FoetusList";
 import PregnancyTimeline from "../../components/PregnancyTimeline/PregnancyTimeline";
 const HomeMember = () => {
   return (
     <>
     <PregnancyTimeline />
-<AddChild />
+<FoetusList />
 <BlogSildeMember />
     </>
   );

@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+
+// Variables
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$text-color: #2f3542;
+$background-color: #fff9f9;
+$white: #ffffff;
+$shadow-color: rgba($primary-color, 0.2);
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// Animations
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.foetus-list-container {
+  font-family: 'Inter', sans-serif;
+  padding: 2rem 0;
+  width: 100%;
+  background-color: $background-color;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px $shadow-color;
+  animation: slideIn 0.3s ease-out;
+
+  .foetus-list-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: $text-color;
+      font-size: 2rem;
+      margin: 0;
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, $primary-color, transparent);
+      }
+    }
+
+    .add-foetus-btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+      color: $white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: $transition;
+      box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+        animation: bounce 1s infinite;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .error-message {
+    max-width: 1200px;
+    margin: 0 auto 1rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #ff6b6b, #ff8585);
+    color: $white;
+    border-radius: 10px;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .add-foetus-form {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 2.5rem;
+    background-color: $white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba($primary-color, 0.2);
+    animation: slideIn 0.3s ease-out;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .form-group {
+        margin-bottom: 1rem;
+        animation: slideIn 0.3s ease-out;
+
+        label {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: $text-color;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        input {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 2px solid $secondary-color;
+          border-radius: 10px;
+          font-size: 1rem;
+          font-family: 'Inter', sans-serif;
+          background-color: $background-color;
+          transition: $transition;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+          }
+
+          &:hover {
+            border-color: $primary-color;
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+
+        button {
+          padding: 0.75rem 1.5rem;
+          border-radius: 10px;
+          cursor: pointer;
+          font-size: 1rem;
+          font-weight: 500;
+          transition: $transition;
+
+          &[type="submit"] {
+            background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+            color: $white;
+            border: none;
+            box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba($primary-color, 0.4);
+            }
+          }
+
+          &[type="button"] {
+            background-color: $background-color;
+            border: 2px solid $secondary-color;
+            color: $text-color;
+
+            &:hover {
+              background-color: $secondary-color;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .foetus-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+    .no-data {
+      text-align: center;
+      color: lighten($text-color, 20%);
+      font-style: italic;
+      padding: 2rem;
+      background-color: $background-color;
+      border-radius: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .foetus-item {
+      background: linear-gradient(135deg, $white, $background-color);
+      padding: 1.5rem;
+      border-radius: 15px;
+      border: 1px solid $secondary-color;
+      transition: $transition;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.3s ease-out;
+      box-shadow: 0 4px 15px rgba($primary-color, 0.1);
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, $primary-color, lighten($primary-color, 20%));
+        opacity: 0;
+        transition: $transition;
+      }
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba($primary-color, 0.2);
+
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      .foetus-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .icon {
+          color: $primary-color;
+          font-size: 1.5rem;
+        }
+
+        .details {
+          flex: 1;
+
+          h3 {
+            color: $primary-color;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+          }
+
+          .sub-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 0.8rem;
+              padding: 0.75rem;
+              background: linear-gradient(135deg, $secondary-color, lighten($secondary-color, 5%));
+              border-radius: 8px;
+              transition: $transition;
+              color: $text-color;
+
+              &:hover {
+                transform: translateX(5px);
+                background: linear-gradient(135deg, $primary-color, lighten($primary-color, 15%));
+                color: $white;
+
+                svg {
+                  color: $white;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: $primary-color;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: $transition;
+
+        &:hover {
+          background-color: $secondary-color;
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 1200px) {
+  .foetus-list-container {
+    .foetus-list {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .foetus-list-container {
+    padding: 1rem 0;
+
+    .foetus-list-header {
+      padding: 0 1rem;
+    }
+
+    .foetus-list {
+      padding: 0 1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .foetus-list-container {
+    .foetus-list {
+      grid-template-columns: 1fr;
+    }
+  }
+} 
