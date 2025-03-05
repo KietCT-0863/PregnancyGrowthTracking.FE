@@ -11,15 +11,17 @@ import {
   FaUsers,
   FaUserCircle,
   FaSignOutAlt,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 import "./NavbarGuest.scss";
 
-const NavLink = ({ to, children, icon }) => {
+const NavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
   const isActive = location.pathname === to;
 
   return (
-    <Link to={to} className={`nav-link ${isActive ? "active" : ""}`}>
+    <Link to={to} className={`nav-link ${isActive ? "active" : ""}`} onClick={onClick}>
       {icon}
       <span>{children}</span>
     </Link>
@@ -31,6 +33,8 @@ const NavBarGuest = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,6 +58,18 @@ const NavBarGuest = () => {
         setIsAdmin(false);
       }
     }
+
+    // Add scroll event listener
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = () => {
@@ -61,13 +77,27 @@ const NavBarGuest = () => {
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsAdmin(false);
+    setIsMobileMenuOpen(false);
+    setIsDropdownOpen(false);
     navigate("/");
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="navbar-container">
-        <div className="nav-section logo-section">
+        <div className="logo-section">
           <Link to="/basic-user" className="navbar-logo">
             <img
               src="/Logo bau-02.png"
@@ -76,105 +106,113 @@ const NavBarGuest = () => {
             />
             <span className="navbar-logo-text">Mẹ Bầu</span>
           </Link>
+          <button className="mobile-menu-toggle" onClick={toggleMobileMenu} aria-label="Toggle menu">
+            {isMobileMenuOpen ? <FaTimes className="toggle-icon" /> : <FaBars className="toggle-icon" />}
+          </button>
         </div>
 
-        <div className="nav-section menu-section">
-          {isAdmin && (
+        <div className={`navbar-content ${isMobileMenuOpen ? "mobile-open" : ""}`}>
+          <div className="menu-section">
+            {isAdmin && (
+              <div className="nav-item">
+                <NavLink to="/admin" icon={<FaUserCircle className="nav-icon" />} onClick={closeMobileMenu}>
+                  Quản trị
+                </NavLink>
+              </div>
+            )}
             <div className="nav-item">
-              <NavLink to="/admin" icon={<FaUserCircle className="nav-icon" />}>
-                Quản trị
+              <NavLink
+                to="/member/basic-tracking"
+                icon={<FaBabyCarriage className="nav-icon" />}
+                onClick={closeMobileMenu}
+              >
+                Theo Dõi Thai Kỳ
               </NavLink>
             </div>
-          )}
-          <div className="nav-item">
-            <NavLink
-              to="/member/basic-tracking"
-              icon={<FaBabyCarriage className="nav-icon" />}
-            >
-              Theo Dõi Thai Kỳ
-            </NavLink>
-          </div>
-          <div className="nav-item">
-            <NavLink
-              to="/member/calendar"
-              icon={<FaCalendarAlt className="nav-icon" />}
-            >
-              Lịch Trình Thăm Khám
-            </NavLink>
-          </div>
-          <div className="nav-item">
-            <NavLink
-              to="/member/doctor-notes"
-              icon={<FaNotesMedical className="nav-icon" />}
-            >
-              Ghi Chú Bác Sĩ
-            </NavLink>
-          </div>
-          <div className="nav-item">
-            <NavLink
-              to="/basic-user/blog"
-              icon={<FaBlog className="nav-icon" />}
-            >
-              Blog
-            </NavLink>
-          </div>
-          <div className="nav-item">
-            <NavLink
-              to="/basic-user/community"
-              icon={<FaUsers className="nav-icon" />}
-            >
-              Cộng Đồng
-            </NavLink>
-          </div>
-        </div>
-
-        <div className="nav-section auth-section">
-          {!isLoggedIn ? (
-            <>
-              <Link to="/login" className="btn btn-login">
-                Đăng Nhập
-              </Link>
-              <Link to="/register" className="btn btn-register">
-                Đăng Ký
-              </Link>
-            </>
-          ) : (
-            <div className="user-menu">
-              <div
-                className="user-actions"
-                style={{ display: "flex", alignItems: "center" }}
+            <div className="nav-item">
+              <NavLink
+                to="/member/calendar"
+                icon={<FaCalendarAlt className="nav-icon" />}
+                onClick={closeMobileMenu}
               >
+                Lịch Trình Thăm Khám
+              </NavLink>
+            </div>
+            <div className="nav-item">
+              <NavLink
+                to="/member/doctor-notes"
+                icon={<FaNotesMedical className="nav-icon" />}
+                onClick={closeMobileMenu}
+              >
+                Ghi Chú Bác Sĩ
+              </NavLink>
+            </div>
+            <div className="nav-item">
+              <NavLink
+                to="/basic-user/blog"
+                icon={<FaBlog className="nav-icon" />}
+                onClick={closeMobileMenu}
+              >
+                Blog
+              </NavLink>
+            </div>
+            <div className="nav-item">
+              <NavLink
+                to="/basic-user/community"
+                icon={<FaUsers className="nav-icon" />}
+                onClick={closeMobileMenu}
+              >
+                Cộng Đồng
+              </NavLink>
+            </div>
+          </div>
+
+          <div className="auth-section">
+            {!isLoggedIn ? (
+              <div className="auth-buttons">
+                <Link to="/login" className="btn btn-login" onClick={closeMobileMenu}>
+                  Đăng Nhập
+                </Link>
+                <Link to="/register" className="btn btn-register" onClick={closeMobileMenu}>
+                  Đăng Ký
+                </Link>
+              </div>
+            ) : (
+              <div className="user-menu">
                 <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  onClick={toggleDropdown}
                   className="user-menu-button"
+                  aria-expanded={isDropdownOpen}
+                  aria-haspopup="true"
                 >
                   <FaUserCircle className="user-icon" />
-                  <span>{userInfo?.name || "Người dùng"}</span>
-                  <div className="user-menu">
-                    <button
-                      className="btn btn-vip"
-                      onClick={() => navigate("/basic-user/choose-vip")}
-                    >
-                      Đăng ký VIP <RiVipCrown2Line />
+                  <span className="user-name">{userInfo?.name || "Người dùng"}</span>
+                </button>
+                {isDropdownOpen && (
+                  <div className="user-dropdown">
+                    <div className="user-info">
+                      <div className="info-item">Ngày sinh: {userInfo?.birthDate}</div>
+                      <div className="info-item">Email: {userInfo?.email}</div>
+                      <button
+                        className="btn btn-vip"
+                        onClick={() => {
+                          navigate("/basic-user/choose-vip");
+                          closeMobileMenu();
+                        }}
+                      >
+                        Đăng ký VIP <RiVipCrown2Line />
+                      </button>
+                    </div>
+                    <div className="dropdown-divider"></div>
+                    <button onClick={handleLogout} className="logout-button">
+                      <FaSignOutAlt className="logout-icon" />
+                      Đăng xuất
                     </button>
                   </div>
-                </button>
+                )}
               </div>
-              {isDropdownOpen && (
-                <div className="user-dropdown">
-                  <div className="user-info">
-                    <div>Ngày sinh: {userInfo?.birthDate}</div>
-                    <div>Email: {userInfo?.email}</div>
-                  </div>
-                  <div className="dropdown-divider"></div>
-                  <button onClick={handleLogout} className="logout-button">
-                    <FaSignOutAlt className="logout-icon" />
-                    Đăng xuất
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </nav>

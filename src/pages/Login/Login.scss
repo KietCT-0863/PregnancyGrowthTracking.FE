@@ -1,21 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Nunito:wght@400;600;700&display=swap");
 
-// Variables
-$primary-pink: #ffb6c1;
-$secondary-pink: #fff0f5;
-$accent-pink: #ffe4e1;
-$text-color: #4a4a4a;
-$error-color: #ff69b4;
-$glass-bg: rgba(255, 255, 255, 0.85);
-$glass-border: rgba(255, 182, 193, 0.3);
+// Variables - Màu nhẹ nhàng hơn
+$primary-pink: #ffd1dc;
+$secondary-pink: #fff5f8;
+$accent-pink: #ffecf1;
+$text-color: #5a5a5a;
+$error-color: #ff8fab;
+$glass-bg: rgba(255, 255, 255, 0.75);
+$glass-border: rgba(255, 209, 220, 0.25);
 
 // Mixins
 @mixin glass-effect {
   background: $glass-bg;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   border: 1px solid $glass-border;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(255, 182, 193, 0.1);
+  box-shadow: 0 8px 32px rgba(255, 209, 220, 0.15);
 }
 
 // Keyframes
@@ -32,12 +32,11 @@ $glass-border: rgba(255, 182, 193, 0.3);
 }
 
 @keyframes floating {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-15px);
   }
 }
 
@@ -45,10 +44,12 @@ $glass-border: rgba(255, 182, 193, 0.3);
   0% {
     top: -10%;
     transform: translateX(0) rotate(0deg);
+    opacity: 0.8;
   }
   100% {
     top: 110%;
     transform: translateX(100px) rotate(360deg);
+    opacity: 0.4;
   }
 }
 
@@ -58,13 +59,31 @@ $glass-border: rgba(255, 182, 193, 0.3);
   }
 }
 
+// Hiệu ứng thác đổ
+@keyframes waterfall {
+  0% {
+    transform: translateY(-100%) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(1000%) translateX(20px);
+    opacity: 0;
+  }
+}
+
 // Main Styles
 .login-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, $secondary-pink 0%, $primary-pink 100%);
+  background: linear-gradient(135deg, $secondary-pink 0%, $accent-pink 100%);
   position: relative;
   overflow: hidden;
   padding: 40px;
@@ -92,12 +111,12 @@ $glass-border: rgba(255, 182, 193, 0.3);
   animation: wave 25s linear infinite;
 
   &:nth-child(2) {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 209, 220, 0.2);
     animation-duration: 20s;
   }
 
   &:nth-child(3) {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 209, 220, 0.3);
     animation-duration: 15s;
   }
 }
@@ -117,7 +136,7 @@ $glass-border: rgba(255, 182, 193, 0.3);
   position: absolute;
   width: 40px;
   height: 40px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FFB6C1' d='M12,3c0,0-6.186,5.34-6.186,11.51c0,3.264,2.768,5.918,6.186,5.918s6.186-2.654,6.186-5.918C18.186,8.34,12,3,12,3z'/%3E%3C/svg%3E")
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23FFD1DC' d='M12,3c0,0-6.186,5.34-6.186,11.51c0,3.264,2.768,5.918,6.186,5.918s6.186-2.654,6.186-5.918C18.186,8.34,12,3,12,3z'/%3E%3C/svg%3E")
     no-repeat center center;
   animation: falling 10s linear infinite;
   opacity: 0.6;
@@ -131,6 +150,45 @@ $glass-border: rgba(255, 182, 193, 0.3);
   }
 }
 
+// Thêm hiệu ứng thác đổ
+.waterfall {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 209, 220, 0.2));
+  }
+}
+
+.water-drop {
+  position: absolute;
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 209, 220, 0.4), transparent);
+  border-radius: 50%;
+  animation: waterfall 4s linear infinite;
+  
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      left: ($i * 5%);
+      animation-delay: -#{$i * 0.2}s;
+      height: #{30 + random(40)}px;
+      opacity: #{0.3 + random(7) * 0.1};
+    }
+  }
+}
+
 // Login Box
 .login-box {
   width: 100%;
@@ -139,6 +197,19 @@ $glass-border: rgba(255, 182, 193, 0.3);
   @include glass-effect;
   z-index: 1;
   animation: floating 6s ease-in-out infinite;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 20px;
+    z-index: -1;
+  }
 
   .login-header {
     text-align: center;
@@ -149,13 +220,16 @@ $glass-border: rgba(255, 182, 193, 0.3);
       font-size: 3rem;
       margin-bottom: 1.5rem;
       font-family: "Nunito", sans-serif;
-      text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.3);
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(255, 209, 220, 0.3);
+      background: linear-gradient(45deg, $text-color, lighten($text-color, 20%));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .logo {
       max-width: 100px;
-
-      filter: drop-shadow(2px 2px 4px rgba(255, 182, 193, 0.3));
+      filter: drop-shadow(2px 2px 4px rgba(255, 209, 220, 0.3));
       animation: floating 4s ease-in-out infinite;
     }
   }
@@ -169,6 +243,18 @@ $glass-border: rgba(255, 182, 193, 0.3);
 
 .form-group {
   margin-bottom: 2rem;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, $primary-pink, transparent);
+    opacity: 0.5;
+  }
 
   label {
     display: block;
@@ -176,26 +262,28 @@ $glass-border: rgba(255, 182, 193, 0.3);
     margin-bottom: 0.8rem;
     font-size: 1.1rem;
     font-weight: 600;
+    letter-spacing: 0.5px;
   }
 
   input {
     width: 100%;
     padding: 1.2rem;
-    border: 2px solid rgba(255, 182, 193, 0.3);
+    border: 2px solid rgba(255, 209, 220, 0.3);
     border-radius: 15px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
     color: $text-color;
     font-size: 1.1rem;
     transition: all 0.3s ease;
 
     &::placeholder {
-      color: rgba(74, 74, 74, 0.6);
+      color: rgba(90, 90, 90, 0.5);
     }
 
     &:focus {
       outline: none;
       border-color: $primary-pink;
-      box-shadow: 0 0 0 4px rgba(255, 182, 193, 0.2);
+      box-shadow: 0 0 15px rgba(255, 209, 220, 0.4);
+      background: rgba(255, 255, 255, 0.95);
     }
 
     &:disabled {
@@ -206,14 +294,15 @@ $glass-border: rgba(255, 182, 193, 0.3);
 }
 
 .error-message {
-  background: rgba(255, 105, 180, 0.1);
+  background: rgba(255, 143, 171, 0.1);
   color: $error-color;
   padding: 1rem;
   border-radius: 15px;
   margin-bottom: 1.5rem;
   font-size: 1rem;
-  border: 1px solid rgba(255, 105, 180, 0.2);
+  border: 1px solid rgba(255, 143, 171, 0.2);
   text-align: center;
+  animation: floating 2s ease-in-out infinite;
 }
 
 .form-actions {
@@ -226,10 +315,28 @@ $glass-border: rgba(255, 182, 193, 0.3);
     font-size: 1rem;
     font-weight: 500;
     transition: color 0.3s ease;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: $primary-pink;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
 
     &:hover {
-      color: $primary-pink;
-      text-decoration: underline;
+      color: darken($primary-pink, 10%);
+      
+      &::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
     }
   }
 }
@@ -253,10 +360,32 @@ $glass-border: rgba(255, 182, 193, 0.3);
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transition: all 0.5s ease;
+  }
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.4);
+    box-shadow: 0 8px 25px rgba(255, 209, 220, 0.5);
+    
+    &::before {
+      left: 100%;
+    }
   }
 
   &:active {
@@ -267,6 +396,10 @@ $glass-border: rgba(255, 182, 193, 0.3);
     opacity: 0.7;
     cursor: not-allowed;
     transform: none;
+    
+    &::before {
+      display: none;
+    }
   }
 
   .spinner {
@@ -283,6 +416,18 @@ $glass-border: rgba(255, 182, 193, 0.3);
   text-align: center;
   margin-top: 2rem;
   color: $text-color;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, $primary-pink, transparent);
+    opacity: 0.5;
+  }
 
   p {
     margin-bottom: 1rem;
@@ -290,15 +435,33 @@ $glass-border: rgba(255, 182, 193, 0.3);
   }
 
   .register-link {
-    color: $primary-pink;
+    color: darken($primary-pink, 10%);
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     font-size: 1.1rem;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: darken($primary-pink, 10%);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
 
     &:hover {
-      color: darken($primary-pink, 10%);
-      text-decoration: underline;
+      color: darken($primary-pink, 20%);
+      
+      &::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
     }
   }
 }
@@ -314,11 +477,33 @@ $glass-border: rgba(255, 182, 193, 0.3);
   font-weight: 600;
   margin-top: 1rem;
   font-size: 1.1rem;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 209, 220, 0.4),
+      transparent
+    );
+    transition: all 0.5s ease;
+  }
 
   &:hover {
-    background: rgba(255, 182, 193, 0.1);
+    background: rgba(255, 209, 220, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 209, 220, 0.3);
+    
+    &::before {
+      left: 100%;
+    }
   }
 }
 
@@ -343,4 +528,36 @@ $glass-border: rgba(255, 182, 193, 0.3);
   .glass-effect {
     padding: 1.5rem;
   }
+  
+  .water-drop {
+    display: none;
+  }
 }
+
+// Thêm hiệu ứng thác đổ vào component
+@media (min-width: 769px) {
+  .login-container {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 15%;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(255, 209, 220, 0.5), transparent);
+      animation: waterfall 3s linear infinite;
+    }
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 15%;
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(255, 209, 220, 0.5), transparent);
+      animation: waterfall 4s linear infinite;
+    }
+  }
+}
+

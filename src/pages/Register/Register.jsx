@@ -1,4 +1,4 @@
-import React from "react"
+"use client"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Mail, Lock, User, Calendar, Phone } from "lucide-react"
@@ -112,7 +112,7 @@ const Register = () => {
         password: formData.password,
         fullName: formData.fullName,
         dob: formData.dob,
-        phone: formData.phone
+        phone: formData.phone,
       }
 
       await register(userData)
@@ -131,11 +131,18 @@ const Register = () => {
           <div key={index} className="leaf"></div>
         ))}
       </div>
-      
+
       <div className="wave-container">
         <div className="wave"></div>
         <div className="wave"></div>
         <div className="wave"></div>
+      </div>
+
+      {/* Thêm hiệu ứng thác đổ */}
+      <div className="waterfall">
+        {[...Array(20)].map((_, index) => (
+          <div key={`drop-${index}`} className="water-drop"></div>
+        ))}
       </div>
 
       <div className="register-box">
@@ -178,16 +185,13 @@ const Register = () => {
           </button>
 
           <div className="login-prompt">
-            <p>Đã có tài khoản? {" "}
+            <p>
+              Đã có tài khoản?{" "}
               <Link to="/login" className="login-link">
                 Đăng nhập
               </Link>
             </p>
-            <button
-              type="button"
-              className="btn-back"
-              onClick={() => navigate("/")}
-            >
+            <button type="button" className="btn-back" onClick={() => navigate("/")}>
               Quay lại trang chủ
             </button>
           </div>
@@ -198,3 +202,4 @@ const Register = () => {
 }
 
 export default Register
+
