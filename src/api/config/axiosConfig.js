@@ -3,10 +3,7 @@ import { API_BASE_URL } from "../constants/apiEndpoints";
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  timeout: 30000,
 });
 
 // Request interceptor
@@ -16,6 +13,15 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Xử lý FormData
+    if (config.data instanceof FormData) {
+      // Để trình duyệt tự động thêm boundary
+      config.headers['Content-Type'] = 'multipart/form-data';
+      // Không transform data khi là FormData
+      config.transformRequest = [(data) => data];
+    }
+
     return config;
   },
   (error) => {

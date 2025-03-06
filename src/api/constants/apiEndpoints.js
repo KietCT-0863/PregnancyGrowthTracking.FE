@@ -30,5 +30,12 @@ export const ENDPOINTS = {
     GET_BY_FOETUS: (foetusId) => `/GrowthData/GetByFoetusId?foetusId=${foetusId}`,
     CREATE: '/GrowthData/Create',
     UPDATE: (growthDataId) => `/GrowthData/Update?growthDataId=${growthDataId}`
+  },
+  USER_NOTES: {
+    GET_BY_USER: (userId) => `/user-notes/user/${userId}`,
+    GET_BY_ID: (id) => `/user-notes/${id}`,
+    CREATE: '/user-notes',
+    UPDATE: (id) => `/user-notes/${id}`,
+    DELETE: (id) => `/user-notes/${id}`
   }
 }; 
