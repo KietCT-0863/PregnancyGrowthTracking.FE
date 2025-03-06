@@ -93,10 +93,11 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
         <Route path="/basic-user/payment-result" element={<PaymentResult />} />
-
+        <Route path="/basic-user/profile/edit" element={<EditProfile />} />
         <Route path="/basic-user/blog" element={<BlogGuest />} >
-        <Route index element={<GuestBlogAll />} />
-        <Route path=":id" element={<GuestBlogDetail />} /></Route>
+          <Route index element={<GuestBlogAll />} />
+          <Route path=":id" element={<GuestBlogDetail />} />
+        </Route>
       </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}

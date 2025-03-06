@@ -13,6 +13,7 @@ import {
   FaSignOutAlt,
   FaBars,
   FaTimes,
+  FaUserEdit,
 } from "react-icons/fa";
 import "./NavbarGuest.scss";
 
@@ -35,41 +36,46 @@ const NavBarGuest = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    
     if (token) {
       try {
         const decoded = jwtDecode(token);
         setUserInfo(decoded);
         setIsLoggedIn(true);
-        setIsAdmin(
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ] === "admin"
-        );
-        localStorage.setItem("userName", decoded.name);
+        setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin");
+        
+        // Set profile image from userData
+        if (userData?.profileImageUrl) {
+          setProfileImage(userData.profileImageUrl);
+        }
       } catch (error) {
         console.error("Token decode error:", error);
         localStorage.removeItem("token");
         setIsLoggedIn(false);
         setUserInfo(null);
         setIsAdmin(false);
+        setProfileImage(null);
       }
     }
 
-    // Add scroll event listener
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+    // Listen for localStorage changes
+    const handleStorageChange = (e) => {
+      if (e.key === 'userData') {
+        const newUserData = JSON.parse(e.newValue);
+        if (newUserData?.profileImageUrl) {
+          setProfileImage(newUserData.profileImageUrl);
+        }
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogout = () => {
@@ -185,14 +191,54 @@ const NavBarGuest = () => {
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="true"
                 >
-                  <FaUserCircle className="user-icon" />
+                  {profileImage ? (
+                    <img 
+                      src={profileImage} 
+                      alt="Profile" 
+                      className="user-avatar"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/placeholder.svg';
+                        setProfileImage(null);
+                      }}
+                    />
+                  ) : (
+                    <FaUserCircle className="user-icon" />
+                  )}
                   <span className="user-name">{userInfo?.name || "Người dùng"}</span>
                 </button>
                 {isDropdownOpen && (
                   <div className="user-dropdown">
                     <div className="user-info">
+                      <div className="user-profile-header">
+                        {profileImage ? (
+                          <img 
+                            src={profileImage} 
+                            alt="Profile" 
+                            className="dropdown-user-avatar"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/placeholder.svg';
+                              setProfileImage(null);
+                            }}
+                          />
+                        ) : (
+                          <FaUserCircle className="dropdown-user-icon" />
+                        )}
+                        <div className="user-details">
+                          <div className="user-name">{userInfo?.name || "Người dùng"}</div>
+                          <div className="user-email">{userInfo?.email}</div>
+                        </div>
+                      </div>
                       <div className="info-item">Ngày sinh: {userInfo?.birthDate}</div>
-                      <div className="info-item">Email: {userInfo?.email}</div>
+                      <Link 
+                        to="/basic-user/profile/edit" 
+                        className="edit-profile-button"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <FaUserEdit className="edit-icon" />
+                        Chỉnh sửa thông tin
+                      </Link>
                       <button
                         className="btn btn-vip"
                         onClick={() => {

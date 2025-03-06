@@ -383,6 +383,21 @@ $border-radius: 8px;
           overflow: hidden;
           text-overflow: ellipsis;
         }
+
+        .user-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+          }
+        }
       }
 
       .user-dropdown {
@@ -455,6 +470,68 @@ $border-radius: 8px;
           
           .logout-icon {
             transition: transform $transition-speed ease;
+          }
+        }
+
+        .user-profile-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 15px;
+          background: #f8f9fa;
+          border-radius: 8px;
+          margin-bottom: 12px;
+
+          .dropdown-user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+
+          .user-details {
+            .user-name {
+              font-weight: 500;
+              color: #333;
+              margin-bottom: 4px;
+            }
+
+            .user-email {
+              font-size: 0.9rem;
+              color: #666;
+            }
+          }
+        }
+
+        .edit-profile-button {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+          padding: 10px 15px;
+          border: none;
+          background: none;
+          color: #333;
+          font-size: 0.9rem;
+          text-decoration: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          margin-bottom: 10px;
+
+          &:hover {
+            background-color: #f0f0f0;
+            color: #ff6b81;
+          }
+
+          .edit-icon {
+            font-size: 1.1rem;
+            color: #666;
+          }
+
+          &:hover .edit-icon {
+            color: #ff6b81;
           }
         }
       }
