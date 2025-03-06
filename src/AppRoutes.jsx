@@ -40,6 +40,8 @@ import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 import Blog from "./pages/blog";
 import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
+import EditProfile from "./pages/Profile/EditProfile";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -121,6 +123,7 @@ const AppRoutes = () => {
         <Route path="/member/blog" element={<Blog />} >
         <Route index element={<BlogAll />} />
         <Route path=":id" element={<BlogDetail />} /></Route>
+        <Route path="/member/profile/edit" element={<EditProfile />} />
       </Route>
 
       {/* Route cho admin - cần đăng nhập admin */}

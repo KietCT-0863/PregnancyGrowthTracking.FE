@@ -37,5 +37,9 @@ export const ENDPOINTS = {
     CREATE: '/user-notes',
     UPDATE: (id) => `/user-notes/${id}`,
     DELETE: (id) => `/user-notes/${id}`
-  }
+  },
+  PROFILE_IMAGE: {
+    UPDATE: (userId) => `/ProfileImg/${userId}/profile-image`,
+    GET: (userId) => `/ProfileImg/${userId}/profile-image`
+  },
 }; 
