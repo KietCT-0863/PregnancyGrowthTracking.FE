@@ -4,22 +4,23 @@ import { ENDPOINTS } from "../constants/apiEndpoints";
 const authService = {
   login: async (credentials) => {
     try {
-      const response = await axiosInstance.post(ENDPOINTS.AUTH.LOGIN, credentials);
+      const response = await axiosInstance.post(
+        ENDPOINTS.AUTH.LOGIN,
+        credentials
+      );
       const data = response.data;
-      
-      // Lưu token
-      localStorage.setItem('token', data.token);
-      
-      // Lưu thông tin user
+
+      // Lưu token và user data vào localStorage
+      localStorage.setItem("token", data.token);
       const userData = {
         userName: data.userName,
         email: data.email,
         role: data.role,
+        userId: data.userId,
         profileImageUrl: data.profileImageUrl,
-        userId: data.userId
       };
-      localStorage.setItem('userData', JSON.stringify(userData));
-      
+      localStorage.setItem("userData", JSON.stringify(userData));
+
       return data;
     } catch (error) {
       throw error;
@@ -28,7 +29,10 @@ const authService = {
 
   register: async (userData) => {
     try {
-      const response = await axiosInstance.post(ENDPOINTS.AUTH.REGISTER, userData);
+      const response = await axiosInstance.post(
+        ENDPOINTS.AUTH.REGISTER,
+        userData
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -37,7 +41,10 @@ const authService = {
 
   forgotPassword: async (email) => {
     try {
-      const response = await axiosInstance.post(ENDPOINTS.AUTH.FORGOT_PASSWORD, { email });
+      const response = await axiosInstance.post(
+        ENDPOINTS.AUTH.FORGOT_PASSWORD,
+        { email }
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -46,7 +53,8 @@ const authService = {
 
   logout: () => {
     localStorage.removeItem("token");
-  }
+    localStorage.removeItem("userData");
+  },
 };
 
-export default authService; 
+export default authService;

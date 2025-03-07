@@ -1,8 +1,10 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 
 import HomePublic from "./pages/HomePublic/HomePublic";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
+import Login from "./pages/Auth/Login/Login";
+import Register from "./pages/Auth/Register/Register";
+import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
 import AdminLayout from "../layout/AdminLayout/AdminLayout";
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
@@ -40,6 +42,8 @@ import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 import Blog from "./pages/blog";
 import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
+import EditProfile from "./pages/Profile/EditProfile";
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -61,6 +65,8 @@ const AppRoutes = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/blog" element={<BlogPublic />} >
         <Route index element={<BlogAllPublic />} />
         <Route path=":id" element={<BlogDetailPublic />} /></Route>
@@ -91,10 +97,11 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
         <Route path="/basic-user/payment-result" element={<PaymentResult />} />
-
+        <Route path="/basic-user/profile/edit" element={<EditProfile />} />
         <Route path="/basic-user/blog" element={<BlogGuest />} >
-        <Route index element={<GuestBlogAll />} />
-        <Route path=":id" element={<GuestBlogDetail />} /></Route>
+          <Route index element={<GuestBlogAll />} />
+          <Route path=":id" element={<GuestBlogDetail />} />
+        </Route>
       </Route>
 
       {/* Route cho thành viên VIP - cần đăng nhập */}
@@ -121,6 +128,7 @@ const AppRoutes = () => {
         <Route path="/member/blog" element={<Blog />} >
         <Route index element={<BlogAll />} />
         <Route path=":id" element={<BlogDetail />} /></Route>
+        <Route path="/member/profile/edit" element={<EditProfile />} />
       </Route>
 
       {/* Route cho admin - cần đăng nhập admin */}
