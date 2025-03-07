@@ -7,20 +7,24 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const userData = localStorage.getItem("userData");
-    return userData ? JSON.parse(userData) : null;
+    const token = localStorage.getItem("token");
+    return userData && token ? JSON.parse(userData) : null;
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem("token");
-      if (token) {
+      const userData = localStorage.getItem("userData");
+
+      if (token && userData) {
         try {
-          // TODO: Thêm API endpoint để lấy thông tin user
-          const response = await authApi.getCurrentUser();
-          setUser(response);
+          setUser(JSON.parse(userData));
         } catch (error) {
+          console.error("Error parsing user data:", error);
           localStorage.removeItem("token");
+          localStorage.removeItem("userData");
+          setUser(null);
         }
       }
       setLoading(false);
