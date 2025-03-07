@@ -1,10 +1,9 @@
 import { Routes, Route, Outlet } from "react-router-dom";
-
 import HomePublic from "./pages/HomePublic/HomePublic";
-import Login from "./pages/Auth/Login/Login";
-import Register from "./pages/Auth/Register/Register";
-import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
-import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+// import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+// import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
 import AdminLayout from "../layout/AdminLayout/AdminLayout";
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
@@ -65,12 +64,13 @@ const AppRoutes = () => {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/blog" element={<BlogPublic />} >
-        <Route index element={<BlogAllPublic />} />
-        <Route path=":id" element={<BlogDetailPublic />} /></Route>
-        
+        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
+        {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
+        <Route path="/blog" element={<BlogPublic />}>
+          <Route index element={<BlogAllPublic />} />
+          <Route path=":id" element={<BlogDetailPublic />} />
+        </Route>
+
         <Route path="/contact" element={<Contact />} />
       </Route>
       <Route path="/faq" element={<FAQ />}>
@@ -98,7 +98,7 @@ const AppRoutes = () => {
         <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
         <Route path="/basic-user/payment-result" element={<PaymentResult />} />
         <Route path="/basic-user/profile/edit" element={<EditProfile />} />
-        <Route path="/basic-user/blog" element={<BlogGuest />} >
+        <Route path="/basic-user/blog" element={<BlogGuest />}>
           <Route index element={<GuestBlogAll />} />
           <Route path=":id" element={<GuestBlogDetail />} />
         </Route>
@@ -124,10 +124,11 @@ const AppRoutes = () => {
           <Route path="/member/calendar/:id" element={<CalendarHistory />} />
         </Route>
         <Route path="/member/doctor-notes" element={<DoctorNotes />} />
-        <Route path="/member/community" element={<Community />} />  
-        <Route path="/member/blog" element={<Blog />} >
-        <Route index element={<BlogAll />} />
-        <Route path=":id" element={<BlogDetail />} /></Route>
+        <Route path="/member/community" element={<Community />} />
+        <Route path="/member/blog" element={<Blog />}>
+          <Route index element={<BlogAll />} />
+          <Route path=":id" element={<BlogDetail />} />
+        </Route>
         <Route path="/member/profile/edit" element={<EditProfile />} />
       </Route>
 
