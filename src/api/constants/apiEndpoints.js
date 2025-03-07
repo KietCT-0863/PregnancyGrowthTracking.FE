@@ -7,9 +7,13 @@ export const ENDPOINTS = {
     FORGOT_PASSWORD: "/Auth/ForgotPassword"
   },
   USER: {
+    LIST: "/User",
+    DETAIL: (id) => `/User/${id}`,
+    CREATE: "/User",
+    UPDATE: (id) => `/User/${id}`,
+    DELETE: (id) => `/User/${id}`,
     PROFILE: "/User/Profile",
-    GET_CURRENT: "/User/GetCurrentUser",
-    UPDATE: "/User/Update"
+    GET_CURRENT: "/User/GetCurrentUser"
   },
   BLOG: {
     LIST: "/Blog",
@@ -30,5 +34,12 @@ export const ENDPOINTS = {
     GET_BY_FOETUS: (foetusId) => `/GrowthData/GetByFoetusId?foetusId=${foetusId}`,
     CREATE: '/GrowthData/Create',
     UPDATE: (growthDataId) => `/GrowthData/Update?growthDataId=${growthDataId}`
+  },
+  USER_MANAGEMENT: {
+    LIST: "/User",
+    DETAIL: (id) => `/User/${id}`,
+    CREATE: "/User",
+    UPDATE: (id) => `/User/${id}`,
+    DELETE: (id) => `/User/${id}`
   }
 }; 

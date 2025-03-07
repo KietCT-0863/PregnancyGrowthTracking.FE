@@ -6,10 +6,12 @@ import {
   DialogActions,
   Button,
   TextField,
-  Box
+  Box,
+  CircularProgress
 } from '@mui/material';
 
 const GrowthStandardForm = ({ open, onClose, editData }) => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     gestationalAge: '',
     hcMedian: '',
@@ -47,6 +49,7 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('token');
       const url = 'https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/GrowthStandard';
       const method = editData ? 'PUT' : 'POST';
@@ -68,6 +71,8 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
     } catch (error) {
       console.error('Error:', error);
       // Có thể thêm xử lý hiển thị thông báo lỗi ở đây
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,6 +90,8 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
             value={formData.gestationalAge}
             onChange={handleChange}
             fullWidth
+            required
+            inputProps={{ min: 0, max: 45 }}
           />
           <TextField
             name="hcMedian"
@@ -121,8 +128,13 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
-        <Button onClick={handleSubmit} variant="contained">
+        <Button onClick={onClose} disabled={loading}>Hủy</Button>
+        <Button 
+          onClick={handleSubmit} 
+          variant="contained"
+          disabled={loading}
+          startIcon={loading ? <CircularProgress size={20} /> : null}
+        >
           {editData ? 'Cập nhật' : 'Thêm mới'}
         </Button>
       </DialogActions>

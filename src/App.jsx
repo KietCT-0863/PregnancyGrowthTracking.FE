@@ -5,7 +5,8 @@ import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdmin
 import Dashboard from "./pages/DashBoardAdmin/DashBoard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import GrowthStandardList from './components/GrowthStandard/GrowthStandardList';
+import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
+import PaymentResult from './pages/Payment/PaymentResult';
 
 function App() {
   return (

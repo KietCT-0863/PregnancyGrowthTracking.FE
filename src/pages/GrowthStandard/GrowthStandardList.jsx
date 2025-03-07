@@ -11,10 +11,11 @@ import {
   Box,
   Typography,
   CircularProgress,
+  TablePagination,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import GrowthStandardForm from "./GrowthStandardForm";
+import GrowthStandardForm from "../../pages/GrowthStandard/GrowthStandardForm";
 
 const GrowthStandardList = () => {
   const [standards, setStandards] = useState([]);
@@ -22,6 +23,8 @@ const GrowthStandardList = () => {
   const [editData, setEditData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage] = useState(7);
 
   const fetchStandards = async () => {
     try {
@@ -73,6 +76,15 @@ const GrowthStandardList = () => {
     fetchStandards();
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const currentPageStandards = standards.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   if (loading) {
     return (
       <Box
@@ -110,41 +122,53 @@ const GrowthStandardList = () => {
           Chưa có dữ liệu
         </Typography>
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Tuổi thai (tuần)</TableCell>
-                <TableCell>HC Median</TableCell>
-                <TableCell>AC Median</TableCell>
-                <TableCell>FL Median</TableCell>
-                <TableCell>EFW Median</TableCell>
-                <TableCell>Thao tác</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {standards.map((standard) => (
-                <TableRow key={standard.growthStandardId}>
-                  <TableCell>{standard.growthStandardId}</TableCell>
-                  <TableCell>{standard.gestationalAge}</TableCell>
-                  <TableCell>{standard.hcMedian}</TableCell>
-                  <TableCell>{standard.acMedian}</TableCell>
-                  <TableCell>{standard.flMedian}</TableCell>
-                  <TableCell>{standard.efwMedian}</TableCell>
-                  <TableCell>
-                    <Button
-                      startIcon={<EditIcon />}
-                      onClick={() => handleEdit(standard)}
-                    >
-                      Sửa
-                    </Button>
-                  </TableCell>
+        <>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Tuổi thai (tuần)</TableCell>
+                  <TableCell>HC Median</TableCell>
+                  <TableCell>AC Median</TableCell>
+                  <TableCell>FL Median</TableCell>
+                  <TableCell>EFW Median</TableCell>
+                  <TableCell>Thao tác</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {currentPageStandards.map((standard) => (
+                  <TableRow key={standard.growthStandardId}>
+                    <TableCell>{standard.growthStandardId}</TableCell>
+                    <TableCell>{standard.gestationalAge}</TableCell>
+                    <TableCell>{standard.hcMedian}</TableCell>
+                    <TableCell>{standard.acMedian}</TableCell>
+                    <TableCell>{standard.flMedian}</TableCell>
+                    <TableCell>{standard.efwMedian}</TableCell>
+                    <TableCell>
+                      <Button
+                        startIcon={<EditIcon />}
+                        onClick={() => handleEdit(standard)}
+                      >
+                        Sửa
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          
+          <TablePagination
+            component="div"
+            count={standards.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={7}
+            rowsPerPageOptions={[7]}
+            sx={{ mt: 2 }}
+          />
+        </>
       )}
 
       <GrowthStandardForm

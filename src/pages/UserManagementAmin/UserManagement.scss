@@ -38,14 +38,30 @@ $background-color: #f5f5f5;
     justify-content: space-between;
     margin-bottom: 20px;
     
-    .search-field {
+    .filter-container {
+      display: flex;
+      gap: 16px;
       flex-grow: 1;
       margin-right: 20px;
-      transition: all 0.3s ease;
 
-      &:focus-within {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      .search-field {
+        flex-grow: 1;
+        transition: all 0.3s ease;
+
+        &:focus-within {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      .role-filter {
+        min-width: 120px;
+        transition: all 0.3s ease;
+
+        &:focus-within {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
       }
     }
 
@@ -82,6 +98,32 @@ $background-color: #f5f5f5;
   .delete-button {
     color: $secondary-color;
   }
+
+  .MuiTableCell-root {
+    &.id-cell {
+      width: 80px;
+      text-align: center;
+    }
+
+    &.role-cell {
+      width: 100px;
+      text-align: center;
+      
+      &.admin {
+        color: #f50057;
+        font-weight: 500;
+      }
+      
+      &.vip {
+        color: #ffa000;
+        font-weight: 500;
+      }
+      
+      &.user {
+        color: #4caf50;
+      }
+    }
+  }
 }
 
 .user-dialog {
@@ -92,16 +134,38 @@ $background-color: #f5f5f5;
   .MuiTextField-root {
     margin-bottom: 16px;
   }
+
+  .MuiDialogContent-root {
+    min-width: 400px;
+  }
+  
+  .MuiFormControl-root {
+    margin-bottom: 16px;
+  }
+}
+
+.MuiSnackbar-root {
+  z-index: 1400;
 }
 
 @media (max-width: 600px) {
   .user-management {
     .search-add-container {
       flex-direction: column;
+      gap: 16px;
 
-      .search-field {
+      .filter-container {
+        flex-direction: column;
         margin-right: 0;
-        margin-bottom: 16px;
+        gap: 16px;
+
+        .search-field {
+          width: 100%;
+        }
+
+        .role-filter {
+          width: 100%;
+        }
       }
     }
   }

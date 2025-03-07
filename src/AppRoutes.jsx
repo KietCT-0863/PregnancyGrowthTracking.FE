@@ -24,7 +24,7 @@ import NavBarMember from "./components/NavBarMember/NavBarMember";
 import FooterMember from "./components/FooterMember/FooterMember";
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
-import GrowthStandardList from "./components/GrowthStandard/GrowthStandardList";
+import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
 import PaymentResult from "./pages/Payment/PaymentResult";
 import ChatAI from "./components/ChatBoxAI/ChatAI";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
