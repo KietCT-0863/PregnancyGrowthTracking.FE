@@ -8,6 +8,8 @@ import "./BlogSilde.scss"
 import { Link } from "react-router-dom"
 import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react"
 import { motion } from "framer-motion"
+import blogService from "../../api/services/blogService"
+import { API_BASE_URL } from "../../api/constants/apiEndpoints"
 
 const BlogSlide = () => {
   const [posts, setPosts] = useState([])
@@ -17,15 +19,18 @@ const BlogSlide = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
-        )
-        if (!response.ok) throw new Error("Không thể tải bài viết")
-        const data = await response.json()
-        const sortedPosts = data.posts
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 8)
-        setPosts(sortedPosts)
+        console.log('Fetching blog posts...')
+        const data = await blogService.getBlogs()
+        console.log('Blog response:', data)
+        
+        if (data && data.posts) {
+          const sortedPosts = data.posts
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 8)
+          
+          console.log('Sorted posts:', sortedPosts)
+          setPosts(sortedPosts)
+        }
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error)
       } finally {
@@ -81,7 +86,7 @@ const BlogSlide = () => {
     ]
   }
 
-  const PostCard = ({ title, body, id, categories }) => (
+  const PostCard = ({ title, body, id, categories, blogImageUrl }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -90,7 +95,14 @@ const BlogSlide = () => {
       className="post-card"
     >
       <div className="post-icon">
-        <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
+        <img 
+          src={blogImageUrl}
+          alt={title}
+          onError={(e) => {
+            console.error('Error loading blog slide image:', id);
+            e.target.style.display = 'none';
+          }}
+        />
       </div>
       <div className="post-content">
         <h3>{title}</h3>
@@ -99,7 +111,7 @@ const BlogSlide = () => {
           <div className="post-categories">
             {categories.map((category, index) => (
               <span key={index} className="category-tag">
-                #{category}
+                #{typeof category === 'string' ? category : category.categoryName}
               </span>
             ))}
           </div>

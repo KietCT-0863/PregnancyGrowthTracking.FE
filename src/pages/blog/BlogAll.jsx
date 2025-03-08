@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Loader, Calendar, User } from "lucide-react";
 import "./BlogAll.scss";
+import blogService from "../../api/services/blogService";
 
 const BlogAll = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,26 +19,27 @@ const BlogAll = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch(
-          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
-        );
-        if (!response.ok) {
+        console.log('Fetching blogs...');
+        const data = await blogService.getBlogs();
+        console.log('Blog data:', data);
+        
+        if (!data || !data.posts) {
           throw new Error("Không thể tải danh sách bài viết");
         }
-        const data = await response.json();
+
         setBlogs(data.posts);
         
         const allCategories = data.posts.reduce((acc, post) => {
           if (post.categories && Array.isArray(post.categories)) {
             post.categories.forEach(category => {
-              if (typeof category === 'string') {
-                acc.add(category);
-              }
+              const categoryName = typeof category === 'string' ? category : category.categoryName;
+              if (categoryName) acc.add(categoryName);
             });
           }
           return acc;
         }, new Set());
         
+        console.log('Available categories:', [...allCategories]);
         setAvailableCategories([...allCategories]);
       } catch (err) {
         console.error("Error fetching blogs:", err);
@@ -187,12 +189,16 @@ const BlogAll = () => {
       </div>
 
       <div className="blog-grid">
-        {currentBlogs.map(({ id, title, body }) => (
+        {currentBlogs.map(({ id, title, body, blogImageUrl }) => (
           <div key={id} className="blog-card">
             <div className="blog-image">
               <img
-                src={`https://picsum.photos/seed/${id}/400/300`}
+                src={blogImageUrl}
                 alt={title}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://picsum.photos/seed/${id}/400/300`;
+                }}
               />
             </div>
             <div className="blog-content">

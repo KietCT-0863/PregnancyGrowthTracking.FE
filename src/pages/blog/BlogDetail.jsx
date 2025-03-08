@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import "./BlogDetail.scss";
+import blogService from "../../api/services/blogService";
 
 const BlogDetail = () => {
   const [post, setPost] = useState(null);
@@ -22,27 +23,31 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog`
-        );
-        if (!response.ok) {
+        console.log('Fetching blog detail for id:', id);
+        const data = await blogService.getBlogs();
+        console.log('Blog data:', data);
+        
+        if (!data || !data.posts) {
           throw new Error("Không thể tải bài viết");
         }
-        const data = await response.json();
-        const selectedPost = data.posts.find((posts) => posts.id === parseInt(id));
+
+        const selectedPost = data.posts.find(post => post.id === parseInt(id));
         if (!selectedPost) {
           throw new Error("Không tìm thấy bài viết");
         }
+        
         setPost(selectedPost);
-        console.log(selectedPost);
-        setLoading(false);
       } catch (err) {
+        console.error('Error fetching blog:', err);
         setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchPost();
+    if (id) {
+      fetchPost();
+    }
   }, [id]);
 
   if (loading) {
@@ -72,8 +77,13 @@ const BlogDetail = () => {
         </NavLink>
         <div className="blog-detail-image">
           <img
-            src={`https://picsum.photos/seed/${post.id}/1200/600`}
+            src={post.blogImageUrl}
             alt={post.title}
+            onError={(e) => {
+              console.log('Image load error, using fallback');
+              e.target.onerror = null;
+              e.target.src = `https://picsum.photos/seed/${post.id}/1200/600`;
+            }}
           />
         </div>
         <h1>{post.title}</h1>

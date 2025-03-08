@@ -12,6 +12,7 @@ import {
   Activity,
 } from "lucide-react";
 import "./GuestBlogDetail.scss";
+import blogService from "../../../api/services/blogService";
 
 const GuestBlogDetail = () => {
   const [post, setPost] = useState(null);
@@ -22,19 +23,17 @@ const GuestBlogDetail = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(
-          `https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog`
-        );
-        if (!response.ok) {
+        const data = await blogService.getBlogs();
+        if (!data || !data.posts) {
           throw new Error("Không thể tải bài viết");
         }
-        const data = await response.json();
-        const selectedPost = data.posts.find((posts) => posts.id === parseInt(id));
+        const selectedPost = data.posts.find(
+          (post) => post.id === parseInt(id)
+        );
         if (!selectedPost) {
           throw new Error("Không tìm thấy bài viết");
         }
         setPost(selectedPost);
-        console.log(selectedPost);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -72,8 +71,12 @@ const GuestBlogDetail = () => {
         </NavLink>
         <div className="blog-detail-image">
           <img
-            src={`https://picsum.photos/seed/${post.id}/1200/600`}
+            src={post.blogImageUrl}
             alt={post.title}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = `https://picsum.photos/seed/${post.id}/1200/600`;
+            }}
           />
         </div>
         <h1>{post.title}</h1>

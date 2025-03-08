@@ -8,6 +8,7 @@ import "./BlogSildeMember.scss"
 import { Link } from "react-router-dom"
 import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react"
 import { motion } from "framer-motion"
+import blogService from "../../api/services/blogService"
 
 const BlogSlideMember = () => {
   const [posts, setPosts] = useState([])
@@ -17,11 +18,9 @@ const BlogSlideMember = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch(
-          "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog"
-        )
-        if (!response.ok) throw new Error("Không thể tải bài viết")
-        const data = await response.json()
+        const data = await blogService.getBlogs()
+        if (!data || !data.posts) throw new Error("Không thể tải bài viết")
+        
         const sortedPosts = data.posts
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 8)
@@ -81,7 +80,7 @@ const BlogSlideMember = () => {
     ]
   }
 
-  const PostCard = ({ title, body, id, categories }) => (
+  const PostCard = ({ title, body, id, categories, blogImageUrl }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -90,7 +89,14 @@ const BlogSlideMember = () => {
       className="post-card"
     >
       <div className="post-icon">
-        <img src={`https://picsum.photos/seed/${id}/300/300`} alt={title} />
+        <img 
+          src={blogImageUrl} 
+          alt={title}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = `https://picsum.photos/seed/${id}/300/300`;
+          }}
+        />
       </div>
       <div className="post-content">
         <h3>{title}</h3>

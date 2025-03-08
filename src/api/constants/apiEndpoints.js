@@ -18,7 +18,10 @@ export const ENDPOINTS = {
   BLOG: {
     LIST: "/Blog",
     DETAIL: (id) => `/Blog/${id}`,
-    DELETE: (id) => `/Blog?blogID=${id}`
+    DELETE: (id) => `/Blog?blogID=${id}`,
+    UPLOAD_PHOTO: (blogId) => `/Blog/upload-photo/${blogId}`,
+    REPLACE_PHOTO: (blogId) => `/Blog/replace-photo/${blogId}`,
+    GET_PHOTO: (blogId) => `/Blog/${blogId}/photo`,
   },
   PAYMENT: {
     CREATE: "/Payment/create-payment",

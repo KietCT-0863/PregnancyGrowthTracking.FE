@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Loader, Calendar } from "lucide-react";
 import "./GuestBlogAll.scss";
+import blogService from "../../../api/services/blogService";
 
 const BLOGS_PER_PAGE = 6;
 const BLOG_API_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
@@ -18,19 +19,25 @@ const GuestBlogAll = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch(BLOG_API_URL);
-        if (!response.ok) throw new Error("Không thể tải danh sách bài viết");
-        const { posts } = await response.json();
+        const data = await blogService.getBlogs();
+        if (!data || !data.posts) throw new Error("Không thể tải danh sách bài viết");
         
-        const categories = [...new Set(posts.flatMap(post => 
+        const categories = [...new Set(data.posts.flatMap(post => 
           post.categories?.filter(cat => typeof cat === 'string') || []
         ))];
 
         setBlogState(prev => ({
-          ...prev, blogs: posts, availableCategories: categories, loading: false
+          ...prev, 
+          blogs: data.posts, 
+          availableCategories: categories, 
+          loading: false
         }));
       } catch (err) {
-        setBlogState(prev => ({ ...prev, error: err.message, loading: false }));
+        setBlogState(prev => ({ 
+          ...prev, 
+          error: err.message, 
+          loading: false 
+        }));
       }
     })();
   }, []);
@@ -113,10 +120,17 @@ const GuestBlogAll = () => {
       </div>
 
       <div className="blog-grid">
-        {currentBlogs.map(({ id, title, body }) => (
+        {currentBlogs.map(({ id, title, body, blogImageUrl }) => (
           <div key={id} className="blog-card">
             <div className="blog-image">
-              <img src={`https://picsum.photos/seed/${id}/400/300`} alt={title} />
+              <img 
+                src={blogImageUrl} 
+                alt={title}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `https://picsum.photos/seed/${id}/400/300`;
+                }}
+              />
             </div>
             <div className="blog-content">
               <h2>{title}</h2>
