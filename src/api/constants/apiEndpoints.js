@@ -1,10 +1,11 @@
-export const API_BASE_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api";
+export const API_BASE_URL =
+  "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api";
 
 export const ENDPOINTS = {
   AUTH: {
     LOGIN: "/Auth/Login",
-    REGISTER: "/Auth/Register", 
-    FORGOT_PASSWORD: "/Auth/ForgotPassword"
+    REGISTER: "/Auth/Register",
+    FORGOT_PASSWORD: "/Auth/ForgotPassword",
   },
   USER: {
     LIST: "/User",
@@ -13,7 +14,7 @@ export const ENDPOINTS = {
     UPDATE: (id) => `/User/${id}`,
     DELETE: (id) => `/User/${id}`,
     PROFILE: "/User/Profile",
-    GET_CURRENT: "/User/GetCurrentUser"
+    GET_CURRENT: "/User/GetCurrentUser",
   },
   BLOG: {
     LIST: "/Blog",
@@ -25,37 +26,38 @@ export const ENDPOINTS = {
   },
   PAYMENT: {
     CREATE: "/Payment/create-payment",
-    CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`
+    CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`,
   },
   FOETUS: {
     LIST: "/Foetus",
     DETAIL: (id) => `/Foetus/${id}`,
     CREATE: "/Foetus/Create",
-    DELETE: (id) => `/Foetus/${id}`
+    DELETE: (id) => `/Foetus/${id}`,
   },
-  GROWTHDATA: {
-    GET_BY_FOETUS: (foetusId) => `/GrowthData/GetByFoetusId?foetusId=${foetusId}`,
-    CREATE: '/GrowthData/Create',
-    UPDATE: (growthDataId) => `/GrowthData/Update?growthDataId=${growthDataId}`
-  },
+
   USER_NOTES: {
     GET_BY_USER: (userId) => `/user-notes/user/${userId}`,
     GET_BY_ID: (id) => `/user-notes/${id}`,
-    CREATE: '/user-notes',
+    CREATE: "/user-notes",
     UPDATE: (id) => `/user-notes/${id}`,
-    DELETE: (id) => `/user-notes/${id}`
+    DELETE: (id) => `/user-notes/${id}`,
   },
   PROFILE_IMAGE: {
     UPDATE: (userId) => `/ProfileImg/${userId}/profile-image`,
-    GET: (userId) => `/ProfileImg/${userId}/profile-image`
+    GET: (userId) => `/ProfileImg/${userId}/profile-image`,
   },
   USER_MANAGEMENT: {
     LIST: "/User",
     DETAIL: (id) => `/User/${id}`,
     CREATE: "/User",
     UPDATE: (id) => `/User/${id}`,
-    DELETE: (id) => `/User/${id}`
-  }
+    DELETE: (id) => `/User/${id}`,
+  },
+  GROWTHDATA: {
+    GET_BY_FOETUS: (foetusId) => `/foetus/${foetusId}/growth-data`,
+    CREATE: (foetusId) => `/foetus/${foetusId}/growth-data`,
+    UPDATE: (foetusId, age) => `/foetus/${foetusId}/growth-data/${age}`,
+  },
 };
 
 // Auth endpoints
@@ -86,12 +88,3 @@ export const PAYMENT_ENDPOINTS = {
   PAYMENT_CALLBACK: "/api/Payment/payment-callback",
   PAYMENT_RESULT: "/payment-result",
 };
-
-// Growth Standard endpoints
-export const GROWTH_STANDARD_ENDPOINTS = {
-  GET_ALL: "/api/GrowthStandard",
-  GET_BY_ID: "/api/GrowthStandard",
-  CREATE: "/api/GrowthStandard",
-  UPDATE: "/api/GrowthStandard",
-  DELETE: "/api/GrowthStandard",
-}; 
