@@ -57,6 +57,7 @@ export const ENDPOINTS = {
     GET_BY_FOETUS: (foetusId) => `/foetus/${foetusId}/growth-data`,
     CREATE: (foetusId) => `/foetus/${foetusId}/growth-data`,
     UPDATE: (foetusId, age) => `/foetus/${foetusId}/growth-data/${age}`,
+    GET_RANGES: (age) => `/growth-data/ranges/${age}`,
   },
 };
 

@@ -26,6 +26,7 @@ import growthStatsService from "../../api/services/growthStatsService";
 import "./BasicTracking.scss";
 import { toast } from "react-toastify";
 import { Table } from "antd";
+import GrowthAlert from "./components/GrowthAlert/GrowthAlert";
 
 // Register ChartJS components
 ChartJS.register(
@@ -141,6 +142,8 @@ const BasicTracking = () => {
   const [showCompareModal, setShowCompareModal] = useState(false); // Thêm state cho modal mới
   const [selectedFoetus, setSelectedFoetus] = useState(null); // State cho thai nhi được chọn
   const [selectedChild, setSelectedChild] = useState(null); // Thêm state cho việc chọn thai nhi
+  const [showGrowthAlert, setShowGrowthAlert] = useState(false);
+  const [alertData, setAlertData] = useState(null);
 
   // Data fetching
   const fetchData = async () => {
@@ -186,41 +189,121 @@ const BasicTracking = () => {
   const handleStatsUpdate = async (foetusId) => {
     try {
       const statsData = tempStats[foetusId] || {};
+
+      // Log thông tin cập nhật
+      console.group("Updating Growth Stats");
+      console.log("Foetus ID:", foetusId);
+      console.log("Stats Data:", statsData);
+
       validateStats(statsData);
-      await updateStats(foetusId, statsData);
-      handleUpdateSuccess();
+      const result = await updateStats(foetusId, statsData);
+
+      // Log kết quả
+      console.log("Update Result:", result);
+      console.groupEnd();
+
+      if (result.success) {
+        // Truyền toàn bộ result làm alertData
+        setAlertData(result);
+        setShowGrowthAlert(true);
+        handleUpdateSuccess(result);
+      }
     } catch (err) {
       handleUpdateError(err);
     }
   };
 
   const validateStats = (statsData) => {
+    console.group("Validating Stats");
+
     const age = Number(statsData.age || 0);
+    console.log("Age:", age);
+
     if (!age || age < 0 || age > 42) {
+      console.error("Invalid age:", age);
+      console.groupEnd();
       throw new Error("Tuần tuổi thai nhi không hợp lệ (0-42 tuần)");
     }
+
+    console.log("Validation passed");
+    console.groupEnd();
   };
 
   const updateStats = async (foetusId, statsData) => {
     const currentChild = childrenHistory.find(
       (child) => child.foetusId === foetusId
     );
-    await growthStatsService.updateGrowthStats(foetusId, {
+
+    const updateData = {
       age: Number(statsData.age || currentChild.age || 0),
       hc: Number(statsData.hc || currentChild.hc || 0),
       ac: Number(statsData.ac || currentChild.ac || 0),
       fl: Number(statsData.fl || currentChild.fl || 0),
       efw: Number(statsData.efw || currentChild.efw || 0),
-    });
+    };
+
+    // Log dữ liệu trước khi gửi
+    console.group("Sending Update Request");
+    console.log("Update Data:", updateData);
+
+    const response = await growthStatsService.updateGrowthStats(
+      foetusId,
+      updateData
+    );
+
+    console.log("Response:", response);
+    console.groupEnd();
+
+    return response;
   };
 
-  const handleUpdateSuccess = async () => {
-    toast.success("Cập nhật chỉ số thành công");
+  const handleUpdateSuccess = async (result) => {
+    console.group("Update Success");
+    console.log("Success Data:", result);
+
+    // Hiển thị thông báo thành công
+    toast.success(
+      <div>
+        <h4>Cập nhật thành công!</h4>
+        <p>ID: {result.data?.id || "N/A"}</p>
+        <p>Tuần thai: {result.data?.age || "N/A"}</p>
+        <p>
+          Ngày đo: {new Date(result.data?.date).toLocaleDateString("vi-VN")}
+        </p>
+      </div>,
+      {
+        autoClose: 5000,
+        position: "top-right",
+      }
+    );
+
     await fetchData();
     setTempStats({});
+    console.groupEnd();
   };
 
   const handleUpdateError = (err) => {
+    // Log chi tiết lỗi
+    console.group("Update Error");
+    console.error("Error Details:", err);
+
+    // Hiển thị thông báo lỗi với chi tiết
+    toast.error(
+      <div>
+        <h4>Lỗi cập nhật!</h4>
+        <p>Mã lỗi: {err.status || "N/A"}</p>
+        <p>
+          Chi tiết:{" "}
+          {err.error || err.message || "Có lỗi xảy ra khi cập nhật chỉ số"}
+        </p>
+      </div>,
+      {
+        autoClose: 5000,
+        position: "top-right",
+      }
+    );
+
+    console.groupEnd();
     console.error("Update failed:", err);
     toast.error(err.message || "Có lỗi xảy ra khi cập nhật chỉ số");
   };
@@ -686,6 +769,12 @@ const BasicTracking = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <GrowthAlert
+        isOpen={showGrowthAlert}
+        onClose={() => setShowGrowthAlert(false)}
+        alertData={alertData}
+      />
     </div>
   );
 };

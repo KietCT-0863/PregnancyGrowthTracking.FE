@@ -1,0 +1,562 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+// Variables
+$primary: #70a1ff;
+$primary-light: #ecf2ff;
+$primary-dark: #5352ed;
+$success: #2ed573;
+$success-light: #e8f8ef;
+$warning: #ff4757;
+$warning-light: #ffecee;
+$text-primary: #2f3542;
+$text-secondary: #747d8c;
+$background: #f9fafc;
+$white: #ffffff;
+$border-radius: 16px;
+$box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin glass-effect {
+  background: rgba($white, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba($white, 0.2);
+}
+
+// Growth Alert Styles
+.growth-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($text-primary, 0.5);
+  backdrop-filter: blur(5px);
+  @include flex-center;
+  z-index: 1000;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.growth-alert-content {
+  width: 100%;
+  max-width: 600px;
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(to right, $primary, $primary-dark);
+    z-index: 1;
+  }
+}
+
+.alert-header {
+  @include flex-between;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba($text-primary, 0.1);
+  position: relative;
+  background: linear-gradient(
+    to right,
+    $primary-light,
+    rgba($primary-light, 0.5)
+  );
+
+  h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: $text-primary;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1rem;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 70%;
+      background: $primary;
+      border-radius: 2px;
+    }
+  }
+
+  button {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    @include flex-center;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      background: rgba($warning, 0.1);
+      color: $warning;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.alert-body {
+  padding: 1.5rem 2rem;
+  max-height: 60vh;
+  overflow-y: auto;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba($primary, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba($primary, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba($primary, 0.3);
+    }
+  }
+
+  .alert-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    transition: $transition;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      border-radius: 2px 0 0 2px;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &.normal {
+      background: $success-light;
+      border-color: rgba($success, 0.2);
+
+      &::before {
+        background: $success;
+      }
+
+      &:hover {
+        box-shadow: 0 4px 15px rgba($success, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .alert-icon {
+        background: rgba($success, 0.1);
+        color: $success;
+      }
+
+      h4 {
+        color: darken($success, 10%);
+      }
+    }
+
+    &.warning {
+      background: $warning-light;
+      border-color: rgba($warning, 0.2);
+
+      &::before {
+        background: $warning;
+      }
+
+      &:hover {
+        box-shadow: 0 4px 15px rgba($warning, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .alert-icon {
+        background: rgba($warning, 0.1);
+        color: $warning;
+      }
+
+      h4 {
+        color: darken($warning, 10%);
+      }
+    }
+
+    .alert-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      @include flex-center;
+
+      svg {
+        filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
+      }
+
+      .icon-success {
+        animation: pulse-success 2s infinite;
+      }
+
+      .icon-warning {
+        animation: pulse-warning 2s infinite;
+      }
+    }
+
+    .alert-content {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0 0 0.8rem;
+        color: $text-secondary;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .recommendation {
+        background: rgba($white, 0.5);
+        padding: 0.8rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        color: $text-primary;
+        border-left: 3px solid $warning;
+        margin-top: 0.5rem;
+        position: relative;
+
+        &::before {
+          content: "💡";
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .no-alerts-message {
+    @include flex-center;
+    flex-direction: column;
+    padding: 3rem 1rem;
+    color: $text-secondary;
+    background: rgba($primary, 0.05);
+    border-radius: 12px;
+    border: 1px dashed rgba($primary, 0.2);
+
+    svg {
+      color: $primary;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.alert-footer {
+  padding: 1.2rem 2rem;
+  border-top: 1px solid rgba($text-primary, 0.1);
+  text-align: right;
+  background: rgba($background, 0.5);
+
+  .close-btn {
+    padding: 0.8rem 2rem;
+    background: $primary;
+    color: $white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: $transition;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: all 0.6s ease;
+    }
+
+    &:hover {
+      background: $primary-dark;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($primary, 0.3);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Loading and Error States
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+  text-align: center;
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+
+  p {
+    margin-top: 1.2rem;
+    color: $text-secondary;
+    font-size: 1.1rem;
+  }
+}
+
+.loading-state {
+  .spin {
+    animation: spin 1.2s linear infinite;
+    color: $primary;
+    filter: drop-shadow(0 2px 4px rgba($primary, 0.3));
+  }
+}
+
+.error-state {
+  .icon-error {
+    color: $warning;
+    filter: drop-shadow(0 2px 4px rgba($warning, 0.3));
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-success {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-warning {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .growth-alert-content {
+    max-width: 95%;
+  }
+
+  .alert-header {
+    padding: 1.2rem 1.5rem;
+
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .alert-body {
+    padding: 1.2rem 1.5rem;
+
+    .alert-item {
+      padding: 1rem;
+
+      .alert-icon {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+      }
+
+      .alert-content {
+        h4 {
+          font-size: 1rem;
+        }
+
+        p {
+          font-size: 0.9rem;
+        }
+
+        .recommendation {
+          font-size: 0.85rem;
+          padding: 0.7rem;
+        }
+      }
+    }
+  }
+
+  .alert-footer {
+    padding: 1rem 1.5rem;
+
+    .close-btn {
+      padding: 0.7rem 1.5rem;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .growth-alert-content {
+    background: #1e2235;
+
+    &::before {
+      background: linear-gradient(to right, $primary, $primary-dark);
+    }
+  }
+
+  .alert-header {
+    background: rgba($primary-dark, 0.1);
+    border-bottom-color: rgba($white, 0.1);
+
+    h3 {
+      color: $white;
+    }
+
+    button {
+      color: rgba($white, 0.7);
+
+      &:hover {
+        background: rgba($warning, 0.2);
+      }
+    }
+  }
+
+  .alert-body {
+    .alert-item {
+      &.normal {
+        background: rgba($success, 0.1);
+        border-color: rgba($success, 0.3);
+
+        h4 {
+          color: lighten($success, 10%);
+        }
+
+        p {
+          color: rgba($white, 0.8);
+        }
+      }
+
+      &.warning {
+        background: rgba($warning, 0.1);
+        border-color: rgba($warning, 0.3);
+
+        h4 {
+          color: lighten($warning, 10%);
+        }
+
+        p {
+          color: rgba($white, 0.8);
+        }
+      }
+
+      .alert-content {
+        .recommendation {
+          background: rgba($white, 0.05);
+          color: rgba($white, 0.9);
+        }
+      }
+    }
+
+    .no-alerts-message {
+      background: rgba($primary, 0.1);
+      border-color: rgba($primary, 0.3);
+      color: rgba($white, 0.8);
+    }
+  }
+
+  .alert-footer {
+    background: rgba($text-primary, 0.2);
+    border-top-color: rgba($white, 0.1);
+  }
+
+  .loading-state,
+  .error-state {
+    background: #1e2235;
+
+    p {
+      color: rgba($white, 0.8);
+    }
+  }
+}
