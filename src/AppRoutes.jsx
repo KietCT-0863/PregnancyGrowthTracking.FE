@@ -61,7 +61,7 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<HomePublic />} />
-        <Route path="/about" element={<AboutUs />} />
+        <Route path="about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
