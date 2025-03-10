@@ -19,9 +19,36 @@ const paymentService = {
     }
   },
 
+  getTotalRevenue: async () => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.PAYMENT.GET_TOTAL_REVENUE);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   checkPaymentResult: async (transactionNo) => {
     try {
       const response = await axiosInstance.get(ENDPOINTS.PAYMENT.CHECK_RESULT(transactionNo));
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getRevenueByMonth: async () => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.PAYMENT.GET_REVENUE_BY_MONTH);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getRevenueStats: async () => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.PAYMENT.GET_REVENUE_STATS);
       return response.data;
     } catch (error) {
       throw error;

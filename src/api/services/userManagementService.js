@@ -61,7 +61,20 @@ const userManagementService = {
         status: error.response?.status || 500
       };
     }
-  }
+  },
+
+  getTotalUsers: async () => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.USER_MANAGEMENT.GET_TOTAL_USERS);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching total users:', error);
+      throw {
+        message: error.response?.data?.message || "Không thể lấy tổng số người dùng",
+        status: error.response?.status || 500
+      };
+    }
+  },
 };
 
 export default userManagementService; 

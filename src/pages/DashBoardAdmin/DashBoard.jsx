@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 import {
   BarChart,
@@ -12,18 +13,26 @@ import {
 import { LineChart, Line } from "recharts";
 import { PieChart, Pie, Cell } from "recharts";
 import CountUp from "react-countup";
+import paymentService from "../../api/services/paymentService";
+import userManagementService from "../../api/services/userManagementService";
+import blogService from "../../api/services/blogService";
 import "./Dashboard.scss";
 
 const Dashboard = () => {
-  const revenueData = [
-    { month: "Jan", revenue: 65000000 },
-    { month: "Feb", revenue: 59000000 },
-    { month: "Mar", revenue: 80000000 },
-    { month: "Apr", revenue: 81000000 },
-    { month: "May", revenue: 56000000 },
-    { month: "Jun", revenue: 55000000 },
-    { month: "Jul", revenue: 40000000 },
-  ];
+  const [revenueData, setRevenueData] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [loading, setLoading] = useState({
+    revenue: true,
+    users: true,
+    posts: true
+  });
+  const [error, setError] = useState({
+    revenue: null,
+    users: null,
+    posts: null
+  });
 
   const userGrowthData = [
     { month: "Jan", users: 1000 },
@@ -44,6 +53,48 @@ const Dashboard = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
+  useEffect(() => {
+    const fetchTotalRevenue = async () => {
+      try {
+        const response = await paymentService.getTotalRevenue();
+        setTotalRevenue(response.totalPaymentAmount || 0);
+      } catch (err) {
+        console.error("Error fetching total revenue:", err);
+        setError(prev => ({ ...prev, revenue: err.message }));
+      } finally {
+        setLoading(prev => ({ ...prev, revenue: false }));
+      }
+    };
+
+    const fetchTotalUsers = async () => {
+      try {
+        const response = await userManagementService.getTotalUsers();
+        setTotalUsers(response.totalUsers || 0);
+      } catch (err) {
+        console.error("Error fetching total users:", err);
+        setError(prev => ({ ...prev, users: err.message }));
+      } finally {
+        setLoading(prev => ({ ...prev, users: false }));
+      }
+    };
+
+    const fetchTotalPosts = async () => {
+      try {
+        const total = await blogService.getTotalPosts();
+        setTotalPosts(total);
+      } catch (err) {
+        console.error("Error fetching total posts:", err);
+        setError(prev => ({ ...prev, posts: err.message }));
+      } finally {
+        setLoading(prev => ({ ...prev, posts: false }));
+      }
+    };
+
+    fetchTotalRevenue();
+    fetchTotalUsers();
+    fetchTotalPosts();
+  }, []);
+
   return (
     <div className="dashboard">
       <Typography variant="h4" gutterBottom className="dashboard-title">
@@ -54,27 +105,48 @@ const Dashboard = () => {
         <Grid item xs={12} md={4}>
           <Paper className="stat-card revenue">
             <Typography variant="h6">Tổng doanh thu</Typography>
-            <Typography variant="h4">
-              <CountUp end={100000000} duration={2.5} separator="," /> VNĐ
-            </Typography>
+            {loading.revenue ? (
+              <Typography variant="h4">Đang tải...</Typography>
+            ) : error.revenue ? (
+              <Typography color="error">Lỗi: {error.revenue}</Typography>
+            ) : (
+              <Typography variant="h4">
+                {new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND'
+                }).format(totalRevenue)}
+              </Typography>
+            )}
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <Paper className="stat-card users">
             <Typography variant="h6">Tổng người dùng</Typography>
-            <Typography variant="h4">
-              <CountUp end={2700} duration={2.5} separator="," />
-            </Typography>
+            {loading.users ? (
+              <Typography variant="h4">Đang tải...</Typography>
+            ) : error.users ? (
+              <Typography color="error">Lỗi: {error.users}</Typography>
+            ) : (
+              <Typography variant="h4">
+                {new Intl.NumberFormat('vi-VN').format(totalUsers)}
+              </Typography>
+            )}
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <Paper className="stat-card posts">
             <Typography variant="h6">Tổng bài viết</Typography>
-            <Typography variant="h4">
-              <CountUp end={1000} duration={2.5} separator="," />
-            </Typography>
+            {loading.posts ? (
+              <Typography variant="h4">Đang tải...</Typography>
+            ) : error.posts ? (
+              <Typography color="error">Lỗi: {error.posts}</Typography>
+            ) : (
+              <Typography variant="h4">
+                {new Intl.NumberFormat('vi-VN').format(totalPosts)}
+              </Typography>
+            )}
           </Paper>
         </Grid>
 
@@ -87,10 +159,24 @@ const Dashboard = () => {
               <BarChart data={revenueData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
+                <YAxis 
+                  tickFormatter={(value) => 
+                    new Intl.NumberFormat('vi-VN', {
+                      notation: 'compact',
+                      compactDisplay: 'short'
+                    }).format(value)
+                  }
+                />
+                <Tooltip 
+                  formatter={(value) => 
+                    new Intl.NumberFormat('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND'
+                    }).format(value)
+                  }
+                />
                 <Legend />
-                <Bar dataKey="revenue" fill="#8884d8" />
+                <Bar dataKey="revenue" fill="#8884d8" name="Doanh thu" />
               </BarChart>
             </ResponsiveContainer>
           </Paper>

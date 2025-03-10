@@ -226,6 +226,20 @@ const blogService = {
       return null;
     }
   },
+
+  getTotalPosts: async () => {
+    try {
+      const response = await axiosInstance.get(ENDPOINTS.BLOG.LIST);
+      // Lấy tổng số bài viết từ response
+      return response.data.posts?.length || 0;
+    } catch (error) {
+      console.error('Error fetching total posts:', error);
+      throw {
+        message: error.response?.data?.message || "Không thể lấy tổng số bài viết",
+        status: error.response?.status || 500
+      };
+    }
+  },
 };
 
 export default blogService; 

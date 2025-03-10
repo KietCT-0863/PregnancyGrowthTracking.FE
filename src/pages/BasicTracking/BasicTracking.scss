@@ -890,3 +890,23 @@ $white: #ffffff;
     background: rgba($accent, 0.1);
   }
 }
+
+.chart-section {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+
+  .chart-container {
+    height: 400px;
+    position: relative;
+  }
+
+  .chart-info {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+  }
+}

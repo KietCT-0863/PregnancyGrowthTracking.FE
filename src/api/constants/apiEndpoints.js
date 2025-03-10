@@ -27,6 +27,7 @@ export const ENDPOINTS = {
   PAYMENT: {
     CREATE: "/Payment/create-payment",
     CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`,
+    GET_TOTAL_REVENUE: "/Payment/total-payment",
   },
   FOETUS: {
     LIST: "/Foetus",
@@ -52,6 +53,7 @@ export const ENDPOINTS = {
     CREATE: "/User",
     UPDATE: (id) => `/User/${id}`,
     DELETE: (id) => `/User/${id}`,
+    GET_TOTAL_USERS: "/User/count-total-users",
   },
   GROWTHDATA: {
     GET_BY_FOETUS: (foetusId) => `/foetus/${foetusId}/growth-data`,

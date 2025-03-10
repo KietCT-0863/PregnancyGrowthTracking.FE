@@ -8,6 +8,8 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
@@ -33,17 +35,19 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend
 );
 
-// Tách constants ra đầu file
+// Constants
 const STATS_FIELDS = [
   { key: "hc", label: "HC", icon: Ruler },
   { key: "ac", label: "AC", icon: Heart },
   { key: "fl", label: "FL", icon: Scale },
-  { key: "efw", label: "EFW", icon: Activity },
+  { key: "efw", label: "EFW", icon: Activity }
 ];
 
 const HISTORY_COLUMNS = [
@@ -52,45 +56,46 @@ const HISTORY_COLUMNS = [
     dataIndex: "age",
     key: "age",
     width: 100,
-    render: (value) => `Tuần ${value || "?"}`,
+    render: (value) => `Tuần ${value || "?"}`
   },
   {
     title: "Ngày đo",
     dataIndex: "measurementDate",
     key: "measurementDate",
     width: 120,
-    render: (date) => new Date(date).toLocaleDateString("vi-VN"),
+    render: (date) => new Date(date).toLocaleDateString("vi-VN")
   },
   {
     title: "HC (mm)",
     dataIndex: "hc",
     key: "hc",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (value) => value || "Chưa có"
   },
   {
     title: "AC (mm)",
     dataIndex: "ac",
     key: "ac",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (value) => value || "Chưa có"
   },
   {
     title: "FL (mm)",
     dataIndex: "fl",
     key: "fl",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (value) => value || "Chưa có"
   },
   {
     title: "EFW (g)",
     dataIndex: "efw",
     key: "efw",
     width: 100,
-    render: (value) => value || "Chưa có",
-  },
+    render: (value) => value || "Chưa có"
+  }
 ];
 
+// Chart Options
 const CHART_OPTIONS = {
   responsive: true,
   maintainAspectRatio: false,
@@ -100,34 +105,56 @@ const CHART_OPTIONS = {
       labels: {
         font: {
           size: 12,
-          family: "'Inter', sans-serif",
+          family: "'Inter', sans-serif"
         },
-      },
+        filter: function(item, chart) {
+          // Chỉ hiển thị label cho bar charts
+          return item.datasetIndex < 4;
+        }
+      }
     },
     title: {
       display: true,
-      text: "Biểu đồ chỉ số thai nhi",
+      text: "Biểu đồ tăng trưởng thai nhi (4 tuần gần nhất)",
       font: {
         size: 16,
         family: "'Inter', sans-serif",
-        weight: "bold",
-      },
+        weight: "bold"
+      }
     },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          const label = context.dataset.label || "";
+          const value = context.parsed.y || 0;
+          const unit = label.includes('EFW') ? 'g' : 'mm';
+          return `${label}: ${value} ${unit}`;
+        }
+      }
+    }
   },
   scales: {
     y: {
       beginAtZero: true,
+      title: {
+        display: true,
+        text: 'Chỉ số (mm/g)'
+      },
       grid: {
         display: true,
-        color: "rgba(0, 0, 0, 0.1)",
-      },
+        color: "rgba(0, 0, 0, 0.1)"
+      }
     },
     x: {
       grid: {
-        display: false,
+        display: false
       },
-    },
-  },
+      title: {
+        display: true,
+        text: 'Tuần thai'
+      }
+    }
+  }
 };
 
 const BasicTracking = () => {
@@ -361,89 +388,125 @@ const BasicTracking = () => {
     })[0];
   };
 
-  // Cập nhật hàm getChartData để chỉ hiển thị dữ liệu của thai nhi được chọn
+  // Cập nhật hàm getChartData
   const getChartData = () => {
     if (!selectedChild) {
       return {
-        labels: ["HC (mm)", "AC (mm)", "FL (mm)", "EFW (g)"],
-        datasets: [], // Không có dữ liệu khi chưa chọn thai nhi
+        labels: [],
+        datasets: []
       };
     }
 
-    const latestData = getLatestGrowthData(selectedChild.foetusId);
+    const foetusData = growthData[selectedChild.foetusId];
+    if (!foetusData || !Array.isArray(foetusData)) {
+      return {
+        labels: [],
+        datasets: []
+      };
+    }
+
+    // Sắp xếp dữ liệu theo tuần giảm dần (mới nhất trước)
+    const sortedData = foetusData.sort((a, b) => b.age - a.age);
+    // Lấy 4 tuần gần nhất
+    const recentWeeks = sortedData.slice(0, 4);
+    // Sắp xếp lại theo tuần tăng dần
+    const weeksToShow = recentWeeks.sort((a, b) => a.age - b.age);
 
     return {
-      labels: ["HC (mm)", "AC (mm)", "FL (mm)", "EFW (g)"],
+      labels: weeksToShow.map(data => `Tuần ${data.age}`),
       datasets: [
+        // Bar charts
         {
-          label: `${selectedChild.name} (Tuần ${latestData?.age || "?"})`,
-          data: [
-            latestData?.hc || 0,
-            latestData?.ac || 0,
-            latestData?.fl || 0,
-            latestData?.efw || 0,
-          ],
-          backgroundColor: "rgba(255, 107, 129, 0.5)",
-          borderColor: "rgb(255, 107, 129)",
+          type: 'bar',
+          label: 'HC (mm)',
+          data: weeksToShow.map(data => data.hc || 0),
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          borderColor: 'rgb(255, 99, 132)',
           borderWidth: 1,
+          barPercentage: 0.7,
+          categoryPercentage: 0.8,
+          order: 2 // Hiển thị phía sau line
         },
-      ],
+        {
+          type: 'bar',
+          label: 'AC (mm)',
+          data: weeksToShow.map(data => data.ac || 0),
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgb(54, 162, 235)',
+          borderWidth: 1,
+          barPercentage: 0.7,
+          categoryPercentage: 0.8,
+          order: 2
+        },
+        {
+          type: 'bar',
+          label: 'FL (mm)',
+          data: weeksToShow.map(data => data.fl || 0),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 1,
+          barPercentage: 0.7,
+          categoryPercentage: 0.8,
+          order: 2
+        },
+        {
+          type: 'bar',
+          label: 'EFW (g)',
+          data: weeksToShow.map(data => data.efw || 0),
+          backgroundColor: 'rgba(153, 102, 255, 0.5)',
+          borderColor: 'rgb(153, 102, 255)',
+          borderWidth: 1,
+          barPercentage: 0.7,
+          categoryPercentage: 0.8,
+          order: 2
+        },
+        // Line charts
+        {
+          type: 'line',
+          label: 'HC Trend',
+          data: weeksToShow.map(data => data.hc || 0),
+          borderColor: 'rgb(255, 99, 132)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 4,
+          order: 1 // Hiển thị phía trước bar
+        },
+        {
+          type: 'line',
+          label: 'AC Trend',
+          data: weeksToShow.map(data => data.ac || 0),
+          borderColor: 'rgb(54, 162, 235)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 4,
+          order: 1
+        },
+        {
+          type: 'line',
+          label: 'FL Trend',
+          data: weeksToShow.map(data => data.fl || 0),
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 4,
+          order: 1
+        },
+        {
+          type: 'line',
+          label: 'EFW Trend',
+          data: weeksToShow.map(data => data.efw || 0),
+          borderColor: 'rgb(153, 102, 255)',
+          borderWidth: 2,
+          fill: false,
+          tension: 0.4,
+          pointRadius: 4,
+          order: 1
+        }
+      ]
     };
-  };
-
-  // Cập nhật chartOptions để hiển thị tooltip chi tiết hơn
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: {
-            size: 12,
-            family: "'Inter', sans-serif",
-          },
-        },
-      },
-      title: {
-        display: true,
-        text: "Biểu đồ chỉ số thai nhi (Tuần mới nhất)",
-        font: {
-          size: 16,
-          family: "'Inter', sans-serif",
-          weight: "bold",
-        },
-      },
-      tooltip: {
-        callbacks: {
-          label: function (context) {
-            const label = context.dataset.label || "";
-            const value = context.parsed.y || 0;
-            const measureType = context.chart.data.labels[context.dataIndex];
-            return `${label}: ${value} ${measureType.split(" ")[1]}`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: true,
-          color: "rgba(0, 0, 0, 0.1)",
-        },
-        ticks: {
-          callback: function (value) {
-            return value.toLocaleString("vi-VN");
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
   };
 
   // Thêm hàm xử lý khi click vào card thai nhi
@@ -479,16 +542,20 @@ const BasicTracking = () => {
       <div className="monitor-content">
         <div className="chart-section">
           <div className="chart-container">
-            <Bar data={getChartData()} options={chartOptions} height={300} />
+            <Bar 
+              data={getChartData()} 
+              options={CHART_OPTIONS} 
+              height={300} 
+            />
           </div>
           <div className="chart-info">
             <p className="chart-note">
               {selectedChild
-                ? `* Biểu đồ hiển thị các chỉ số mới nhất của ${selectedChild.name}`
-                : "* Chọn một thai nhi để xem biểu đồ chỉ số"}
+                ? `* Biểu đồ hiển thị sự tăng trưởng của ${selectedChild.name} theo tuần`
+                : "* Chọn một thai nhi để xem biểu đồ tăng trưởng"}
             </p>
+            </div>
           </div>
-        </div>
 
         <motion.div
           className="children-grid"
@@ -564,7 +631,7 @@ const BasicTracking = () => {
                           min="0"
                           max="42"
                         />
-                      </div>
+                    </div>
                     </motion.div>
                   </div>
 
@@ -589,7 +656,7 @@ const BasicTracking = () => {
                             transition={{ type: "spring", stiffness: 400 }}
                           >
                             <Icon className="stat-icon" size={16} />
-                            <div className="stat-content">
+                          <div className="stat-content">
                               <span className="stat-label">{label}</span>
                               <input
                                 type="number"
@@ -612,10 +679,10 @@ const BasicTracking = () => {
                                     : "Chưa có dữ liệu"
                                 }
                               />
-                            </div>
+                          </div>
                           </motion.div>
                         ))}
-                      </div>
+                        </div>
 
                       {currentGrowthData && (
                         <div className="history-section">
@@ -624,7 +691,7 @@ const BasicTracking = () => {
                             {new Date(
                               currentGrowthData.measurementDate
                             ).toLocaleDateString("vi-VN")}
-                          </div>
+                      </div>
 
                           <motion.button
                             className="view-history-button"
@@ -699,9 +766,9 @@ const BasicTracking = () => {
                 ) : (
                   <div className="no-data-message">
                     Không có dữ liệu lịch sử
-                  </div>
+                </div>
                 )}
-              </div>
+                </div>
             </motion.div>
           </motion.div>
         )}
@@ -735,7 +802,7 @@ const BasicTracking = () => {
                 >
                   ✕
                 </motion.button>
-              </div>
+                </div>
               <div className="compare-modal-body">
                 {selectedFoetus && (
                   <div className="comparison-chart">
@@ -764,7 +831,7 @@ const BasicTracking = () => {
                     />
                   </div>
                 )}
-              </div>
+                </div>
             </motion.div>
           </motion.div>
         )}

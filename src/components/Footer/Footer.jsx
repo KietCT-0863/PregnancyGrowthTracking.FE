@@ -14,7 +14,7 @@ const footerSections = [
     title: "Liên kết",
     links: [
       { name: "Về chúng tôi", url: "/about" },
-      { name: "Blog", url: "/member/blog" },
+      { name: "Blog", url: "/blog" },
       { name: "Liên hệ", url: "/contact" },
       { name: "FAQ", url: "/faq" },
     ],
@@ -40,12 +40,12 @@ const footerSections = [
       {
         name: "Blog",
         icon: <FaBlog />,
-        url: "/member/blog",
+        url: "/blog",
       },
       {
         name: "Cộng Đồng",
         icon: <TiSocialInstagram />,
-        url: "/member/community",
+        url: "/basic-user/community",
       },
     ],
   },
