@@ -42,6 +42,7 @@ import Blog from "./pages/blog";
 import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
 import EditProfile from "./pages/Profile/EditProfile";
+import CalendarChange from "./pages/Calender/CalendarChange";
 
 const AppRoutes = () => {
   return (
@@ -119,17 +120,17 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Member />} />
-        <Route path="/member/basic-tracking" element={<BasicTracking />} />
-        <Route path="/member/calendar" element={<CalendarAll />}>
-          <Route path="/member/calendar/:id" element={<CalendarHistory />} />
-        </Route>
-        <Route path="/member/doctor-notes" element={<DoctorNotes />} />
-        <Route path="/member/community" element={<Community />} />
-        <Route path="/member/blog" element={<Blog />}>
+        <Route path="basic-tracking" element={<BasicTracking />} />
+        <Route path="calendar" element={<CalendarAll />} />
+        <Route path="calendar-history" element={<CalendarHistory />} />
+        <Route path="calendar-change/:remindId" element={<CalendarChange />} />
+        <Route path="doctor-notes" element={<DoctorNotes />} />
+        <Route path="community" element={<Community />} />
+        <Route path="blog" element={<Blog />}>
           <Route index element={<BlogAll />} />
           <Route path=":id" element={<BlogDetail />} />
         </Route>
-        <Route path="/member/profile/edit" element={<EditProfile />} />
+        <Route path="profile/edit" element={<EditProfile />} />
       </Route>
 
       {/* Route cho admin - cần đăng nhập admin */}

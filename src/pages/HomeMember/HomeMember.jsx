@@ -6,11 +6,13 @@ import NotesList from "../../components/NotesList/NotesList";
 const HomeMember = () => {
   return (
     <>
-    <FoetusList />
-    <NotesList /> 
-    <PregnancyTimeline />
-    <BlogSildeMember />
+      <FoetusList />
+
+      <NotesList />
+      <PregnancyTimeline />
+      <BlogSildeMember />
     </>
   );
 };
+
 export default HomeMember;

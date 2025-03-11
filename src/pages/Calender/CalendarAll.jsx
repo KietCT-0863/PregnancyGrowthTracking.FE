@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Search, Clock, ChevronLeft, ChevronRight, Pill, Stethoscope, Baby, Dumbbell, Apple } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CalendarAll.scss";
@@ -19,16 +19,16 @@ const CalendarAll = () => {
     title: "",
     date: "",
     time: "",
-    reminderType: "appointment",
+    reminderType: "",
     notification: "",
   });
 
   const categories = [
-    { id: "appointment", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B" },
-    { id: "medication", label: "Uống thuốc", color: "#4ECDC4" },
-    { id: "checkup", label: "Khám thai", color: "#45B7D1" },
-    { id: "exercise", label: "Tập thể dục", color: "#FFA07A" },
-    { id: "nutrition", label: "Dinh dưỡng", color: "#98D8C8" },
+    { id: "Cuộc hẹn bác sĩ", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B", icon: Stethoscope },
+    { id: "Uống thuốc", label: "Uống thuốc", color: "#4ECDC4", icon: Pill },
+    { id: "Khám thai", label: "Khám thai", color: "#45B7D1", icon: Baby },
+    { id: "Tập thể dục", label: "Tập thể dục", color: "#FFA07A", icon: Dumbbell },
+    { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8", icon: Apple },
   ];
 
   const getDaysInMonth = (date) => {
@@ -52,56 +52,82 @@ const CalendarAll = () => {
   const handleAddEvent = async (e) => {
     e.preventDefault();
     try {
-      console.group("Add Event Details");
-      console.log("New Event Data:", newEvent);
+      // Validate form data
+      if (!validateEventForm(newEvent)) {
+        return;
+      }
 
       const reminderData = {
-        date: new Date(newEvent.date).toISOString(),
+        title: newEvent.title.trim(),
+        date: newEvent.date,
         time: newEvent.time,
-        title: newEvent.title,
-        notification: newEvent.notification,
         reminderType: newEvent.reminderType,
+        notification: newEvent.notification || ""
       };
-
-      console.log("Formatted Reminder Data:", reminderData);
-
+      
       const response = await reminderService.createReminder(reminderData);
-      console.log("Create Reminder Response:", response);
-
-      setEvents([...events, response.data]);
-      setShowAddModal(false);
-      setNewEvent({
-        title: "",
-        date: "",
-        time: "",
-        reminderType: "appointment",
-        notification: "",
-      });
-
-      toast.success("Tạo lịch nhắc nhở thành công!");
-      console.groupEnd();
+      
+      if (response) {
+        updateEventsAfterAdd(response);
+        resetForm();
+        toast.success("Tạo lịch nhắc nhở thành công!");
+        fetchReminders();
+      }
     } catch (error) {
-      console.group("Add Event Error");
-      console.error("Error Object:", error);
-      console.error("Error Message:", error.message);
-      console.error("Error Status:", error.status);
-      console.groupEnd();
-
       toast.error(error.message || "Không thể tạo lịch nhắc nhở");
     }
   };
 
-  useEffect(() => {
-    const fetchReminders = async () => {
-      try {
-        const response = await reminderService.getReminderHistory();
-        setEvents(response.data);
-      } catch (error) {
-        console.error("Error fetching reminders:", error);
-        toast.error("Không thể tải danh sách lịch nhắc nhở");
-      }
-    };
+  const validateEventForm = (eventData) => {
+    if (!eventData.title?.trim()) {
+      toast.error("Vui lòng nhập tiêu đề");
+      return false;
+    }
+    if (!eventData.date) {
+      toast.error("Vui lòng chọn ngày");
+      return false;
+    }
+    if (!eventData.time) {
+      toast.error("Vui lòng chọn giờ");
+      return false;
+    }
+    if (!eventData.reminderType) {
+      toast.error("Vui lòng chọn loại nhắc nhở");
+      return false;
+    }
+    return true;
+  };
 
+  const resetForm = () => {
+    setShowAddModal(false);
+    setNewEvent({
+      title: "",
+      date: "",
+      time: "",
+      reminderType: categories[0].id,
+      notification: ""
+    });
+  };
+
+  const fetchReminders = async () => {
+    try {
+      const response = await reminderService.getReminderHistory();
+      const formattedData = Array.isArray(response) ? response.map(item => ({
+        id: item.remindId,
+        title: item.title,
+        date: item.date,
+        time: item.time,
+        reminderType: item.reminderType || "Uống thuốc",
+        notification: item.notification
+      })) : [];
+
+      setEvents(formattedData);
+    } catch (error) {
+      toast.error("Không thể tải danh sách lịch nhắc nhở");
+    }
+  };
+
+  useEffect(() => {
     fetchReminders();
   }, []);
 
@@ -131,6 +157,21 @@ const CalendarAll = () => {
     return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" });
   };
 
+  const getEventIcon = (reminderType) => {
+    const category = categories.find(cat => cat.id === reminderType);
+    if (!category) return null;
+    
+    const IconComponent = category.icon;
+    return <IconComponent size={16} />;
+  };
+
+  const updateEventsAfterAdd = (newEvent) => {
+    setEvents(prevEvents => {
+      const currentEvents = Array.isArray(prevEvents) ? prevEvents : [];
+      return [...currentEvents, newEvent];
+    });
+  };
+
   return (
     <motion.div
       className="calendar-container"
@@ -141,7 +182,7 @@ const CalendarAll = () => {
       <div className="calendar-header">
         <h1>Lịch thai kỳ</h1>
         <div className="header-actions">
-          <Link to="/member/calendar-history/:id" className="history-btn">
+          <Link to="/member/calendar-history" className="history-btn">
             <Clock size={20} />
             Lịch sử
           </Link>
@@ -234,25 +275,32 @@ const CalendarAll = () => {
             {day && (
               <>
                 <span className="day-number">{day.getDate()}</span>
-                {filteredEvents
-                  .filter(
-                    (event) =>
-                      new Date(event.date).toDateString() === day.toDateString()
-                  )
-                  .map((event) => (
-                    <Link
-                      to={`/member/calendar/${event.id}`}
-                      key={event.id}
-                      className={`event-pill ${event.reminderType}`}
-                      style={{
-                        backgroundColor: categories.find(
-                          (cat) => cat.id === event.reminderType
-                        )?.color,
-                      }}
-                    >
-                      {event.title}
-                    </Link>
-                  ))}
+                <div className="day-events">
+                  {filteredEvents
+                    .filter(
+                      (event) =>
+                        new Date(event.date).toDateString() === day.toDateString()
+                    )
+                    .map((event) => (
+                      <Link
+                        to={`/member/calendar-change/${event.id}`}
+                        key={event.id}
+                        className={`event-pill ${event.reminderType}`}
+                        style={{
+                          backgroundColor: categories.find(
+                            (cat) => cat.id === event.reminderType
+                          )?.color || "#4ECDC4",
+                        }}
+                      >
+                        <span className="event-icon">
+                          {getEventIcon(event.reminderType) || <Clock size={16} />}
+                        </span>
+                        <span className="event-title">
+                          {event.time} - {event.title}
+                        </span>
+                      </Link>
+                    ))}
+                </div>
               </>
             )}
           </motion.div>

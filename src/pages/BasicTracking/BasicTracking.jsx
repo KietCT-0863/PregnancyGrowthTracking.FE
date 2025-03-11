@@ -97,28 +97,28 @@ const HISTORY_COLUMNS = [
 
 // Chart Options
 const CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "top",
-      labels: {
-        font: {
-          size: 12,
-          family: "'Inter', sans-serif"
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: {
+            size: 12,
+            family: "'Inter', sans-serif"
         },
         filter: function(item, chart) {
           // Chỉ hiển thị label cho bar charts
           return item.datasetIndex < 4;
+          }
         }
-      }
-    },
-    title: {
-      display: true,
+      },
+      title: {
+        display: true,
       text: "Biểu đồ tăng trưởng thai nhi (4 tuần gần nhất)",
-      font: {
-        size: 16,
-        family: "'Inter', sans-serif",
+        font: {
+          size: 16,
+          family: "'Inter', sans-serif",
         weight: "bold"
       }
     },
@@ -130,25 +130,25 @@ const CHART_OPTIONS = {
           const unit = label.includes('EFW') ? 'g' : 'mm';
           return `${label}: ${value} ${unit}`;
         }
+        }
       }
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
       title: {
         display: true,
         text: 'Chỉ số (mm/g)'
       },
-      grid: {
-        display: true,
-        color: "rgba(0, 0, 0, 0.1)"
-      }
-    },
-    x: {
-      grid: {
-        display: false
+        grid: {
+          display: true,
+          color: "rgba(0, 0, 0, 0.1)"
+        }
       },
+      x: {
+        grid: {
+          display: false
+        },
       title: {
         display: true,
         text: 'Tuần thai'
@@ -399,7 +399,7 @@ const BasicTracking = () => {
 
     const foetusData = growthData[selectedChild.foetusId];
     if (!foetusData || !Array.isArray(foetusData)) {
-      return {
+          return {
         labels: [],
         datasets: []
       };
@@ -417,6 +417,7 @@ const BasicTracking = () => {
       datasets: [
         // Bar charts
         {
+          key: 'hc-bar',
           type: 'bar',
           label: 'HC (mm)',
           data: weeksToShow.map(data => data.hc || 0),
@@ -428,6 +429,7 @@ const BasicTracking = () => {
           order: 2 // Hiển thị phía sau line
         },
         {
+          key: 'ac-bar',
           type: 'bar',
           label: 'AC (mm)',
           data: weeksToShow.map(data => data.ac || 0),
@@ -563,7 +565,7 @@ const BasicTracking = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          {childrenHistory.map((child, index) => {
+          {childrenHistory.map((child) => {
             const currentGrowthData = growthData[child.foetusId];
             const isSelected = selectedChild?.foetusId === child.foetusId;
 
@@ -574,7 +576,7 @@ const BasicTracking = () => {
                 onClick={() => handleChildSelect(child)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 * index }}
+                transition={{ duration: 0.4, delay: 0.1 * child.foetusId }}
                 whileHover={{ y: -5 }}
                 style={{ cursor: "pointer" }}
               >
@@ -650,7 +652,7 @@ const BasicTracking = () => {
                       <div className="stats-grid">
                         {STATS_FIELDS.map(({ key, label, icon: Icon }) => (
                           <motion.div
-                            key={key}
+                            key={`${child.foetusId}-${key}`}
                             className="stat-item"
                             whileHover={{ scale: 1.03 }}
                             transition={{ type: "spring", stiffness: 400 }}
@@ -728,6 +730,7 @@ const BasicTracking = () => {
       <AnimatePresence>
         {showHistory && (
           <motion.div
+            key="history-modal"
             className="history-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -759,7 +762,7 @@ const BasicTracking = () => {
                   <Table
                     dataSource={selectedWeekHistory}
                     columns={HISTORY_COLUMNS}
-                    rowKey={(record) => record.measurementDate}
+                    rowKey={(record) => `${record.measurementDate}-${record.age}`}
                     pagination={false}
                     scroll={{ x: "max-content" }}
                   />
@@ -778,6 +781,7 @@ const BasicTracking = () => {
       <AnimatePresence>
         {showCompareModal && (
           <motion.div
+            key="compare-modal"
             className="compare-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

@@ -6,28 +6,54 @@ const VALID_CATEGORIES = [
   "american", "mystery", "crime", "love", "classic"
 ];
 
+const FILE_CONSTRAINTS = {
+  maxSize: 5 * 1024 * 1024, // 5MB
+  validTypes: ['image/jpeg', 'image/png', 'image/jpg']
+};
+
+const handleApiError = (error, defaultMessage) => {
+  throw {
+    message: error.response?.data?.message || error.message || defaultMessage,
+    status: error.response?.status || 500
+  };
+};
+
+const validateFileUpload = (file) => {
+  if (!file) throw new Error('Vui lòng chọn ảnh để tải lên');
+  if (file.size > FILE_CONSTRAINTS.maxSize) {
+    throw new Error('Kích thước ảnh không được vượt quá 5MB');
+  }
+  if (!FILE_CONSTRAINTS.validTypes.includes(file.type)) {
+    throw new Error('Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG');
+  }
+};
+
+const formatCategories = (categories) => {
+  return (categories || [])
+    .filter(cat => VALID_CATEGORIES.includes(cat))
+    .map(cat => ({ categoryName: cat }));
+};
+
 const blogService = {
   // Lấy danh sách blog
   getBlogs: async () => {
     try {
       const response = await axiosInstance.get(ENDPOINTS.BLOG.LIST);
-      // Thêm xử lý ảnh cho mỗi blog
       const blogs = response.data.posts;
+      
       if (blogs && Array.isArray(blogs)) {
-        for (let blog of blogs) {
+        await Promise.all(blogs.map(async (blog) => {
           try {
-            const photoUrl = await blogService.getBlogPhoto(blog.id);
-            blog.imageUrl = photoUrl;
-          } catch (error) {
-            console.error(`Error loading photo for blog ${blog.id}:`, error);
+            blog.imageUrl = await blogService.getBlogPhoto(blog.id);
+          } catch {
             blog.imageUrl = null;
           }
-        }
+        }));
       }
+      
       return response.data;
     } catch (error) {
-      console.error('Error fetching blogs:', error);
-      throw error;
+      handleApiError(error, "Không thể tải danh sách bài viết");
     }
   },
 
@@ -37,69 +63,46 @@ const blogService = {
       const response = await axiosInstance.get(ENDPOINTS.BLOG.DETAIL(id));
       return response.data;
     } catch (error) {
-      console.error('Error fetching blog:', error);
-      throw {
-        message: error.response?.data?.message || "Không thể tải thông tin bài viết",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Không thể tải thông tin bài viết");
     }
   },
 
   // Tạo blog mới
   createBlog: async (blogData) => {
     try {
-      // Validate dữ liệu
       if (!blogData.title?.trim() || !blogData.body?.trim()) {
         throw new Error("Tiêu đề và nội dung không được để trống");
       }
 
-      // Format categories
-      const formattedCategories = (blogData.categories || [])
-        .filter(cat => VALID_CATEGORIES.includes(cat))
-        .map(cat => ({ categoryName: cat }));
-
-      const response = await axiosInstance.post(ENDPOINTS.BLOG.LIST, {
+      const payload = {
         title: blogData.title.trim(),
         body: blogData.body.trim(),
-        categories: formattedCategories
-      });
+        categories: formatCategories(blogData.categories)
+      };
 
+      const response = await axiosInstance.post(ENDPOINTS.BLOG.LIST, payload);
       return response.data;
     } catch (error) {
-      console.error('Error creating blog:', error);
-      throw {
-        message: error.response?.data?.message || error.message || "Lỗi khi tạo bài viết",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Lỗi khi tạo bài viết");
     }
   },
 
   // Cập nhật blog
   updateBlog: async (id, blogData) => {
     try {
-      // Validate dữ liệu
       if (!id) throw new Error("ID bài viết không hợp lệ");
 
-      // Format categories
-      const formattedCategories = (blogData.categories || [])
-        .filter(cat => VALID_CATEGORIES.includes(cat))
-        .map(cat => ({ categoryName: cat }));
-
-      // Gửi request PUT đến endpoint gốc với đầy đủ data
-      const response = await axiosInstance.put(ENDPOINTS.BLOG.LIST, {
+      const payload = {
         id: parseInt(id),
         title: blogData.title,
         body: blogData.body,
-        categories: formattedCategories
-      });
+        categories: formatCategories(blogData.categories)
+      };
 
+      const response = await axiosInstance.put(ENDPOINTS.BLOG.LIST, payload);
       return response.data;
     } catch (error) {
-      console.error('Error updating blog:', error);
-      throw {
-        message: error.response?.data?.message || "Lỗi khi cập nhật bài viết",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Lỗi khi cập nhật bài viết");
     }
   },
 
@@ -109,109 +112,55 @@ const blogService = {
       const response = await axiosInstance.delete(ENDPOINTS.BLOG.DELETE(id));
       return response.data;
     } catch (error) {
-      console.error('Error deleting blog:', error);
-      throw {
-        message: error.response?.data?.message || "Lỗi khi xóa bài viết",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Lỗi khi xóa bài viết");
     }
   },
 
   // Thêm ảnh cho blog
   uploadBlogPhoto: async (blogId, file) => {
     try {
-      if (!blogId) {
-        throw new Error('ID blog không hợp lệ');
-      }
-
-      if (!file) {
-        throw new Error('Vui lòng chọn ảnh để tải lên');
-      }
-
-      // Kiểm tra kích thước file (giới hạn 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Kích thước ảnh không được vượt quá 5MB');
-      }
-
-      // Kiểm tra định dạng file
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      if (!validTypes.includes(file.type)) {
-        throw new Error('Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG');
-      }
+      if (!blogId) throw new Error('ID blog không hợp lệ');
+      validateFileUpload(file);
 
       const formData = new FormData();
       formData.append('file', file);
-
-      console.log('Uploading photo for blogId:', blogId);
 
       const response = await axiosInstance.post(
         ENDPOINTS.BLOG.UPLOAD_PHOTO(blogId),
         formData,
         {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          transformRequest: (data) => data // Không transform FormData
+          headers: { 'Content-Type': 'multipart/form-data' },
+          transformRequest: (data) => data
         }
       );
 
-      console.log('Upload response:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error uploading blog photo:', error);
-      throw {
-        message: error.response?.data?.message || error.message || "Không thể tải ảnh lên",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Không thể tải ảnh lên");
     }
   },
 
   // Cập nhật/thay thế ảnh cho blog
   replaceBlogPhoto: async (blogId, file) => {
     try {
-      if (!blogId) {
-        throw new Error('ID blog không hợp lệ');
-      }
-
-      if (!file) {
-        throw new Error('Vui lòng chọn ảnh để tải lên');
-      }
-
-      // Kiểm tra kích thước file (giới hạn 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        throw new Error('Kích thước ảnh không được vượt quá 5MB');
-      }
-
-      // Kiểm tra định dạng file
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      if (!validTypes.includes(file.type)) {
-        throw new Error('Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG');
-      }
+      if (!blogId) throw new Error('ID blog không hợp lệ');
+      validateFileUpload(file);
 
       const formData = new FormData();
       formData.append('file', file);
-
-      console.log('Replacing photo for blogId:', blogId);
 
       const response = await axiosInstance.put(
         ENDPOINTS.BLOG.REPLACE_PHOTO(blogId),
         formData,
         {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          transformRequest: (data) => data // Không transform FormData
+          headers: { 'Content-Type': 'multipart/form-data' },
+          transformRequest: (data) => data
         }
       );
 
-      console.log('Replace response:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error replacing blog photo:', error);
-      throw {
-        message: error.response?.data?.message || error.message || "Không thể cập nhật ảnh",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Không thể cập nhật ảnh");
     }
   },
 
@@ -221,8 +170,7 @@ const blogService = {
         responseType: 'blob'
       });
       return URL.createObjectURL(response.data);
-    } catch (error) {
-      console.error('Error fetching blog photo:', error);
+    } catch {
       return null;
     }
   },
@@ -230,14 +178,9 @@ const blogService = {
   getTotalPosts: async () => {
     try {
       const response = await axiosInstance.get(ENDPOINTS.BLOG.LIST);
-      // Lấy tổng số bài viết từ response
       return response.data.posts?.length || 0;
     } catch (error) {
-      console.error('Error fetching total posts:', error);
-      throw {
-        message: error.response?.data?.message || "Không thể lấy tổng số bài viết",
-        status: error.response?.status || 500
-      };
+      handleApiError(error, "Không thể lấy tổng số bài viết");
     }
   },
 };

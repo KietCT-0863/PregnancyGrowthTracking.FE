@@ -176,23 +176,80 @@ $border-color: #e9ecef;
         display: block;
       }
 
+      .day-events {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 4px;
+        max-height: 80px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+          width: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgba(0, 0, 0, 0.2);
+          border-radius: 2px;
+        }
+      }
+
       .event-pill {
-        display: block;
-        padding: 0.25rem 0.5rem;
-        margin-bottom: 0.25rem;
-        border-radius: 15px;
-        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
         color: white;
         text-decoration: none;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        transition: all 0.3s ease;
+        background-color: #4ECDC4;
+        transition: all 0.2s ease;
 
         &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          transform: scale(1.02);
+          filter: brightness(1.1);
         }
+
+        .event-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 16px;
+          
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+
+        .event-title {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex: 1;
+        }
+      }
+
+      // Thêm style cho các loại reminder khác nhau
+      .event-pill.Uống-thuốc {
+        background-color: #4ECDC4;
+      }
+
+      .event-pill.Cuộc-hẹn-bác-sĩ {
+        background-color: #FF6B6B;
+      }
+
+      .event-pill.Khám-thai {
+        background-color: #45B7D1;
+      }
+
+      .event-pill.Tập-thể-dục {
+        background-color: #FFA07A;
+      }
+
+      .event-pill.Dinh-dưỡng {
+        background-color: #98D8C8;
       }
     }
   }
@@ -283,6 +340,15 @@ $border-color: #e9ecef;
           }
         }
       }
+
+      select {
+        option {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px;
+        }
+      }
     }
   }
 }
@@ -320,8 +386,13 @@ $border-color: #e9ecef;
         font-size: 0.8rem;
 
         .event-pill {
-          padding: 0.2rem 0.4rem;
-          font-size: 0.7rem;
+          padding: 2px 4px;
+          font-size: 10px;
+
+          .event-icon svg {
+            width: 12px;
+            height: 12px;
+          }
         }
       }
     }
