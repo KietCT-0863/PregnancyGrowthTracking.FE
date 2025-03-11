@@ -1,25 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus, Search, Clock, ChevronLeft, ChevronRight } from "lucide-react"
-import { Link } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import "./CalendarAll.scss"
+import { useState, useEffect } from "react";
+import { Plus, Search, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import "./CalendarAll.scss";
+import reminderService from "../../api/services/reminderService";
+import { toast } from "react-toastify";
 
 const CalendarAll = () => {
-  const [currentDate, setCurrentDate] = useState(new Date())
-  const [events, setEvents] = useState([])
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [events, setEvents] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const [newEvent, setNewEvent] = useState({
     title: "",
     date: "",
     time: "",
-    category: "appointment",
-    notes: "",
-  })
+    reminderType: "appointment",
+    notification: "",
+  });
 
   const categories = [
     { id: "appointment", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B" },
@@ -27,58 +29,107 @@ const CalendarAll = () => {
     { id: "checkup", label: "Khám thai", color: "#45B7D1" },
     { id: "exercise", label: "Tập thể dục", color: "#FFA07A" },
     { id: "nutrition", label: "Dinh dưỡng", color: "#98D8C8" },
-  ]
+  ];
 
   const getDaysInMonth = (date) => {
-    const year = date.getFullYear()
-    const month = date.getMonth()
-    const daysInMonth = new Date(year, month + 1, 0).getDate()
-    const firstDayOfMonth = new Date(year, month, 1).getDay()
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-    const days = []
+    const days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null)
+      days.push(null);
     }
 
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i))
+      days.push(new Date(year, month, i));
     }
 
-    return days
-  }
+    return days;
+  };
 
-  const handleAddEvent = (e) => {
-    e.preventDefault()
-    const event = {
-      id: Date.now(),
-      ...newEvent,
-      createdAt: new Date().toISOString(),
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    try {
+      console.group("Add Event Details");
+      console.log("New Event Data:", newEvent);
+
+      const reminderData = {
+        date: new Date(newEvent.date).toISOString(),
+        time: newEvent.time,
+        title: newEvent.title,
+        notification: newEvent.notification,
+        reminderType: newEvent.reminderType,
+      };
+
+      console.log("Formatted Reminder Data:", reminderData);
+
+      const response = await reminderService.createReminder(reminderData);
+      console.log("Create Reminder Response:", response);
+
+      setEvents([...events, response.data]);
+      setShowAddModal(false);
+      setNewEvent({
+        title: "",
+        date: "",
+        time: "",
+        reminderType: "appointment",
+        notification: "",
+      });
+
+      toast.success("Tạo lịch nhắc nhở thành công!");
+      console.groupEnd();
+    } catch (error) {
+      console.group("Add Event Error");
+      console.error("Error Object:", error);
+      console.error("Error Message:", error.message);
+      console.error("Error Status:", error.status);
+      console.groupEnd();
+
+      toast.error(error.message || "Không thể tạo lịch nhắc nhở");
     }
+  };
 
-    setEvents([...events, event])
-    setShowAddModal(false)
-    setNewEvent({
-      title: "",
-      date: "",
-      time: "",
-      category: "appointment",
-      notes: "",
-    })
-  }
+  useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        const response = await reminderService.getReminderHistory();
+        setEvents(response.data);
+      } catch (error) {
+        console.error("Error fetching reminders:", error);
+        toast.error("Không thể tải danh sách lịch nhắc nhở");
+      }
+    };
 
-  const filteredEvents = events.filter((event) => {
-    const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || event.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
+    fetchReminders();
+  }, []);
+
+  const filteredEvents =
+    events && events.length
+      ? events.filter((event) => {
+          if (!event) return false;
+
+          const matchesSearch =
+            event.title &&
+            event.title.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesCategory =
+            selectedCategory === "all" ||
+            event.reminderType === selectedCategory;
+
+          return matchesSearch && matchesCategory;
+        })
+      : [];
 
   const navigateMonth = (direction) => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
-  }
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1)
+    );
+  };
 
   const formatMonthYear = (date) => {
-    return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })
-  }
+    return date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" });
+  };
 
   return (
     <motion.div
@@ -107,7 +158,11 @@ const CalendarAll = () => {
       </div>
 
       <div className="calendar-navigation">
-        <motion.button onClick={() => navigateMonth(-1)} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        <motion.button
+          onClick={() => navigateMonth(-1)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
           <ChevronLeft size={24} />
         </motion.button>
         <motion.span
@@ -120,7 +175,11 @@ const CalendarAll = () => {
         >
           {formatMonthYear(currentDate)}
         </motion.span>
-        <motion.button onClick={() => navigateMonth(1)} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+        <motion.button
+          onClick={() => navigateMonth(1)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
           <ChevronRight size={24} />
         </motion.button>
       </div>
@@ -176,13 +235,20 @@ const CalendarAll = () => {
               <>
                 <span className="day-number">{day.getDate()}</span>
                 {filteredEvents
-                  .filter((event) => new Date(event.date).toDateString() === day.toDateString())
+                  .filter(
+                    (event) =>
+                      new Date(event.date).toDateString() === day.toDateString()
+                  )
                   .map((event) => (
                     <Link
                       to={`/member/calendar/${event.id}`}
                       key={event.id}
-                      className={`event-pill ${event.category}`}
-                      style={{ backgroundColor: categories.find((cat) => cat.id === event.category)?.color }}
+                      className={`event-pill ${event.reminderType}`}
+                      style={{
+                        backgroundColor: categories.find(
+                          (cat) => cat.id === event.reminderType
+                        )?.color,
+                      }}
                     >
                       {event.title}
                     </Link>
@@ -195,7 +261,12 @@ const CalendarAll = () => {
 
       <AnimatePresence>
         {showAddModal && (
-          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <motion.div
               className="modal-content"
               initial={{ scale: 0.8, y: -50 }}
@@ -208,27 +279,35 @@ const CalendarAll = () => {
                   type="text"
                   placeholder="Tiêu đề"
                   value={newEvent.title}
-                  onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, title: e.target.value })
+                  }
                   required
                 />
 
                 <input
                   type="date"
                   value={newEvent.date}
-                  onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, date: e.target.value })
+                  }
                   required
                 />
 
                 <input
                   type="time"
                   value={newEvent.time}
-                  onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, time: e.target.value })
+                  }
                   required
                 />
 
                 <select
-                  value={newEvent.category}
-                  onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })}
+                  value={newEvent.reminderType}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, reminderType: e.target.value })
+                  }
                   required
                 >
                   {categories.map((cat) => (
@@ -239,9 +318,11 @@ const CalendarAll = () => {
                 </select>
 
                 <textarea
-                  placeholder="Ghi chú"
-                  value={newEvent.notes}
-                  onChange={(e) => setNewEvent({ ...newEvent, notes: e.target.value })}
+                  placeholder="Thông báo"
+                  value={newEvent.notification}
+                  onChange={(e) =>
+                    setNewEvent({ ...newEvent, notification: e.target.value })
+                  }
                 />
 
                 <div className="modal-actions">
@@ -253,7 +334,11 @@ const CalendarAll = () => {
                   >
                     Hủy
                   </motion.button>
-                  <motion.button type="submit" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
                     Lưu
                   </motion.button>
                 </div>
@@ -263,8 +348,7 @@ const CalendarAll = () => {
         )}
       </AnimatePresence>
     </motion.div>
-  )
-}
+  );
+};
 
-export default CalendarAll
-
+export default CalendarAll;

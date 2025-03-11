@@ -63,6 +63,12 @@ export const ENDPOINTS = {
     UPDATE: (foetusId, age) => `/foetus/${foetusId}/growth-data/${age}`,
     GET_RANGES: (age) => `/growth-data/ranges/${age}`,
   },
+  REMINDER: {
+    CREATE: "/Reminder/create",
+    LIST: "/Reminder/history",
+    DELETE: (remindId) => `/Reminder/delete/${remindId}`,
+    UPDATE: (remindId) => `/Reminder/update/${remindId}`,
+  },
 };
 
 // Auth endpoints

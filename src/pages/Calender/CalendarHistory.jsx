@@ -1,17 +1,27 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, CalendarIcon, Clock, Tag, Trash, Edit, X } from "lucide-react"
-import "./CalendarHistory.scss"
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft,
+  CalendarIcon,
+  Clock,
+  Tag,
+  Trash,
+  Edit,
+  X,
+} from "lucide-react";
+import "./CalendarHistory.scss";
+import reminderService from "../../api/services/reminderService";
+import { toast } from "react-toastify";
 
 const CalendarHistory = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const [event, setEvent] = useState(null)
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedEvent, setEditedEvent] = useState(null)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedEvent, setEditedEvent] = useState(null);
 
   const categories = [
     { id: "appointment", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B" },
@@ -19,39 +29,58 @@ const CalendarHistory = () => {
     { id: "checkup", label: "Khám thai", color: "#45B7D1" },
     { id: "exercise", label: "Tập thể dục", color: "#FFA07A" },
     { id: "nutrition", label: "Dinh dưỡng", color: "#98D8C8" },
-  ]
+  ];
 
   useEffect(() => {
-    // Fetch event details
-    // For now using mock data
-    const mockEvent = {
-      id,
-      title: "Khám thai định kỳ",
-      date: "2024-03-20",
-      time: "09:00",
-      category: "checkup",
-      notes: "Nhớ mang theo sổ khám thai",
-      createdAt: "2024-03-15T10:00:00Z",
+    const fetchReminderDetails = async () => {
+      try {
+        const response = await reminderService.getReminderHistory();
+        const reminder = response.data.find((r) => r.id === id);
+        setEvent(reminder);
+        setEditedEvent(reminder);
+      } catch (error) {
+        console.error("Error fetching reminder:", error);
+        toast.error("Không thể tải thông tin lịch nhắc nhở");
+      }
+    };
+
+    fetchReminderDetails();
+  }, [id]);
+
+  const handleSave = async () => {
+    try {
+      const reminderData = {
+        date: new Date(editedEvent.date).toISOString(),
+        time: editedEvent.time,
+        title: editedEvent.title,
+        notification: editedEvent.notes,
+        reminderType: editedEvent.category,
+      };
+
+      await reminderService.updateReminder(id, reminderData);
+      setEvent(editedEvent);
+      setIsEditing(false);
+      toast.success("Cập nhật lịch nhắc nhở thành công!");
+    } catch (error) {
+      console.error("Error updating reminder:", error);
+      toast.error(error.message || "Không thể cập nhật lịch nhắc nhở");
     }
+  };
 
-    setEvent(mockEvent)
-    setEditedEvent(mockEvent)
-  }, [id])
-
-  const handleSave = () => {
-    setEvent(editedEvent)
-    setIsEditing(false)
-    // Here you would typically save to backend
-  }
-
-  const handleDelete = () => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa sự kiện này?")) {
-      // Here you would typically delete from backend
-      navigate("/member/calendar")
+  const handleDelete = async () => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa lịch nhắc nhở này?")) {
+      try {
+        await reminderService.deleteReminder(id);
+        toast.success("Xóa lịch nhắc nhở thành công!");
+        navigate("/member/calendar");
+      } catch (error) {
+        console.error("Error deleting reminder:", error);
+        toast.error(error.message || "Không thể xóa lịch nhắc nhở");
+      }
     }
-  }
+  };
 
-  if (!event) return null
+  if (!event) return null;
 
   return (
     <motion.div
@@ -111,7 +140,9 @@ const CalendarHistory = () => {
             <input
               type="text"
               value={editedEvent.title}
-              onChange={(e) => setEditedEvent({ ...editedEvent, title: e.target.value })}
+              onChange={(e) =>
+                setEditedEvent({ ...editedEvent, title: e.target.value })
+              }
               placeholder="Tiêu đề"
             />
 
@@ -121,7 +152,9 @@ const CalendarHistory = () => {
                 <input
                   type="date"
                   value={editedEvent.date}
-                  onChange={(e) => setEditedEvent({ ...editedEvent, date: e.target.value })}
+                  onChange={(e) =>
+                    setEditedEvent({ ...editedEvent, date: e.target.value })
+                  }
                 />
               </div>
 
@@ -130,7 +163,9 @@ const CalendarHistory = () => {
                 <input
                   type="time"
                   value={editedEvent.time}
-                  onChange={(e) => setEditedEvent({ ...editedEvent, time: e.target.value })}
+                  onChange={(e) =>
+                    setEditedEvent({ ...editedEvent, time: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -139,7 +174,9 @@ const CalendarHistory = () => {
               <label>Danh mục</label>
               <select
                 value={editedEvent.category}
-                onChange={(e) => setEditedEvent({ ...editedEvent, category: e.target.value })}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, category: e.target.value })
+                }
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -153,7 +190,9 @@ const CalendarHistory = () => {
               <label>Ghi chú</label>
               <textarea
                 value={editedEvent.notes}
-                onChange={(e) => setEditedEvent({ ...editedEvent, notes: e.target.value })}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, notes: e.target.value })
+                }
                 rows={4}
               />
             </div>
@@ -203,7 +242,12 @@ const CalendarHistory = () => {
 
               <div className="meta-item">
                 <Tag size={20} />
-                <span style={{ color: categories.find((cat) => cat.id === event.category)?.color }}>
+                <span
+                  style={{
+                    color: categories.find((cat) => cat.id === event.category)
+                      ?.color,
+                  }}
+                >
                   {categories.find((cat) => cat.id === event.category)?.label}
                 </span>
               </div>
@@ -215,14 +259,16 @@ const CalendarHistory = () => {
             </div>
 
             <div className="event-created">
-              <small>Tạo ngày: {new Date(event.createdAt).toLocaleDateString("vi-VN")}</small>
+              <small>
+                Tạo ngày:{" "}
+                {new Date(event.createdAt).toLocaleDateString("vi-VN")}
+              </small>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
-  )
-}
+  );
+};
 
-export default CalendarHistory
-
+export default CalendarHistory;
