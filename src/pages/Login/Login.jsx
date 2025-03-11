@@ -1,88 +1,91 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../../contexts/AuthContext"
-import "./Login.scss"
-import { toast } from "react-toastify"
-import { jwtDecode } from "jwt-decode"
-import authService from "../../api/services/authService"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import "./Login.scss";
+import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import authService from "../../api/services/authService";
 
 const Login = () => {
-  const navigate = useNavigate()
-  const { login } = useAuth()
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
-  })
-  const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
     try {
       if (!formData.usernameOrEmail || !formData.password) {
-        throw new Error("Vui lòng điền đầy đủ thông tin")
+        throw new Error("Vui lòng điền đầy đủ thông tin");
       }
 
-      const response = await authService.login(formData)
+      const response = await authService.login(formData);
 
-      console.log("Login response:", response)
+      console.log("Login response:", response);
 
-      const storedUserData = localStorage.getItem("userData")
-      console.log("Stored user data:", storedUserData)
+      const storedUserData = localStorage.getItem("userData");
+      console.log("Stored user data:", storedUserData);
 
       if (response && response.token) {
-        const decoded = jwtDecode(response.token)
-        const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-        toast.success("Đăng nhập thành công!")
+        const decoded = jwtDecode(response.token);
+        const userRole =
+          decoded[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        toast.success("Đăng nhập thành công!");
 
         if (userRole === "guest") {
-          navigate("/basic-user")
+          navigate("/basic-user");
         } else if (userRole === "admin") {
-          navigate("/admin")
+          navigate("/admin");
         } else {
-          navigate("/member")
+          navigate("/member");
         }
       } else {
-        throw new Error("Đăng nhập thất bại: Không nhận được token")
+        throw new Error("Đăng nhập thất bại: Không nhận được token");
       }
     } catch (err) {
-      console.error("Login error:", err)
+      console.error("Login error:", err);
       if (err.response) {
         switch (err.response.status) {
           case 400:
-            setError("Thông tin đăng nhập không hợp lệ")
-            break
+            setError("Thông tin đăng nhập không hợp lệ");
+            break;
           case 401:
-            setError("Email hoặc mật khẩu không đúng")
-            break
+            setError("Email hoặc mật khẩu không đúng");
+            break;
           case 404:
-            setError("Tài khoản không tồn tại")
-            break
+            setError("Tài khoản không tồn tại");
+            break;
           default:
-            setError("Có lỗi xảy ra, vui lòng thử lại sau")
+            setError("Có lỗi xảy ra, vui lòng thử lại sau");
         }
       } else if (err.message) {
-        setError(err.message)
+        setError(err.message);
       } else {
-        setError("Có lỗi xảy ra, vui lòng thử lại sau")
+        setError("Có lỗi xảy ra, vui lòng thử lại sau");
       }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   return (
     <div className="login-container">
@@ -115,7 +118,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="glass-effect">
           <div className="form-group">
-            <label htmlFor="usernameOrEmail">Email hoặc tên đăng nhập</label>
+            <label htmlFor="usernameOrEmail">Tài Khoản</label>
             <input
               id="usernameOrEmail"
               type="text"
@@ -164,15 +167,18 @@ const Login = () => {
                 Đăng ký ngay
               </Link>
             </p>
-            <button type="button" className="btn-back" onClick={() => navigate("/")}>
+            <button
+              type="button"
+              className="btn-back"
+              onClick={() => navigate("/")}
+            >
               Quay lại trang chủ
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
-
+export default Login;

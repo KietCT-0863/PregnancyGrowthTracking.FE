@@ -28,6 +28,7 @@ export const ENDPOINTS = {
     CREATE: "/Payment/create-payment",
     CHECK_RESULT: (transactionNo) => `/Payment/check-payment/${transactionNo}`,
     GET_TOTAL_REVENUE: "/Payment/total-payment",
+    GET_MONTHLY_REVENUE: "/Payment/monthly-revenue-list",
   },
   FOETUS: {
     LIST: "/Foetus",
@@ -54,6 +55,7 @@ export const ENDPOINTS = {
     UPDATE: (id) => `/User/${id}`,
     DELETE: (id) => `/User/${id}`,
     GET_TOTAL_USERS: "/User/count-total-users",
+    GET_MONTHLY_USERS: "/User/monthly-user-count",
   },
   GROWTHDATA: {
     GET_BY_FOETUS: (foetusId) => `/foetus/${foetusId}/growth-data`,
