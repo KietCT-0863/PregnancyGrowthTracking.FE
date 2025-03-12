@@ -42,19 +42,41 @@ const userManagementService = {
   updateUser: async (id, userData) => {
     try {
       if (!id) throw new Error("ID người dùng không hợp lệ");
+
+      // Log để debug chi tiết
+      console.group("Update User Details");
+      console.log("User ID:", id);
+      console.log("Update Data:", JSON.stringify(userData, null, 2));
+      console.groupEnd();
+
       const response = await axiosInstance.put(
         ENDPOINTS.USER_MANAGEMENT.UPDATE(id),
-        userData
+        userData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
+
       return response.data;
     } catch (error) {
-      console.error("Error updating user:", error);
-      throw {
-        message:
-          error.response?.data?.message ||
-          "Không thể cập nhật thông tin người dùng",
-        status: error.response?.status || 500,
-      };
+      // Log chi tiết lỗi
+      console.group("Update User Error");
+      console.error("Error Details:", {
+        id,
+        userData,
+        errorResponse: error.response?.data,
+        errorMessage: error.message
+      });
+      console.groupEnd();
+      
+      // Ném lỗi với message cụ thể
+      if (error.response?.status === 400) {
+        throw new Error(error.response?.data?.message || "Dữ liệu không hợp lệ");
+      }
+      
+      throw new Error("Không thể cập nhật thông tin người dùng");
     }
   },
 

@@ -73,9 +73,30 @@ const UserManagement = () => {
   const handleSaveUser = async () => {
     try {
       setLoading(true)
+
+      // Tạo một object chứa tất cả các trường
+      const updateData = {
+        userId: currentUser.userId,
+        userName: currentUser.userName.trim(),
+        fullName: currentUser.fullName?.trim() || "",
+        email: currentUser.email.trim(),
+        dob: currentUser.dob || null,
+        phone: currentUser.phone?.trim() || "",
+        roleId: parseInt(currentUser.roleId), // Chắc chắn roleId được gửi
+        available: currentUser.available
+      }
+
+      // Log để debug
+      console.log("Full update data:", updateData)
+
       if (currentUser.userId) {
-        await userManagementService.updateUser(currentUser.userId, currentUser)
+        // Gọi API update với toàn bộ dữ liệu
+        await userManagementService.updateUser(currentUser.userId, updateData)
       } else {
+        // Nếu là tạo mới user
+        if (!currentUser.userName || !currentUser.email || !currentUser.password) {
+          throw new Error("Vui lòng điền đầy đủ thông tin bắt buộc")
+        }
         await userManagementService.createUser(currentUser)
       }
       
@@ -83,7 +104,8 @@ const UserManagement = () => {
       handleCloseDialog()
       showSnackbar(`Người dùng đã được ${currentUser.userId ? "cập nhật" : "tạo"} thành công`)
     } catch (error) {
-      showSnackbar(error.message, "error")
+      console.error("Save user error:", error)
+      showSnackbar(error.message || "Có lỗi xảy ra", "error")
     } finally {
       setLoading(false)
     }
