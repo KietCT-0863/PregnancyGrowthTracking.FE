@@ -11,6 +11,11 @@ const INITIAL_FOETUS_STATE = {
 
 const PREGNANCY_FULL_TERM = 40; // Số tuần thai kỳ đủ
 
+const GENDER_OPTIONS = [
+  { value: "Nam", label: "Nam" },
+  { value: "Nữ", label: "Nữ" }
+];
+
 const FoetusList = () => {
   const [foetusList, setFoetusList] = useState([]);
   const [growthDataMap, setGrowthDataMap] = useState({});
@@ -37,19 +42,7 @@ const FoetusList = () => {
 
   const getGenderDisplay = (gender) => {
     if (!gender) return "Chưa xác định";
-    
-    const normalizedGender = String(gender).trim().toUpperCase();
-    switch (normalizedGender) {
-      case 'MALE':
-      case 'NAM':
-        return 'Nam';
-      case 'FEMALE':
-      case 'NỮ':
-      case 'NU':
-        return 'Nữ';
-      default:
-        return 'Chưa xác định';
-    }
+    return gender;
   };
 
   const fetchData = async () => {
@@ -77,15 +70,62 @@ const FoetusList = () => {
     }
   };
 
+  const handleShowAddForm = () => {
+    console.log("Opening add foetus form");
+    console.log("Current state:", { showAddForm, newFoetus });
+    setShowAddForm(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    console.log("Input change:", { field, value });
+    setNewFoetus(prev => {
+      const updated = { ...prev, [field]: value };
+      console.log("Updated foetus data:", updated);
+      return updated;
+    });
+  };
+
   const handleAddFoetus = async (e) => {
     e.preventDefault();
+    console.group("Adding New Foetus");
     try {
-      await foetusService.createFoetus(newFoetus);
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      if (!userData?.userId) {
+        throw new Error("Vui lòng đăng nhập để thêm thai nhi");
+      }
+
+      if (!newFoetus.name.trim()) {
+        throw new Error("Vui lòng nhập tên thai nhi");
+      }
+      if (!newFoetus.gender) {
+        throw new Error("Vui lòng chọn giới tính");
+      }
+
+      const foetusData = {
+        name: newFoetus.name.trim(),
+        gender: newFoetus.gender
+      };
+
+      console.log("Submitting foetus data:", foetusData);
+
+      const result = await foetusService.createFoetus(foetusData);
+      console.log("API Response:", result);
+
       setNewFoetus(INITIAL_FOETUS_STATE);
       setShowAddForm(false);
-      fetchData();
+      await fetchData();
+      setError(null);
+
     } catch (err) {
-      setError(err.message);
+      console.error("Create Foetus Error:", {
+        error: err,
+        message: err.message,
+        response: err.response?.data
+      });
+      
+      setError(err.message || "Không thể tạo thai nhi mới");
+    } finally {
+      console.groupEnd();
     }
   };
 
@@ -114,7 +154,7 @@ const FoetusList = () => {
           <input
             type="text"
             value={newFoetus.name}
-            onChange={e => setNewFoetus({ ...newFoetus, name: e.target.value })}
+            onChange={e => handleInputChange('name', e.target.value)}
             required
             placeholder="Nhập tên thai nhi"
           />
@@ -123,21 +163,60 @@ const FoetusList = () => {
           <label>Giới tính:</label>
           <select
             value={newFoetus.gender}
-            onChange={e => setNewFoetus({ ...newFoetus, gender: e.target.value })}
+            onChange={e => handleInputChange('gender', e.target.value)}
             required
+            className="gender-select"
           >
             <option value="">Chọn giới tính</option>
-            <option value="MALE">Nam</option>
-            <option value="FEMALE">Nữ</option>
+            {GENDER_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="form-actions">
           <button type="submit">Thêm</button>
-          <button type="button" onClick={() => setShowAddForm(false)}>Hủy</button>
+          <button 
+            type="button" 
+            onClick={() => {
+              setShowAddForm(false);
+              setNewFoetus(INITIAL_FOETUS_STATE);
+              setError(null);
+            }}
+          >
+            Hủy
+          </button>
         </div>
       </form>
     </div>
   );
+
+  const styles = `
+  .add-foetus-form {
+    .form-group {
+      .gender-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        background-color: white;
+        cursor: pointer;
+        
+        &:focus {
+          outline: none;
+          border-color: #4a90e2;
+          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        option {
+          padding: 8px;
+        }
+      }
+    }
+  }
+  `;
 
   const renderFoetusItem = (foetus) => {
     const growthData = growthDataMap[foetus.foetusId];
