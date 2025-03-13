@@ -3,42 +3,38 @@ import { AlertCircle, CheckCircle } from "lucide-react";
 import "./GrowthAlert.scss";
 
 const GrowthAlert = ({ isOpen, onClose, alertData }) => {
-  if (!isOpen || !alertData?.data?.alerts) return null;
+  if (!isOpen || !alertData) return null;
+
+  const alerts = alertData.data?.alerts;
+  if (!alerts) return null;
 
   const measurements = [
     { key: "AC", label: "AC (mm)" },
     { key: "HC", label: "HC (mm)" },
     { key: "FL", label: "FL (mm)" },
-    { key: "EFW", label: "EFW (g)" },
+    { key: "EFW", label: "EFW (g)" }
   ];
 
-  // Tạo alerts từ dữ liệu response
-  const alerts = measurements
+  const alertItems = measurements
     .map(({ key, label }) => {
-      const alert = alertData.data.alerts[key];
+      const alert = alerts[key];
       if (!alert) return null;
 
-      // Kiểm tra giá trị có nằm trong khoảng an toàn không
       const value = alert.currentValue;
-      const isInSafeRange = value >= alert.minRange && value <= alert.maxRange;
-
-      // isAlert: false -> cảnh báo (nằm ngoài khoảng an toàn)
-      // isAlert: true -> an toàn (nằm trong khoảng an toàn)
       const isNormal = alert.isAlert;
 
       return {
         label,
-        value: value,
-        isNormal: isNormal,
+        value,
+        isNormal,
         range: {
           min: alert.minRange,
-          max: alert.maxRange,
+          max: alert.maxRange
         },
-        message: isNormal
-          ? `${label} (${value}) đang trong khoảng an toàn (${alert.minRange}-${alert.maxRange})`
-          : `${label} (${value}) ${
-              value < alert.minRange ? "thấp hơn" : "cao hơn"
-            } khoảng an toàn (${alert.minRange}-${alert.maxRange})`,
+        message: `${label} (${value}) ${isNormal ? 
+          'đang trong' : 
+          `${value < alert.minRange ? 'thấp hơn' : 'cao hơn'}`
+        } khoảng an toàn (${alert.minRange}-${alert.maxRange})`
       };
     })
     .filter(Boolean);

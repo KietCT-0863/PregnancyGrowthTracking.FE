@@ -95,30 +95,30 @@ const HISTORY_COLUMNS = [
   }
 ];
 
-// Chart Options
-const CHART_OPTIONS = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: {
-            size: 12,
-            family: "'Inter', sans-serif"
-          },
-          filter: function(item) {
-            // Chỉ hiển thị label cho bar charts
-            return item.datasetIndex < 4;
-          }
-        }
-      },
-      title: {
-        display: true,
-      text: "Biểu đồ tăng trưởng thai nhi (4 tuần gần nhất)",
+// Tách riêng cấu hình chart options
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: "top",
+      labels: {
         font: {
-          size: 16,
-          family: "'Inter', sans-serif",
+          size: 12,
+          family: "'Inter', sans-serif"
+        },
+        filter: function(item) {
+          // Chỉ hiển thị label cho bar charts
+          return !item.text.includes('Trend');
+        }
+      }
+    },
+    title: {
+      display: true,
+      text: "Biểu đồ tăng trưởng thai nhi (4 tuần gần nhất)",
+      font: {
+        size: 16,
+        family: "'Inter', sans-serif",
         weight: "bold"
       }
     },
@@ -130,25 +130,25 @@ const CHART_OPTIONS = {
           const unit = label.includes('EFW') ? 'g' : 'mm';
           return `${label}: ${value} ${unit}`;
         }
-        }
       }
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
+    }
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
       title: {
         display: true,
         text: 'Chỉ số (mm/g)'
       },
-        grid: {
-          display: true,
-          color: "rgba(0, 0, 0, 0.1)"
-        }
+      grid: {
+        display: true,
+        color: "rgba(0, 0, 0, 0.1)"
+      }
+    },
+    x: {
+      grid: {
+        display: false
       },
-      x: {
-        grid: {
-          display: false
-        },
       title: {
         display: true,
         text: 'Tuần thai'
@@ -365,8 +365,8 @@ const BasicTracking = () => {
   };
 
   // Cập nhật hàm getChartData
-  const getChartData = () => {
-    if (!selectedChild) {
+  const getChartData = (selectedChild, growthData) => {
+    if (!selectedChild || !growthData[selectedChild.foetusId]) {
       return {
         labels: [],
         datasets: []
@@ -374,75 +374,64 @@ const BasicTracking = () => {
     }
 
     const foetusData = growthData[selectedChild.foetusId];
-    if (!foetusData || !Array.isArray(foetusData)) {
-          return {
+    if (!Array.isArray(foetusData) || foetusData.length === 0) {
+      return {
         labels: [],
         datasets: []
       };
     }
 
-    // Sắp xếp dữ liệu theo tuần giảm dần (mới nhất trước)
-    const sortedData = foetusData.sort((a, b) => b.age - a.age);
-    // Lấy 4 tuần gần nhất
-    const recentWeeks = sortedData.slice(0, 4);
-    // Sắp xếp lại theo tuần tăng dần
-    const weeksToShow = recentWeeks.sort((a, b) => a.age - b.age);
+    // Lấy 4 tuần gần nhất và sắp xếp theo tuần tăng dần
+    const recentWeeks = [...foetusData]
+      .sort((a, b) => b.age - a.age)
+      .slice(0, 4)
+      .sort((a, b) => a.age - b.age);
 
     return {
-      labels: weeksToShow.map(data => `Tuần ${data.age}`),
+      labels: recentWeeks.map(data => `Tuần ${data.age}`),
       datasets: [
         // Bar charts
         {
-          key: 'hc-bar',
           type: 'bar',
           label: 'HC (mm)',
-          data: weeksToShow.map(data => data.hc || 0),
+          data: recentWeeks.map(data => data.hc || 0),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
           borderColor: 'rgb(255, 99, 132)',
           borderWidth: 1,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8,
           order: 2 // Hiển thị phía sau line
         },
         {
-          key: 'ac-bar',
           type: 'bar',
           label: 'AC (mm)',
-          data: weeksToShow.map(data => data.ac || 0),
+          data: recentWeeks.map(data => data.ac || 0),
           backgroundColor: 'rgba(54, 162, 235, 0.5)',
           borderColor: 'rgb(54, 162, 235)',
           borderWidth: 1,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8,
           order: 2
         },
         {
           type: 'bar',
           label: 'FL (mm)',
-          data: weeksToShow.map(data => data.fl || 0),
+          data: recentWeeks.map(data => data.fl || 0),
           backgroundColor: 'rgba(75, 192, 192, 0.5)',
           borderColor: 'rgb(75, 192, 192)',
           borderWidth: 1,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8,
           order: 2
         },
         {
           type: 'bar',
           label: 'EFW (g)',
-          data: weeksToShow.map(data => data.efw || 0),
+          data: recentWeeks.map(data => data.efw || 0),
           backgroundColor: 'rgba(153, 102, 255, 0.5)',
           borderColor: 'rgb(153, 102, 255)',
           borderWidth: 1,
-          barPercentage: 0.7,
-          categoryPercentage: 0.8,
           order: 2
         },
-        // Line charts
+        // Line charts cho đường tăng trưởng
         {
           type: 'line',
           label: 'HC Trend',
-          data: weeksToShow.map(data => data.hc || 0),
+          data: recentWeeks.map(data => data.hc || 0),
           borderColor: 'rgb(255, 99, 132)',
           borderWidth: 2,
           fill: false,
@@ -453,7 +442,7 @@ const BasicTracking = () => {
         {
           type: 'line',
           label: 'AC Trend',
-          data: weeksToShow.map(data => data.ac || 0),
+          data: recentWeeks.map(data => data.ac || 0),
           borderColor: 'rgb(54, 162, 235)',
           borderWidth: 2,
           fill: false,
@@ -464,7 +453,7 @@ const BasicTracking = () => {
         {
           type: 'line',
           label: 'FL Trend',
-          data: weeksToShow.map(data => data.fl || 0),
+          data: recentWeeks.map(data => data.fl || 0),
           borderColor: 'rgb(75, 192, 192)',
           borderWidth: 2,
           fill: false,
@@ -475,7 +464,7 @@ const BasicTracking = () => {
         {
           type: 'line',
           label: 'EFW Trend',
-          data: weeksToShow.map(data => data.efw || 0),
+          data: recentWeeks.map(data => data.efw || 0),
           borderColor: 'rgb(153, 102, 255)',
           borderWidth: 2,
           fill: false,
@@ -520,11 +509,13 @@ const BasicTracking = () => {
       <div className="monitor-content">
         <div className="chart-section">
           <div className="chart-container">
-            <Bar 
-              data={getChartData()} 
-              options={CHART_OPTIONS} 
-              height={300} 
-            />
+            {selectedChild && (
+              <Bar 
+                data={getChartData(selectedChild, growthData)}
+                options={chartOptions}
+                height={300}
+              />
+            )}
           </div>
           <div className="chart-info">
             <p className="chart-note">
@@ -807,7 +798,7 @@ const BasicTracking = () => {
                           },
                         ],
                       }}
-                      options={CHART_OPTIONS}
+                      options={chartOptions}
                     />
                   </div>
                 )}
