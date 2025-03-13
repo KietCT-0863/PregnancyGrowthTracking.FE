@@ -108,8 +108,7 @@ const chartOptions = {
           family: "'Inter', sans-serif"
         },
         filter: function(item) {
-          // Chỉ hiển thị label cho bar charts
-          return !item.text.includes('Trend');
+          return item.datasetIndex < 4;
         }
       }
     },
@@ -121,16 +120,6 @@ const chartOptions = {
         family: "'Inter', sans-serif",
         weight: "bold"
       }
-    },
-    tooltip: {
-      callbacks: {
-        label: function(context) {
-          const label = context.dataset.label || "";
-          const value = context.parsed.y || 0;
-          const unit = label.includes('EFW') ? 'g' : 'mm';
-          return `${label}: ${value} ${unit}`;
-        }
-      }
     }
   },
   scales: {
@@ -139,19 +128,11 @@ const chartOptions = {
       title: {
         display: true,
         text: 'Chỉ số (mm/g)'
-      },
-      grid: {
-        display: true,
-        color: "rgba(0, 0, 0, 0.1)"
       }
     },
     x: {
       grid: {
         display: false
-      },
-      title: {
-        display: true,
-        text: 'Tuần thai'
       }
     }
   }
@@ -390,15 +371,13 @@ const BasicTracking = () => {
     return {
       labels: recentWeeks.map(data => `Tuần ${data.age}`),
       datasets: [
-        // Bar charts
         {
           type: 'bar',
           label: 'HC (mm)',
           data: recentWeeks.map(data => data.hc || 0),
           backgroundColor: 'rgba(255, 99, 132, 0.5)',
           borderColor: 'rgb(255, 99, 132)',
-          borderWidth: 1,
-          order: 2 // Hiển thị phía sau line
+          borderWidth: 1
         },
         {
           type: 'bar',
@@ -406,8 +385,7 @@ const BasicTracking = () => {
           data: recentWeeks.map(data => data.ac || 0),
           backgroundColor: 'rgba(54, 162, 235, 0.5)',
           borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1,
-          order: 2
+          borderWidth: 1
         },
         {
           type: 'bar',
@@ -415,8 +393,7 @@ const BasicTracking = () => {
           data: recentWeeks.map(data => data.fl || 0),
           backgroundColor: 'rgba(75, 192, 192, 0.5)',
           borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 1,
-          order: 2
+          borderWidth: 1
         },
         {
           type: 'bar',
@@ -424,53 +401,7 @@ const BasicTracking = () => {
           data: recentWeeks.map(data => data.efw || 0),
           backgroundColor: 'rgba(153, 102, 255, 0.5)',
           borderColor: 'rgb(153, 102, 255)',
-          borderWidth: 1,
-          order: 2
-        },
-        // Line charts cho đường tăng trưởng
-        {
-          type: 'line',
-          label: 'HC Trend',
-          data: recentWeeks.map(data => data.hc || 0),
-          borderColor: 'rgb(255, 99, 132)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.4,
-          pointRadius: 4,
-          order: 1 // Hiển thị phía trước bar
-        },
-        {
-          type: 'line',
-          label: 'AC Trend',
-          data: recentWeeks.map(data => data.ac || 0),
-          borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.4,
-          pointRadius: 4,
-          order: 1
-        },
-        {
-          type: 'line',
-          label: 'FL Trend',
-          data: recentWeeks.map(data => data.fl || 0),
-          borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.4,
-          pointRadius: 4,
-          order: 1
-        },
-        {
-          type: 'line',
-          label: 'EFW Trend',
-          data: recentWeeks.map(data => data.efw || 0),
-          borderColor: 'rgb(153, 102, 255)',
-          borderWidth: 2,
-          fill: false,
-          tension: 0.4,
-          pointRadius: 4,
-          order: 1
+          borderWidth: 1
         }
       ]
     };
