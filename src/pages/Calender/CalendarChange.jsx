@@ -23,7 +23,7 @@ const CalendarChange = () => {
     { id: "medication", label: "Uống thuốc" },
     { id: "appointment", label: "Cuộc hẹn" },
     { id: "other", label: "Khác" }
-  ];image.png
+  ];
 
   useEffect(() => {
     console.log('Current remindId:', remindId);
