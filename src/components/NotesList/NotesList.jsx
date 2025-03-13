@@ -170,41 +170,62 @@ const NotesList = () => {
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
               <div className="modal-content">
-                <button className="close-btn" onClick={() => setSelectedNote(null)}>
+                <button 
+                  className="close-btn" 
+                  onClick={() => setSelectedNote(null)}
+                  aria-label="Đóng"
+                >
                   ×
                 </button>
 
                 <div className="detail-header">
                   <h3>{selectedNote.note || "Chưa có thông tin"}</h3>
-                  <span className="detail-date">{selectedNote.date}</span>
+                  <span className="detail-date">
+                    {new Date(selectedNote.date).toLocaleDateString("vi-VN")}
+                  </span>
                 </div>
 
                 <div className="detail-content">
                   {selectedNote.diagnosis && (
-                    <div className="detail-item">
+                    <motion.div 
+                      className="detail-item"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
                       <strong>Chẩn đoán:</strong>
                       <p>{selectedNote.diagnosis}</p>
-                    </div>
+                    </motion.div>
                   )}
 
                   {selectedNote.detail && (
-                    <div className="detail-item">
+                    <motion.div 
+                      className="detail-item"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
                       <strong>Ghi chú:</strong>
                       <p>{selectedNote.detail}</p>
-                    </div>
+                    </motion.div>
                   )}
 
                   {selectedNote.userNotePhoto && (
-                    <div className="detail-image">
+                    <motion.div 
+                      className="detail-image"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
                       <img
-                        src={selectedNote.userNotePhoto || "/placeholder.svg"}
-                        alt="Note"
+                        src={selectedNote.userNotePhoto}
+                        alt="Chi tiết ghi chú"
                         onClick={() => window.open(selectedNote.userNotePhoto, "_blank")}
                       />
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               </div>

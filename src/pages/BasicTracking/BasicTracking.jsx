@@ -106,10 +106,10 @@ const CHART_OPTIONS = {
           font: {
             size: 12,
             family: "'Inter', sans-serif"
-        },
-        filter: function(item, chart) {
-          // Chỉ hiển thị label cho bar charts
-          return item.datasetIndex < 4;
+          },
+          filter: function(item) {
+            // Chỉ hiển thị label cho bar charts
+            return item.datasetIndex < 4;
           }
         }
       },
@@ -166,9 +166,8 @@ const BasicTracking = () => {
   const [tempStats, setTempStats] = useState({});
   const [selectedWeekHistory, setSelectedWeekHistory] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
-  const [showCompareModal, setShowCompareModal] = useState(false); // Thêm state cho modal mới
-  const [selectedFoetus, setSelectedFoetus] = useState(null); // State cho thai nhi được chọn
-  const [selectedChild, setSelectedChild] = useState(null); // Thêm state cho việc chọn thai nhi
+  const [showCompareModal, setShowCompareModal] = useState(false);
+  const [selectedChild, setSelectedChild] = useState(null);
   const [showGrowthAlert, setShowGrowthAlert] = useState(false);
   const [alertData, setAlertData] = useState(null);
 
@@ -355,12 +354,6 @@ const BasicTracking = () => {
     });
   };
 
-  // Thêm hàm xử lý cho modal so sánh
-  const handleCompare = (foetusId) => {
-    setSelectedFoetus(foetusId);
-    setShowCompareModal(true);
-  };
-
   const handleInputChange = (foetusId, field, value) => {
     setTempStats((prev) => ({
       ...prev,
@@ -369,23 +362,6 @@ const BasicTracking = () => {
         [field]: value,
       },
     }));
-  };
-
-  // Hàm lấy dữ liệu mới nhất cho mỗi thai nhi
-  const getLatestGrowthData = (foetusId) => {
-    const foetusData = growthData[foetusId];
-    if (!foetusData || !Array.isArray(foetusData) || foetusData.length === 0) {
-      return null;
-    }
-
-    // Sắp xếp theo tuần mới nhất và lấy dữ liệu đầu tiên
-    return foetusData.sort((a, b) => {
-      if (a.age !== b.age) {
-        return b.age - a.age; // Sắp xếp theo tuần giảm dần
-      }
-      // Nếu cùng tuần thì sắp xếp theo ngày đo
-      return new Date(b.measurementDate) - new Date(a.measurementDate);
-    })[0];
   };
 
   // Cập nhật hàm getChartData
@@ -808,7 +784,7 @@ const BasicTracking = () => {
                 </motion.button>
                 </div>
               <div className="compare-modal-body">
-                {selectedFoetus && (
+                {selectedChild && (
                   <div className="comparison-chart">
                     <Bar
                       data={{
@@ -817,10 +793,10 @@ const BasicTracking = () => {
                           {
                             label: "Chỉ số hiện tại",
                             data: [
-                              growthData[selectedFoetus]?.hc || 0,
-                              growthData[selectedFoetus]?.ac || 0,
-                              growthData[selectedFoetus]?.fl || 0,
-                              growthData[selectedFoetus]?.efw || 0,
+                              growthData[selectedChild]?.hc || 0,
+                              growthData[selectedChild]?.ac || 0,
+                              growthData[selectedChild]?.fl || 0,
+                              growthData[selectedChild]?.efw || 0,
                             ],
                             backgroundColor: "rgba(255, 107, 129, 0.5)",
                           },
