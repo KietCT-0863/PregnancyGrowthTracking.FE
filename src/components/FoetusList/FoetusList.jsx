@@ -268,9 +268,15 @@ const FoetusList = () => {
 
   return (
     <div className="foetus-list-container">
+      <div className="blog-background">
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+      </div>
+      
       <div className="foetus-list-header">
         <h2>Danh sách thai nhi</h2>
-        <button className="add-foetus-btn" onClick={() => setShowAddForm(true)}>
+        <button className="add-foetus-btn" onClick={handleShowAddForm}>
           <Baby size={20} />
           Thêm thai nhi
         </button>

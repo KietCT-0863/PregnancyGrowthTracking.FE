@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap");
 
 // Variables
 $primary: #ff6b81;
@@ -6,6 +6,7 @@ $primary-light: #ffdae0;
 $primary-dark: #ff4757;
 $secondary: #ffc2d1;
 $accent: #70a1ff;
+$accent-light: #e0f1ff;
 $success: #2ed573;
 $warning: #ffa502;
 $error: #ff4757;
@@ -13,19 +14,17 @@ $text-primary: #2f3542;
 $text-secondary: #747d8c;
 $background: #fff9f9;
 $white: #ffffff;
+$shadow-color: rgba($primary, 0.15);
+$text-shadow: 0 1px 2px rgba($primary, 0.2);
 
 // Mixins
 @mixin card {
   background: $white;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba($primary, 0.1);
+  box-shadow: 0 10px 30px $shadow-color;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-
-  &:hover {
-    box-shadow: 0 15px 40px rgba($primary, 0.15);
-    transform: translateY(-5px);
-  }
+  border: 1px solid rgba($primary, 0.1);
 }
 
 @mixin flex-center {
@@ -38,69 +37,59 @@ $white: #ffffff;
   background: rgba($white, 0.8);
   backdrop-filter: blur(10px);
   border: 1px solid rgba($white, 0.2);
-  box-shadow: 0 8px 32px rgba($primary, 0.1);
+  box-shadow: 0 8px 32px $shadow-color;
 }
 
-@mixin button-hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba($accent, 0.3);
+@mixin gradient-text {
+  background: linear-gradient(135deg, $primary, $accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }
 
-// Keyframes
+// Animation Keyframes
 @keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
+  from { 
     opacity: 0;
     transform: translateY(20px);
   }
-  to {
+  to { 
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .pregnancy-monitor {
@@ -108,8 +97,8 @@ $white: #ffffff;
   background: linear-gradient(135deg, $background, lighten($primary-light, 5%));
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
-  padding: 2rem;
-  font-family: "Inter", sans-serif;
+  padding: 2.5rem;
+  font-family: "Poppins", sans-serif;
   position: relative;
   overflow-x: hidden;
 
@@ -128,20 +117,25 @@ $white: #ffffff;
     z-index: 0;
   }
 
+  // Header Section
   .monitor-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     position: relative;
     z-index: 1;
+    animation: fadeIn 0.8s ease-out;
 
     h1 {
       font-family: "Playfair Display", serif;
       color: $text-primary;
-      font-size: 2.8rem;
+      font-size: 3rem;
       margin: 0 0 0.5rem;
-      text-shadow: 0 2px 10px rgba($primary, 0.1);
+      text-shadow: $text-shadow;
       position: relative;
       display: inline-block;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      animation: float 6s ease-in-out infinite;
 
       &::after {
         content: "";
@@ -149,41 +143,48 @@ $white: #ffffff;
         bottom: -10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
+        width: 100px;
+        height: 4px;
         background: linear-gradient(to right, $primary, $accent);
         border-radius: 3px;
+        box-shadow: 0 2px 4px $shadow-color;
       }
     }
 
     p {
       color: $text-secondary;
       font-size: 1.2rem;
-      margin: 1rem 0 0;
+      margin: 1.5rem 0 0;
       opacity: 0.9;
+      font-weight: 500;
+      letter-spacing: 0.3px;
     }
   }
 
+  // Main Content Grid
   .monitor-content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2.5rem;
     position: relative;
     z-index: 1;
+    animation: fadeIn 0.8s ease-out;
 
     @media (max-width: 1200px) {
       grid-template-columns: 1fr;
     }
 
+    // Chart Section
     .chart-section {
       @include card;
       padding: 2rem;
       background: rgba($white, 0.95);
-      border: 1px solid rgba($primary, 0.1);
       transition: all 0.4s ease;
+      animation: slideUp 0.5s ease-out;
 
       &:hover {
-        border-color: rgba($primary, 0.3);
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px $shadow-color;
       }
 
       .chart-container {
@@ -195,18 +196,18 @@ $white: #ffffff;
         box-shadow: 0 5px 15px rgba($primary, 0.05);
         transition: all 0.3s ease;
         min-height: 300px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
 
         &:hover {
-          box-shadow: 0 8px 25px rgba($primary, 0.1);
+          box-shadow: 0 8px 25px $shadow-color;
         }
 
         &:empty::before {
           content: "Chọn một thai nhi để xem biểu đồ";
           color: $text-secondary;
           font-style: italic;
+          font-weight: 500;
+          letter-spacing: 0.3px;
         }
       }
 
@@ -216,47 +217,60 @@ $white: #ffffff;
 
         .chart-note {
           color: $text-secondary;
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           font-style: italic;
           margin: 0;
           text-align: center;
+          letter-spacing: 0.3px;
         }
       }
     }
 
+    // Children Grid
     .children-grid {
       display: grid;
       gap: 2rem;
       align-content: start;
+      animation: slideUp 0.5s ease-out;
 
       .child-card {
         @include card;
         background: rgba($white, 0.95);
-        border: 1px solid rgba($primary, 0.1);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
         &.selected {
           border: 2px solid $primary;
-          box-shadow: 0 8px 30px rgba($primary, 0.2);
+          box-shadow: 0 15px 40px $shadow-color;
 
           .card-header {
             background: linear-gradient(
               135deg,
-              darken($primary-light, 5%),
-              $primary-light
+              $primary-light,
+              lighten($primary-light, 5%)
             );
+
+            h3 {
+              color: $primary-dark;
+              text-shadow: $text-shadow;
+              
+              &::after {
+                width: 100%;
+              }
+            }
           }
         }
 
         &:hover {
-          border-color: $primary;
+          transform: translateY(-8px);
+          border-color: rgba($primary, 0.3);
+          box-shadow: 0 15px 40px $shadow-color;
         }
 
         .card-header {
           background: linear-gradient(
             135deg,
             $primary-light,
-            lighten($primary-light, 5%)
+            lighten($primary-light, 8%)
           );
           padding: 1.5rem;
           display: flex;
@@ -287,11 +301,13 @@ $white: #ffffff;
           }
 
           h3 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: $text-primary;
             margin: 0;
             font-weight: 600;
             position: relative;
+            font-family: "Playfair Display", serif;
+            letter-spacing: -0.3px;
 
             &::after {
               content: "";
@@ -332,6 +348,7 @@ $white: #ffffff;
               &:hover {
                 border-color: rgba($primary, 0.2);
                 background: rgba($primary, 0.08);
+                transform: translateX(5px);
               }
 
               svg {
@@ -343,6 +360,7 @@ $white: #ffffff;
                 color: $text-secondary;
                 font-size: 0.95rem;
                 font-weight: 500;
+                letter-spacing: 0.3px;
               }
 
               .age-input-container {
@@ -351,7 +369,8 @@ $white: #ffffff;
                 gap: 8px;
 
                 span {
-                  font-weight: 500;
+                  font-weight: 600;
+                  color: $text-primary;
                 }
               }
             }
@@ -369,6 +388,8 @@ $white: #ffffff;
             border-left: 3px solid $error;
             margin-bottom: 1.5rem;
             animation: pulse 2s infinite ease-in-out;
+            font-weight: 500;
+            letter-spacing: 0.3px;
 
             svg {
               filter: drop-shadow(0 2px 3px rgba($error, 0.2));
@@ -389,12 +410,13 @@ $white: #ffffff;
               align-items: center;
               gap: 1rem;
               border: 1px solid transparent;
-              transition: all 0.3s ease;
+              transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
               &:hover {
                 border-color: rgba($primary, 0.2);
                 background: rgba($primary, 0.08);
-                transform: translateY(-3px);
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba($primary, 0.1);
               }
 
               .stat-icon {
@@ -411,9 +433,10 @@ $white: #ffffff;
 
                 .stat-label {
                   font-size: 0.9rem;
-                  color: $text-secondary;
+                  color: $text-primary;
                   font-weight: 600;
                   letter-spacing: 0.5px;
+                  text-shadow: 0 1px 1px rgba($primary, 0.1);
                 }
               }
             }
@@ -425,11 +448,20 @@ $white: #ffffff;
             border-radius: 12px;
             margin-bottom: 1.5rem;
             border: 1px solid rgba($accent, 0.1);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: rgba($accent, 0.08);
+              border-color: rgba($accent, 0.2);
+              box-shadow: 0 5px 15px rgba($accent, 0.1);
+            }
 
             .last-updated {
               font-size: 0.9rem;
               color: $text-secondary;
               margin-bottom: 1rem;
+              font-style: italic;
+              letter-spacing: 0.3px;
             }
 
             .view-history-button {
@@ -443,14 +475,34 @@ $white: #ffffff;
               color: $accent;
               border: 1px solid rgba($accent, 0.2);
               border-radius: 8px;
-              font-size: 0.9rem;
+              font-size: 0.95rem;
               font-weight: 500;
               cursor: pointer;
-              transition: all 0.3s ease;
+              transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+              letter-spacing: 0.3px;
+              position: relative;
+              overflow: hidden;
+
+              &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba($accent, 0);
+                z-index: -1;
+                transition: all 0.3s ease;
+              }
 
               &:hover {
                 background: rgba($accent, 0.2);
-                @include button-hover;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba($accent, 0.2);
+
+                &::after {
+                  background: rgba($accent, 0.1);
+                }
               }
 
               svg {
@@ -470,16 +522,19 @@ $white: #ffffff;
             justify-content: center;
             gap: 0.8rem;
             padding: 1rem;
-            background: $accent;
+            background: linear-gradient(135deg, $accent, darken($accent, 10%));
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 1rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba($accent, 0.3);
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 
             &::before {
               content: "";
@@ -498,8 +553,9 @@ $white: #ffffff;
             }
 
             &:hover {
-              background: darken($accent, 5%);
-              @include button-hover;
+              background: linear-gradient(135deg, darken($accent, 5%), darken($accent, 15%));
+              transform: translateY(-5px);
+              box-shadow: 0 8px 20px rgba($accent, 0.4);
 
               &::before {
                 left: 100%;
@@ -514,63 +570,49 @@ $white: #ffffff;
       }
     }
   }
-}
 
-// Loading spinner
-.loading-spinner {
-  @include flex-center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, $background, lighten($primary-light, 5%));
-  font-family: "Inter", sans-serif;
-  font-size: 1.2rem;
-  color: $primary;
-  position: relative;
+  // Loading spinner
+  .loading-spinner {
+    @include flex-center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, $background, lighten($primary-light, 5%));
+    font-family: "Poppins", sans-serif;
+    font-size: 1.2rem;
+    color: $primary;
+    position: relative;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-shadow: $text-shadow;
+    animation: fadeIn 0.5s ease-out;
 
-  &::after {
-    content: "";
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: $primary;
-    border-bottom-color: $accent;
-    position: absolute;
-    animation: spin 1.2s linear infinite;
+    &::after {
+      content: "";
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: $primary;
+      border-bottom-color: $accent;
+      position: absolute;
+      animation: spin 1.2s linear infinite;
+      box-shadow: 0 0 10px $shadow-color;
+    }
   }
-}
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+  // Error message
+  .error-message {
+    background: rgba($error, 0.1);
+    color: $error;
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 500;
+    border-left: 4px solid $error;
+    box-shadow: 0 5px 15px rgba($error, 0.1);
+    letter-spacing: 0.3px;
+    animation: fadeIn 0.5s ease-out;
   }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-// Error message
-.error-message {
-  background: rgba($error, 0.1);
-  color: $error;
-  padding: 1.2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-weight: 500;
-  border-left: 4px solid $error;
-  box-shadow: 0 5px 15px rgba($error, 0.1);
 }
 
 // Modal styles
@@ -588,6 +630,7 @@ $white: #ffffff;
   align-items: center;
   z-index: 1000;
   padding: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
 
   .history-modal-content,
   .compare-modal-content {
@@ -600,6 +643,7 @@ $white: #ffffff;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba($text-primary, 0.2);
     position: relative;
+    animation: slideUp 0.5s ease-out;
 
     &::before {
       content: "";
@@ -627,6 +671,8 @@ $white: #ffffff;
         color: $text-primary;
         font-family: "Playfair Display", serif;
         position: relative;
+        font-weight: 600;
+        letter-spacing: -0.3px;
 
         &::after {
           content: "";
@@ -635,7 +681,7 @@ $white: #ffffff;
           left: 0;
           width: 40px;
           height: 3px;
-          background: $primary;
+          background: linear-gradient(to right, $primary, $accent);
           border-radius: 3px;
         }
       }
@@ -658,6 +704,7 @@ $white: #ffffff;
         &:hover {
           background: rgba($error, 0.1);
           color: $error;
+          transform: rotate(90deg);
         }
       }
     }
@@ -672,6 +719,8 @@ $white: #ffffff;
         border-radius: 16px;
         font-size: 1.1rem;
         border: 1px dashed rgba($primary, 0.2);
+        font-weight: 500;
+        letter-spacing: 0.3px;
       }
 
       .ant-table-wrapper {
@@ -767,6 +816,52 @@ $white: #ffffff;
   }
 }
 
+// Input styles
+.age-input-container,
+.stat-content {
+  input {
+    width: 80px;
+    padding: 0.6rem;
+    border: 1px solid rgba($primary, 0.2);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba($white, 0.9);
+    font-family: "Poppins", sans-serif;
+    color: $text-primary;
+    font-weight: 500;
+
+    &:focus {
+      outline: none;
+      border-color: $accent;
+      box-shadow: 0 0 0 3px rgba($accent, 0.2);
+      background: $white;
+      transform: translateY(-2px);
+    }
+
+    &:hover {
+      border-color: $accent;
+    }
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    &::placeholder {
+      color: rgba($text-secondary, 0.6);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+  }
+}
+
 // Responsive styles
 @media (max-width: 768px) {
   .pregnancy-monitor {
@@ -827,86 +922,3 @@ $white: #ffffff;
   }
 }
 
-// Input styles
-.age-input-container,
-.stat-content {
-  input {
-    width: 80px;
-    padding: 0.6rem;
-    border: 1px solid rgba($primary, 0.2);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    background: rgba($white, 0.9);
-
-    &:focus {
-      outline: none;
-      border-color: $accent;
-      box-shadow: 0 0 0 3px rgba($accent, 0.2);
-      background: $white;
-    }
-
-    &:hover {
-      border-color: $accent;
-    }
-
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    &[type="number"] {
-      -moz-appearance: textfield;
-    }
-
-    &::placeholder {
-      color: rgba($text-secondary, 0.6);
-      font-size: 0.85rem;
-    }
-  }
-}
-
-// View history button
-.view-history-button {
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba($accent, 0);
-    z-index: -1;
-    transition: all 0.3s ease;
-  }
-
-  &:hover::after {
-    background: rgba($accent, 0.1);
-  }
-}
-
-.chart-section {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-
-  .chart-container {
-    height: 400px;
-    position: relative;
-  }
-
-  .chart-info {
-    margin-top: 10px;
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-  }
-}

@@ -18,6 +18,7 @@ const authService = {
         role: data.role,
         userId: data.userId,
         profileImageUrl: data.profileImageUrl,
+        fullName: data.fullName,
       };
       localStorage.setItem("userData", JSON.stringify(userData));
 

@@ -1,34 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Variables
+// Synchronized color variables - đồng bộ với FoetusList
 $primary-color: #ff6b81;
-$secondary-color: #ffdde1;
+$accent-color: #70a1ff;
 $text-color: #2f3542;
-$background-color: #fff9f9;
-$white: #ffffff;
-$shadow-color: rgba($primary-color, 0.2);
-$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$background: #f8f9fa;
+$secondary-color: #ffdde1;
 
-// Add animations
-@keyframes slideIn {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+// Animation Keyframes
+@keyframes waterWave {
+  0% { transform: translate(-50%, 0) rotate(0deg); }
+  50% { transform: translate(-50%, -2%) rotate(180deg); }
+  100% { transform: translate(-50%, 0) rotate(360deg); }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes flowWave {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0); }
+  100% { transform: translateX(100%); }
 }
 
-@keyframes bounce {
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
@@ -37,48 +37,73 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   100% { transform: scale(1); }
 }
 
-// Mixins
-@mixin card-shadow {
-  box-shadow: 0 4px 15px $shadow-color;
-}
-
-@mixin hover-shadow {
-  box-shadow: 0 8px 25px rgba($primary-color, 0.2);
-}
-
 .pregnancy-timeline {
-  padding: 2rem;
-  background-color: $background-color;
-  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, 
+    rgba($background, 0.95), 
+    rgba($secondary-color, 0.85)
+  );
+  padding: 1.5rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  border-radius: 20px;
+  margin-top: 0;
+
+  // Wave background
+  .blog-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+
+    .wave {
+      position: absolute;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 43%;
+      animation: waterWave 15s infinite linear;
+
+      &:nth-child(1) { top: -50%; animation-duration: 20s; }
+      &:nth-child(2) { top: -55%; animation-delay: -5s; animation-duration: 17s; }
+      &:nth-child(3) { top: -60%; animation-delay: -8s; animation-duration: 15s; }
+    }
+  }
 
   h2 {
     font-family: 'Playfair Display', serif;
-    color: $primary-color;
+    color: $text-color;
+    font-size: 3rem;
     text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
+    margin: 0 0 2rem;
     position: relative;
-
+    
     &::after {
       content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
+      display: block;
       width: 100px;
-      height: 3px;
+      height: 4px;
       background: linear-gradient(90deg, transparent, $primary-color, transparent);
+      margin: 0.5rem auto 0;
+      animation: flowWave 2s infinite linear;
     }
   }
 
   .timeline-note {
-    background: linear-gradient(135deg, $white, $secondary-color);
-    border-left: 4px solid $primary-color;
-    padding: 1rem 2rem;
-    margin: 1rem auto;
-    border-radius: 10px;
-    max-width: 800px;
-    @include card-shadow;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin: 0 auto 2rem;
+    max-width: 1400px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 3px solid $primary-color;
 
     p {
       margin: 0;
@@ -93,39 +118,36 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     margin: 2rem 0;
     padding: 0 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
 
     .scroll-button {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
-      color: $white;
+      background: $primary-color;
+      color: white;
       border: none;
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       z-index: 10;
-      transition: $transition;
 
       &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba($primary-color, 0.4);
-        animation: bounce 1s infinite;
+        background: darken($primary-color, 10%);
+        transform: translateY(-50%) translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
       }
 
-      &:active {
-        transform: translateY(0);
-      }
-
-      &.left { left: 0; }
-      &.right { right: 0; }
-
-      svg {
-        width: 20px;
-        height: 20px;
-      }
+      &.left { left: 0; margin-left: -20px; }
+      &.right { right: 0; margin-right: -20px; }
     }
   }
 
@@ -141,7 +163,7 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     &::-webkit-scrollbar-track {
-      background: $secondary-color;
+      background: rgba($secondary-color, 0.5);
       border-radius: 4px;
     }
 
@@ -149,32 +171,22 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       background: $primary-color;
       border-radius: 4px;
     }
-
-    .timeline-cards {
-      display: flex;
-      gap: 2rem;
-      padding: 1rem 2rem;
-      scroll-snap-align: start;
-    }
   }
 
   .timeline-progress-bar {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     height: 4px;
-    background: linear-gradient(90deg, transparent, $secondary-color, transparent);
-    margin: 0 2rem;
-    z-index: 1;
+    background: rgba($secondary-color, 0.5);
+    margin: 0 2rem 2rem;
+    border-radius: 2px;
 
     .progress-line {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
-      background: linear-gradient(90deg, $primary-color, lighten($primary-color, 10%));
-      box-shadow: 0 0 10px rgba($primary-color, 0.3);
+      background: $primary-color;
+      border-radius: 2px;
       width: var(--scroll-progress, 0%);
       transition: width 0.3s ease;
     }
@@ -188,136 +200,150 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border-radius: 50%;
       background: $primary-color;
       box-shadow: 0 0 0 4px rgba($primary-color, 0.2);
-      animation: pulse 2s infinite;
       z-index: 2;
+
+      &:nth-child(1) { left: 0%; }
+      &:nth-child(2) { left: 16.66%; }
+      &:nth-child(3) { left: 33.33%; }
+      &:nth-child(4) { left: 50%; }
+      &:nth-child(5) { left: 66.66%; }
+      &:nth-child(6) { left: 83.33%; }
+      &:nth-child(7) { left: 100%; }
     }
   }
 
+  .timeline-cards {
+    display: flex;
+    gap: 2rem;
+    padding: 0 2rem;
+  }
 
   .timeline-card {
-    flex: 0 0 350px;
-    scroll-snap-align: start;
-    margin-bottom: 1rem;
-    background: $white;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba($primary-color, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    min-width: 350px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     overflow: hidden;
-    transition: $transition;
-    animation: slideIn 0.3s ease-out;
+    scroll-snap-align: start;
 
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba($primary-color, 0.15);
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     &.expanded {
-      flex: 0 0 450px;
-      animation: pulse 0.3s ease-out;
+      min-width: 400px;
 
       .timeline-card-header {
-        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
-        color: $white;
+        background: $primary-color;
+        color: white;
 
-        .period {
-          color: $white;
+        .period, h3, p {
+          color: white;
         }
 
         .expand-icon {
-          color: $white;
+          color: white;
         }
       }
     }
 
     .timeline-card-header {
-      padding: 1.25rem;
-      background: $white;
+      padding: 1.5rem;
       cursor: pointer;
-      transition: $transition;
+      transition: all 0.3s ease;
       position: relative;
 
       &:hover {
-        background: $secondary-color;
+        background: rgba($secondary-color, 0.5);
       }
 
       .header-content {
         .period {
-          font-size: 0.9rem;
-          font-weight: 600;
+          font-family: 'Playfair Display', serif;
           color: $primary-color;
+          font-size: 1.2rem;
+          font-weight: 600;
           display: block;
           margin-bottom: 0.5rem;
         }
 
         h3 {
-          margin: 0 0 0.5rem;
-          font-size: 1.2rem;
           color: $text-color;
+          font-size: 1.5rem;
+          margin: 0 0 0.5rem;
+          line-height: 1.3;
         }
 
         p {
-          margin: 0;
-          font-size: 0.9rem;
           color: lighten($text-color, 20%);
-          line-height: 1.5;
+          font-size: 1rem;
+          line-height: 1.6;
+          margin: 0;
         }
       }
 
       .expand-icon {
         position: absolute;
-        top: 1rem;
-        right: 1rem;
+        top: 1.5rem;
+        right: 1.5rem;
         color: $primary-color;
-        transition: $transition;
+        transition: all 0.3s ease;
       }
     }
 
     .timeline-card-details {
-      background: $white;
+      background: white;
       overflow: hidden;
+      border-top: 1px solid rgba($secondary-color, 0.5);
 
       .details-section {
-        padding: 1rem 1.25rem;
-        border-top: 1px solid $secondary-color;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba($secondary-color, 0.3);
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         h4 {
           color: $primary-color;
-          margin: 0 0 0.8rem;
-          font-size: 1rem;
+          font-size: 1.2rem;
+          margin: 0 0 1rem;
           font-weight: 600;
         }
 
         p {
-          margin: 0;
-          font-size: 0.9rem;
           color: $text-color;
+          font-size: 1rem;
           line-height: 1.6;
+          margin: 0 0 1rem;
         }
 
         ul {
           margin: 0;
-          padding-left: 1.5rem;
-          list-style-type: none;
+          padding: 0;
+          list-style: none;
 
           li {
-            position: relative;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
             color: $text-color;
+            font-size: 1rem;
             line-height: 1.6;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
 
-            &::before {
+            &:before {
               content: '';
               position: absolute;
-              left: -1.5rem;
-              top: 0.5rem;
-              width: 6px;
-              height: 6px;
+              left: 0;
+              top: 0.6rem;
+              width: 8px;
+              height: 8px;
               border-radius: 50%;
               background: $primary-color;
-            }
-
-            &:last-child {
-              margin-bottom: 0;
             }
           }
         }
@@ -326,10 +352,27 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-@media (max-width: 768px) {
+// Responsive styles
+@media (max-width: 1024px) {
   .pregnancy-timeline {
     padding: 1rem;
 
+    h2 {
+      font-size: 2.5rem;
+    }
+
+    .timeline-card {
+      min-width: 300px;
+      
+      &.expanded {
+        min-width: 350px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .pregnancy-timeline {
     h2 {
       font-size: 2rem;
     }
@@ -338,11 +381,15 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       padding: 0 2rem;
     }
 
-    .timeline-card {
-      flex: 0 0 300px;
+    .timeline-cards {
+      gap: 1rem;
+    }
 
+    .timeline-card {
+      min-width: 260px;
+      
       &.expanded {
-        flex: 0 0 350px;
+        min-width: 300px;
       }
     }
   }

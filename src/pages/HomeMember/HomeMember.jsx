@@ -6,10 +6,9 @@ import NotesList from "../../components/NotesList/NotesList";
 const HomeMember = () => {
   return (
     <>
-      <FoetusList />
-
-      <NotesList />
       <PregnancyTimeline />
+      <FoetusList />
+      <NotesList />
       <BlogSildeMember />
     </>
   );

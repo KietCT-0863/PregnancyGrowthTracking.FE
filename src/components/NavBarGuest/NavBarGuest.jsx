@@ -46,11 +46,18 @@ const NavBarGuest = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        console.group('NavBarGuest - User Information');
+        console.log('Decoded Token:', decoded);
+        console.log('User Data:', userData);
+        console.log('Full Name:', decoded?.fullName);
+        console.log('Email:', decoded?.email);
+        console.log('Role:', decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
+        console.groupEnd();
+
         setUserInfo(decoded);
         setIsLoggedIn(true);
         setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin");
         
-        // Set profile image from userData
         if (userData?.profileImageUrl) {
           setProfileImage(userData.profileImageUrl);
         }
@@ -205,7 +212,7 @@ const NavBarGuest = () => {
                   ) : (
                     <FaUserCircle className="user-icon" />
                   )}
-                  <span className="user-name">{userInfo?.name || "Người dùng"}</span>
+                  <span className="user-name">{userInfo?.fullName || "Người dùng"}</span>
                 </button>
                 {isDropdownOpen && (
                   <div className="user-dropdown">
@@ -226,7 +233,7 @@ const NavBarGuest = () => {
                           <FaUserCircle className="dropdown-user-icon" />
                         )}
                         <div className="user-details">
-                          <div className="user-name">{userInfo?.name || "Người dùng"}</div>
+                          <div className="user-name">{userInfo?.fullName || "Người dùng"}</div>
                           <div className="user-email">{userInfo?.email}</div>
                         </div>
                       </div>

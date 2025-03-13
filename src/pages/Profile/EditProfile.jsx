@@ -84,7 +84,7 @@ const EditProfile = () => {
       <div className="edit-profile-header">
         <motion.button
           className="back-button"
-          onClick={() => navigate('/member/profile')}
+          onClick={() => navigate('/member')}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

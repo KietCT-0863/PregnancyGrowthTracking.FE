@@ -1,0 +1,39 @@
+/* Reset CSS để loại bỏ khoảng trắng */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Loại bỏ khoảng trắng giữa các phần tử */
+h1, h2, h3, h4, h5, h6, p, div {
+  margin-top: 0;
+}
+
+/* Đảm bảo các container chính không có margin */
+.container, .main-content, .page-content {
+  margin-top: 0 !important;
+}
+
+/* Điều chỉnh cho navbar cố định */
+.navbar {
+  height: 70px;
+}
+
+/* Điều chỉnh cho nội dung chính */
+main {
+  padding-top: 70px;
+}
+
+/* Điều chỉnh cho PregnancyTimeline */
+.pregnancy-timeline {
+  margin-top: 0 !important;
+}
+
+/* Điều chỉnh cho các component khác */
+.home-member-container, 
+.foetus-list-container,
+.notes-list-component,
+.blog-posts {
+  margin-top: 0 !important;
+} 

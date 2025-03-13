@@ -68,11 +68,10 @@ const NotesList = () => {
   return (
     <motion.div
       className="notes-list-component"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Wave background effect */}
       <div className="wave-background">
         <div className="wave"></div>
         <div className="wave"></div>
@@ -80,7 +79,13 @@ const NotesList = () => {
       </div>
 
       <div className="notes-list-header">
-        <h3>Ghi chú gần đây</h3>
+        <motion.h3
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          Ghi chú gần đây
+        </motion.h3>
       </div>
 
       <div
@@ -104,10 +109,7 @@ const NotesList = () => {
                 type: "spring",
                 stiffness: 100,
               }}
-              whileHover={{
-                scale: 1.03,
-                transition: { duration: 0.2 },
-              }}
+              whileHover={{ scale: 1.03 }}
               onClick={() => setSelectedNote(note)}
             >
               <div className="note-card-header">
@@ -135,7 +137,6 @@ const NotesList = () => {
         )}
       </div>
 
-      {/* Navigation buttons */}
       <div className="scroll-buttons">
         <motion.button
           className="scroll-btn"
@@ -143,7 +144,7 @@ const NotesList = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronLeft />
+          <ChevronLeft size={24} />
         </motion.button>
         <motion.button
           className="scroll-btn"
@@ -151,7 +152,7 @@ const NotesList = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronRight />
+          <ChevronRight size={24} />
         </motion.button>
       </div>
 

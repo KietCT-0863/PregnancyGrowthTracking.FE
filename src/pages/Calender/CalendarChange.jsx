@@ -65,6 +65,16 @@ const CalendarChange = () => {
     }));
   };
 
+  // Thêm hàm để lấy ngày hiện tại theo định dạng YYYY-MM-DD
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Cập nhật hàm validateReminderForm
   const validateReminderForm = () => {
     if (!reminder.title.trim()) {
       toast.error("Vui lòng nhập tiêu đề");
@@ -74,6 +84,15 @@ const CalendarChange = () => {
       toast.error("Vui lòng chọn ngày");
       return false;
     }
+    
+    // Kiểm tra ngày có nhỏ hơn ngày hiện tại không
+    const selectedDate = new Date(reminder.date);
+    const currentDate = new Date(getCurrentDate());
+    if (selectedDate < currentDate) {
+      toast.error("Không thể chọn ngày trong quá khứ");
+      return false;
+    }
+    
     if (!reminder.time) {
       toast.error("Vui lòng chọn giờ");
       return false;
@@ -145,6 +164,7 @@ const CalendarChange = () => {
               name="date"
               value={reminder.date}
               onChange={handleInputChange}
+              min={getCurrentDate()}
               required
             />
           </div>

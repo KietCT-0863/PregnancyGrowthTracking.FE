@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+
+// Synchronized color variables
+$primary-color: #ff6b81;
+$accent-color: #70a1ff;
+$text-color: #2f3542;
+$background: #f8f9fa;
+$secondary-color: #ffdde1;
+
+// Xử lý khoảng trắng và màu nền
+body.member-page {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, 
+    rgba($background, 0.95), 
+    rgba($secondary-color, 0.85)
+  );
+  min-height: 100vh;
+  
+  // Loại bỏ padding-top mặc định
+  padding-top: 0 !important;
+  
+  // Loại bỏ margin mặc định
+  * {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  // Đảm bảo không có khoảng trắng giữa các phần tử
+  h1, h2, h3, h4, h5, h6, p, div {
+    margin-top: 0;
+  }
+}
+
+.member-container {
+  position: relative;
+  padding-top: 70px; // Bù trừ cho NavBar cố định
+  margin-top: 0 !important; // Đảm bảo không có margin-top
+  min-height: calc(100vh - 70px);
+  width: 100%;
+  overflow-x: hidden;
+  
+  // Thêm hiệu ứng sóng nước
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+      rgba($background, 0.95), 
+      rgba($secondary-color, 0.85)
+    );
+    z-index: -2;
+  }
+  
+  // Wave background
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: 
+      radial-gradient(
+        circle at 20% 35%, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0) 50%
+      ),
+      radial-gradient(
+        circle at 75% 65%, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0) 50%
+      );
+  }
+}
+
+// Thêm animation waves cho toàn bộ trang
+.member-waves {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  
+  .wave {
+    position: absolute;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 43%;
+    animation: waterWave 15s infinite linear;
+    
+    &:nth-child(1) { top: -50%; animation-duration: 20s; }
+    &:nth-child(2) { top: -55%; animation-delay: -5s; animation-duration: 17s; }
+    &:nth-child(3) { top: -60%; animation-delay: -8s; animation-duration: 15s; }
+  }
+}
+
+@keyframes waterWave {
+  0% { transform: translate(-50%, 0) rotate(0deg); }
+  50% { transform: translate(-50%, -2%) rotate(180deg); }
+  100% { transform: translate(-50%, 0) rotate(360deg); }
+}
+
+// Đảm bảo các component con không có margin-top
+.home-member-container {
+  margin-top: 0 !important;
+}
+
+// Điều chỉnh cho PregnancyTimeline
+.pregnancy-timeline {
+  margin-top: 0 !important;
+  padding-top: 1rem !important;
+  
+  h2 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  .timeline-note {
+    margin-top: 1rem !important;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .member-container {
+    padding-top: 60px; // Giảm padding cho màn hình nhỏ
+  }
+} 

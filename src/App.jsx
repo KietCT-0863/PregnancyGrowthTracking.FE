@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
 import PaymentResult from './pages/Payment/PaymentResult';
+import './global.css';
 
 function App() {
   return (

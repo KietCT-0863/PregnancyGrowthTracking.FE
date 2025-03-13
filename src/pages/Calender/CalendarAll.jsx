@@ -49,6 +49,14 @@ const CalendarAll = () => {
     return days;
   };
 
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleAddEvent = async (e) => {
     e.preventDefault();
     try {
@@ -83,14 +91,26 @@ const CalendarAll = () => {
       toast.error("Vui lòng nhập tiêu đề");
       return false;
     }
+    
+    // Kiểm tra ngày có hợp lệ không
+    const selectedDate = new Date(eventData.date);
+    const today = new Date(getCurrentDate());
+    
     if (!eventData.date) {
       toast.error("Vui lòng chọn ngày");
       return false;
     }
+    
+    if (selectedDate < today) {
+      toast.error("Không thể chọn ngày trong quá khứ");
+      return false;
+    }
+    
     if (!eventData.time) {
       toast.error("Vui lòng chọn giờ");
       return false;
     }
+    
     if (!eventData.reminderType) {
       toast.error("Vui lòng chọn loại nhắc nhở");
       return false;
@@ -131,21 +151,44 @@ const CalendarAll = () => {
     fetchReminders();
   }, []);
 
-  const filteredEvents =
-    events && events.length
-      ? events.filter((event) => {
-          if (!event) return false;
+  const getEventsForMonth = (events, date) => {
+    return events.filter(event => {
+      const eventDate = new Date(event.date);
+      return eventDate.getMonth() === date.getMonth() && 
+             eventDate.getFullYear() === date.getFullYear();
+    });
+  };
 
-          const matchesSearch =
-            event.title &&
-            event.title.toLowerCase().includes(searchTerm.toLowerCase());
-          const matchesCategory =
-            selectedCategory === "all" ||
-            event.reminderType === selectedCategory;
+  const filteredEvents = events && events.length
+    ? events.filter((event) => {
+        if (!event) return false;
 
-          return matchesSearch && matchesCategory;
-        })
-      : [];
+        // Kiểm tra sự kiện có trong tháng hiện tại không
+        const eventDate = new Date(event.date);
+        const isCurrentMonth = eventDate.getMonth() === currentDate.getMonth() && 
+                             eventDate.getFullYear() === currentDate.getFullYear();
+
+        // Kiểm tra điều kiện tìm kiếm và category
+        const matchesSearch = event.title &&
+          event.title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === "all" ||
+          event.reminderType === selectedCategory;
+
+        return isCurrentMonth && matchesSearch && matchesCategory;
+      })
+    : [];
+
+  const getCategoryStats = () => {
+    const monthEvents = getEventsForMonth(events, currentDate);
+    const stats = categories.reduce((acc, cat) => {
+      acc[cat.id] = monthEvents.filter(event => event.reminderType === cat.id).length;
+      return acc;
+    }, {});
+    
+    // Thêm tổng số sự kiện
+    stats.all = monthEvents.length;
+    return stats;
+  };
 
   const navigateMonth = (direction) => {
     setCurrentDate(
@@ -170,6 +213,40 @@ const CalendarAll = () => {
       const currentEvents = Array.isArray(prevEvents) ? prevEvents : [];
       return [...currentEvents, newEvent];
     });
+  };
+
+  const CategoryFilters = () => {
+    return (
+      <div className="category-filters">
+        <motion.button
+          className={`filter-btn all ${selectedCategory === 'all' ? 'active' : ''}`}
+          onClick={() => setSelectedCategory('all')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <span className="filter-label">Tất cả</span>
+          <span className="filter-count">({getCategoryStats().all})</span>
+        </motion.button>
+
+        {categories.map((cat) => (
+          <motion.button
+            key={cat.id}
+            className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+            onClick={() => setSelectedCategory(cat.id)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              backgroundColor: selectedCategory === cat.id ? cat.color : 'transparent',
+              borderColor: cat.color
+            }}
+          >
+            <cat.icon size={16} />
+            <span className="filter-label">{cat.label}</span>
+            <span className="filter-count">({getCategoryStats()[cat.id]})</span>
+          </motion.button>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -235,19 +312,7 @@ const CalendarAll = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="category-filter"
-        >
-          <option value="all">Tất cả danh mục</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.label}
-            </option>
-          ))}
-        </select>
+        <CategoryFilters />
       </div>
 
       <motion.div
@@ -277,9 +342,8 @@ const CalendarAll = () => {
                 <span className="day-number">{day.getDate()}</span>
                 <div className="day-events">
                   {filteredEvents
-                    .filter(
-                      (event) =>
-                        new Date(event.date).toDateString() === day.toDateString()
+                    .filter(event => 
+                      new Date(event.date).toDateString() === day.toDateString()
                     )
                     .map((event) => (
                       <Link
@@ -336,6 +400,7 @@ const CalendarAll = () => {
                 <input
                   type="date"
                   value={newEvent.date}
+                  min={getCurrentDate()}
                   onChange={(e) =>
                     setNewEvent({ ...newEvent, date: e.target.value })
                   }

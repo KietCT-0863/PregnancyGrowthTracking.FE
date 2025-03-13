@@ -165,7 +165,13 @@ const PregnancyTimeline = () => {
   }
 
   return (
-    <div className="pregnancy-timeline">
+    <div className="pregnancy-timeline" style={{ marginTop: "70px" }}>
+      <div className="blog-background">
+        <div className="wave"></div>
+        <div className="wave"></div>
+        <div className="wave"></div>
+      </div>
+
       <motion.h2 
         initial={{ opacity: 0, y: -20 }} 
         animate={{ opacity: 1, y: 0 }} 
