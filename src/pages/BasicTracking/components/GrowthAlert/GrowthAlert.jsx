@@ -60,8 +60,8 @@ const GrowthAlert = ({ isOpen, onClose, alertData }) => {
           </div>
 
           <div className="alert-body">
-            {alerts.length > 0 ? (
-              alerts.map((alert, index) => (
+            {alertItems.length > 0 ? (
+              alertItems.map((alert, index) => (
                 <motion.div
                   key={alert.label}
                   className={`alert-item ${
