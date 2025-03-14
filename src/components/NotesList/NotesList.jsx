@@ -1,69 +1,73 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import Swal from "sweetalert2"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import userNoteService from "../../api/services/userNoteService"
-import "./NotesList.scss"
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import userNoteService from "../../api/services/userNoteService";
+import "./NotesList.scss";
 
 const NotesList = () => {
-  const [notes, setNotes] = useState([])
-  const [selectedNote, setSelectedNote] = useState(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [startX, setStartX] = useState(0)
-  const [scrollLeft, setScrollLeft] = useState(0)
-  const notesContainerRef = useRef(null)
+  const [notes, setNotes] = useState([]);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const notesContainerRef = useRef(null);
 
   useEffect(() => {
-    fetchNotes()
-  }, [])
+    fetchNotes();
+  }, []);
 
   const fetchNotes = async () => {
     try {
-      const data = await userNoteService.getUserNotes()
-      const sortedNotes = data.sort((a, b) => new Date(b.date) - new Date(a.date))
-      setNotes(sortedNotes)
+      const data = await userNoteService.getUserNotes();
+      const sortedNotes = data.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+      setNotes(sortedNotes);
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Lỗi",
         text: "Không thể tải danh sách ghi chú",
-      })
+      });
     }
-  }
+  };
 
   const handleMouseDown = (e) => {
-    setIsDragging(true)
-    setStartX(e.pageX - e.currentTarget.offsetLeft)
-    setScrollLeft(e.currentTarget.scrollLeft)
-  }
+    setIsDragging(true);
+    setStartX(e.pageX - e.currentTarget.offsetLeft);
+    setScrollLeft(e.currentTarget.scrollLeft);
+  };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return
-    e.preventDefault()
-    const x = e.pageX - e.currentTarget.offsetLeft
-    const walk = (x - startX) * 2
-    e.currentTarget.scrollLeft = scrollLeft - walk
-  }
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - e.currentTarget.offsetLeft;
+    const walk = (x - startX) * 2;
+    e.currentTarget.scrollLeft = scrollLeft - walk;
+  };
 
   const handleMouseUp = () => {
-    setIsDragging(false)
-  }
+    setIsDragging(false);
+  };
 
   const handleScroll = (direction) => {
     if (notesContainerRef.current) {
-      const container = notesContainerRef.current
-      const scrollAmount = 300
+      const container = notesContainerRef.current;
+      const scrollAmount = 300;
       const newScrollLeft =
-        direction === "left" ? container.scrollLeft - scrollAmount : container.scrollLeft + scrollAmount
+        direction === "left"
+          ? container.scrollLeft - scrollAmount
+          : container.scrollLeft + scrollAmount;
 
       container.scrollTo({
         left: newScrollLeft,
         behavior: "smooth",
-      })
+      });
     }
-  }
+  };
 
   return (
     <motion.div
@@ -114,7 +118,9 @@ const NotesList = () => {
             >
               <div className="note-card-header">
                 <div className="note-info">
-                  <span className="note-hospital">{note.note || "Chưa có thông tin"}</span>
+                  <span className="note-hospital">
+                    {note.note || "Chưa có thông tin"}
+                  </span>
                   <span className="note-date">{note.date}</span>
                 </div>
               </div>
@@ -125,7 +131,10 @@ const NotesList = () => {
               )}
               {note.userNotePhoto && (
                 <div className="note-thumbnail">
-                  <img src={note.userNotePhoto || "/placeholder.svg"} alt="Note" />
+                  <img
+                    src={note.userNotePhoto || "/placeholder.svg"}
+                    alt="Note"
+                  />
                 </div>
               )}
             </motion.div>
@@ -166,77 +175,76 @@ const NotesList = () => {
             onClick={() => setSelectedNote(null)}
           >
             <motion.div
-              className="modal-wrapper"
+              className="modal-content"
               onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-              <div className="modal-content">
-                <button 
-                  className="close-btn" 
-                  onClick={() => setSelectedNote(null)}
-                  aria-label="Đóng"
-                >
-                  ×
-                </button>
+              <button
+                className="close-btn"
+                onClick={() => setSelectedNote(null)}
+                aria-label="Đóng"
+              >
+                ×
+              </button>
 
-                <div className="detail-header">
-                  <h3>{selectedNote.note || "Chưa có thông tin"}</h3>
-                  <span className="detail-date">
-                    {new Date(selectedNote.date).toLocaleDateString("vi-VN")}
-                  </span>
-                </div>
+              <div className="detail-header">
+                <h3>{selectedNote.note || "Chưa có thông tin"}</h3>
+                <span className="detail-date">
+                  {new Date(selectedNote.date).toLocaleDateString("vi-VN")}
+                </span>
+              </div>
 
-                <div className="detail-content">
-                  {selectedNote.diagnosis && (
-                    <motion.div 
-                      className="detail-item"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 }}
-                    >
-                      <strong>Chẩn đoán:</strong>
-                      <p>{selectedNote.diagnosis}</p>
-                    </motion.div>
-                  )}
+              <div className="detail-content">
+                {selectedNote.diagnosis && (
+                  <motion.div
+                    className="detail-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    <strong>Chẩn đoán : </strong>
+                    <p>{selectedNote.diagnosis}</p>
+                  </motion.div>
+                )}
 
-                  {selectedNote.detail && (
-                    <motion.div 
-                      className="detail-item"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <strong>Ghi chú:</strong>
-                      <p>{selectedNote.detail}</p>
-                    </motion.div>
-                  )}
+                {selectedNote.detail && (
+                  <motion.div
+                    className="detail-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <strong>Ghi chú:</strong>
+                    <p>{selectedNote.detail}</p>
+                  </motion.div>
+                )}
 
-                  {selectedNote.userNotePhoto && (
-                    <motion.div 
-                      className="detail-image"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <img
-                        src={selectedNote.userNotePhoto}
-                        alt="Chi tiết ghi chú"
-                        onClick={() => window.open(selectedNote.userNotePhoto, "_blank")}
-                      />
-                    </motion.div>
-                  )}
-                </div>
+                {selectedNote.userNotePhoto && (
+                  <motion.div
+                    className="detail-image"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <img
+                      src={selectedNote.userNotePhoto}
+                      alt="Chi tiết ghi chú"
+                      onClick={() =>
+                        window.open(selectedNote.userNotePhoto, "_blank")
+                      }
+                    />
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
-  )
-}
+  );
+};
 
-export default NotesList
-
+export default NotesList;

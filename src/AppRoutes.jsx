@@ -43,6 +43,7 @@ import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
 import EditProfile from "./pages/Profile/EditProfile";
 import CalendarChange from "./pages/Calender/CalendarChange";
+import CalendarDetail from "./pages/Calender/CalendarDetail";
 
 const AppRoutes = () => {
   return (
@@ -124,6 +125,7 @@ const AppRoutes = () => {
         <Route path="calendar" element={<CalendarAll />} />
         <Route path="calendar-history" element={<CalendarHistory />} />
         <Route path="calendar-change/:remindId" element={<CalendarChange />} />
+        <Route path="calendar-detail/:remindId" element={<CalendarDetail />} />
         <Route path="doctor-notes" element={<DoctorNotes />} />
         <Route path="community" element={<Community />} />
         <Route path="blog" element={<Blog />}>

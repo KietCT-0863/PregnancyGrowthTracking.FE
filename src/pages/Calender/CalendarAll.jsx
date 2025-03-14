@@ -1,7 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Search, Clock, ChevronLeft, ChevronRight, Pill, Stethoscope, Baby, Dumbbell, Apple } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  Pill,
+  Stethoscope,
+  Baby,
+  Dumbbell,
+  Apple,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CalendarAll.scss";
@@ -24,10 +35,20 @@ const CalendarAll = () => {
   });
 
   const categories = [
-    { id: "Cuộc hẹn bác sĩ", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B", icon: Stethoscope },
+    {
+      id: "Cuộc hẹn bác sĩ",
+      label: "Cuộc hẹn bác sĩ",
+      color: "#FF6B6B",
+      icon: Stethoscope,
+    },
     { id: "Uống thuốc", label: "Uống thuốc", color: "#4ECDC4", icon: Pill },
     { id: "Khám thai", label: "Khám thai", color: "#45B7D1", icon: Baby },
-    { id: "Tập thể dục", label: "Tập thể dục", color: "#FFA07A", icon: Dumbbell },
+    {
+      id: "Tập thể dục",
+      label: "Tập thể dục",
+      color: "#FFA07A",
+      icon: Dumbbell,
+    },
     { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8", icon: Apple },
   ];
 
@@ -52,8 +73,8 @@ const CalendarAll = () => {
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -70,11 +91,11 @@ const CalendarAll = () => {
         date: newEvent.date,
         time: newEvent.time,
         reminderType: newEvent.reminderType,
-        notification: newEvent.notification || ""
+        notification: newEvent.notification || "",
       };
-      
+
       const response = await reminderService.createReminder(reminderData);
-      
+
       if (response) {
         updateEventsAfterAdd(response);
         resetForm();
@@ -91,26 +112,26 @@ const CalendarAll = () => {
       toast.error("Vui lòng nhập tiêu đề");
       return false;
     }
-    
+
     // Kiểm tra ngày có hợp lệ không
     const selectedDate = new Date(eventData.date);
     const today = new Date(getCurrentDate());
-    
+
     if (!eventData.date) {
       toast.error("Vui lòng chọn ngày");
       return false;
     }
-    
+
     if (selectedDate < today) {
       toast.error("Không thể chọn ngày trong quá khứ");
       return false;
     }
-    
+
     if (!eventData.time) {
       toast.error("Vui lòng chọn giờ");
       return false;
     }
-    
+
     if (!eventData.reminderType) {
       toast.error("Vui lòng chọn loại nhắc nhở");
       return false;
@@ -125,21 +146,23 @@ const CalendarAll = () => {
       date: "",
       time: "",
       reminderType: categories[0].id,
-      notification: ""
+      notification: "",
     });
   };
 
   const fetchReminders = async () => {
     try {
       const response = await reminderService.getReminderHistory();
-      const formattedData = Array.isArray(response) ? response.map(item => ({
-        id: item.remindId,
-        title: item.title,
-        date: item.date,
-        time: item.time,
-        reminderType: item.reminderType || "Uống thuốc",
-        notification: item.notification
-      })) : [];
+      const formattedData = Array.isArray(response)
+        ? response.map((item) => ({
+            id: item.remindId,
+            title: item.title,
+            date: item.date,
+            time: item.time,
+            reminderType: item.reminderType || "Uống thuốc",
+            notification: item.notification,
+          }))
+        : [];
 
       setEvents(formattedData);
     } catch (error) {
@@ -152,39 +175,47 @@ const CalendarAll = () => {
   }, []);
 
   const getEventsForMonth = (events, date) => {
-    return events.filter(event => {
+    return events.filter((event) => {
       const eventDate = new Date(event.date);
-      return eventDate.getMonth() === date.getMonth() && 
-             eventDate.getFullYear() === date.getFullYear();
+      return (
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear()
+      );
     });
   };
 
-  const filteredEvents = events && events.length
-    ? events.filter((event) => {
-        if (!event) return false;
+  const filteredEvents =
+    events && events.length
+      ? events.filter((event) => {
+          if (!event) return false;
 
-        // Kiểm tra sự kiện có trong tháng hiện tại không
-        const eventDate = new Date(event.date);
-        const isCurrentMonth = eventDate.getMonth() === currentDate.getMonth() && 
-                             eventDate.getFullYear() === currentDate.getFullYear();
+          // Kiểm tra sự kiện có trong tháng hiện tại không
+          const eventDate = new Date(event.date);
+          const isCurrentMonth =
+            eventDate.getMonth() === currentDate.getMonth() &&
+            eventDate.getFullYear() === currentDate.getFullYear();
 
-        // Kiểm tra điều kiện tìm kiếm và category
-        const matchesSearch = event.title &&
-          event.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === "all" ||
-          event.reminderType === selectedCategory;
+          // Kiểm tra điều kiện tìm kiếm và category
+          const matchesSearch =
+            event.title &&
+            event.title.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesCategory =
+            selectedCategory === "all" ||
+            event.reminderType === selectedCategory;
 
-        return isCurrentMonth && matchesSearch && matchesCategory;
-      })
-    : [];
+          return isCurrentMonth && matchesSearch && matchesCategory;
+        })
+      : [];
 
   const getCategoryStats = () => {
     const monthEvents = getEventsForMonth(events, currentDate);
     const stats = categories.reduce((acc, cat) => {
-      acc[cat.id] = monthEvents.filter(event => event.reminderType === cat.id).length;
+      acc[cat.id] = monthEvents.filter(
+        (event) => event.reminderType === cat.id
+      ).length;
       return acc;
     }, {});
-    
+
     // Thêm tổng số sự kiện
     stats.all = monthEvents.length;
     return stats;
@@ -201,15 +232,15 @@ const CalendarAll = () => {
   };
 
   const getEventIcon = (reminderType) => {
-    const category = categories.find(cat => cat.id === reminderType);
+    const category = categories.find((cat) => cat.id === reminderType);
     if (!category) return null;
-    
+
     const IconComponent = category.icon;
     return <IconComponent size={16} />;
   };
 
   const updateEventsAfterAdd = (newEvent) => {
-    setEvents(prevEvents => {
+    setEvents((prevEvents) => {
       const currentEvents = Array.isArray(prevEvents) ? prevEvents : [];
       return [...currentEvents, newEvent];
     });
@@ -219,8 +250,10 @@ const CalendarAll = () => {
     return (
       <div className="category-filters">
         <motion.button
-          className={`filter-btn all ${selectedCategory === 'all' ? 'active' : ''}`}
-          onClick={() => setSelectedCategory('all')}
+          className={`filter-btn all ${
+            selectedCategory === "all" ? "active" : ""
+          }`}
+          onClick={() => setSelectedCategory("all")}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -231,13 +264,16 @@ const CalendarAll = () => {
         {categories.map((cat) => (
           <motion.button
             key={cat.id}
-            className={`filter-btn ${selectedCategory === cat.id ? 'active' : ''}`}
+            className={`filter-btn ${
+              selectedCategory === cat.id ? "active" : ""
+            }`}
             onClick={() => setSelectedCategory(cat.id)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             style={{
-              backgroundColor: selectedCategory === cat.id ? cat.color : 'transparent',
-              borderColor: cat.color
+              backgroundColor:
+                selectedCategory === cat.id ? cat.color : "transparent",
+              borderColor: cat.color,
             }}
           >
             <cat.icon size={16} />
@@ -342,22 +378,27 @@ const CalendarAll = () => {
                 <span className="day-number">{day.getDate()}</span>
                 <div className="day-events">
                   {filteredEvents
-                    .filter(event => 
-                      new Date(event.date).toDateString() === day.toDateString()
+                    .filter(
+                      (event) =>
+                        new Date(event.date).toDateString() ===
+                        day.toDateString()
                     )
                     .map((event) => (
                       <Link
-                        to={`/member/calendar-change/${event.id}`}
+                        to={`/member/calendar-detail/${event.id}`}
                         key={event.id}
                         className={`event-pill ${event.reminderType}`}
                         style={{
-                          backgroundColor: categories.find(
-                            (cat) => cat.id === event.reminderType
-                          )?.color || "#4ECDC4",
+                          backgroundColor:
+                            categories.find(
+                              (cat) => cat.id === event.reminderType
+                            )?.color || "#4ECDC4",
                         }}
                       >
                         <span className="event-icon">
-                          {getEventIcon(event.reminderType) || <Clock size={16} />}
+                          {getEventIcon(event.reminderType) || (
+                            <Clock size={16} />
+                          )}
                         </span>
                         <span className="event-title">
                           {event.time} - {event.title}

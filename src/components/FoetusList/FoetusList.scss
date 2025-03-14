@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Synchronized color variables - giống với NotesList
@@ -10,30 +10,52 @@ $secondary-color: #ffdde1;
 
 // Animation Keyframes
 @keyframes waterWave {
-  0% { transform: translate(-50%, 0) rotate(0deg); }
-  50% { transform: translate(-50%, -2%) rotate(180deg); }
-  100% { transform: translate(-50%, 0) rotate(360deg); }
+  0% {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -2%) rotate(180deg);
+  }
+  100% {
+    transform: translate(-50%, 0) rotate(360deg);
+  }
 }
 
 @keyframes flowWave {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .foetus-list-container {
-  background: linear-gradient(135deg, 
-    rgba($background, 0.95), 
+  background: linear-gradient(
+    135deg,
+    rgba($background, 0.95),
     rgba($secondary-color, 0.85)
   );
   padding: 1.5rem 2rem 3rem;
@@ -45,14 +67,15 @@ $secondary-color: #ffdde1;
 
   // Thêm hiệu ứng sóng nước
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-      rgba($background, 0.95), 
+    background: linear-gradient(
+      135deg,
+      rgba($background, 0.95),
       rgba($secondary-color, 0.85)
     );
     z-index: -1;
@@ -77,35 +100,54 @@ $secondary-color: #ffdde1;
       border-radius: 43%;
       animation: waterWave 15s infinite linear;
 
-      &:nth-child(1) { top: -50%; animation-duration: 20s; }
-      &:nth-child(2) { top: -55%; animation-delay: -5s; animation-duration: 17s; }
-      &:nth-child(3) { top: -60%; animation-delay: -8s; animation-duration: 15s; }
+      &:nth-child(1) {
+        top: -50%;
+        animation-duration: 20s;
+      }
+      &:nth-child(2) {
+        top: -55%;
+        animation-delay: -5s;
+        animation-duration: 17s;
+      }
+      &:nth-child(3) {
+        top: -60%;
+        animation-delay: -8s;
+        animation-duration: 15s;
+      }
     }
   }
 
   .foetus-list-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 2rem;
     padding: 0;
     max-width: 1400px;
     margin: 0 auto 2rem;
-    
+    flex-direction: column;
+    gap: 1.5rem;
+
     h2 {
-      font-family: 'Playfair Display', serif;
+      font-family: "Playfair Display", serif;
       color: $text-color;
       font-size: 3rem;
       margin: 0;
       position: relative;
-      
+      text-align: center;
+
       &::after {
-        content: '';
+        content: "";
         display: block;
         width: 100px;
         height: 4px;
-        background: linear-gradient(90deg, transparent, $primary-color, transparent);
-        margin-top: 0.5rem;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          $primary-color,
+          transparent
+        );
+        margin: 0.5rem auto 0;
         animation: flowWave 2s infinite linear;
       }
     }
@@ -151,8 +193,7 @@ $secondary-color: #ffdde1;
     max-width: 1400px;
     margin: 0 auto 2rem;
     position: relative;
-    box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.15),
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
       0 0 0 2px rgba($primary-color, 0.2);
     border: none;
 
@@ -172,7 +213,8 @@ $secondary-color: #ffdde1;
           font-weight: 600;
         }
 
-        input, select {
+        input,
+        select {
           width: 100%;
           padding: 0.75rem 1rem;
           border: 2px solid rgba($primary-color, 0.3);
@@ -236,7 +278,7 @@ $secondary-color: #ffdde1;
     max-width: 1400px;
     margin: 0 auto;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    
+
     .no-data {
       grid-column: 1 / -1;
       text-align: center;
@@ -244,7 +286,7 @@ $secondary-color: #ffdde1;
       color: lighten($text-color, 20%);
       font-style: italic;
     }
-    
+
     .foetus-item {
       background: rgba(255, 255, 255, 0.8);
       border-radius: 20px;
@@ -277,7 +319,7 @@ $secondary-color: #ffdde1;
           flex: 1;
 
           h3 {
-            font-family: 'Playfair Display', serif;
+            font-family: "Playfair Display", serif;
             color: $text-color;
             font-size: 1.5rem;
             line-height: 1.3;
@@ -330,7 +372,7 @@ $secondary-color: #ffdde1;
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background: rgba($primary-color, 0.2);
           transform: rotate(90deg);
@@ -354,18 +396,18 @@ $secondary-color: #ffdde1;
 @media (max-width: 768px) {
   .foetus-list-container {
     .foetus-list-header {
-      flex-direction: column;
       gap: 1rem;
-      align-items: flex-start;
-      
+      align-items: center;
+
       h2 {
         font-size: 2rem;
+        text-align: center;
       }
     }
 
     .foetus-list {
       gap: 1rem;
-      
+
       .foetus-item {
         min-width: 260px;
         margin: 0.25rem;
