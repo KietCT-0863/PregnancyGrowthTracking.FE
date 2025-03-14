@@ -47,7 +47,7 @@ const STATS_FIELDS = [
   { key: "hc", label: "HC", icon: Ruler },
   { key: "ac", label: "AC", icon: Heart },
   { key: "fl", label: "FL", icon: Scale },
-  { key: "efw", label: "EFW", icon: Activity }
+  { key: "efw", label: "EFW", icon: Activity },
 ];
 
 const HISTORY_COLUMNS = [
@@ -56,43 +56,43 @@ const HISTORY_COLUMNS = [
     dataIndex: "age",
     key: "age",
     width: 100,
-    render: (value) => `Tuần ${value || "?"}`
+    render: (value) => `Tuần ${value || "?"}`,
   },
   {
     title: "Ngày đo",
     dataIndex: "measurementDate",
     key: "measurementDate",
     width: 120,
-    render: (date) => new Date(date).toLocaleDateString("vi-VN")
+    render: (date) => new Date(date).toLocaleDateString("vi-VN"),
   },
   {
     title: "HC (mm)",
     dataIndex: "hc",
     key: "hc",
     width: 100,
-    render: (value) => value || "Chưa có"
+    render: (value) => value || "Chưa có",
   },
   {
     title: "AC (mm)",
     dataIndex: "ac",
     key: "ac",
     width: 100,
-    render: (value) => value || "Chưa có"
+    render: (value) => value || "Chưa có",
   },
   {
     title: "FL (mm)",
     dataIndex: "fl",
     key: "fl",
     width: 100,
-    render: (value) => value || "Chưa có"
+    render: (value) => value || "Chưa có",
   },
   {
     title: "EFW (g)",
     dataIndex: "efw",
     key: "efw",
     width: 100,
-    render: (value) => value || "Chưa có"
-  }
+    render: (value) => value || "Chưa có",
+  },
 ];
 
 // Tách riêng cấu hình chart options
@@ -105,12 +105,12 @@ const chartOptions = {
       labels: {
         font: {
           size: 12,
-          family: "'Inter', sans-serif"
+          family: "'Inter', sans-serif",
         },
-        filter: function(item) {
+        filter: function (item) {
           return item.datasetIndex < 4;
-        }
-      }
+        },
+      },
     },
     title: {
       display: true,
@@ -118,24 +118,24 @@ const chartOptions = {
       font: {
         size: 16,
         family: "'Inter', sans-serif",
-        weight: "bold"
-      }
-    }
+        weight: "bold",
+      },
+    },
   },
   scales: {
     y: {
       beginAtZero: true,
       title: {
         display: true,
-        text: 'Chỉ số (mm/g)'
-      }
+        text: "Chỉ số (mm/g)",
+      },
     },
     x: {
       grid: {
-        display: false
-      }
-    }
-  }
+        display: false,
+      },
+    },
+  },
 };
 
 const BasicTracking = () => {
@@ -350,7 +350,7 @@ const BasicTracking = () => {
     if (!selectedChild || !growthData[selectedChild.foetusId]) {
       return {
         labels: [],
-        datasets: []
+        datasets: [],
       };
     }
 
@@ -358,7 +358,7 @@ const BasicTracking = () => {
     if (!Array.isArray(foetusData) || foetusData.length === 0) {
       return {
         labels: [],
-        datasets: []
+        datasets: [],
       };
     }
 
@@ -369,41 +369,41 @@ const BasicTracking = () => {
       .sort((a, b) => a.age - b.age);
 
     return {
-      labels: recentWeeks.map(data => `Tuần ${data.age}`),
+      labels: recentWeeks.map((data) => `Tuần ${data.age}`),
       datasets: [
         {
-          type: 'bar',
-          label: 'HC (mm)',
-          data: recentWeeks.map(data => data.hc || 0),
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
-          borderColor: 'rgb(255, 99, 132)',
-          borderWidth: 1
+          type: "bar",
+          label: "HC (mm)",
+          data: recentWeeks.map((data) => data.hc || 0),
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          borderColor: "rgb(255, 99, 132)",
+          borderWidth: 1,
         },
         {
-          type: 'bar',
-          label: 'AC (mm)',
-          data: recentWeeks.map(data => data.ac || 0),
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgb(54, 162, 235)',
-          borderWidth: 1
+          type: "bar",
+          label: "AC (mm)",
+          data: recentWeeks.map((data) => data.ac || 0),
+          backgroundColor: "rgba(54, 162, 235, 0.5)",
+          borderColor: "rgb(54, 162, 235)",
+          borderWidth: 1,
         },
         {
-          type: 'bar',
-          label: 'FL (mm)',
-          data: recentWeeks.map(data => data.fl || 0),
-          backgroundColor: 'rgba(75, 192, 192, 0.5)',
-          borderColor: 'rgb(75, 192, 192)',
-          borderWidth: 1
+          type: "bar",
+          label: "FL (mm)",
+          data: recentWeeks.map((data) => data.fl || 0),
+          backgroundColor: "rgba(75, 192, 192, 0.5)",
+          borderColor: "rgb(75, 192, 192)",
+          borderWidth: 1,
         },
         {
-          type: 'bar',
-          label: 'EFW (g)',
-          data: recentWeeks.map(data => data.efw || 0),
-          backgroundColor: 'rgba(153, 102, 255, 0.5)',
-          borderColor: 'rgb(153, 102, 255)',
-          borderWidth: 1
-        }
-      ]
+          type: "bar",
+          label: "EFW (g)",
+          data: recentWeeks.map((data) => data.efw || 0),
+          backgroundColor: "rgba(153, 102, 255, 0.5)",
+          borderColor: "rgb(153, 102, 255)",
+          borderWidth: 1,
+        },
+      ],
     };
   };
 
@@ -441,7 +441,7 @@ const BasicTracking = () => {
         <div className="chart-section">
           <div className="chart-container">
             {selectedChild && (
-              <Bar 
+              <Bar
                 data={getChartData(selectedChild, growthData)}
                 options={chartOptions}
                 height={300}
@@ -454,8 +454,8 @@ const BasicTracking = () => {
                 ? `* Biểu đồ hiển thị sự tăng trưởng của ${selectedChild.name} theo tuần`
                 : "* Chọn một thai nhi để xem biểu đồ tăng trưởng"}
             </p>
-            </div>
           </div>
+        </div>
 
         <motion.div
           className="children-grid"
@@ -531,7 +531,7 @@ const BasicTracking = () => {
                           min="0"
                           max="42"
                         />
-                    </div>
+                      </div>
                     </motion.div>
                   </div>
 
@@ -556,7 +556,7 @@ const BasicTracking = () => {
                             transition={{ type: "spring", stiffness: 400 }}
                           >
                             <Icon className="stat-icon" size={16} />
-                          <div className="stat-content">
+                            <div className="stat-content">
                               <span className="stat-label">{label}</span>
                               <input
                                 type="number"
@@ -579,10 +579,10 @@ const BasicTracking = () => {
                                     : "Chưa có dữ liệu"
                                 }
                               />
-                          </div>
+                            </div>
                           </motion.div>
                         ))}
-                        </div>
+                      </div>
 
                       {currentGrowthData && (
                         <div className="history-section">
@@ -591,7 +591,7 @@ const BasicTracking = () => {
                             {new Date(
                               currentGrowthData.measurementDate
                             ).toLocaleDateString("vi-VN")}
-                      </div>
+                          </div>
 
                           <motion.button
                             className="view-history-button"
@@ -660,16 +660,18 @@ const BasicTracking = () => {
                   <Table
                     dataSource={selectedWeekHistory}
                     columns={HISTORY_COLUMNS}
-                    rowKey={(record) => `${record.measurementDate}-${record.age}`}
+                    rowKey={(record) =>
+                      `${record.measurementDate}-${record.age}`
+                    }
                     pagination={false}
                     scroll={{ x: "max-content" }}
                   />
                 ) : (
                   <div className="no-data-message">
                     Không có dữ liệu lịch sử
-                </div>
+                  </div>
                 )}
-                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -704,7 +706,7 @@ const BasicTracking = () => {
                 >
                   ✕
                 </motion.button>
-                </div>
+              </div>
               <div className="compare-modal-body">
                 {selectedChild && (
                   <div className="comparison-chart">
@@ -733,7 +735,7 @@ const BasicTracking = () => {
                     />
                   </div>
                 )}
-                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}

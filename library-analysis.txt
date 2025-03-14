@@ -1,0 +1,98 @@
+PHÂN TÍCH THƯ VIỆN ĐÃ DÙNG TRONG DỰ ÁN
+
+1. UI Framework & Icons
+- antd (^5.24.3)
+  + Framework UI chính của ứng dụng
+  + Sử dụng cho: Button, Form, Modal, Layout
+  
+- @ant-design/icons (^5.6.1)
+  + Bộ icons của Ant Design
+  + Sử dụng cho: Menu icons, Action icons
+  
+- react-icons (^5.5.0)
+  + Thư viện icons bổ sung
+  + Sử dụng cho: FaUser, FaBell, social media icons
+
+2. HTTP Client
+- axios (^1.6.7)
+  + Xử lý API calls
+  + Sử dụng cho: GET, POST, PUT, DELETE requests
+
+3. Authentication
+- jwt-decode (^4.0.0)
+  + Decode JWT tokens
+  + Sử dụng cho: User authentication
+
+4. React & Router
+- react (^18.2.0)
+- react-dom (^18.2.0)
+  + Core React library
+  + Sử dụng cho: Toàn bộ ứng dụng
+  
+- react-router-dom (^6.22.3)
+  + Routing trong ứng dụng
+  + Sử dụng cho: Navigation, route protection
+
+5. Calendar Components
+- react-calendar (^4.8.0)
+  + Component calendar
+  + Sử dụng cho: Lịch khám thai, đặt lịch
+
+- react-big-calendar (^1.11.1)
+  + Calendar lớn hơn (có thể loại bỏ)
+  + Chưa sử dụng nhiều
+
+6. Charts
+- chart.js (^4.4.8)
+- react-chartjs-2 (^5.3.0)
+  + Vẽ biểu đồ
+  + Có thể thay thế bằng Ant Design Charts
+
+7. Notifications
+- react-toastify (^10.0.6)
+  + Toast notifications
+  + Sử dụng cho: Thông báo nhỏ, alerts
+
+- sweetalert2 (^11.17.2)
+  + Modal dialogs đẹp
+  + Sử dụng cho: Confirm dialogs, alerts lớn
+
+8. Styling
+- sass (^1.71.1)
+  + CSS preprocessor
+  + Sử dụng cho: Toàn bộ styling của ứng dụng
+
+9. Development Tools
+- vite (^5.1.5)
+- @vitejs/plugin-react (^4.2.1)
+  + Build tool
+  + Development server
+
+- eslint (^8.57.0)
+- eslint-plugin-react (^7.34.0)
+- eslint-plugin-react-hooks (^4.6.0)
+- eslint-plugin-react-refresh (^0.4.5)
+  + Code linting
+  + Code quality checks
+
+ĐÁNH GIÁ VÀ ĐỀ XUẤT:
+
+Thư viện có thể loại bỏ:
+1. react-big-calendar - đã có react-calendar
+2. chart.js và react-chartjs-2 - có thể dùng Ant Design Charts
+3. @types/react và @types/react-dom - không dùng TypeScript
+
+Thư viện cần giữ lại:
+1. antd + icons - UI framework chính
+2. axios - xử lý API
+3. jwt-decode - authentication
+4. react + router - core functionality
+5. react-calendar - lịch
+6. react-toastify + sweetalert2 - notifications
+7. sass - styling
+8. vite + eslint - development tools
+
+Kết luận:
+- Dự án sử dụng các thư viện phổ biến và ổn định
+- Cần tối ưu bằng cách loại bỏ các thư viện trùng lặp
+- Nên tận dụng nhiều hơn các components có sẵn từ Ant Design 

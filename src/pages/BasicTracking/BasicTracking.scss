@@ -50,46 +50,75 @@ $text-shadow: 0 1px 2px rgba($primary, 0.2);
 
 // Animation Keyframes
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .pregnancy-monitor {
@@ -252,7 +281,7 @@ $text-shadow: 0 1px 2px rgba($primary, 0.2);
             h3 {
               color: $primary-dark;
               text-shadow: $text-shadow;
-              
+
               &::after {
                 width: 100%;
               }
@@ -553,7 +582,11 @@ $text-shadow: 0 1px 2px rgba($primary, 0.2);
             }
 
             &:hover {
-              background: linear-gradient(135deg, darken($accent, 5%), darken($accent, 15%));
+              background: linear-gradient(
+                135deg,
+                darken($accent, 5%),
+                darken($accent, 15%)
+              );
               transform: translateY(-5px);
               box-shadow: 0 8px 20px rgba($accent, 0.4);
 
@@ -575,7 +608,11 @@ $text-shadow: 0 1px 2px rgba($primary, 0.2);
   .loading-spinner {
     @include flex-center;
     min-height: 100vh;
-    background: linear-gradient(135deg, $background, lighten($primary-light, 5%));
+    background: linear-gradient(
+      135deg,
+      $background,
+      lighten($primary-light, 5%)
+    );
     font-family: "Poppins", sans-serif;
     font-size: 1.2rem;
     color: $primary;
@@ -920,5 +957,42 @@ $text-shadow: 0 1px 2px rgba($primary, 0.2);
       width: 70px;
     }
   }
-}
+  .pregnancy-monitor {
+    min-height: 100vh;
+    background: linear-gradient(
+      135deg,
+      $background,
+      lighten($primary-light, 5%)
+    );
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    padding: 2rem; // Giảm từ 2.5rem xuống 2rem
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    overflow-x: hidden;
 
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 150px; // Giảm từ 200px xuống 150px
+      background: linear-gradient(
+        to bottom,
+        rgba($primary-light, 0.3),
+        transparent
+      );
+      z-index: 0;
+    }
+
+    // Header Section
+    .monitor-header {
+      text-align: center;
+      margin-bottom: 2rem; // Giảm từ 3rem xuống 2rem
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.8s ease-out;
+    }
+  }
+}

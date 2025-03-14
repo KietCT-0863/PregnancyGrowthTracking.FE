@@ -12,7 +12,7 @@ const GrowthAlert = ({ isOpen, onClose, alertData }) => {
     { key: "AC", label: "AC (mm)" },
     { key: "HC", label: "HC (mm)" },
     { key: "FL", label: "FL (mm)" },
-    { key: "EFW", label: "EFW (g)" }
+    { key: "EFW", label: "EFW (g)" },
   ];
 
   const alertItems = measurements
@@ -29,12 +29,13 @@ const GrowthAlert = ({ isOpen, onClose, alertData }) => {
         isNormal,
         range: {
           min: alert.minRange,
-          max: alert.maxRange
+          max: alert.maxRange,
         },
-        message: `${label} (${value}) ${isNormal ? 
-          'đang trong' : 
-          `${value < alert.minRange ? 'thấp hơn' : 'cao hơn'}`
-        } khoảng an toàn (${alert.minRange}-${alert.maxRange})`
+        message: `${label} (${value}) ${
+          isNormal
+            ? "đang trong"
+            : `${value < alert.minRange ? "thấp hơn" : "cao hơn"}`
+        } khoảng an toàn (${alert.minRange}-${alert.maxRange})`,
       };
     })
     .filter(Boolean);

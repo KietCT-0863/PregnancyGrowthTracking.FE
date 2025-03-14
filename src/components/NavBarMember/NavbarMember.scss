@@ -76,21 +76,25 @@ $font-accent: "Amatic SC", cursive;
 
   .navbar-container {
     max-width: 1400px;
-    margin: 0;
-    padding: 0 1.5rem;
+    margin: 0 auto;
+    padding: 0 2rem;
     height: 100%;
     @include flex-between;
+    width: 100%;
+    justify-content: center;
   }
 
   // Logo Section
   .logo-section {
     @include flex-center;
-    gap: 1rem;
+    gap: 1.5rem;
     margin: 0;
+    flex: 1;
+    justify-content: flex-start;
 
     .navbar-logo {
       @include flex-center;
-      gap: 0.8rem;
+      gap: 1rem;
       text-decoration: none;
       color: $primary;
       transition: all $transition;
@@ -133,25 +137,28 @@ $font-accent: "Amatic SC", cursive;
   .menu-section {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin: 0 2rem;
+    gap: 2rem;
+    margin: 0;
+    flex: 2;
+    justify-content: center;
 
     .nav-item {
       position: relative;
-      margin: 0;
+      margin: 0 0.5rem;
 
       .nav-link {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.7rem 1rem;
+        gap: 0.8rem;
+        padding: 0.7rem 1.2rem;
         text-decoration: none;
         color: $text-dark;
         border-radius: $border-radius;
         transition: all $transition;
         font-weight: 500;
-        font-size: 0.95rem;
+        font-size: 1rem;
         margin: 0;
+        white-space: nowrap;
 
         &:hover {
           color: $primary;
@@ -354,6 +361,8 @@ $font-accent: "Amatic SC", cursive;
     display: flex;
     align-items: center;
     margin: 0;
+    flex: 1;
+    justify-content: flex-end;
 
     .auth-buttons {
       display: flex;
@@ -398,8 +407,8 @@ $font-accent: "Amatic SC", cursive;
       .user-menu-button {
         display: flex;
         align-items: center;
-        gap: 0.8rem;
-        padding: 0.5rem 1rem;
+        gap: 1rem;
+        padding: 0.5rem 1.2rem;
         background: none;
         border: none;
         cursor: pointer;
@@ -432,7 +441,7 @@ $font-accent: "Amatic SC", cursive;
           font-weight: 500;
           color: $text-dark;
           margin: 0;
-          max-width: 120px;
+          max-width: 150px;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -608,6 +617,7 @@ $font-accent: "Amatic SC", cursive;
 
     .navbar-container {
       padding: 0 1rem;
+      justify-content: space-between;
     }
 
     .logo-section {
@@ -796,5 +806,102 @@ $font-accent: "Amatic SC", cursive;
         }
       }
     }
+  }
+}
+
+// Thêm style cho container chính của trang
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// Style cho tiêu đề trang
+.page-title {
+  text-align: center;
+  margin: 2rem 0;
+  width: 100%;
+  position: relative;
+
+  h1 {
+    font-family: $font-heading;
+    font-size: 2.5rem;
+    color: $text-dark;
+    margin: 0 0 1rem;
+    font-weight: 700;
+  }
+
+  .title-underline {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(to right, $primary, $secondary);
+    margin: 0 auto;
+    border-radius: 3px;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: lighten($text-dark, 20%);
+    margin-top: 1rem;
+    font-style: italic;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// Style cho nội dung chính
+.content-wrapper {
+  width: 100%;
+  max-width: 900px; // Giảm chiều rộng tối đa
+  margin: 0 auto;
+  background-color: $white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba($shadow, 0.1);
+  padding: 2rem;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, $primary, $secondary);
+    border-radius: 15px 15px 0 0;
+  }
+
+  .content-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+// Điều chỉnh responsive
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .page-title {
+    h1 {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      max-width: 95%;
+    }
+  }
+
+  .content-wrapper {
+    padding: 1.5rem;
+    border-radius: 10px;
   }
 }

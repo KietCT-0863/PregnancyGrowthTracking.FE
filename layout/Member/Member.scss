@@ -1,14 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Synchronized color variables
+// Variables
 $primary-color: #ff6b81;
 $accent-color: #70a1ff;
 $text-color: #2f3542;
 $background: #f8f9fa;
 $secondary-color: #ffdde1;
 
-// Xử lý khoảng trắng và màu nền
+// Reset styles
 body.member-page {
   margin: 0;
   padding: 0;
@@ -19,6 +19,7 @@ body.member-page {
   );
   min-height: 100vh;
   padding-top: 0 !important;
+  overflow-x: hidden; // Ngăn cuộn ngang
 
   * {
     margin: 0;
@@ -28,19 +29,19 @@ body.member-page {
 }
 
 .member-container {
+  position: relative; // Thêm position relative
   padding-top: 70px;
   margin: 0;
   min-height: calc(100vh - 70px);
   width: 100%;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; // Thêm khoảng cách giữa các section
+  gap: 1.5rem;
+  overflow: hidden; // Ngăn overflow từ container chính
 
-  // Đảm bảo các component con không có margin
   > * {
     margin: 0 !important;
-    padding: 0 1.5rem !important; // Thêm padding hai bên
+    padding: 0 1.5rem !important;
   }
 
   // Thêm hiệu ứng sóng nước
@@ -82,20 +83,25 @@ body.member-page {
   }
 }
 
-// Thêm animation waves cho toàn bộ trang
+// Wave background
 .member-waves {
-  margin: 0;
-  padding: 0;
+  position: fixed; // Thay đổi thành fixed
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; // Cho phép click xuyên qua
+  z-index: -1;
+  overflow: hidden; // Ngăn overflow từ waves
 
   .wave {
-    margin: 0;
-    padding: 0;
     position: absolute;
     left: 50%;
     width: 200%;
     height: 200%;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 43%;
+    transform-origin: center;
     animation: waterWave 15s infinite linear;
 
     &:nth-child(1) {
@@ -127,21 +133,21 @@ body.member-page {
   }
 }
 
-// Đảm bảo các component không có margin
+// Component styles
 .pregnancy-timeline,
 .foetus-list,
 .notes-list,
 .blog-slide-member {
   margin: 0 !important;
   padding: 1rem !important;
+  width: 100%;
 }
 
-// Đảm bảo các component con không có margin-top
 .home-member-container {
   margin-top: 0 !important;
+  width: 100%;
 }
 
-// Điều chỉnh cho PregnancyTimeline
 .pregnancy-timeline {
   margin-top: 0 !important;
   padding-top: 1rem !important;
@@ -159,11 +165,11 @@ body.member-page {
 // Responsive styles
 @media (max-width: 768px) {
   .member-container {
-    padding-top: 60px; // Giảm padding cho màn hình nhỏ
+    padding-top: 60px;
   }
 }
 
-// Thêm styles chung cho text
+// Typography
 h1,
 h2,
 h3,

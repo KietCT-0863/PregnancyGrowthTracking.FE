@@ -54,9 +54,9 @@ const AppRoutes = () => {
         element={
           <>
             <NavBar />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: "10px 0" }} />
             <Outlet />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: "10px 0" }} />
             <ChatAI />
             <Footer />
           </>
@@ -86,9 +86,9 @@ const AppRoutes = () => {
           <ProtectedBasicUserRoute>
             <>
               <NavBarGuest />
-              <div style={{ margin: "20px 0" }} />
+              <div style={{ margin: "10px 0" }} />
               <Outlet />
-              <div style={{ margin: "20px 0" }} />
+              <div style={{ margin: "10px 0" }} />
               <ChatAI />
               <FooterGuest />
             </>
@@ -112,9 +112,9 @@ const AppRoutes = () => {
         element={
           <ProtectedBasicUserRoute>
             <NavBarMember />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: "10px 0" }} />
             <Outlet />
-            <div style={{ margin: "20px 0" }} />
+            <div style={{ margin: "300px 0" }} />
             <ChatAI />
             <FooterMember />
           </ProtectedBasicUserRoute>

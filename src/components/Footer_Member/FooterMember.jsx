@@ -14,9 +14,9 @@ const FooterMember = () => {
         <div className="footer-main">
           <motion.div
             className="footer-brand"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.3 }}
           >
             <h3 className="brand-name">Mẹ Bầu</h3>
             <p className="brand-description">
@@ -26,21 +26,21 @@ const FooterMember = () => {
               <motion.a
                 href="#"
                 className="social-link"
-                whileHover={{ scale: 1.2 }}
+                whileHover={{ scale: 1.1 }}
               >
                 <FaFacebookF />
               </motion.a>
               <motion.a
                 href="#"
                 className="social-link"
-                whileHover={{ scale: 1.2 }}
+                whileHover={{ scale: 1.1 }}
               >
                 <FaInstagram />
               </motion.a>
               <motion.a
                 href="#"
                 className="social-link"
-                whileHover={{ scale: 1.2 }}
+                whileHover={{ scale: 1.1 }}
               >
                 <FaYoutube />
               </motion.a>
@@ -79,7 +79,7 @@ const FooterMember = () => {
         className="footer-bottom"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
       >
         <p>&copy; 2025 Mẹ Bầu. Tất cả quyền được bảo lưu.</p>
         <p>
