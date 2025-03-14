@@ -2,14 +2,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Variables - đồng bộ với NavbarMember
-$primary-color: #ff6b81;
-$secondary-color: #ffdde1;
-$accent-color: #70a1ff;
-$text-color: #2f3542;
-$background-light: #f8f9fa;
-$hover-bg: rgba(255, 255, 255, 0.9);
-$shadow-color: rgba(0, 0, 0, 0.1);
-$transition-speed: 0.3s;
+$primary: #ff6b81;
+$accent: #70a1ff;
+$text-dark: #2f3542;
+$background: #f8f9fa;
+$secondary: #ffdde1;
+$white: #ffffff;
+$shadow: rgba(0, 0, 0, 0.1);
+$transition: 0.3s ease;
 $border-radius: 8px;
 
 // Font variables - đồng bộ với NavbarMember
@@ -60,27 +60,6 @@ $font-accent: "Amatic SC", cursive;
   }
 }
 
-@keyframes ripple {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-@keyframes glow {
-  0%,
-  100% {
-    box-shadow: 0 0 5px rgba($primary-color, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba($primary-color, 0.6);
-  }
-}
-
 // Mixins
 @mixin flex-center {
   display: flex;
@@ -94,29 +73,6 @@ $font-accent: "Amatic SC", cursive;
   justify-content: space-between;
 }
 
-@mixin hover-effect {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: $primary-color;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform $transition-speed ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-}
-
 // Main Navbar Styles
 .navbar {
   position: fixed;
@@ -125,11 +81,11 @@ $font-accent: "Amatic SC", cursive;
   right: 0;
   z-index: 1000;
   font-family: $font-main;
-  transition: all $transition-speed ease;
+  transition: all $transition;
   background: linear-gradient(
     to right,
-    rgba($background-light, 0.95),
-    rgba($secondary-color, 0.85)
+    rgba($background, 0.95),
+    rgba($secondary, 0.85)
   );
   backdrop-filter: blur(10px);
   margin: 0;
@@ -137,7 +93,7 @@ $font-accent: "Amatic SC", cursive;
   height: 70px;
 
   &.scrolled {
-    box-shadow: 0 4px 20px rgba($shadow-color, 0.15);
+    box-shadow: 0 4px 20px rgba($shadow, 0.15);
   }
 
   .navbar-container {
@@ -162,8 +118,8 @@ $font-accent: "Amatic SC", cursive;
       @include flex-center;
       gap: 1rem;
       text-decoration: none;
-      color: $primary-color;
-      transition: all $transition-speed ease;
+      color: $primary;
+      transition: all $transition;
       margin: 0;
 
       &:hover {
@@ -173,7 +129,7 @@ $font-accent: "Amatic SC", cursive;
       .navbar-logo-image {
         height: 40px;
         width: auto;
-        transition: all $transition-speed ease;
+        transition: all $transition;
         margin: 0;
       }
 
@@ -181,7 +137,7 @@ $font-accent: "Amatic SC", cursive;
         font-family: $font-accent;
         font-size: 2rem;
         font-weight: 700;
-        color: $primary-color;
+        color: $primary;
         margin: 0;
         line-height: 1;
       }
@@ -191,11 +147,36 @@ $font-accent: "Amatic SC", cursive;
       display: none;
       background: none;
       border: none;
-      color: $text-color;
+      color: $text-dark;
       font-size: 1.5rem;
       cursor: pointer;
       padding: 0.5rem;
       margin: 0;
+    }
+    
+    .sidebar-toggle {
+      display: none; // Ẩn nút toggle sidebar trên màn hình lớn
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: rgba($primary, 0.1);
+      border-radius: 8px;
+      border: none;
+      color: $text-dark;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all $transition;
+      margin-left: 0.5rem;
+      
+      &:hover {
+        background-color: rgba($primary, 0.2);
+        transform: translateY(-2px);
+      }
+      
+      .toggle-icon {
+        transition: transform 0.3s ease;
+      }
     }
   }
 
@@ -205,7 +186,7 @@ $font-accent: "Amatic SC", cursive;
     align-items: center;
     justify-content: flex-end;
     flex: 1;
-    transition: all $transition-speed ease;
+    transition: all $transition;
   }
 
   // Menu Section
@@ -227,37 +208,37 @@ $font-accent: "Amatic SC", cursive;
         gap: 0.8rem;
         padding: 0.7rem 1.2rem;
         text-decoration: none;
-        color: $text-color;
+        color: $text-dark;
         border-radius: $border-radius;
-        transition: all $transition-speed ease;
+        transition: all $transition;
         font-weight: 500;
         font-size: 1rem;
         margin: 0;
         white-space: nowrap;
 
         &:hover {
-          color: $primary-color;
-          background-color: rgba($primary-color, 0.05);
+          color: $primary;
+          background-color: rgba($primary, 0.05);
 
           .nav-icon {
-            color: $primary-color;
+            color: $primary;
             transform: translateY(-2px);
           }
         }
 
         &.active {
-          color: $primary-color;
-          background-color: rgba($primary-color, 0.1);
+          color: $primary;
+          background-color: rgba($primary, 0.1);
 
           .nav-icon {
-            color: $primary-color;
+            color: $primary;
           }
         }
 
         .nav-icon {
           font-size: 1.2rem;
-          transition: all $transition-speed ease;
-          color: $text-color;
+          transition: all $transition;
+          color: $text-dark;
           margin: 0;
         }
 
@@ -287,25 +268,25 @@ $font-accent: "Amatic SC", cursive;
         text-decoration: none;
         font-weight: 500;
         font-size: 0.95rem;
-        transition: all $transition-speed ease;
+        transition: all $transition;
         margin: 0;
 
         &.btn-login {
-          color: $primary-color;
-          border: 1px solid $primary-color;
+          color: $primary;
+          border: 1px solid $primary;
 
           &:hover {
-            background-color: rgba($primary-color, 0.05);
+            background-color: rgba($primary, 0.05);
           }
         }
 
         &.btn-register {
-          background-color: $primary-color;
+          background-color: $primary;
           color: white;
-          border: 1px solid $primary-color;
+          border: 1px solid $primary;
 
           &:hover {
-            background-color: darken($primary-color, 5%);
+            background-color: darken($primary, 5%);
           }
         }
 
@@ -345,18 +326,18 @@ $font-accent: "Amatic SC", cursive;
         background: none;
         border: none;
         cursor: pointer;
-        color: $text-color;
+        color: $text-dark;
         border-radius: $border-radius;
-        transition: all $transition-speed ease;
+        transition: all $transition;
         margin: 0;
 
         &:hover {
-          background-color: rgba($primary-color, 0.05);
+          background-color: rgba($primary, 0.05);
         }
 
         .user-icon {
           font-size: 1.5rem;
-          color: $accent-color;
+          color: $accent;
           margin: 0;
         }
 
@@ -366,13 +347,13 @@ $font-accent: "Amatic SC", cursive;
           border-radius: 50%;
           object-fit: cover;
           border: 2px solid white;
-          box-shadow: 0 2px 5px rgba($shadow-color, 0.2);
+          box-shadow: 0 2px 5px rgba($shadow, 0.2);
           margin: 0;
         }
 
         .user-name {
           font-weight: 500;
-          color: $text-color;
+          color: $text-dark;
           margin: 0;
           max-width: 150px;
           white-space: nowrap;
@@ -387,12 +368,12 @@ $font-accent: "Amatic SC", cursive;
         right: 0;
         background-color: white;
         border-radius: $border-radius;
-        box-shadow: 0 5px 25px rgba($shadow-color, 0.15);
+        box-shadow: 0 5px 25px rgba($shadow, 0.15);
         padding: 1rem;
         min-width: 250px;
         z-index: 10;
         animation: slideDown 0.3s ease;
-        border: 1px solid rgba($primary-color, 0.1);
+        border: 1px solid rgba($primary, 0.1);
         margin: 0;
 
         &::before {
@@ -404,8 +385,8 @@ $font-accent: "Amatic SC", cursive;
           height: 16px;
           background-color: white;
           transform: rotate(45deg);
-          border-top: 1px solid rgba($primary-color, 0.1);
-          border-left: 1px solid rgba($primary-color, 0.1);
+          border-top: 1px solid rgba($primary, 0.1);
+          border-left: 1px solid rgba($primary, 0.1);
           margin: 0;
         }
 
@@ -414,7 +395,7 @@ $font-accent: "Amatic SC", cursive;
           align-items: center;
           gap: 0.8rem;
           padding: 0.8rem;
-          background: rgba($secondary-color, 0.3);
+          background: rgba($secondary, 0.3);
           border-radius: $border-radius;
           margin: 0 0 0.8rem 0;
 
@@ -424,13 +405,13 @@ $font-accent: "Amatic SC", cursive;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid white;
-            box-shadow: 0 2px 5px rgba($shadow-color, 0.2);
+            box-shadow: 0 2px 5px rgba($shadow, 0.2);
             margin: 0;
           }
 
           .dropdown-user-icon {
             font-size: 48px;
-            color: $accent-color;
+            color: $accent;
             margin: 0;
           }
 
@@ -439,14 +420,14 @@ $font-accent: "Amatic SC", cursive;
 
             .user-name {
               font-weight: 500;
-              color: $text-color;
+              color: $text-dark;
               margin: 0 0 0.25rem 0;
               font-family: $font-heading;
             }
 
             .user-email {
               font-size: 0.8rem;
-              color: lighten($text-color, 20%);
+              color: lighten($text-dark, 20%);
               margin: 0;
             }
           }
@@ -458,8 +439,8 @@ $font-accent: "Amatic SC", cursive;
           .info-item {
             padding: 0.5rem;
             font-size: 0.9rem;
-            color: $text-color;
-            border-bottom: 1px dashed rgba($text-color, 0.1);
+            color: $text-dark;
+            border-bottom: 1px dashed rgba($text-dark, 0.1);
             margin: 0;
 
             &:last-child {
@@ -469,7 +450,7 @@ $font-accent: "Amatic SC", cursive;
         }
 
         .dropdown-divider {
-          border-top: 1px solid rgba($text-color, 0.1);
+          border-top: 1px solid rgba($text-dark, 0.1);
           margin: 0.5rem 0;
         }
 
@@ -481,26 +462,26 @@ $font-accent: "Amatic SC", cursive;
           padding: 0.8rem;
           background: none;
           border: none;
-          color: $text-color;
+          color: $text-dark;
           font-size: 0.9rem;
           text-decoration: none;
           cursor: pointer;
-          transition: all $transition-speed ease;
+          transition: all $transition;
           border-radius: $border-radius;
           margin: 0;
 
           &:hover {
-            background-color: rgba($primary-color, 0.05);
-            color: $primary-color;
+            background-color: rgba($primary, 0.05);
+            color: $primary;
 
             .edit-icon {
-              color: $primary-color;
+              color: $primary;
               transform: translateX(3px);
             }
           }
 
           .edit-icon {
-            transition: transform $transition-speed ease;
+            transition: transform $transition;
             margin: 0;
           }
         }
@@ -513,15 +494,15 @@ $font-accent: "Amatic SC", cursive;
           padding: 0.8rem;
           background: none;
           border: none;
-          color: $primary-color;
+          color: $primary;
           cursor: pointer;
-          transition: all $transition-speed ease;
+          transition: all $transition;
           border-radius: $border-radius;
           font-weight: 500;
           margin: 0;
 
           &:hover {
-            background-color: rgba($primary-color, 0.1);
+            background-color: rgba($primary, 0.1);
 
             .logout-icon {
               transform: translateX(3px);
@@ -529,7 +510,7 @@ $font-accent: "Amatic SC", cursive;
           }
 
           .logout-icon {
-            transition: transform $transition-speed ease;
+            transition: transform $transition;
             margin: 0;
           }
         }
@@ -540,7 +521,336 @@ $font-accent: "Amatic SC", cursive;
 
 // Navbar spacer
 .navbar-spacer {
-  display: none;
+  height: 70px;
+  margin: 0;
+  padding: 0;
+}
+
+// Sidebar Menu - Chỉ hiển thị trên mobile
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: -100%; // Bắt đầu ẩn bên trái
+  height: 100vh;
+  width: 280px;
+  background: linear-gradient(165deg, rgba(255, 246, 248, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%);
+  box-shadow: 0 0 25px rgba($shadow, 0.15);
+  z-index: 1001; // Tăng z-index để đảm bảo hiển thị trên cùng
+  padding-top: 0;
+  transition: left 0.3s ease; // Thay đổi từ transform sang left
+  backdrop-filter: blur(10px);
+  border-right: 1px solid rgba($primary, 0.08);
+  overflow: hidden;
+  display: block !important; // Đảm bảo luôn hiển thị
+  
+  &.open {
+    left: 0; // Thay đổi từ transform sang left
+  }
+  
+  .sidebar-header {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba($primary, 0.1);
+    background: linear-gradient(to right, rgba($secondary, 0.5), rgba($secondary, 0.2));
+    height: 70px;
+    
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .sidebar-logo-image {
+        height: 35px;
+        width: auto;
+        transition: all $transition;
+      }
+      
+      .sidebar-title {
+        color: $primary;
+        font-family: $font-accent;
+        font-size: 2rem;
+        margin: 0;
+        text-shadow: 1px 1px 2px rgba($white, 0.8);
+        letter-spacing: 0.5px;
+      }
+    }
+    
+    .close-sidebar {
+      background: rgba($white, 0.6);
+      border: none;
+      color: $primary;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba($primary, 0.1);
+        transform: rotate(90deg);
+      }
+    }
+  }
+  
+  .sidebar-user-profile {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(to right, rgba($secondary, 0.3), rgba($secondary, 0.1));
+    border-bottom: 1px solid rgba($primary, 0.07);
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba($primary, 0.2), transparent);
+    }
+    
+    .sidebar-user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid $white;
+      box-shadow: 0 3px 10px rgba($shadow, 0.2);
+      margin-right: 1rem;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba($primary, 0.3);
+      }
+    }
+    
+    .sidebar-user-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 60px;
+      color: $accent;
+      margin-right: 1rem;
+      filter: drop-shadow(0 3px 5px rgba($shadow, 0.2));
+    }
+    
+    .sidebar-user-info {
+      flex: 1;
+      overflow: hidden;
+      
+      .sidebar-user-name {
+        margin: 0 0 0.4rem 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: $text-dark;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: $font-heading;
+      }
+      
+      .sidebar-user-email {
+        margin: 0;
+        font-size: 0.85rem;
+        color: lighten($text-dark, 20%);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0.8;
+      }
+    }
+  }
+  
+  .sidebar-items {
+    padding: 1rem 0.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 240px);
+    
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba($secondary, 0.1);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba($primary, 0.2);
+      border-radius: 4px;
+    }
+    
+    .sidebar-menu-item {
+      display: flex;
+      align-items: center;
+      padding: 0.9rem 1.2rem;
+      color: $text-dark;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      margin-bottom: 0.3rem;
+      position: relative;
+      overflow: hidden;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(to right, rgba($primary, 0.1), transparent);
+        transition: width 0.3s ease;
+        z-index: -1;
+      }
+      
+      &:hover, &.active {
+        color: $primary;
+        transform: translateX(5px);
+        
+        &::before {
+          width: 100%;
+        }
+        
+        .sidebar-icon {
+          color: $primary;
+          transform: scale(1.1);
+        }
+      }
+      
+      &.active {
+        background-color: rgba($primary, 0.08);
+        font-weight: 500;
+      }
+      
+      .sidebar-icon {
+        font-size: 1.3rem;
+        margin-right: 1rem;
+        min-width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        color: lighten($text-dark, 10%);
+      }
+      
+      .sidebar-text {
+        font-weight: 500;
+        font-size: 1rem;
+        white-space: nowrap;
+        display: block;
+        letter-spacing: 0.2px;
+      }
+    }
+  }
+  
+  .sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba($primary, 0.07);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba($secondary, 0.3), rgba($secondary, 0.1));
+    box-shadow: 0 -3px 10px rgba($shadow, 0.05);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      width: 80%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba($primary, 0.1), transparent);
+    }
+    
+    .sidebar-logout-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: rgba($white, 0.5);
+      border: 1px solid rgba($primary, 0.1);
+      color: $primary;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      
+      &:hover {
+        background: rgba($primary, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba($primary, 0.15);
+        
+        .sidebar-icon {
+          transform: translateX(3px) rotate(-10deg);
+          color: darken($primary, 10%);
+        }
+      }
+      
+      .sidebar-icon {
+        margin-right: 0.8rem;
+        font-size: 1.3rem;
+        transition: all 0.3s ease;
+        min-width: 24px;
+      }
+    }
+    
+    .btn-vip {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #ffd700, #ffaa00);
+      color: #333;
+      border: none;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      text-decoration: none;
+      justify-content: center;
+
+      svg {
+        font-size: 1.2rem;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, #ffaa00, #ff8800);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(255, 170, 0, 0.3);
+      }
+    }
+  }
+}
+
+// Overlay khi sidebar mở
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(3px);
+  display: block !important; // Đảm bảo luôn hiển thị
+  
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 // Mobile Styles
@@ -555,13 +865,11 @@ $font-accent: "Amatic SC", cursive;
 
     .logo-section {
       .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background-color: rgba($primary-color, 0.1);
-        border-radius: 8px;
+        display: none; // Ẩn nút mobile menu cũ
+      }
+      
+      .sidebar-toggle {
+        display: flex !important; // Đảm bảo hiển thị
       }
 
       .navbar-logo-text {
@@ -580,13 +888,13 @@ $font-accent: "Amatic SC", cursive;
       right: 0;
       background: linear-gradient(
         135deg,
-        rgba($background-light, 0.95),
-        rgba($secondary-color, 0.85)
+        rgba($background, 0.95),
+        rgba($secondary, 0.85)
       );
       flex-direction: column;
       align-items: flex-start;
       padding: 0;
-      box-shadow: 0 5px 15px rgba($shadow-color, 0.1);
+      box-shadow: 0 5px 15px rgba($shadow, 0.1);
       transform: translateY(-100%);
       opacity: 0;
       visibility: hidden;
@@ -603,42 +911,13 @@ $font-accent: "Amatic SC", cursive;
         max-height: calc(100vh - 60px);
         overflow-y: auto;
         padding: 1rem;
-        border-top: 1px solid rgba($primary-color, 0.1);
+        border-top: 1px solid rgba($primary, 0.1);
         animation: slideDown 0.3s ease forwards;
       }
     }
 
     .menu-section {
-      flex-direction: column;
-      width: 100%;
-      margin: 0 0 1rem 0;
-
-      .nav-item {
-        width: 100%;
-
-        .nav-link {
-          width: 100%;
-          padding: 1rem;
-          justify-content: flex-start;
-          border-radius: 0;
-          border-bottom: 1px solid rgba($text-color, 0.1);
-
-          span {
-            display: inline;
-            margin-left: 0.5rem;
-          }
-
-          .nav-icon {
-            width: 20px;
-            text-align: center;
-          }
-
-          &.active {
-            border-radius: $border-radius;
-            margin: 0.3rem 0;
-          }
-        }
-      }
+      display: none; // Ẩn menu section trên mobile vì đã có sidebar
     }
 
     .auth-section {
@@ -668,7 +947,7 @@ $font-accent: "Amatic SC", cursive;
           width: 100%;
           justify-content: flex-start;
           padding: 0.8rem;
-          border: 1px solid rgba($primary-color, 0.1);
+          border: 1px solid rgba($primary, 0.1);
           border-radius: $border-radius;
           margin-bottom: 0.5rem;
 
@@ -682,7 +961,7 @@ $font-accent: "Amatic SC", cursive;
           position: static;
           width: 100%;
           box-shadow: none;
-          border: 1px solid rgba($primary-color, 0.1);
+          border: 1px solid rgba($primary, 0.1);
           margin-top: 0.5rem;
           animation: fadeIn 0.3s ease forwards;
 
@@ -693,101 +972,33 @@ $font-accent: "Amatic SC", cursive;
       }
     }
   }
-}
-
-// Thêm style cho container chính của trang
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-// Style cho tiêu đề trang
-.page-title {
-  text-align: center;
-  margin: 2rem 0;
-  width: 100%;
-  position: relative;
-
-  h1 {
-    font-family: $font-heading;
-    font-size: 2.5rem;
-    color: $text-color;
-    margin: 0 0 1rem;
-    font-weight: 700;
+  
+  // Hiển thị sidebar và overlay trên mobile
+  .sidebar-menu {
+    display: block !important; // Đảm bảo hiển thị
   }
-
-  .title-underline {
-    width: 100px;
-    height: 3px;
-    background: linear-gradient(to right, $primary-color, $secondary-color);
-    margin: 0 auto;
-    border-radius: 3px;
+  
+  .sidebar-overlay {
+    display: block !important; // Đảm bảo hiển thị
   }
-
-  .subtitle {
-    font-size: 0.9rem;
-    color: lighten($text-color, 20%);
-    margin-top: 1rem;
-    font-style: italic;
-    max-width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-// Style cho nội dung chính
-.content-wrapper {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  background-color: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba($shadow-color, 0.1);
-  padding: 2rem;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: linear-gradient(to right, $primary-color, $secondary-color);
-    border-radius: 15px 15px 0 0;
-  }
-
-  .content-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  
+  // Điều chỉnh navbar-spacer trên mobile
+  .navbar-spacer {
+    height: 60px;
   }
 }
 
 // Điều chỉnh responsive
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .page-title {
-    h1 {
-      font-size: 2rem;
+@media (max-width: 360px) {
+  .sidebar-header {
+    .sidebar-logo {
+      .sidebar-logo-image {
+        height: 28px; // Nhỏ hơn trên màn hình rất nhỏ
+      }
+      
+      .sidebar-title {
+        font-size: 1.8rem; // Nhỏ hơn trên màn hình rất nhỏ
+      }
     }
-
-    .subtitle {
-      max-width: 95%;
-    }
-  }
-
-  .content-wrapper {
-    padding: 1.5rem;
-    border-radius: 10px;
   }
 }

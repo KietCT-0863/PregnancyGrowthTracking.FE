@@ -1,62 +1,101 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import authApi from "../api/authApi";
 import authService from "../api/services/authService";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const userData = localStorage.getItem("userData");
-    const token = localStorage.getItem("token");
-    return userData && token ? JSON.parse(userData) : null;
-  });
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      const userData = localStorage.getItem("userData");
-
-      if (token && userData) {
-        try {
-          setUser(JSON.parse(userData));
-        } catch (error) {
-          console.error("Error parsing user data:", error);
-          localStorage.removeItem("token");
-          localStorage.removeItem("userData");
-          setUser(null);
+    const checkAuthStatus = async () => {
+      try {
+        setLoading(true);
+        const userData = localStorage.getItem("userData");
+        
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          
+          const isValid = await authService.validateToken(parsedUser.token);
+          
+          if (isValid) {
+            setCurrentUser(parsedUser);
+            console.log("User authenticated:", parsedUser);
+          } else {
+            console.log("Token invalid, logging out");
+            localStorage.removeItem("userData");
+            setCurrentUser(null);
+          }
+        } else {
+          console.log("No user data found");
+          setCurrentUser(null);
         }
+      } catch (err) {
+        console.error("Auth check error:", err);
+        setError(err.message);
+        localStorage.removeItem("userData");
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    checkAuth();
+    checkAuthStatus();
   }, []);
 
   const login = async (credentials) => {
     try {
+      setLoading(true);
       const response = await authService.login(credentials);
-      const userData = {
-        userName: response.userName,
-        email: response.email,
-        role: response.role,
-        userId: response.userId,
-      };
-      localStorage.setItem("userData", JSON.stringify(userData));
-      setUser(userData);
-      return response;
-    } catch (error) {
-      throw error;
+      
+      if (response.success) {
+        localStorage.setItem("userData", JSON.stringify(response.data));
+        setCurrentUser(response.data);
+        return { success: true };
+      } else {
+        throw new Error(response.message || "Đăng nhập thất bại");
+      }
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await authService.logout();
+      
+      localStorage.removeItem("userData");
+      sessionStorage.clear();
+      
+      setCurrentUser(null);
+      
+      return { success: true };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const value = {
+    currentUser,
+    loading,
+    error,
+    login,
+    logout,
+    isAuthenticated: !!currentUser,
+    isVIP: currentUser?.role === "VIP" || currentUser?.isPremium,
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

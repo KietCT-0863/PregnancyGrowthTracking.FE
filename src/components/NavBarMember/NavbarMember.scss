@@ -121,15 +121,33 @@ $font-accent: "Amatic SC", cursive;
       }
     }
 
-    .mobile-menu-toggle {
+    .sidebar-toggle {
       display: none;
-      background: none;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: rgba($primary, 0.1);
+      border-radius: 8px;
       border: none;
       color: $text-dark;
       font-size: 1.5rem;
       cursor: pointer;
-      padding: 0.5rem;
-      margin: 0;
+      transition: all $transition;
+      margin-left: 0.5rem;
+      
+      @media (max-width: 768px) {
+        display: flex;
+      }
+      
+      &:hover {
+        background-color: rgba($primary, 0.2);
+        transform: translateY(-2px);
+      }
+      
+      .toggle-icon {
+        transition: transform 0.3s ease;
+      }
     }
   }
 
@@ -613,7 +631,7 @@ $font-accent: "Amatic SC", cursive;
 // Mobile Styles
 @media (max-width: 768px) {
   .navbar {
-    height: 60px; // Match the padding-top in Member.scss for mobile
+    height: 60px;
 
     .navbar-container {
       padding: 0 1rem;
@@ -622,13 +640,7 @@ $font-accent: "Amatic SC", cursive;
 
     .logo-section {
       .mobile-menu-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        background-color: rgba($primary, 0.1);
-        border-radius: 8px;
+        display: none;
       }
 
       .navbar-logo-text {
@@ -640,72 +652,8 @@ $font-accent: "Amatic SC", cursive;
       }
     }
 
-    .navbar-content {
-      position: fixed;
-      top: 60px; // Match navbar height
-      left: 0;
-      right: 0;
-      background: linear-gradient(
-        135deg,
-        rgba($background, 0.95),
-        rgba($secondary, 0.85)
-      );
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 0;
-      box-shadow: 0 5px 15px rgba($shadow, 0.1);
-      transform: translateY(-100%);
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      height: auto;
-      max-height: 0;
-      overflow: hidden;
-      margin: 0;
-
-      &.mobile-open {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        max-height: calc(100vh - 60px);
-        overflow-y: auto;
-        padding: 1rem;
-        border-top: 1px solid rgba($primary, 0.1);
-        animation: slideDown 0.3s ease forwards;
-      }
-    }
-
     .menu-section {
-      flex-direction: column;
-      width: 100%;
-      margin: 0 0 1rem 0;
-
-      .nav-item {
-        width: 100%;
-
-        .nav-link {
-          width: 100%;
-          padding: 1rem;
-          justify-content: flex-start;
-          border-radius: 0;
-          border-bottom: 1px solid rgba($text-dark, 0.1);
-
-          span {
-            display: inline;
-            margin-left: 0.5rem;
-          }
-
-          .nav-icon {
-            width: 20px;
-            text-align: center;
-          }
-
-          &.active {
-            border-radius: $border-radius;
-            margin: 0.3rem 0;
-          }
-        }
-      }
+      display: none;
     }
 
     .notification-container {
@@ -903,5 +851,258 @@ $font-accent: "Amatic SC", cursive;
   .content-wrapper {
     padding: 1.5rem;
     border-radius: 10px;
+  }
+}
+
+// Điều chỉnh sidebar cho mobile
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: -100%; // Bắt đầu ẩn bên trái
+  width: 280px;
+  height: 100vh;
+  background: linear-gradient(to bottom, #ffe6e6, #ffb3b3);
+  z-index: 1001; // Tăng z-index để đảm bảo hiển thị trên cùng
+  transition: left 0.3s ease;
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: block !important; // Đảm bảo luôn hiển thị
+
+  &.open {
+    left: 0; // Hiện ra khi có class open
+  }
+}
+
+// Overlay khi sidebar mở
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+
+  &.open {
+    display: block !important; // Đảm bảo hiển thị khi có class open
+  }
+}
+
+// Điều chỉnh nút toggle sidebar
+.sidebar-toggle {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex !important; // Đảm bảo hiển thị trên mobile
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+  }
+}
+
+// Thêm style cho sidebar user profile
+.sidebar-user-profile {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  
+  .sidebar-user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid white;
+  }
+  
+  .sidebar-user-icon {
+    font-size: 50px;
+    color: #70a1ff;
+    margin-right: 15px;
+  }
+  
+  .sidebar-user-info {
+    .sidebar-user-name {
+      margin: 0 0 5px 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .sidebar-user-email {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #666;
+    }
+  }
+}
+
+// Style cho nút đóng sidebar
+.close-sidebar {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  
+  &:hover {
+    color: $primary;
+  }
+}
+
+// Style cho footer sidebar
+.sidebar-footer {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  
+  .sidebar-logout-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 15px;
+    background-color: rgba(255, 107, 129, 0.1);
+    border: none;
+    border-radius: 8px;
+    color: #ff6b81;
+    font-weight: 500;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: rgba(255, 107, 129, 0.2);
+    }
+    
+    .sidebar-icon {
+      margin-right: 10px;
+    }
+  }
+}
+
+// Style cho dropdown thông báo trong sidebar
+.sidebar-notification-dropdown {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 320px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  z-index: 1002; // Cao hơn sidebar
+  display: block !important; // Đảm bảo hiển thị
+  
+  .sidebar-notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    
+    h3 {
+      margin: 0;
+      color: #ff6b81;
+    }
+    
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+      
+      &:hover {
+        color: #ff6b81;
+      }
+    }
+  }
+  
+  .sidebar-notification-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+  }
+  
+  .sidebar-notification-item {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(255, 221, 225, 0.3);
+    margin-bottom: 10px;
+    border-left: 3px solid #ff6b81;
+    
+    .notification-type {
+      font-size: 0.8rem;
+      color: #ff6b81;
+      margin-bottom: 5px;
+    }
+    
+    .notification-content {
+      h4 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+      }
+      
+      .notification-time {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #666;
+      }
+    }
+  }
+  
+  .view-all-link {
+    display: block;
+    text-align: center;
+    padding: 12px;
+    color: #ff6b81;
+    text-decoration: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      background-color: rgba(255, 107, 129, 0.05);
+    }
+  }
+}
+
+// Thêm style cho badge thông báo trong sidebar
+.sidebar-notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff6b81;
+  color: white;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+// Đảm bảo sidebar hiển thị đúng trên mobile
+@media (max-width: 768px) {
+  .sidebar-menu, .sidebar-overlay {
+    display: block !important; // Đảm bảo luôn hiển thị
+  }
+  
+  .sidebar-menu.open {
+    left: 0 !important; // Đảm bảo hiển thị khi có class open
+  }
+  
+  .sidebar-overlay.open {
+    display: block !important; // Đảm bảo hiển thị khi có class open
   }
 }

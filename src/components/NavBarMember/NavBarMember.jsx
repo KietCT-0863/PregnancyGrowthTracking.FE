@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -45,6 +46,9 @@ const NavBarMember = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showSidebarNotifications, setShowSidebarNotifications] = useState(false);
+  const [isMobile, setIsMobile] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,6 +116,21 @@ const NavBarMember = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    // Khởi tạo giá trị ban đầu
+    handleResize();
+
+    // Thêm event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchReminders = async () => {
     try {
       const response = await reminderService.getReminderHistory();
@@ -168,7 +187,6 @@ const NavBarMember = () => {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    console.log("Clearing user information");
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     setIsLoggedIn(false);
@@ -191,6 +209,27 @@ const NavBarMember = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // Thêm useEffect để handle click outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // Đóng dropdown thông báo trong sidebar khi click bên ngoài
+      if (showSidebarNotifications && 
+          !event.target.closest('.sidebar-notification-dropdown') && 
+          !event.target.closest('.sidebar-notification-button')) {
+        setShowSidebarNotifications(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSidebarNotifications]);
+
   return (
     <>
       <nav
@@ -207,17 +246,20 @@ const NavBarMember = () => {
               />
               <span className="navbar-logo-text">Mẹ Bầu</span>
             </Link>
-            <button
-              className="mobile-menu-toggle"
-              onClick={toggleMobileMenu}
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <FaTimes className="toggle-icon" />
-              ) : (
-                <FaBars className="toggle-icon" />
-              )}
-            </button>
+            {/* Chỉ hiển thị nút toggle sidebar trên mobile */}
+            {isMobile && (
+              <button
+                className="sidebar-toggle"
+                onClick={toggleSidebar}
+                aria-label="Toggle sidebar"
+              >
+                {isSidebarOpen ? (
+                  <FaTimes className="toggle-icon" />
+                ) : (
+                  <FaBars className="toggle-icon" />
+                )}
+              </button>
+            )}
           </div>
 
           <div
@@ -438,6 +480,148 @@ const NavBarMember = () => {
         </div>
       </nav>
       <div className="navbar-spacer" style={{ margin: 0, padding: 0 }}></div>
+
+      {/* Chỉ render sidebar và overlay khi ở chế độ mobile */}
+      {isMobile && (
+        <>
+          <div className={`sidebar-menu ${isSidebarOpen ? 'open' : ''}`}>
+            <div className="sidebar-header">
+              <div className="sidebar-logo">
+                <img
+                  src="/Logo bau-02.png"
+                  alt="Mẹ Bầu"
+                  className="sidebar-logo-image"
+                />
+                <h2 className="sidebar-title">Mẹ Bầu</h2>
+              </div>
+              <button className="close-sidebar" onClick={toggleSidebar}>
+                <FaTimes />
+              </button>
+            </div>
+            
+            {/* Thêm thông tin người dùng vào sidebar */}
+            {isLoggedIn && (
+              <div className="sidebar-user-profile">
+                {profileImage ? (
+                  <img
+                    src={profileImage || "/placeholder.svg"}
+                    alt="Profile"
+                    className="sidebar-user-avatar"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/placeholder.svg";
+                      setProfileImage(null);
+                    }}
+                  />
+                ) : (
+                  <FaUserCircle className="sidebar-user-icon" />
+                )}
+                <div className="sidebar-user-info">
+                  <h3 className="sidebar-user-name">{userInfo?.fullName || "Người dùng"}</h3>
+                  <p className="sidebar-user-email">{userInfo?.email}</p>
+                </div>
+              </div>
+            )}
+            
+            <div className="sidebar-items">
+              <Link to="/member/basic-tracking" className="sidebar-menu-item">
+                <div className="sidebar-icon"><FaBabyCarriage /></div>
+                <span className="sidebar-text">Theo Dõi Thai Kỳ</span>
+              </Link>
+              <Link to="/member/calendar" className="sidebar-menu-item">
+                <div className="sidebar-icon"><FaCalendarAlt /></div>
+                <span className="sidebar-text">Lịch Trình Thăm Khám</span>
+              </Link>
+              <Link to="/member/doctor-notes" className="sidebar-menu-item">
+                <div className="sidebar-icon"><FaNotesMedical /></div>
+                <span className="sidebar-text">Ghi Chú Bác Sĩ</span>
+              </Link>
+              <Link to="/member/blog" className="sidebar-menu-item">
+                <div className="sidebar-icon"><FaBlog /></div>
+                <span className="sidebar-text">Blog</span>
+              </Link>
+              <Link to="/member/community" className="sidebar-menu-item">
+                <div className="sidebar-icon"><FaUsers /></div>
+                <span className="sidebar-text">Cộng Đồng</span>
+              </Link>
+              
+              {/* Thêm nút thông báo vào sidebar */}
+              <button 
+                className="sidebar-menu-item sidebar-notification-button"
+                onClick={(e) => {
+                  e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
+                  setShowSidebarNotifications(!showSidebarNotifications);
+                }}
+              >
+                <div className="sidebar-icon">
+                  <FaBell />
+                  {notifications.length > 0 && (
+                    <span className="sidebar-notification-badge">{notifications.length}</span>
+                  )}
+                </div>
+                <span className="sidebar-text">Thông báo</span>
+              </button>
+            </div>
+            
+            {/* Thêm nút đăng xuất dưới cùng */}
+            <div className="sidebar-footer">
+              <button onClick={handleLogout} className="sidebar-logout-button">
+                <FaSignOutAlt className="sidebar-icon" />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Overlay */}
+          <div 
+            className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} 
+            onClick={toggleSidebar}
+          ></div>
+
+          {/* Thêm dropdown thông báo cho sidebar */}
+          {showSidebarNotifications && (
+            <div className="sidebar-notification-dropdown">
+              <div className="sidebar-notification-header">
+                <h3>Lịch nhắc sắp tới</h3>
+                <button className="close-button" onClick={() => setShowSidebarNotifications(false)}>
+                  ×
+                </button>
+              </div>
+              
+              <div className="sidebar-notification-list">
+                {notifications.length === 0 ? (
+                  <div className="no-notifications">
+                    <i className="fas fa-bell-slash"></i>
+                    <p>Không có lịch nhắc nào sắp tới</p>
+                  </div>
+                ) : (
+                  notifications.map((reminder, index) => (
+                    <div key={index} className="sidebar-notification-item">
+                      <div className="notification-type">
+                        {reminder.reminderType || "Khám thai"}
+                      </div>
+                      <div className="notification-content">
+                        <h4>{reminder.title}</h4>
+                        <p className="notification-time">
+                          {formatDateTime(reminder.date, reminder.time)}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              <Link
+                to="/member/calendar"
+                className="view-all-link"
+                onClick={() => setShowSidebarNotifications(false)}
+              >
+                Xem tất cả lịch
+              </Link>
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 };

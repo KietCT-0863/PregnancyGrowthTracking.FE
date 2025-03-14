@@ -1,12 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Synchronized color variables - giống với BlogSlideMember
-$primary-color: #ff6b81;
-$accent-color: #70a1ff;
-$text-color: #2f3542;
-$background: #f8f9fa;
-$secondary-color: #ffdde1;
+// Màu sắc nhẹ nhàng hơn
+$primary-color: #ff9cad; // Hồng nhạt hơn
+$accent-color: #a5d8ff; // Xanh nhạt
+$text-color: #7d7d7d; // Xám nhạt thay vì hồng
+$background: #fff9fa; // Trắng hơi hồng
+$secondary-color: #ffe9ed; // Hồng rất nhạt
+$light-pink: #fff5f7; // Hồng gần như trắng
 
 // Animation Keyframes
 @keyframes waterWave {
@@ -56,7 +57,7 @@ $secondary-color: #ffdde1;
   background: linear-gradient(
     135deg,
     rgba($background, 0.95),
-    rgba($secondary-color, 0.85)
+    rgba($secondary-color, 0.7)
   );
   padding: 1.5rem 2rem 3rem;
   position: relative;
@@ -101,21 +102,22 @@ $secondary-color: #ffdde1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     padding: 0;
 
     h3 {
       font-family: "Playfair Display", serif;
-      color: $text-color;
-      font-size: 3rem;
+      color: $primary-color;
+      font-size: 2.5rem; // Nhỏ hơn một chút
       margin: 0 auto;
       position: relative;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); // Thêm shadow nhẹ
 
       &::after {
         content: "";
         display: block;
-        width: 100px;
-        height: 4px;
+        width: 80px; // Nhỏ hơn
+        height: 3px; // Mỏng hơn
         background: linear-gradient(
           90deg,
           transparent,
@@ -123,113 +125,78 @@ $secondary-color: #ffdde1;
           transparent
         );
         margin-top: 0.5rem;
-        animation: flowWave 2s infinite linear;
+        animation: flowWave 3s infinite linear; // Chậm hơn
       }
     }
   }
 
   .notes-container {
     display: flex;
-    gap: 2rem;
+    gap: 1.5rem; // Nhỏ hơn
     padding: 0;
     max-width: 1400px;
     margin: 0 auto;
 
     .note-card {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 20px;
-      padding: 1.5rem;
+      background: #ffffff;
+      border-radius: 16px; // Bo tròn nhỏ hơn
+      padding: 1.2rem; // Padding nhỏ hơn
       margin: 0.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); // Shadow nhẹ hơn
+      transition: all 0.4s ease; // Transition nhẹ nhàng hơn
+      border: 1px solid rgba(255, 156, 173, 0.1); // Viền mờ hơn
       height: calc(100% - 2rem);
       display: flex;
       flex-direction: column;
-      min-width: 300px;
+      min-width: 280px;
 
       &:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: translateY(-5px); // Di chuyển ít hơn
+        box-shadow: 0 10px 20px rgba(255, 156, 173, 0.1); // Shadow hồng nhạt
 
         .note-thumbnail img {
-          transform: scale(1.1) rotate(2deg);
+          transform: scale(1.05); // Scale nhỏ hơn, không xoay
         }
       }
 
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          $primary-color,
-          transparent
-        );
-        opacity: 0;
-        transform: scaleX(0);
-        transition: all 0.5s ease;
-      }
-
       .note-card-header {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
 
         .note-info {
           .note-hospital {
             font-family: "Playfair Display", serif;
-            color: $text-color;
-            font-size: 1.5rem;
+            color: $text-color; // Màu xám thay vì hồng
+            font-size: 1.3rem; // Nhỏ hơn
             line-height: 1.3;
             margin-bottom: 0.5rem;
           }
 
           .note-date {
-            color: lighten($text-color, 20%);
-            font-size: 0.9rem;
+            color: lighten($text-color, 20%); // Xám nhạt hơn
+            font-size: 0.85rem; // Nhỏ hơn
           }
         }
       }
 
       .note-diagnosis {
-        color: lighten($text-color, 20%);
-        font-size: 1rem;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
+        color: $text-color; // Màu xám
+        font-size: 0.95rem; // Nhỏ hơn
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
         flex: 1;
       }
 
       .note-thumbnail {
         position: relative;
-        border-radius: 15px;
+        border-radius: 12px; // Bo tròn nhỏ hơn
         overflow: hidden;
-        margin-bottom: 1.5rem;
-
-        &::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: radial-gradient(
-            circle at center,
-            rgba($primary-color, 0.2),
-            transparent 70%
-          );
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        }
+        margin-bottom: 0.5rem; // Margin nhỏ hơn
 
         img {
           width: 100%;
-          height: 200px;
+          height: 180px; // Thấp hơn
           object-fit: cover;
-          transition: all 0.5s ease;
+          transition: all 0.4s ease;
         }
       }
     }
@@ -249,9 +216,9 @@ $secondary-color: #ffdde1;
     pointer-events: none;
 
     .scroll-btn {
-      width: 40px;
-      height: 40px;
-      background: $primary-color;
+      width: 36px; // Nhỏ hơn
+      height: 36px; // Nhỏ hơn
+      background: rgba($primary-color, 0.8); // Hơi trong suốt
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -260,21 +227,21 @@ $secondary-color: #ffdde1;
       cursor: pointer;
       transition: all 0.3s ease;
       border: none;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 8px rgba(255, 156, 173, 0.2); // Shadow hồng nhạt
       pointer-events: auto;
 
       &:hover {
-        background: darken($primary-color, 10%);
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        background: $primary-color; // Không đậm hơn
+        transform: translateY(-2px); // Di chuyển ít hơn
+        box-shadow: 0 5px 12px rgba(255, 156, 173, 0.3); // Shadow hồng nhạt
       }
 
       &:first-child {
-        margin-left: -20px;
+        margin-left: -15px; // Margin nhỏ hơn
       }
 
       &:last-child {
-        margin-right: -20px;
+        margin-right: -15px; // Margin nhỏ hơn
       }
     }
   }
@@ -313,12 +280,13 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.8); // Nền trắng trong suốt thay vì hồng
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 20px;
+  backdrop-filter: blur(3px); // Blur nhẹ hơn
 }
 
 .modal-content {
@@ -326,29 +294,29 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 16px;
   padding: 1.5rem;
   width: 90%;
-  max-width: 500px;
+  max-width: 480px; // Nhỏ hơn
   position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  border: 2px solid #ffffff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); // Shadow xám nhạt
+  border: 1px solid $secondary-color; // Viền mỏng hơn
 
   // Close Button
   .close-btn {
     position: absolute;
     top: 0.8rem;
     right: 0.8rem;
-    background: rgba($primary-color, 0.1);
-    border: 1px solid $primary-color;
-    width: 32px;
-    height: 32px;
+    background: $light-pink;
+    border: none;
+    width: 30px; // Nhỏ hơn
+    height: 30px; // Nhỏ hơn
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: $primary-color;
-    font-size: 1.5rem;
+    font-size: 1.3rem; // Nhỏ hơn
     z-index: 2;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); // Shadow nhẹ hơn
 
     &:hover {
       background: $primary-color;
@@ -358,37 +326,37 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   // Header Section
   .detail-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem; // Nhỏ hơn
     padding-bottom: 0.8rem;
-    border-bottom: 2px solid $primary-color;
+    border-bottom: 1px solid $secondary-color; // Viền mỏng hơn
     background: #ffffff;
-    padding: 1rem;
+    padding: 0.8rem; // Padding nhỏ hơn
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: none; // Bỏ shadow
 
     h3 {
       font-family: "Playfair Display", serif;
-      color: #2f3542;
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin: 0 0 1rem 0;
+      color: $text-color; // Màu xám
+      font-size: 1.5rem; // Nhỏ hơn
+      font-weight: 600; // Nhẹ hơn
+      margin: 0 0 0.8rem 0; // Margin nhỏ hơn
       line-height: 1.4;
       padding: 0.5rem;
-      background: #f8f9fa;
+      background: $light-pink;
       border-radius: 8px;
-      border-left: 4px solid $primary-color;
+      border-left: 3px solid $primary-color; // Viền mỏng hơn
     }
 
     .detail-date {
       display: inline-block;
-      color: $primary-color;
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 0.5rem 1.2rem;
-      background: #fff5f6;
+      color: $primary-color; // Màu hồng nhạt
+      font-size: 0.9rem; // Nhỏ hơn
+      font-weight: 500; // Nhẹ hơn
+      padding: 0.4rem 1rem; // Padding nhỏ hơn
+      background: $light-pink;
       border-radius: 20px;
-      border: 2px solid $primary-color;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba($primary-color, 0.2); // Viền mỏng
+      box-shadow: none; // Bỏ shadow
       letter-spacing: 0.5px;
     }
   }
@@ -396,11 +364,11 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   // Content Section
   .detail-content {
     .detail-item {
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.2rem; // Nhỏ hơn
       background: #ffffff;
-      padding: 1rem;
+      padding: 0.8rem; // Padding nhỏ hơn
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: none; // Bỏ shadow
 
       &:last-child {
         margin-bottom: 0;
@@ -409,37 +377,37 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       strong {
         display: block;
         color: $primary-color;
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-bottom: 0.8rem;
+        font-size: 1.1rem; // Nhỏ hơn
+        font-weight: 600; // Nhẹ hơn
+        margin-bottom: 0.6rem; // Margin nhỏ hơn
         padding-left: 0.5rem;
-        border-left: 4px solid $primary-color;
-        letter-spacing: 0.5px;
+        border-left: 3px solid $primary-color; // Viền mỏng hơn
+        letter-spacing: 0.3px; // Nhỏ hơn
       }
 
       p {
-        color: #2f3542;
-        line-height: 1.8;
-        background: #f8f9fa;
-        padding: 1.2rem;
+        color: $text-color; // Màu xám
+        line-height: 1.6; // Line height nhỏ hơn
+        background: $light-pink;
+        padding: 1rem; // Padding nhỏ hơn
         border-radius: 8px;
         margin: 0;
-        font-size: 1.1rem;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-        border: 1px solid #edf0f7;
+        font-size: 1rem; // Nhỏ hơn
+        font-weight: 400; // Nhẹ hơn
+        letter-spacing: 0.2px; // Nhỏ hơn
+        border: none; // Bỏ viền
       }
     }
 
     // Image Section
     .detail-image {
-      margin-top: 2rem;
+      margin-top: 1.5rem; // Margin nhỏ hơn
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      border: 2px solid #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); // Shadow nhẹ hơn
+      border: none; // Bỏ viền
       background: #ffffff;
-      padding: 0.5rem;
+      padding: 0.3rem; // Padding nhỏ hơn
 
       img {
         width: 100%;
@@ -450,54 +418,8 @@ $transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         transition: transform 0.3s ease;
 
         &:hover {
-          transform: scale(1.02);
+          transform: scale(1.01); // Scale nhỏ hơn
         }
-      }
-    }
-  }
-}
-
-// Dark Mode Support
-@media (prefers-color-scheme: dark) {
-  .modal-content {
-    background: #1a1a1a;
-
-    .detail-header {
-      background: #2d2d2d;
-
-      h3 {
-        color: #ffffff;
-        background: #1a1a1a;
-        border-left: 4px solid $primary-color;
-      }
-
-      .detail-date {
-        background: $primary-color;
-        color: #ffffff;
-        border: none;
-        font-weight: 600;
-      }
-    }
-
-    .detail-content {
-      .detail-item {
-        background: #2d2d2d;
-
-        strong {
-          color: $primary-color;
-          border-left-color: $primary-color;
-        }
-
-        p {
-          background: #1a1a1a;
-          color: #ffffff;
-          border-color: #3f3f3f;
-        }
-      }
-
-      .detail-image {
-        background: #2d2d2d;
-        border-color: #3f3f3f;
       }
     }
   }

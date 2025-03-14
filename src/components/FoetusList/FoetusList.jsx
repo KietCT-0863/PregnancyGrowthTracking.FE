@@ -275,10 +275,10 @@ const FoetusList = () => {
       </div>
       
       <div className="foetus-list-header">
-        <h2>Danh sách thai nhi</h2>
+        <h2>Bé Yêu Của Mẹ</h2>
         <button className="add-foetus-btn" onClick={handleShowAddForm}>
           <Baby size={20} />
-          Thêm thai nhi
+          Thêm Bé Cưng
         </button>
       </div>
 

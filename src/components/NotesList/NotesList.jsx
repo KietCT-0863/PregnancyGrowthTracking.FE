@@ -115,6 +115,7 @@ const NotesList = () => {
               }}
               whileHover={{ scale: 1.03 }}
               onClick={() => setSelectedNote(note)}
+              style={{ background: '#ffffff' }}
             >
               <div className="note-card-header">
                 <div className="note-info">
@@ -181,6 +182,7 @@ const NotesList = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              style={{ background: '#ffffff' }}
             >
               <button
                 className="close-btn"
@@ -190,7 +192,7 @@ const NotesList = () => {
                 ×
               </button>
 
-              <div className="detail-header">
+              <div className="detail-header" style={{ background: '#ffffff' }}>
                 <h3>{selectedNote.note || "Chưa có thông tin"}</h3>
                 <span className="detail-date">
                   {new Date(selectedNote.date).toLocaleDateString("vi-VN")}
@@ -204,6 +206,7 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
+                    style={{ background: '#ffffff' }}
                   >
                     <strong>Chẩn đoán : </strong>
                     <p>{selectedNote.diagnosis}</p>
@@ -216,6 +219,7 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
+                    style={{ background: '#ffffff' }}
                   >
                     <strong>Ghi chú:</strong>
                     <p>{selectedNote.detail}</p>
@@ -228,6 +232,7 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
+                    style={{ background: '#ffffff' }}
                   >
                     <img
                       src={selectedNote.userNotePhoto}
