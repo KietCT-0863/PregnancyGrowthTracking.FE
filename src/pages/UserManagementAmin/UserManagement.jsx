@@ -25,6 +25,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import {
   Edit as EditIcon,
@@ -63,6 +65,15 @@ const UserManagement = () => {
   const [currentUser, setCurrentUser] = useState(initialUserState);
   const [roleFilter, setRoleFilter] = useState("all");
   const [errors, setErrors] = useState({});
+  const [statusConfirmDialog, setStatusConfirmDialog] = useState({
+    open: false,
+    userId: null,
+    newStatus: false,
+    userName: "",
+  });
+
+  // Thêm biến lưu thông tin người dùng đang đăng nhập
+  const currentLoggedInUser = JSON.parse(localStorage.getItem("userData"));
 
   useEffect(() => {
     fetchUsers();
@@ -212,6 +223,16 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = (id) => {
+    const userToDelete = users.find((u) => u.userId === id);
+
+    if (
+      userToDelete?.roleId === 1 &&
+      userToDelete.userId === currentLoggedInUser?.userId
+    ) {
+      showSnackbar("Không thể xóa tài khoản admin đang đăng nhập", "error");
+      return;
+    }
+
     setSelectedUserId(id);
     setOpenDeleteDialog(true);
   };
@@ -219,6 +240,46 @@ const UserManagement = () => {
   const handleRoleFilterChange = (event) => {
     setRoleFilter(event.target.value);
     setPage(0);
+  };
+
+  const handleStatusChange = async (userId, newStatus, userName) => {
+    const userToUpdate = users.find((u) => u.userId === userId);
+    if (userToUpdate?.roleId === 1) {
+      showSnackbar("Không thể thay đổi trạng thái của Admin", "error");
+      return;
+    }
+
+    setStatusConfirmDialog({
+      open: true,
+      userId,
+      newStatus,
+      userName,
+    });
+  };
+
+  const handleConfirmStatusChange = async () => {
+    try {
+      setLoading(true);
+      await userManagementService.updateUser(statusConfirmDialog.userId, {
+        available: statusConfirmDialog.newStatus,
+      });
+      await fetchUsers();
+      showSnackbar("Cập nhật trạng thái thành công");
+    } catch (error) {
+      showSnackbar(
+        error.response?.data?.message ||
+          "Có lỗi xảy ra khi cập nhật trạng thái",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+      setStatusConfirmDialog({
+        open: false,
+        userId: null,
+        newStatus: false,
+        userName: "",
+      });
+    }
   };
 
   const filteredUsers = users.filter((user) => {
@@ -296,6 +357,7 @@ const UserManagement = () => {
                 <TableCell>Email</TableCell>
                 <TableCell>Họ và tên</TableCell>
                 <TableCell>Vai trò</TableCell>
+                <TableCell>Trạng thái</TableCell>
                 <TableCell>Hành động</TableCell>
               </TableRow>
             </TableHead>
@@ -314,6 +376,25 @@ const UserManagement = () => {
                       }`}
                     >
                       {getRoleInfo(user.roleId).name}
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={user.available}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            user.userId,
+                            e.target.checked,
+                            user.userName
+                          )
+                        }
+                        color="primary"
+                        disabled={user.roleId === 1}
+                        title={
+                          user.roleId === 1
+                            ? "Không thể thay đổi trạng thái của Admin"
+                            : ""
+                        }
+                      />
                     </TableCell>
                     <TableCell>
                       <IconButton
@@ -349,14 +430,18 @@ const UserManagement = () => {
         open={openDeleteDialog}
         onClose={() => setOpenDeleteDialog(false)}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Xác nhận xóa người dùng</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this user?
+          {users.find((u) => u.userId === selectedUserId)?.userName
+            ? `Bạn có chắc chắn muốn xóa người dùng "${
+                users.find((u) => u.userId === selectedUserId)?.userName
+              }" không?`
+            : "Bạn có chắc chắn muốn xóa người dùng này không?"}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenDeleteDialog(false)}>Hủy</Button>
           <Button onClick={handleDeleteConfirm} color="error">
-            Delete
+            Xóa
           </Button>
         </DialogActions>
       </Dialog>
@@ -461,11 +546,63 @@ const UserManagement = () => {
               <MenuItem value={3}>User</MenuItem>
             </Select>
           </FormControl>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={currentUser.available}
+                onChange={(e) =>
+                  setCurrentUser({
+                    ...currentUser,
+                    available: e.target.checked,
+                  })
+                }
+                color="primary"
+                disabled={currentUser.roleId === 1}
+              />
+            }
+            label={
+              currentUser.roleId === 1
+                ? "Admin luôn trong trạng thái hoạt động"
+                : currentUser.available
+                ? "Tài khoản đang hoạt động"
+                : "Tài khoản bị khóa"
+            }
+            className="status-switch"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button onClick={handleSaveUser} color="primary">
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={statusConfirmDialog.open}
+        onClose={() =>
+          setStatusConfirmDialog({ ...statusConfirmDialog, open: false })
+        }
+      >
+        <DialogTitle>Xác nhận thay đổi trạng thái</DialogTitle>
+        <DialogContent>
+          Bạn có chắc chắn muốn{" "}
+          {statusConfirmDialog.newStatus ? "mở khóa" : "khóa"} tài khoản của
+          người dùng "{statusConfirmDialog.userName}" không?
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() =>
+              setStatusConfirmDialog({ ...statusConfirmDialog, open: false })
+            }
+          >
+            Hủy
+          </Button>
+          <Button
+            onClick={handleConfirmStatusChange}
+            color={statusConfirmDialog.newStatus ? "primary" : "error"}
+          >
+            Xác nhận
           </Button>
         </DialogActions>
       </Dialog>
