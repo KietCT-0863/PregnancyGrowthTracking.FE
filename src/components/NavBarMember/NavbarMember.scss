@@ -290,6 +290,30 @@ $font-accent: "Amatic SC", cursive;
         }
       }
 
+      .notification-tabs {
+        display: flex;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 10px;
+        
+        .tab-button {
+          flex: 1;
+          padding: 8px;
+          border: none;
+          background: none;
+          cursor: pointer;
+          color: #666;
+          
+          &.active {
+            color: #ff4757;
+            border-bottom: 2px solid #ff4757;
+          }
+          
+          &:hover {
+            background-color: rgba(255, 71, 87, 0.1);
+          }
+        }
+      }
+
       .notification-list {
         max-height: 300px;
         overflow-y: auto;
@@ -334,6 +358,45 @@ $font-accent: "Amatic SC", cursive;
               color: lighten($text-dark, 20%);
             }
           }
+
+          &.alert {
+            border-left: 3px solid #ff4757;
+            
+            .notification-type.warning {
+              color: #ff4757;
+              background-color: rgba(255, 71, 87, 0.1);
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+              font-weight: 500;
+            }
+            
+            .notification-message {
+              color: #333;
+              margin: 8px 0;
+            }
+            
+            .notification-details {
+              color: #666;
+              font-size: 12px;
+            }
+          }
+          
+          &.reminder {
+            border-left: 3px solid #2ed573;
+          }
+          
+          .notification-message {
+            font-size: 14px;
+            color: #333;
+            margin: 5px 0;
+          }
+          
+          .notification-details {
+            font-size: 12px;
+            color: #666;
+            margin: 3px 0;
+          }
         }
 
         .no-notifications {
@@ -356,19 +419,20 @@ $font-accent: "Amatic SC", cursive;
         }
       }
 
-      .view-all-link {
-        display: block;
-        text-align: center;
-        padding: 1rem;
-        color: $primary;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all $transition;
-        border-top: 1px solid rgba($primary, 0.1);
-        margin: 0;
-
-        &:hover {
-          background: rgba($primary, 0.05);
+      .notification-footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-top: 1px solid #eee;
+        
+        .view-all-link {
+          font-size: 14px;
+          color: #ff4757;
+          text-decoration: none;
+          
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
     }
@@ -1105,4 +1169,18 @@ $font-accent: "Amatic SC", cursive;
   .sidebar-overlay.open {
     display: block !important; // Đảm bảo hiển thị khi có class open
   }
+}
+
+// Cập nhật badge để hiển thị tổng số thông báo
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4757;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
 }

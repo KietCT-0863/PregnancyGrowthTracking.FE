@@ -105,27 +105,71 @@ const HISTORY_COLUMNS = [
   {
     title: "Trạng thái",
     key: "status",
-    width: 120,
-    render: (_, record) => {
-      const allSafe = record.hc?.isAlert && record.ac?.isAlert && 
-                      record.fl?.isAlert && record.efw?.isAlert;
-      
-      return (
-        <span className={`status-badge ${allSafe ? 'safe' : 'warning'}`}>
-          {allSafe ? (
-            <>
-              <CheckCircle size={14} />
-              <span>An toàn</span>
+    width: 200,
+    render: (_, record) => (
+      <div className="status-indicators">
+        {record.hc && (
+          <span className={`status-badge ${record.hc.isAlert ? 'warning' : 'safe'}`}>
+            {record.hc.isAlert ? (
+              <>
+                <AlertTriangle size={14} />
+                <span>HC: Cần chú ý</span>
             </>
           ) : (
             <>
-              <AlertTriangle size={14} />
-              <span>Cần chú ý</span>
+                <CheckCircle size={14} />
+                <span>HC: An toàn</span>
             </>
           )}
         </span>
-      );
-    }
+        )}
+        {record.ac && (
+          <span className={`status-badge ${record.ac.isAlert ? 'warning' : 'safe'}`}>
+            {record.ac.isAlert ? (
+              <>
+                <AlertTriangle size={14} />
+                <span>AC: Cần chú ý</span>
+              </>
+                  ) : (
+                    <>
+                <CheckCircle size={14} />
+                <span>AC: An toàn</span>
+                    </>
+                  )}
+          </span>
+        )}
+        {record.fl && (
+          <span className={`status-badge ${record.fl.isAlert ? 'warning' : 'safe'}`}>
+            {record.fl.isAlert ? (
+              <>
+                                        <AlertTriangle size={14} />
+                <span>FL: Cần chú ý</span>
+              </>
+            ) : (
+              <>
+                                        <CheckCircle size={14} />
+                <span>FL: An toàn</span>
+              </>
+            )}
+          </span>
+        )}
+        {record.efw && (
+          <span className={`status-badge ${record.efw.isAlert ? 'warning' : 'safe'}`}>
+            {record.efw.isAlert ? (
+              <>
+                <AlertTriangle size={14} />
+                <span>EFW: Cần chú ý</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle size={14} />
+                <span>EFW: An toàn</span>
+              </>
+            )}
+          </span>
+        )}
+      </div>
+    )
   }
 ];
 
@@ -189,6 +233,8 @@ const BasicTracking = () => {
   const [alerts, setAlerts] = useState([]);
   const [standardRanges, setStandardRanges] = useState({});
   const [loadingRanges, setLoadingRanges] = useState(false);
+  const [alertHistory, setAlertHistory] = useState([]);
+  const [showAlertHistory, setShowAlertHistory] = useState(false);
 
   // Data fetching
   const fetchData = async () => {
@@ -658,26 +704,14 @@ const BasicTracking = () => {
       
       // Lấy dữ liệu mới nhất
       const currentData = [...foetusData].sort((a, b) => b.age - a.age)[0];
-      const currentAge = currentData.age;
-      
       let newAlerts = [];
       
-      // Kiểm tra tuần thai
-      if (currentAge < 20) {
-        newAlerts.push({
-          type: "info",
-          title: "Thai nhi đang trong giai đoạn phát triển sớm",
-          description: "Các chỉ số có thể chưa phản ánh đầy đủ sự phát triển.",
-          icon: <Info />
-        });
-      }
-      
-      // Kiểm tra HC (Head Circumference)
+      // Kiểm tra HC
       if (currentData.hc) {
-        if (!currentData.hc.isAlert) {
+        if (currentData.hc.isAlert) {
           newAlerts.push({
-            type: "danger",
-            title: "HC nằm ngoài khoảng an toàn",
+            type: "warning",
+            title: "Cảnh báo HC",
             description: `Chu vi đầu (HC) hiện tại là ${currentData.hc.value}mm, nằm ngoài khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
             icon: <AlertTriangle />
           });
@@ -691,12 +725,12 @@ const BasicTracking = () => {
         }
       }
       
-      // Kiểm tra AC (Abdominal Circumference)
+      // Kiểm tra AC
       if (currentData.ac) {
-        if (!currentData.ac.isAlert) {
+        if (currentData.ac.isAlert) {
           newAlerts.push({
-            type: "danger",
-            title: "AC nằm ngoài khoảng an toàn",
+            type: "warning",
+            title: "Cảnh báo AC",
             description: `Chu vi bụng (AC) hiện tại là ${currentData.ac.value}mm, nằm ngoài khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
             icon: <AlertTriangle />
           });
@@ -710,12 +744,12 @@ const BasicTracking = () => {
         }
       }
       
-      // Kiểm tra FL (Femur Length)
+      // Kiểm tra FL
       if (currentData.fl) {
-        if (!currentData.fl.isAlert) {
+        if (currentData.fl.isAlert) {
           newAlerts.push({
-            type: "danger",
-            title: "FL nằm ngoài khoảng an toàn",
+            type: "warning",
+            title: "Cảnh báo FL",
             description: `Chiều dài xương đùi (FL) hiện tại là ${currentData.fl.value}mm, nằm ngoài khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
             icon: <AlertTriangle />
           });
@@ -729,12 +763,12 @@ const BasicTracking = () => {
         }
       }
       
-      // Kiểm tra EFW (Estimated Fetal Weight)
+      // Kiểm tra EFW
       if (currentData.efw) {
-        if (!currentData.efw.isAlert) {
+        if (currentData.efw.isAlert) {
           newAlerts.push({
-            type: "danger",
-            title: "Cân nặng nằm ngoài khoảng an toàn",
+            type: "warning",
+            title: "Cảnh báo cân nặng",
             description: `Cân nặng ước tính (EFW) hiện tại là ${currentData.efw.value}g, nằm ngoài khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
             icon: <AlertTriangle />
           });
@@ -796,6 +830,138 @@ const BasicTracking = () => {
     };
     
     return standardValues[age] || 180; // Giá trị mặc định nếu không có dữ liệu
+  };
+
+  // Thêm hàm để lấy lịch sử cảnh báo
+  const fetchAlertHistory = async (foetusId) => {
+    try {
+      const response = await growthStatsService.getGrowthData(foetusId);
+      if (Array.isArray(response)) {
+        const alerts = response.map(data => {
+          const alerts = [];
+          if (data.hc?.isAlert) {
+            alerts.push({
+              type: 'warning',
+              measure: 'HC',
+              value: data.hc.value,
+              range: `${data.hc.minRange}-${data.hc.maxRange}`,
+              date: data.date
+            });
+          }
+          if (data.ac?.isAlert) {
+            alerts.push({
+              type: 'warning',
+              measure: 'AC',
+              value: data.ac.value,
+              range: `${data.ac.minRange}-${data.ac.maxRange}`,
+              date: data.date
+            });
+          }
+          if (data.fl?.isAlert) {
+            alerts.push({
+              type: 'warning',
+              measure: 'FL',
+              value: data.fl.value,
+              range: `${data.fl.minRange}-${data.fl.maxRange}`,
+              date: data.date
+            });
+          }
+          if (data.efw?.isAlert) {
+            alerts.push({
+              type: 'warning',
+              measure: 'EFW',
+              value: data.efw.value,
+              range: `${data.efw.minRange}-${data.efw.maxRange}`,
+              date: data.date
+            });
+          }
+          return {
+            date: data.date,
+            age: data.age,
+            alerts
+          };
+        }).filter(item => item.alerts.length > 0);
+        
+        setAlertHistory(alerts);
+      }
+    } catch (error) {
+      console.error('Error fetching alert history:', error);
+      toast.error('Không thể lấy lịch sử cảnh báo');
+    }
+  };
+
+  // Cập nhật useEffect khi chọn thai nhi
+  useEffect(() => {
+    if (selectedChild) {
+      fetchAlertHistory(selectedChild.foetusId);
+    }
+  }, [selectedChild]);
+
+  // Thêm component AlertHistoryModal
+  const AlertHistoryModal = ({ isOpen, onClose, history }) => {
+    return (
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="alert-history-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="alert-history-content"
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.9 }}
+              transition={{ type: "spring", damping: 20 }}
+            >
+              <div className="alert-history-header">
+                <h3>Lịch sử cảnh báo</h3>
+                <motion.button
+                  onClick={onClose}
+                  whileHover={{
+                    rotate: 90,
+                    backgroundColor: "rgba(255, 71, 87, 0.1)",
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  ✕
+                </motion.button>
+              </div>
+              <div className="alert-history-body">
+                {history.length > 0 ? (
+                  history.map((item, index) => (
+                    <div key={index} className="alert-history-item">
+                      <div className="alert-history-date">
+                        <Calendar size={14} />
+                        <span>{new Date(item.date).toLocaleDateString('vi-VN')}</span>
+                        <span className="alert-history-week">Tuần {item.age}</span>
+                      </div>
+                      <div className="alert-history-alerts">
+                        {item.alerts.map((alert, alertIndex) => (
+                          <div key={alertIndex} className="alert-detail">
+                            <AlertTriangle size={14} className="warning-icon" />
+                            <span>
+                              {alert.measure}: {alert.value} {alert.measure === 'EFW' ? 'g' : 'mm'}
+                              {' '}(Khoảng an toàn: {alert.range} {alert.measure === 'EFW' ? 'g' : 'mm'})
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-alerts-history">
+                    <Info size={24} />
+                    <p>Không có lịch sử cảnh báo</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
   };
 
   if (loading) return <div className="loading-spinner">Đang tải...</div>;
@@ -1115,7 +1281,11 @@ const BasicTracking = () => {
           <div className="chart-alerts">
             <div className="alert-header">
               <h4>
-                <Bell size={16} />
+                <Bell 
+                  size={16} 
+                  className={alertHistory.length > 0 ? 'has-alerts' : ''}
+                  onClick={() => setShowAlertHistory(true)}
+                />
                 <span>Cảnh báo & Thông báo</span>
               </h4>
               <button 
@@ -1290,18 +1460,18 @@ const BasicTracking = () => {
                               <>
                                 <div className="comparison-item">
                                   <h5>HC (Chu vi đầu)</h5>
-                                  <div className={`comparison-value ${latestData.hc?.isAlert ? 'safe' : 'warning'}`}>
+                                  <div className={`comparison-value ${latestData.hc?.isAlert ? 'warning' : 'safe'}`}>
                                     <span>Giá trị: {latestData.hc?.value || 0} mm</span>
                                     <span>Khoảng an toàn: {latestData.hc?.minRange || 0} - {latestData.hc?.maxRange || 0} mm</span>
                                     {latestData.hc?.isAlert ? (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    ) : (
                                       <div className="status-badge warning">
                                         <AlertTriangle size={14} />
                                         <span>Cần chú ý</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
                                       </div>
                                     )}
                                   </div>
@@ -1309,18 +1479,18 @@ const BasicTracking = () => {
                                 
                                 <div className="comparison-item">
                                   <h5>AC (Chu vi bụng)</h5>
-                                  <div className={`comparison-value ${latestData.ac?.isAlert ? 'safe' : 'warning'}`}>
+                                  <div className={`comparison-value ${latestData.ac?.isAlert ? 'warning' : 'safe'}`}>
                                     <span>Giá trị: {latestData.ac?.value || 0} mm</span>
                                     <span>Khoảng an toàn: {latestData.ac?.minRange || 0} - {latestData.ac?.maxRange || 0} mm</span>
                                     {latestData.ac?.isAlert ? (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    ) : (
                                       <div className="status-badge warning">
                                         <AlertTriangle size={14} />
                                         <span>Cần chú ý</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
                                       </div>
                                     )}
                                   </div>
@@ -1328,18 +1498,18 @@ const BasicTracking = () => {
                                 
                                 <div className="comparison-item">
                                   <h5>FL (Chiều dài xương đùi)</h5>
-                                  <div className={`comparison-value ${latestData.fl?.isAlert ? 'safe' : 'warning'}`}>
+                                  <div className={`comparison-value ${latestData.fl?.isAlert ? 'warning' : 'safe'}`}>
                                     <span>Giá trị: {latestData.fl?.value || 0} mm</span>
                                     <span>Khoảng an toàn: {latestData.fl?.minRange || 0} - {latestData.fl?.maxRange || 0} mm</span>
                                     {latestData.fl?.isAlert ? (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    ) : (
                                       <div className="status-badge warning">
                                         <AlertTriangle size={14} />
                                         <span>Cần chú ý</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
                                       </div>
                                     )}
                                   </div>
@@ -1347,18 +1517,18 @@ const BasicTracking = () => {
                                 
                                 <div className="comparison-item">
                                   <h5>EFW (Cân nặng ước tính)</h5>
-                                  <div className={`comparison-value ${latestData.efw?.isAlert ? 'safe' : 'warning'}`}>
+                                  <div className={`comparison-value ${latestData.efw?.isAlert ? 'warning' : 'safe'}`}>
                                     <span>Giá trị: {latestData.efw?.value || 0} g</span>
                                     <span>Khoảng an toàn: {latestData.efw?.minRange || 0} - {latestData.efw?.maxRange || 0} g</span>
                                     {latestData.efw?.isAlert ? (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    ) : (
                                       <div className="status-badge warning">
                                         <AlertTriangle size={14} />
                                         <span>Cần chú ý</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
                                       </div>
                                     )}
                                   </div>
@@ -1380,6 +1550,12 @@ const BasicTracking = () => {
           isOpen={showGrowthAlert}
           onClose={() => setShowGrowthAlert(false)}
           alertData={alertData}
+        />
+
+        <AlertHistoryModal
+          isOpen={showAlertHistory}
+          onClose={() => setShowAlertHistory(false)}
+          history={alertHistory}
         />
       </div>
     </div>

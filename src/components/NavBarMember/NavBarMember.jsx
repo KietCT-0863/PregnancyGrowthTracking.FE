@@ -19,6 +19,7 @@ import {
 } from "react-icons/fa";
 import "./NavbarMember.scss";
 import reminderService from "../../api/services/reminderService";
+import growthStatsService from "../../api/services/growthStatsService";
 
 const NavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
@@ -49,6 +50,9 @@ const NavBarMember = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showSidebarNotifications, setShowSidebarNotifications] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
+  const [alertHistory, setAlertHistory] = useState([]);
+  const [combinedNotifications, setCombinedNotifications] = useState([]);
+  const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,9 +171,94 @@ const NavBarMember = () => {
     }
   };
 
+  const fetchAlertHistory = async () => {
+    try {
+      const response = await growthStatsService.getGrowthData();
+      if (Array.isArray(response)) {
+        const alerts = response
+          .map(data => {
+            const alerts = [];
+            const date = new Date(data.date);
+            
+            if (data.hc?.isAlert) {
+              alerts.push({
+                type: 'warning',
+                measure: 'HC',
+                value: data.hc.value,
+                range: `${data.hc.minRange}-${data.hc.maxRange}`,
+                date: date,
+                age: data.age,
+                message: `Chu vi đầu (HC) ${data.hc.value}mm nằm ngoài khoảng an toàn`
+              });
+            }
+            if (data.ac?.isAlert) {
+              alerts.push({
+                type: 'warning',
+                measure: 'AC',
+                value: data.ac.value,
+                range: `${data.ac.minRange}-${data.ac.maxRange}`,
+                date: date,
+                age: data.age,
+                message: `Chu vi bụng (AC) ${data.ac.value}mm nằm ngoài khoảng an toàn`
+              });
+            }
+            if (data.fl?.isAlert) {
+              alerts.push({
+                type: 'warning',
+                measure: 'FL',
+                value: data.fl.value,
+                range: `${data.fl.minRange}-${data.fl.maxRange}`,
+                date: date,
+                age: data.age,
+                message: `Chiều dài xương đùi (FL) ${data.fl.value}mm nằm ngoài khoảng an toàn`
+              });
+            }
+            if (data.efw?.isAlert) {
+              alerts.push({
+                type: 'warning',
+                measure: 'EFW',
+                value: data.efw.value,
+                range: `${data.efw.minRange}-${data.efw.maxRange}`,
+                date: date,
+                age: data.age,
+                message: `Cân nặng ước tính (EFW) ${data.efw.value}g nằm ngoài khoảng an toàn`
+              });
+            }
+            return alerts;
+          })
+          .flat()
+          .sort((a, b) => b.date - a.date);
+
+        setAlertHistory(alerts);
+      }
+    } catch (error) {
+      console.error('Error fetching alert history:', error);
+    }
+  };
+
+  useEffect(() => {
+    const combined = [
+      ...notifications.map(n => ({
+        ...n,
+        isReminder: true,
+        date: new Date(`${n.date.split('T')[0]}T${n.time}`)
+      })),
+      ...alertHistory.map(a => ({
+        ...a,
+        isAlert: true
+      }))
+    ].sort((a, b) => b.date - a.date);
+    
+    setCombinedNotifications(combined);
+  }, [notifications, alertHistory]);
+
   useEffect(() => {
     fetchReminders();
-    const interval = setInterval(fetchReminders, 60000);
+    fetchAlertHistory();
+    const interval = setInterval(() => {
+      fetchReminders();
+      fetchAlertHistory();
+    }, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -229,6 +318,8 @@ const NavBarMember = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showSidebarNotifications]);
+
+  const totalNotifications = combinedNotifications.length;
 
   return (
     <>
@@ -332,55 +423,94 @@ const NavBarMember = () => {
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <FaBell />
-                {notifications.length > 0 && (
+                {totalNotifications > 0 && (
                   <span className="notification-badge">
-                    {notifications.length}
+                    {totalNotifications}
                   </span>
                 )}
               </button>
 
               {showNotifications && (
                 <div className="notification-dropdown">
-                  <h3>
-                    Lịch nhắc sắp tới
+                  <div className="notification-header">
+                    <h3>Thông báo</h3>
                     <button
                       className="close-button"
                       onClick={() => setShowNotifications(false)}
                     >
                       ×
                     </button>
-                  </h3>
-
-                  <div className="notification-list">
-                    {notifications.length === 0 ? (
-                      <div className="no-notifications">
-                        <i className="fas fa-bell-slash"></i>
-                        <p>Không có lịch nhắc nào sắp tới</p>
-                      </div>
-                    ) : (
-                      notifications.map((reminder, index) => (
-                        <div key={index} className="notification-item">
-                          <div className="notification-type">
-                            {reminder.reminderType || "Khám thai"}
-                          </div>
-                          <div className="notification-content">
-                            <h4>{reminder.title}</h4>
-                            <p className="notification-time">
-                              {formatDateTime(reminder.date, reminder.time)}
-                            </p>
-                          </div>
-                        </div>
-                      ))
-                    )}
                   </div>
 
-                  <Link
-                    to="/member/calendar"
-                    className="view-all-link"
-                    onClick={() => setShowNotifications(false)}
-                  >
-                    Xem tất cả lịch
-                  </Link>
+                  <div className="notification-tabs">
+                    <button 
+                      className={`tab-button ${activeTab === 'all' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('all')}
+                    >
+                      Tất cả
+                    </button>
+                    <button 
+                      className={`tab-button ${activeTab === 'reminders' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('reminders')}
+                    >
+                      Lịch hẹn
+                    </button>
+                    <button 
+                      className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('alerts')}
+                    >
+                      Cảnh báo
+                    </button>
+                  </div>
+
+                  <div className="notification-list">
+                    {combinedNotifications.length === 0 ? (
+                      <div className="no-notifications">
+                        <i className="fas fa-bell-slash"></i>
+                        <p>Không có thông báo nào</p>
+                      </div>
+                    ) : (
+                      combinedNotifications
+                        .filter(notification => {
+                          if (activeTab === 'reminders') return notification.isReminder;
+                          if (activeTab === 'alerts') return notification.isAlert;
+                          return true;
+                        })
+                        .map((notification, index) => (
+                          <div 
+                            key={index} 
+                            className={`notification-item ${notification.isAlert ? 'alert' : 'reminder'}`}
+                          >
+                            {notification.isReminder ? (
+                              <div className="notification-content">
+                                <div className="notification-type">
+                                  {notification.reminderType || "Lịch hẹn"}
+                                </div>
+                                <h4>{notification.title}</h4>
+                                <p className="notification-time">
+                                  {notification.date.toLocaleString('vi-VN')}
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="notification-content">
+                                <div className="notification-type warning">
+                                  Cảnh báo {notification.measure}
+                                </div>
+                                <p className="notification-message">
+                                  {notification.message}
+                                </p>
+                                <p className="notification-details">
+                                  Tuần thai: {notification.age}
+                                </p>
+                                <p className="notification-time">
+                                  {notification.date.toLocaleString('vi-VN')}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                    )}
+                  </div>
                 </div>
               )}
             </div>
