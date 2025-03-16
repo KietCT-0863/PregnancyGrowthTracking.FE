@@ -69,8 +69,8 @@ const HISTORY_COLUMNS = [
   },
   {
     title: "Ngày đo",
-    dataIndex: "measurementDate",
-    key: "measurementDate",
+    dataIndex: "date",
+    key: "date",
     width: 120,
     render: (date) => new Date(date).toLocaleDateString("vi-VN"),
   },
@@ -79,29 +79,54 @@ const HISTORY_COLUMNS = [
     dataIndex: "hc",
     key: "hc",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (hc) => (hc ? hc.value || "Chưa có" : "Chưa có"),
   },
   {
     title: "AC (mm)",
     dataIndex: "ac",
     key: "ac",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (ac) => (ac ? ac.value || "Chưa có" : "Chưa có"),
   },
   {
     title: "FL (mm)",
     dataIndex: "fl",
     key: "fl",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (fl) => (fl ? fl.value || "Chưa có" : "Chưa có"),
   },
   {
     title: "EFW (g)",
     dataIndex: "efw",
     key: "efw",
     width: 100,
-    render: (value) => value || "Chưa có",
+    render: (efw) => (efw ? efw.value || "Chưa có" : "Chưa có"),
   },
+  {
+    title: "Trạng thái",
+    key: "status",
+    width: 120,
+    render: (_, record) => {
+      const allSafe = record.hc?.isAlert && record.ac?.isAlert && 
+                      record.fl?.isAlert && record.efw?.isAlert;
+      
+      return (
+        <span className={`status-badge ${allSafe ? 'safe' : 'warning'}`}>
+          {allSafe ? (
+            <>
+              <CheckCircle size={14} />
+              <span>An toàn</span>
+            </>
+          ) : (
+            <>
+              <AlertTriangle size={14} />
+              <span>Cần chú ý</span>
+            </>
+          )}
+        </span>
+      );
+    }
+  }
 ];
 
 // Tách riêng cấu hình chart options
@@ -387,7 +412,7 @@ const BasicTracking = () => {
         {
           type: "bar",
           label: "HC (mm)",
-          data: recentWeeks.map((data) => data.hc || 0),
+          data: recentWeeks.map((data) => data.hc?.value || 0),
           backgroundColor: "rgba(255, 99, 132, 0.5)",
           borderColor: "rgb(255, 99, 132)",
           borderWidth: 1,
@@ -395,7 +420,7 @@ const BasicTracking = () => {
         {
           type: "bar",
           label: "AC (mm)",
-          data: recentWeeks.map((data) => data.ac || 0),
+          data: recentWeeks.map((data) => data.ac?.value || 0),
           backgroundColor: "rgba(54, 162, 235, 0.5)",
           borderColor: "rgb(54, 162, 235)",
           borderWidth: 1,
@@ -403,7 +428,7 @@ const BasicTracking = () => {
         {
           type: "bar",
           label: "FL (mm)",
-          data: recentWeeks.map((data) => data.fl || 0),
+          data: recentWeeks.map((data) => data.fl?.value || 0),
           backgroundColor: "rgba(75, 192, 192, 0.5)",
           borderColor: "rgb(75, 192, 192)",
           borderWidth: 1,
@@ -411,7 +436,7 @@ const BasicTracking = () => {
         {
           type: "bar",
           label: "EFW (g)",
-          data: recentWeeks.map((data) => data.efw || 0),
+          data: recentWeeks.map((data) => data.efw?.value || 0),
           backgroundColor: "rgba(153, 102, 255, 0.5)",
           borderColor: "rgb(153, 102, 255)",
           borderWidth: 1,
@@ -472,30 +497,28 @@ const BasicTracking = () => {
     // Phân tích xu hướng HC
     if (sortedData.length >= 2) {
       const lastTwoMeasurements = sortedData.slice(-2);
-      const currentAge = lastTwoMeasurements[1].age;
-      const currentRanges = standardRanges[currentAge];
       
       // Phân tích HC
-      if (lastTwoMeasurements[0].hc && lastTwoMeasurements[1].hc) {
-        const hcGrowth = lastTwoMeasurements[1].hc - lastTwoMeasurements[0].hc;
+      if (lastTwoMeasurements[0].hc?.value && lastTwoMeasurements[1].hc?.value) {
+        const hcGrowth = lastTwoMeasurements[1].hc.value - lastTwoMeasurements[0].hc.value;
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age;
         const hcGrowthRate = weeksDiff > 0 ? hcGrowth / weeksDiff : hcGrowth;
         
-        // Tốc độ tăng trưởng HC chuẩn theo tuần (mm/tuần)
-        const expectedHcGrowthRate = currentRanges?.hcGrowthRate || 10; // Sử dụng giá trị từ API hoặc mặc định
+        // Kiểm tra trạng thái cảnh báo
+        const isLatestHCSafe = lastTwoMeasurements[1].hc.isAlert;
         
-        if (hcGrowthRate < expectedHcGrowthRate * 0.7) {
+        if (!isLatestHCSafe) {
           trendAlerts.push({
             type: "danger",
-            title: "Tăng trưởng HC chậm",
-            description: `HC tăng ${hcGrowthRate.toFixed(1)}mm/tuần, thấp hơn mức chuẩn (${expectedHcGrowthRate}mm/tuần).`,
+            title: "Cảnh báo HC",
+            description: `HC hiện tại (${lastTwoMeasurements[1].hc.value}mm) nằm ngoài khoảng an toàn (${lastTwoMeasurements[1].hc.minRange}-${lastTwoMeasurements[1].hc.maxRange}mm).`,
             icon: <AlertTriangle />
           });
-        } else if (hcGrowthRate > expectedHcGrowthRate * 1.3) {
+        } else if (hcGrowthRate < 5) {
           trendAlerts.push({
             type: "warning",
-            title: "Tăng trưởng HC nhanh",
-            description: `HC tăng ${hcGrowthRate.toFixed(1)}mm/tuần, cao hơn mức chuẩn (${expectedHcGrowthRate}mm/tuần).`,
+            title: "Tăng trưởng HC chậm",
+            description: `HC tăng ${hcGrowthRate.toFixed(1)}mm/tuần, thấp hơn mức kỳ vọng.`,
             icon: <AlertCircle />
           });
         } else {
@@ -509,26 +532,26 @@ const BasicTracking = () => {
       }
       
       // Phân tích AC
-      if (lastTwoMeasurements[0].ac && lastTwoMeasurements[1].ac) {
-        const acGrowth = lastTwoMeasurements[1].ac - lastTwoMeasurements[0].ac;
+      if (lastTwoMeasurements[0].ac?.value && lastTwoMeasurements[1].ac?.value) {
+        const acGrowth = lastTwoMeasurements[1].ac.value - lastTwoMeasurements[0].ac.value;
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age;
         const acGrowthRate = weeksDiff > 0 ? acGrowth / weeksDiff : acGrowth;
         
-        // Tốc độ tăng trưởng AC chuẩn theo tuần (mm/tuần)
-        const expectedAcGrowthRate = currentRanges?.acGrowthRate || 12; // Sử dụng giá trị từ API hoặc mặc định
+        // Kiểm tra trạng thái cảnh báo
+        const isLatestACSafe = lastTwoMeasurements[1].ac.isAlert;
         
-        if (acGrowthRate < expectedAcGrowthRate * 0.7) {
+        if (!isLatestACSafe) {
           trendAlerts.push({
             type: "danger",
-            title: "Tăng trưởng AC chậm",
-            description: `AC tăng ${acGrowthRate.toFixed(1)}mm/tuần, thấp hơn mức chuẩn (${expectedAcGrowthRate}mm/tuần).`,
+            title: "Cảnh báo AC",
+            description: `AC hiện tại (${lastTwoMeasurements[1].ac.value}mm) nằm ngoài khoảng an toàn (${lastTwoMeasurements[1].ac.minRange}-${lastTwoMeasurements[1].ac.maxRange}mm).`,
             icon: <AlertTriangle />
           });
-        } else if (acGrowthRate > expectedAcGrowthRate * 1.3) {
+        } else if (acGrowthRate < 7) {
           trendAlerts.push({
             type: "warning",
-            title: "Tăng trưởng AC nhanh",
-            description: `AC tăng ${acGrowthRate.toFixed(1)}mm/tuần, cao hơn mức chuẩn (${expectedAcGrowthRate}mm/tuần).`,
+            title: "Tăng trưởng AC chậm",
+            description: `AC tăng ${acGrowthRate.toFixed(1)}mm/tuần, thấp hơn mức kỳ vọng.`,
             icon: <AlertCircle />
           });
         } else {
@@ -541,47 +564,82 @@ const BasicTracking = () => {
         }
       }
       
-      // Phân tích EFW (cân nặng ước tính)
-      if (lastTwoMeasurements[0].efw && lastTwoMeasurements[1].efw) {
-        const efwGrowth = lastTwoMeasurements[1].efw - lastTwoMeasurements[0].efw;
+      // Phân tích FL
+      if (lastTwoMeasurements[0].fl?.value && lastTwoMeasurements[1].fl?.value) {
+        const flGrowth = lastTwoMeasurements[1].fl.value - lastTwoMeasurements[0].fl.value;
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age;
-        const efwGrowthRate = weeksDiff > 0 ? efwGrowth / weeksDiff : efwGrowth;
+        const flGrowthRate = weeksDiff > 0 ? flGrowth / weeksDiff : flGrowth;
         
-        // Tốc độ tăng trưởng EFW chuẩn theo tuần (g/tuần)
-        let expectedEfwGrowthRate = currentRanges?.efwGrowthRate;
+        // Kiểm tra trạng thái cảnh báo
+        const isLatestFLSafe = lastTwoMeasurements[1].fl.isAlert;
         
-        if (!expectedEfwGrowthRate) {
-          // Giá trị mặc định nếu không có từ API
-          if (currentAge < 20) {
-            expectedEfwGrowthRate = 25; // g/tuần
-          } else if (currentAge < 30) {
-            expectedEfwGrowthRate = 85; // g/tuần
-          } else {
-            expectedEfwGrowthRate = 200; // g/tuần
-          }
-        }
-        
-        if (efwGrowthRate < expectedEfwGrowthRate * 0.7) {
+        if (!isLatestFLSafe) {
           trendAlerts.push({
             type: "danger",
-            title: "Tăng cân chậm",
-            description: `Cân nặng tăng ${efwGrowthRate.toFixed(0)}g/tuần, thấp hơn mức chuẩn (${expectedEfwGrowthRate}g/tuần) ở tuần ${currentAge}.`,
+            title: "Cảnh báo FL",
+            description: `FL hiện tại (${lastTwoMeasurements[1].fl.value}mm) nằm ngoài khoảng an toàn (${lastTwoMeasurements[1].fl.minRange}-${lastTwoMeasurements[1].fl.maxRange}mm).`,
             icon: <AlertTriangle />
           });
-        } else if (efwGrowthRate > expectedEfwGrowthRate * 1.3) {
+        } else if (flGrowthRate < 2) {
           trendAlerts.push({
             type: "warning",
-            title: "Tăng cân nhanh",
-            description: `Cân nặng tăng ${efwGrowthRate.toFixed(0)}g/tuần, cao hơn mức chuẩn (${expectedEfwGrowthRate}g/tuần) ở tuần ${currentAge}.`,
+            title: "Tăng trưởng FL chậm",
+            description: `FL tăng ${flGrowthRate.toFixed(1)}mm/tuần, thấp hơn mức kỳ vọng.`,
             icon: <AlertCircle />
           });
         } else {
           trendAlerts.push({
             type: "success",
-            title: "Tăng cân bình thường",
-            description: `Cân nặng tăng ${efwGrowthRate.toFixed(0)}g/tuần, phù hợp với mức chuẩn ở tuần ${currentAge}.`,
+            title: "Tăng trưởng FL bình thường",
+            description: `FL tăng ${flGrowthRate.toFixed(1)}mm/tuần, phù hợp với mức chuẩn.`,
             icon: <CheckCircle />
           });
+        }
+      }
+      
+      // Phân tích EFW (cân nặng ước tính)
+      if (lastTwoMeasurements[0].efw?.value && lastTwoMeasurements[1].efw?.value) {
+        const efwGrowth = lastTwoMeasurements[1].efw.value - lastTwoMeasurements[0].efw.value;
+        const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age;
+        const efwGrowthRate = weeksDiff > 0 ? efwGrowth / weeksDiff : efwGrowth;
+        
+        // Kiểm tra trạng thái cảnh báo
+        const isLatestEFWSafe = lastTwoMeasurements[1].efw.isAlert;
+        
+        if (!isLatestEFWSafe) {
+          trendAlerts.push({
+            type: "danger",
+            title: "Cảnh báo cân nặng",
+            description: `Cân nặng hiện tại (${lastTwoMeasurements[1].efw.value}g) nằm ngoài khoảng an toàn (${lastTwoMeasurements[1].efw.minRange}-${lastTwoMeasurements[1].efw.maxRange}g).`,
+            icon: <AlertTriangle />
+          });
+        } else {
+          const currentAge = lastTwoMeasurements[1].age;
+          let expectedGrowthRate;
+          
+          if (currentAge < 20) {
+            expectedGrowthRate = 25; // g/tuần
+          } else if (currentAge < 30) {
+            expectedGrowthRate = 85; // g/tuần
+          } else {
+            expectedGrowthRate = 200; // g/tuần
+          }
+          
+          if (efwGrowthRate < expectedGrowthRate * 0.7) {
+            trendAlerts.push({
+              type: "warning",
+              title: "Tăng cân chậm",
+              description: `Cân nặng tăng ${efwGrowthRate.toFixed(0)}g/tuần, thấp hơn mức kỳ vọng (${expectedGrowthRate}g/tuần) ở tuần ${currentAge}.`,
+              icon: <AlertCircle />
+            });
+          } else {
+            trendAlerts.push({
+              type: "success",
+              title: "Tăng cân bình thường",
+              description: `Cân nặng tăng ${efwGrowthRate.toFixed(0)}g/tuần, phù hợp với mức chuẩn ở tuần ${currentAge}.`,
+              icon: <CheckCircle />
+            });
+          }
         }
       }
     }
@@ -589,7 +647,7 @@ const BasicTracking = () => {
     return trendAlerts;
   };
 
-  // Cập nhật useEffect để thêm phân tích xu hướng vào alerts và sử dụng dữ liệu từ API
+  // Cập nhật useEffect để tạo cảnh báo dựa trên dữ liệu mới
   useEffect(() => {
     if (selectedChild && growthData[selectedChild.foetusId]) {
       const foetusData = growthData[selectedChild.foetusId];
@@ -601,7 +659,6 @@ const BasicTracking = () => {
       // Lấy dữ liệu mới nhất
       const currentData = [...foetusData].sort((a, b) => b.age - a.age)[0];
       const currentAge = currentData.age;
-      const currentRanges = standardRanges[currentAge];
       
       let newAlerts = [];
       
@@ -616,128 +673,76 @@ const BasicTracking = () => {
       }
       
       // Kiểm tra HC (Head Circumference)
-      if (currentData.hc && currentRanges) {
-        const hcMin = currentRanges.hcMin || getStandardHC(currentAge) * 0.9;
-        const hcMax = currentRanges.hcMax || getStandardHC(currentAge) * 1.1;
-        const hcStandard = currentRanges.hcStandard || getStandardHC(currentAge);
-        
-        if (currentData.hc < hcMin) {
-          const hcDiff = ((currentData.hc - hcStandard) / hcStandard) * 100;
+      if (currentData.hc) {
+        if (!currentData.hc.isAlert) {
           newAlerts.push({
             type: "danger",
-            title: "HC thấp hơn mức chuẩn",
-            description: `Chu vi đầu (HC) thấp hơn ${Math.abs(Math.round(hcDiff))}% so với mức chuẩn ở tuần ${currentAge}.`,
+            title: "HC nằm ngoài khoảng an toàn",
+            description: `Chu vi đầu (HC) hiện tại là ${currentData.hc.value}mm, nằm ngoài khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
             icon: <AlertTriangle />
-          });
-        } else if (currentData.hc > hcMax) {
-          const hcDiff = ((currentData.hc - hcStandard) / hcStandard) * 100;
-          newAlerts.push({
-            type: "warning",
-            title: "HC cao hơn mức chuẩn",
-            description: `Chu vi đầu (HC) cao hơn ${Math.round(hcDiff)}% so với mức chuẩn ở tuần ${currentAge}.`,
-            icon: <AlertCircle />
           });
         } else {
           newAlerts.push({
             type: "success",
             title: "HC trong mức bình thường",
-            description: "Chu vi đầu (HC) đang phát triển tốt theo tuần thai.",
+            description: `Chu vi đầu (HC) đang phát triển tốt trong khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
             icon: <CheckCircle />
           });
         }
       }
       
       // Kiểm tra AC (Abdominal Circumference)
-      if (currentData.ac && currentRanges) {
-        const acMin = currentRanges.acMin || getStandardAC(currentAge) * 0.9;
-        const acMax = currentRanges.acMax || getStandardAC(currentAge) * 1.1;
-        const acStandard = currentRanges.acStandard || getStandardAC(currentAge);
-        
-        if (currentData.ac < acMin) {
-          const acDiff = ((currentData.ac - acStandard) / acStandard) * 100;
+      if (currentData.ac) {
+        if (!currentData.ac.isAlert) {
           newAlerts.push({
             type: "danger",
-            title: "AC thấp hơn mức chuẩn",
-            description: `Chu vi bụng (AC) thấp hơn ${Math.abs(Math.round(acDiff))}% so với mức chuẩn ở tuần ${currentAge}.`,
+            title: "AC nằm ngoài khoảng an toàn",
+            description: `Chu vi bụng (AC) hiện tại là ${currentData.ac.value}mm, nằm ngoài khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
             icon: <AlertTriangle />
-          });
-        } else if (currentData.ac > acMax) {
-          const acDiff = ((currentData.ac - acStandard) / acStandard) * 100;
-          newAlerts.push({
-            type: "warning",
-            title: "AC cao hơn mức chuẩn",
-            description: `Chu vi bụng (AC) cao hơn ${Math.round(acDiff)}% so với mức chuẩn ở tuần ${currentAge}.`,
-            icon: <AlertCircle />
           });
         } else {
           newAlerts.push({
             type: "success",
             title: "AC trong mức bình thường",
-            description: "Chu vi bụng (AC) đang phát triển tốt theo tuần thai.",
+            description: `Chu vi bụng (AC) đang phát triển tốt trong khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
             icon: <CheckCircle />
           });
         }
       }
       
       // Kiểm tra FL (Femur Length)
-      if (currentData.fl && currentRanges) {
-        const flMin = currentRanges.flMin || (currentAge * 2);
-        const flMax = currentRanges.flMax || (currentAge * 2.5);
-        const flStandard = currentRanges.flStandard || (currentAge * 2.2);
-        
-        if (currentData.fl < flMin) {
-          const flDiff = ((currentData.fl - flStandard) / flStandard) * 100;
+      if (currentData.fl) {
+        if (!currentData.fl.isAlert) {
           newAlerts.push({
             type: "danger",
-            title: "FL thấp hơn mức chuẩn",
-            description: `Chiều dài xương đùi (FL) thấp hơn ${Math.abs(Math.round(flDiff))}% so với mức chuẩn ở tuần ${currentAge}.`,
+            title: "FL nằm ngoài khoảng an toàn",
+            description: `Chiều dài xương đùi (FL) hiện tại là ${currentData.fl.value}mm, nằm ngoài khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
             icon: <AlertTriangle />
-          });
-        } else if (currentData.fl > flMax) {
-          const flDiff = ((currentData.fl - flStandard) / flStandard) * 100;
-          newAlerts.push({
-            type: "warning",
-            title: "FL cao hơn mức chuẩn",
-            description: `Chiều dài xương đùi (FL) cao hơn ${Math.round(flDiff)}% so với mức chuẩn ở tuần ${currentAge}.`,
-            icon: <AlertCircle />
           });
         } else {
           newAlerts.push({
             type: "success",
             title: "FL trong mức bình thường",
-            description: "Chiều dài xương đùi (FL) đang phát triển tốt theo tuần thai.",
+            description: `Chiều dài xương đùi (FL) đang phát triển tốt trong khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
             icon: <CheckCircle />
           });
         }
       }
       
       // Kiểm tra EFW (Estimated Fetal Weight)
-      if (currentData.efw && currentRanges) {
-        const efwMin = currentRanges.efwMin || (currentAge * 50);
-        const efwMax = currentRanges.efwMax || (currentAge * 70);
-        const efwStandard = currentRanges.efwStandard || (currentAge * 60);
-        
-        if (currentData.efw < efwMin) {
-          const efwDiff = ((currentData.efw - efwStandard) / efwStandard) * 100;
+      if (currentData.efw) {
+        if (!currentData.efw.isAlert) {
           newAlerts.push({
             type: "danger",
-            title: "Cân nặng thấp hơn mức chuẩn",
-            description: `Cân nặng ước tính (EFW) thấp hơn ${Math.abs(Math.round(efwDiff))}% so với mức chuẩn ở tuần ${currentAge}.`,
+            title: "Cân nặng nằm ngoài khoảng an toàn",
+            description: `Cân nặng ước tính (EFW) hiện tại là ${currentData.efw.value}g, nằm ngoài khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
             icon: <AlertTriangle />
-          });
-        } else if (currentData.efw > efwMax) {
-          const efwDiff = ((currentData.efw - efwStandard) / efwStandard) * 100;
-          newAlerts.push({
-            type: "warning",
-            title: "Cân nặng cao hơn mức chuẩn",
-            description: `Cân nặng ước tính (EFW) cao hơn ${Math.round(efwDiff)}% so với mức chuẩn ở tuần ${currentAge}.`,
-            icon: <AlertCircle />
           });
         } else {
           newAlerts.push({
             type: "success",
             title: "Cân nặng trong mức bình thường",
-            description: "Cân nặng ước tính (EFW) đang phát triển tốt theo tuần thai.",
+            description: `Cân nặng ước tính (EFW) đang phát triển tốt trong khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
             icon: <CheckCircle />
           });
         }
@@ -766,7 +771,7 @@ const BasicTracking = () => {
     } else {
       setAlerts([]);
     }
-  }, [selectedChild, growthData, standardRanges]);
+  }, [selectedChild, growthData]);
 
   // Thêm hàm helper để lấy giá trị chuẩn (đây chỉ là ví dụ, bạn cần điều chỉnh theo dữ liệu thực tế)
   const getStandardHC = (age) => {
@@ -1233,32 +1238,137 @@ const BasicTracking = () => {
                   </motion.button>
                 </div>
                 <div className="compare-modal-body">
-                  {selectedChild && (
-                    <div className="comparison-chart">
-                      <Bar
-                        data={{
-                          labels: ["HC", "AC", "FL", "EFW"],
-                          datasets: [
-                            {
-                              label: "Chỉ số hiện tại",
-                              data: [
-                                growthData[selectedChild]?.hc || 0,
-                                growthData[selectedChild]?.ac || 0,
-                                growthData[selectedChild]?.fl || 0,
-                                growthData[selectedChild]?.efw || 0,
-                              ],
-                              backgroundColor: "rgba(255, 107, 129, 0.5)",
-                            },
-                            {
-                              label: "Chỉ số chuẩn",
-                              data: [200, 180, 150, 500], // Thêm chỉ số chuẩn tương ứng
-                              backgroundColor: "rgba(112, 161, 255, 0.5)",
-                            },
-                          ],
-                        }}
-                        options={chartOptions}
-                      />
-                    </div>
+                  {selectedChild && growthData[selectedChild.foetusId] && (
+                    <>
+                      <div className="comparison-chart">
+                        {/* Lấy dữ liệu mới nhất */}
+                        {(() => {
+                          const latestData = [...growthData[selectedChild.foetusId]]
+                            .sort((a, b) => b.age - a.age)[0];
+                          
+                          return (
+                            <Bar
+                              data={{
+                                labels: ["HC", "AC", "FL", "EFW"],
+                                datasets: [
+                                  {
+                                    label: "Chỉ số hiện tại",
+                                    data: [
+                                      latestData.hc?.value || 0,
+                                      latestData.ac?.value || 0,
+                                      latestData.fl?.value || 0,
+                                      latestData.efw?.value || 0,
+                                    ],
+                                    backgroundColor: "rgba(255, 107, 129, 0.5)",
+                                  },
+                                  {
+                                    label: "Giá trị trung bình",
+                                    data: [
+                                      (latestData.hc?.minRange + latestData.hc?.maxRange) / 2 || 0,
+                                      (latestData.ac?.minRange + latestData.ac?.maxRange) / 2 || 0,
+                                      (latestData.fl?.minRange + latestData.fl?.maxRange) / 2 || 0,
+                                      (latestData.efw?.minRange + latestData.efw?.maxRange) / 2 || 0,
+                                    ],
+                                    backgroundColor: "rgba(112, 161, 255, 0.5)",
+                                  },
+                                ],
+                              }}
+                              options={chartOptions}
+                            />
+                          );
+                        })()}
+                      </div>
+                      
+                      <div className="comparison-details">
+                        <h4>Chi tiết so sánh</h4>
+                        <div className="comparison-grid">
+                          {(() => {
+                            const latestData = [...growthData[selectedChild.foetusId]]
+                              .sort((a, b) => b.age - a.age)[0];
+                            
+                            return (
+                              <>
+                                <div className="comparison-item">
+                                  <h5>HC (Chu vi đầu)</h5>
+                                  <div className={`comparison-value ${latestData.hc?.isAlert ? 'safe' : 'warning'}`}>
+                                    <span>Giá trị: {latestData.hc?.value || 0} mm</span>
+                                    <span>Khoảng an toàn: {latestData.hc?.minRange || 0} - {latestData.hc?.maxRange || 0} mm</span>
+                                    {latestData.hc?.isAlert ? (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge warning">
+                                        <AlertTriangle size={14} />
+                                        <span>Cần chú ý</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="comparison-item">
+                                  <h5>AC (Chu vi bụng)</h5>
+                                  <div className={`comparison-value ${latestData.ac?.isAlert ? 'safe' : 'warning'}`}>
+                                    <span>Giá trị: {latestData.ac?.value || 0} mm</span>
+                                    <span>Khoảng an toàn: {latestData.ac?.minRange || 0} - {latestData.ac?.maxRange || 0} mm</span>
+                                    {latestData.ac?.isAlert ? (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge warning">
+                                        <AlertTriangle size={14} />
+                                        <span>Cần chú ý</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="comparison-item">
+                                  <h5>FL (Chiều dài xương đùi)</h5>
+                                  <div className={`comparison-value ${latestData.fl?.isAlert ? 'safe' : 'warning'}`}>
+                                    <span>Giá trị: {latestData.fl?.value || 0} mm</span>
+                                    <span>Khoảng an toàn: {latestData.fl?.minRange || 0} - {latestData.fl?.maxRange || 0} mm</span>
+                                    {latestData.fl?.isAlert ? (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge warning">
+                                        <AlertTriangle size={14} />
+                                        <span>Cần chú ý</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="comparison-item">
+                                  <h5>EFW (Cân nặng ước tính)</h5>
+                                  <div className={`comparison-value ${latestData.efw?.isAlert ? 'safe' : 'warning'}`}>
+                                    <span>Giá trị: {latestData.efw?.value || 0} g</span>
+                                    <span>Khoảng an toàn: {latestData.efw?.minRange || 0} - {latestData.efw?.maxRange || 0} g</span>
+                                    {latestData.efw?.isAlert ? (
+                                      <div className="status-badge safe">
+                                        <CheckCircle size={14} />
+                                        <span>An toàn</span>
+                                      </div>
+                                    ) : (
+                                      <div className="status-badge warning">
+                                        <AlertTriangle size={14} />
+                                        <span>Cần chú ý</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               </motion.div>
