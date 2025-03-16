@@ -1,65 +1,164 @@
-.edit-profile-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: #fff;
+// Variables
+// Primary Colors
+$primary-color: #ff6b9b; // Màu hồng đậm làm màu chủ đạo
+$primary-light: #ff8fb1; // Hồng nhạt cho hover
+$primary-dark: #e84393; // Hồng tối cho text quan trọng
+
+// Secondary Colors
+$secondary-color: #ff4081; // Hồng đậm cho các action
+$secondary-light: #ff80ab; // Hồng nhạt cho hover
+$secondary-dark: #c51162; // Hồng đậm cho text
+
+// Neutral Colors
+$text-color: #2d3436; // Màu chữ chính
+$text-light: #636e72; // Màu chữ phụ
+$text-muted: #b2bec3; // Màu chữ mờ
+
+// Background Colors
+$background-primary: #fff0f5; // Background chính - hồng rất nhạt
+$background-secondary: #fff5f8; // Background phụ - hồng rất nhạt
+$white: #ffffff;
+
+// Border Colors
+$border-color: #ffd0e0; // Viền hồng nhạt
+$border-hover: #ffb0c8; // Viền hover hồng đậm hơn
+
+// Status Colors
+$error-color: #e74c3c; // Đỏ
+$success-color: #2ecc71; // Xanh lá
+$warning-color: #f1c40f; // Vàng
+$info-color: #ff4081; // Hồng đậm
+
+// Shadow Colors
+$shadow-color: rgba(255, 107, 155, 0.1); // Shadow hồng nhạt
+$shadow-color-hover: rgba(255, 107, 155, 0.2);
+
+// Timing
+$transition-time: 0.3s;
+
+// Mixins
+@mixin card-shadow {
+  box-shadow: 0 4px 15px $shadow-color;
+}
+
+@mixin hover-effect {
+  transition: all $transition-time ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px $shadow-color-hover;
+  }
+}
+
+@mixin elevated-box {
+  background: $white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba($primary-color, 0.05),
+    0 8px 15px rgba($primary-color, 0.1);
+  transition: all $transition-time ease;
+
+  &:hover {
+    box-shadow: 0 6px 12px rgba($primary-color, 0.08),
+      0 12px 25px rgba($primary-color, 0.15);
+  }
+}
+
+.edit-profile-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: $white;
+  border-radius: 20px;
+  @include elevated-box;
 
   .edit-profile-header {
     display: flex;
     align-items: center;
-    margin-bottom: 2rem;
-    gap: 1rem;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: 1.5rem;
 
     .back-button {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.25rem;
       border: none;
-      background: #f0f0f0;
-      border-radius: 8px;
+      background: $background-primary;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      color: #333;
+      color: $primary-color;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba($primary-color, 0.1);
+      transition: all $transition-time ease;
+
+      svg {
+        transition: transform $transition-time ease;
+        color: $primary-color;
+      }
 
       &:hover {
-        background: #e0e0e0;
+        background: $white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba($primary-color, 0.15);
+
+        svg {
+          transform: translateX(-3px);
+          color: $primary-dark;
+        }
       }
     }
 
     h1 {
-      font-size: 1.5rem;
-      color: #333;
+      font-size: 1.75rem;
+      color: $primary-dark;
       margin: 0;
+      font-weight: 600;
     }
   }
 
   .edit-profile-content {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+
     .profile-image-section {
-      display: flex;
-      align-items: flex-start;
-      gap: 2rem;
+      background: $white;
+      border-radius: 16px;
       padding: 2rem;
-      background: #f8f9fa;
-      border-radius: 12px;
-      margin-bottom: 2rem;
+      text-align: center;
+      height: fit-content;
+      @include elevated-box;
 
       .image-preview {
         .image-container {
           position: relative;
-          width: 150px;
-          height: 150px;
+          width: 180px;
+          height: 180px;
           border-radius: 50%;
+          margin: 0 auto 1.5rem;
           overflow: hidden;
-          background: #fff;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          
+          background: $white;
+          box-shadow: 0 4px 8px rgba($primary-color, 0.1),
+            0 8px 16px rgba($primary-color, 0.1);
+          border: 4px solid $white;
+          transition: all $transition-time ease;
+
+          &:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba($primary-color, 0.15),
+              0 12px 24px rgba($primary-color, 0.15);
+          }
+
           .profile-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform $transition-time ease;
+
+            &:hover {
+              transform: scale(1.05);
+            }
           }
 
           .placeholder-icon {
@@ -67,7 +166,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #ccc;
+            color: $primary-light;
           }
 
           .upload-overlay {
@@ -76,12 +175,12 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba($primary-dark, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity $transition-time ease;
 
             &:hover {
               opacity: 1;
@@ -89,27 +188,29 @@
 
             &.uploading {
               opacity: 1;
-              background: rgba(0, 0, 0, 0.7);
+              background: rgba($primary-dark, 0.9);
             }
 
             .upload-button {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 0.5rem;
-              color: white;
+              gap: 0.75rem;
+              color: $white;
               cursor: pointer;
-              padding: 0.5rem;
-              border-radius: 8px;
-              transition: background-color 0.3s ease;
+              padding: 1rem;
+              border-radius: 12px;
+              transition: all $transition-time ease;
+              background: rgba($primary-color, 0.2);
 
               &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
+                background: rgba($primary-color, 0.3);
+                transform: scale(1.05);
               }
 
               span {
-                font-size: 0.875rem;
-                text-align: center;
+                font-size: 0.9rem;
+                font-weight: 500;
               }
             }
           }
@@ -117,41 +218,200 @@
       }
 
       .image-info {
-        flex: 1;
-
         h3 {
-          margin: 0 0 0.5rem 0;
-          color: #333;
-          font-size: 1.1rem;
+          margin: 0 0 0.75rem 0;
+          color: $primary-dark;
+          font-size: 1.2rem;
+          font-weight: 600;
         }
 
         .upload-hint {
-          color: #666;
-          font-size: 0.875rem;
-          line-height: 1.5;
+          color: $text-muted;
+          font-size: 0.9rem;
+          line-height: 1.6;
           margin: 0;
+        }
+      }
+    }
+
+    .profile-form {
+      padding: 2rem;
+      background: $white;
+      border-radius: 16px;
+      @include elevated-box;
+
+      .form-group {
+        margin-bottom: 1.75rem;
+
+        label {
+          display: block;
+          margin-bottom: 0.75rem;
+          color: $text-color;
+          font-weight: 500;
+          font-size: 0.95rem;
+        }
+
+        input,
+        .date-picker {
+          width: 100%;
+          padding: 0.875rem 1rem;
+          border: 2px solid $border-color;
+          border-radius: 12px;
+          font-size: 1rem;
+          color: $text-color;
+          transition: all $transition-time ease;
+          background: $white;
+          box-shadow: 0 2px 4px rgba($primary-color, 0.05);
+
+          &:focus {
+            outline: none;
+            border-color: $primary-light;
+            box-shadow: 0 0 0 3px rgba($primary-light, 0.1),
+              0 2px 4px rgba($primary-color, 0.1);
+          }
+
+          &:hover:not(:disabled) {
+            border-color: $border-hover;
+            box-shadow: 0 4px 8px rgba($primary-color, 0.08);
+          }
+
+          &:disabled {
+            background-color: $background-secondary;
+            cursor: not-allowed;
+            opacity: 0.7;
+          }
+
+          &::placeholder {
+            color: $text-muted;
+          }
+        }
+
+        .error-message {
+          color: $error-color;
+          font-size: 0.875rem;
+          margin-top: 0.5rem;
+          display: block;
+        }
+      }
+
+      .submit-button {
+        width: 100%;
+        padding: 1rem;
+        background: $primary-color;
+        color: $white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all $transition-time ease;
+        margin-top: 1rem;
+        box-shadow: 0 4px 6px rgba($primary-color, 0.2),
+          0 8px 16px rgba($primary-color, 0.1);
+
+        &:hover {
+          background: darken($primary-color, 5%);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba($primary-color, 0.25),
+            0 12px 24px rgba($primary-color, 0.15);
+        }
+
+        &:disabled {
+          background: $text-muted;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+
+        &:active {
+          transform: translateY(1px);
+          box-shadow: 0 2px 4px rgba($primary-color, 0.2),
+            0 4px 8px rgba($primary-color, 0.1);
         }
       }
     }
   }
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 1.1rem;
+  color: $primary-color;
+  background: $white;
+  border-radius: 16px;
+  @include elevated-box;
+}
+
+// Animation cho loading
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
 // Responsive styles
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .edit-profile-container {
-    padding: 1rem;
+    margin: 1rem;
+    padding: 1.5rem;
 
     .edit-profile-content {
-      .profile-image-section {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 1rem;
+      grid-template-columns: 1fr;
 
-        .image-preview {
-          margin-bottom: 1rem;
+      .profile-image-section {
+        padding: 1.5rem;
+      }
+
+      .profile-form {
+        padding: 1.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .edit-profile-container {
+    margin: 0;
+    padding: 1rem;
+    border-radius: 0;
+
+    .edit-profile-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+
+      h1 {
+        font-size: 1.25rem;
+      }
+    }
+
+    .edit-profile-content {
+      .profile-image-section,
+      .profile-form {
+        padding: 1rem;
+      }
+
+      .profile-image-section {
+        .image-container {
+          width: 150px;
+          height: 150px;
         }
       }
     }
   }
-} 
+}

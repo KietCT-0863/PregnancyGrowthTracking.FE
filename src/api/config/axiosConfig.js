@@ -1,8 +1,8 @@
 import axios from "axios";
-import { API_BASE_URL } from "../constants/apiEndpoints";
+import { BASE_URL } from "../apiEndpoints";
 
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: BASE_URL,
   timeout: 30000,
 });
 
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     // Xử lý FormData
     if (config.data instanceof FormData) {
       // Để trình duyệt tự động thêm boundary
-      config.headers['Content-Type'] = 'multipart/form-data';
+      config.headers["Content-Type"] = "multipart/form-data";
       // Không transform data khi là FormData
       config.transformRequest = [(data) => data];
     }
@@ -38,7 +38,7 @@ axiosInstance.interceptors.response.use(
     // Handle token expiration
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       // Clear token and redirect to login
       localStorage.removeItem("token");
       window.location.href = "/login";
@@ -49,15 +49,15 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 500) {
       return Promise.reject({
         message: "Lỗi server, vui lòng thử lại sau",
-        ...error
+        ...error,
       });
     }
 
     // Thêm xử lý timeout
-    if (error.code === 'ECONNABORTED') {
+    if (error.code === "ECONNABORTED") {
       return Promise.reject({
         message: "Yêu cầu đã hết thời gian, vui lòng thử lại",
-        ...error
+        ...error,
       });
     }
 
@@ -65,4 +65,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance; 
+export default axiosInstance;
