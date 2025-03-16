@@ -173,14 +173,42 @@ const NavBarMember = () => {
 
   const fetchAlertHistory = async () => {
     try {
-      const response = await growthStatsService.getGrowthData();
+      console.group("Alert History Fetch");
+      console.log("Fetching alert history...");
+      
+      // Get the foetusId from localStorage if available
+      const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+      const foetusId = userData.foetusId;
+      
+      console.log("User data:", userData);
+      console.log("FoetusId:", foetusId);
+      
+      // If we have a foetusId, use it, otherwise fetch without it
+      let response;
+      if (foetusId) {
+        console.log("Fetching with foetusId:", foetusId);
+        response = await growthStatsService.getGrowthData(foetusId);
+      } else {
+        console.log("Fetching without foetusId");
+        // You might need to adjust this if the API requires a foetusId
+        response = await growthStatsService.getGrowthData();
+      }
+      
+      console.log("API Response:", response);
+      
       if (Array.isArray(response)) {
+        console.log("Response is an array with", response.length, "items");
+        
         const alerts = response
           .map(data => {
+            console.log("Processing data item:", data);
             const alerts = [];
-            const date = new Date(data.date);
+            const date = new Date(data.date || data.measurementDate);
             
-            if (data.hc?.isAlert) {
+            // Check HC
+            if (data.hc) {
+              console.log("HC data:", data.hc, "isAlert:", data.hc.isAlert);
+              if (data.hc.isAlert === true) {
               alerts.push({
                 type: 'warning',
                 measure: 'HC',
@@ -191,7 +219,12 @@ const NavBarMember = () => {
                 message: `Chu vi đầu (HC) ${data.hc.value}mm nằm ngoài khoảng an toàn`
               });
             }
-            if (data.ac?.isAlert) {
+            }
+            
+            // Check AC
+            if (data.ac) {
+              console.log("AC data:", data.ac, "isAlert:", data.ac.isAlert);
+              if (data.ac.isAlert === true) {
               alerts.push({
                 type: 'warning',
                 measure: 'AC',
@@ -202,7 +235,12 @@ const NavBarMember = () => {
                 message: `Chu vi bụng (AC) ${data.ac.value}mm nằm ngoài khoảng an toàn`
               });
             }
-            if (data.fl?.isAlert) {
+            }
+            
+            // Check FL
+            if (data.fl) {
+              console.log("FL data:", data.fl, "isAlert:", data.fl.isAlert);
+              if (data.fl.isAlert === true) {
               alerts.push({
                 type: 'warning',
                 measure: 'FL',
@@ -213,7 +251,12 @@ const NavBarMember = () => {
                 message: `Chiều dài xương đùi (FL) ${data.fl.value}mm nằm ngoài khoảng an toàn`
               });
             }
-            if (data.efw?.isAlert) {
+            }
+            
+            // Check EFW
+            if (data.efw) {
+              console.log("EFW data:", data.efw, "isAlert:", data.efw.isAlert);
+              if (data.efw.isAlert === true) {
               alerts.push({
                 type: 'warning',
                 measure: 'EFW',
@@ -224,15 +267,30 @@ const NavBarMember = () => {
                 message: `Cân nặng ước tính (EFW) ${data.efw.value}g nằm ngoài khoảng an toàn`
               });
             }
+            }
+            
+            console.log("Generated alerts for this item:", alerts);
             return alerts;
           })
           .flat()
           .sort((a, b) => b.date - a.date);
 
+        console.log("Final processed alerts:", alerts);
         setAlertHistory(alerts);
+      } else {
+        console.log("Response is not an array:", response);
+        setAlertHistory([]);
       }
+      console.groupEnd();
     } catch (error) {
+      console.group("Alert History Error");
       console.error('Error fetching alert history:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        response: error.response
+      });
+      console.groupEnd();
     }
   };
 
@@ -457,7 +515,15 @@ const NavBarMember = () => {
                     </button>
                     <button 
                       className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`} 
-                      onClick={() => setActiveTab('alerts')}
+                      onClick={() => {
+                        console.group("Alert Tab Click");
+                        console.log("Current alert history:", alertHistory);
+                        console.log("Switching to alerts tab");
+                        setActiveTab('alerts');
+                        // Optionally refresh alerts when tab is clicked
+                        fetchAlertHistory();
+                        console.groupEnd();
+                      }}
                     >
                       Cảnh báo
                     </button>
@@ -473,13 +539,21 @@ const NavBarMember = () => {
                       combinedNotifications
                         .filter(notification => {
                           if (activeTab === 'reminders') return notification.isReminder;
-                          if (activeTab === 'alerts') return notification.isAlert;
+                          if (activeTab === 'alerts') {
+                            console.log("Filtering alert notification:", notification);
+                            return notification.isAlert;
+                          }
                           return true;
                         })
                         .map((notification, index) => (
                           <div 
                             key={index} 
                             className={`notification-item ${notification.isAlert ? 'alert' : 'reminder'}`}
+                            onClick={() => {
+                              if (notification.isAlert) {
+                                console.log("Alert notification clicked:", notification);
+                              }
+                            }}
                           >
                             {notification.isReminder ? (
                               <div className="notification-content">

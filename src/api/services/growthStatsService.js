@@ -95,6 +95,89 @@ const growthStatsService = {
       throw error;
     }
   },
+
+  // Thêm method để lấy lịch sử cảnh báo
+  getAlertHistory: async (foetusId) => {
+    try {
+      const response = await axiosInstance.get(
+        ENDPOINTS.GROWTHDATA.GET_BY_FOETUS(foetusId)
+      );
+      
+      // Xử lý dữ liệu để lọc ra các cảnh báo
+      const data = response.data;
+      if (!Array.isArray(data)) return [];
+      
+      const alertHistory = data
+        .map(record => {
+          const alerts = [];
+          
+          // Kiểm tra HC
+          if (record.hc && record.hc.isAlert === true) {
+            alerts.push({
+              measure: 'HC',
+              value: record.hc.value,
+              minRange: record.hc.minRange,
+              maxRange: record.hc.maxRange,
+              date: record.date || record.measurementDate,
+              age: record.age
+            });
+          }
+          
+          // Kiểm tra AC
+          if (record.ac && record.ac.isAlert === true) {
+            alerts.push({
+              measure: 'AC',
+              value: record.ac.value,
+              minRange: record.ac.minRange,
+              maxRange: record.ac.maxRange,
+              date: record.date || record.measurementDate,
+              age: record.age
+            });
+          }
+          
+          // Kiểm tra FL
+          if (record.fl && record.fl.isAlert === true) {
+            alerts.push({
+              measure: 'FL',
+              value: record.fl.value,
+              minRange: record.fl.minRange,
+              maxRange: record.fl.maxRange,
+              date: record.date || record.measurementDate,
+              age: record.age
+            });
+          }
+          
+          // Kiểm tra EFW
+          if (record.efw && record.efw.isAlert === true) {
+            alerts.push({
+              measure: 'EFW',
+              value: record.efw.value,
+              minRange: record.efw.minRange,
+              maxRange: record.efw.maxRange,
+              date: record.date || record.measurementDate,
+              age: record.age
+            });
+          }
+          
+          if (alerts.length > 0) {
+            return {
+              date: record.date || record.measurementDate,
+              age: record.age,
+              alerts: alerts
+            };
+          }
+          
+          return null;
+        })
+        .filter(Boolean) // Lọc bỏ các giá trị null
+        .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sắp xếp theo thời gian mới nhất
+      
+      return alertHistory;
+    } catch (error) {
+      console.error("Lỗi khi lấy lịch sử cảnh báo:", error);
+      throw error;
+    }
+  },
 };
 
 export default growthStatsService;

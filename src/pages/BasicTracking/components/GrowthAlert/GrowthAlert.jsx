@@ -21,7 +21,7 @@ const GrowthAlert = ({ isOpen, onClose, alertData }) => {
       if (!alert) return null;
 
       const value = alert.currentValue;
-      const isNormal = alert.isAlert;
+      const isNormal = !alert.isAlert;
 
       return {
         label,

@@ -114,14 +114,14 @@ const HISTORY_COLUMNS = [
               <>
                 <AlertTriangle size={14} />
                 <span>HC: Cần chú ý</span>
-            </>
-          ) : (
-            <>
+              </>
+            ) : (
+              <>
                 <CheckCircle size={14} />
                 <span>HC: An toàn</span>
-            </>
-          )}
-        </span>
+              </>
+            )}
+          </span>
         )}
         {record.ac && (
           <span className={`status-badge ${record.ac.isAlert ? 'warning' : 'safe'}`}>
@@ -130,24 +130,24 @@ const HISTORY_COLUMNS = [
                 <AlertTriangle size={14} />
                 <span>AC: Cần chú ý</span>
               </>
-                  ) : (
-                    <>
+            ) : (
+              <>
                 <CheckCircle size={14} />
                 <span>AC: An toàn</span>
-                    </>
-                  )}
+              </>
+            )}
           </span>
         )}
         {record.fl && (
           <span className={`status-badge ${record.fl.isAlert ? 'warning' : 'safe'}`}>
             {record.fl.isAlert ? (
               <>
-                                        <AlertTriangle size={14} />
+                <AlertTriangle size={14} />
                 <span>FL: Cần chú ý</span>
               </>
             ) : (
               <>
-                                        <CheckCircle size={14} />
+                <CheckCircle size={14} />
                 <span>FL: An toàn</span>
               </>
             )}
