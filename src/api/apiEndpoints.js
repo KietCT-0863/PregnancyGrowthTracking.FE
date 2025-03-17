@@ -1,5 +1,5 @@
 export const BASE_URL =
-  "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api";
+  "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api";
 
 export const USER_API = `${BASE_URL}/User`;
 
