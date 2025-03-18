@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,17 +7,17 @@ import {
   Button,
   TextField,
   Box,
-  CircularProgress
-} from '@mui/material';
+  CircularProgress,
+} from "@mui/material";
 
 const GrowthStandardForm = ({ open, onClose, editData }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    gestationalAge: '',
-    hcMedian: '',
-    acMedian: '',
-    flMedian: '',
-    efwMedian: ''
+    gestationalAge: "",
+    hcMedian: "",
+    acMedian: "",
+    flMedian: "",
+    efwMedian: "",
   });
 
   useEffect(() => {
@@ -27,15 +27,15 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
         hcMedian: editData.hcMedian,
         acMedian: editData.acMedian,
         flMedian: editData.flMedian,
-        efwMedian: editData.efwMedian
+        efwMedian: editData.efwMedian,
       });
     } else {
       setFormData({
-        gestationalAge: '',
-        hcMedian: '',
-        acMedian: '',
-        flMedian: '',
-        efwMedian: ''
+        gestationalAge: "",
+        hcMedian: "",
+        acMedian: "",
+        flMedian: "",
+        efwMedian: "",
       });
     }
   }, [editData]);
@@ -43,33 +43,35 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const url = 'https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/GrowthStandard';
-      const method = editData ? 'PUT' : 'POST';
+      const token = localStorage.getItem("token");
+      const url =
+        "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api/GrowthStandard";
+
+      const method = editData ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save data');
+        throw new Error("Failed to save data");
       }
 
       onClose();
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       // Có thể thêm xử lý hiển thị thông báo lỗi ở đây
     } finally {
       setLoading(false);
@@ -79,10 +81,10 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {editData ? 'Cập nhật Growth Standard' : 'Thêm Growth Standard'}
+        {editData ? "Cập nhật Growth Standard" : "Thêm Growth Standard"}
       </DialogTitle>
       <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
           <TextField
             name="gestationalAge"
             label="Tuổi thai (tuần)"
@@ -128,18 +130,20 @@ const GrowthStandardForm = ({ open, onClose, editData }) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={loading}>Hủy</Button>
-        <Button 
-          onClick={handleSubmit} 
+        <Button onClick={onClose} disabled={loading}>
+          Hủy
+        </Button>
+        <Button
+          onClick={handleSubmit}
           variant="contained"
           disabled={loading}
           startIcon={loading ? <CircularProgress size={20} /> : null}
         >
-          {editData ? 'Cập nhật' : 'Thêm mới'}
+          {editData ? "Cập nhật" : "Thêm mới"}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default GrowthStandardForm; 
+export default GrowthStandardForm;

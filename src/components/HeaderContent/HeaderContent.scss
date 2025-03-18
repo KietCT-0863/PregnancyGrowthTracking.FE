@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Variables
@@ -12,24 +12,47 @@ $dark-text: #ffffff;
 
 // Animation Keyframes
 @keyframes waterWave {
-  0% { transform: translate(-50%, 0) rotate(0deg); }
-  50% { transform: translate(-50%, -2%) rotate(180deg); }
-  100% { transform: translate(-50%, 0) rotate(360deg); }
+  0% {
+    transform: translate(-50%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -2%) rotate(180deg);
+  }
+  100% {
+    transform: translate(-50%, 0) rotate(360deg);
+  }
 }
 
 @keyframes waterDrop {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 @keyframes ripple {
-  0% { transform: scale(1); opacity: 0.4; }
-  100% { transform: scale(2.5); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .hero {
@@ -45,16 +68,26 @@ $dark-text: #ffffff;
     color: $dark-text;
 
     .hero-content {
-      h1, h2, h3 { color: $dark-text; }
-      p { color: darken($dark-text, 10%); }
+      h1,
+      h2,
+      h3 {
+        color: $dark-text;
+      }
+      p {
+        color: darken($dark-text, 10%);
+      }
     }
 
     .feature-card {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      
-      h3 { color: $dark-text; }
-      p { color: darken($dark-text, 15%); }
+
+      h3 {
+        color: $dark-text;
+      }
+      p {
+        color: darken($dark-text, 15%);
+      }
     }
 
     .quick-action-btn {
@@ -85,9 +118,20 @@ $dark-text: #ffffff;
       border-radius: 43%;
       animation: waterWave 15s infinite linear;
 
-      &1 { top: -50%; animation-duration: 20s; }
-      &2 { top: -55%; animation-delay: -5s; animation-duration: 17s; }
-      &3 { top: -60%; animation-delay: -8s; animation-duration: 15s; }
+      &1 {
+        top: -50%;
+        animation-duration: 20s;
+      }
+      &2 {
+        top: -55%;
+        animation-delay: -5s;
+        animation-duration: 17s;
+      }
+      &3 {
+        top: -60%;
+        animation-delay: -8s;
+        animation-duration: 15s;
+      }
     }
   }
 
@@ -115,7 +159,7 @@ $dark-text: #ffffff;
       &:hover {
         background: white;
         transform: translateY(-5px);
-        
+
         .quick-action-label {
           opacity: 1;
           transform: translateY(0);
@@ -197,7 +241,7 @@ $dark-text: #ffffff;
     z-index: 1;
 
     .current-time {
-      font-family: 'Roboto', sans-serif;
+      font-family: "Roboto", sans-serif;
       font-size: 1.2rem;
       color: $text-color;
       margin: 1rem 0;
@@ -210,7 +254,7 @@ $dark-text: #ffffff;
       margin-bottom: 4rem;
 
       h1 {
-        font-family: 'Playfair Display', serif;
+        font-family: "Playfair Display", serif;
         font-size: 3.5rem;
         color: $text-color;
         margin-bottom: 1.5rem;
@@ -307,13 +351,17 @@ $dark-text: #ffffff;
 
       &.left {
         align-self: flex-start;
-        .water-stream { left: 100%; }
+        .water-stream {
+          left: 100%;
+        }
       }
 
       &.right {
         align-self: flex-end;
         flex-direction: row-reverse;
-        .water-stream { right: 100%; }
+        .water-stream {
+          right: 100%;
+        }
       }
 
       .water-drop {
@@ -327,7 +375,7 @@ $dark-text: #ffffff;
         transform: translateX(-50%);
 
         &::before {
-          content: '';
+          content: "";
           position: absolute;
           top: 0;
           left: 0;
@@ -385,7 +433,7 @@ $dark-text: #ffffff;
         }
 
         h3 {
-          font-family: 'Amatic SC', cursive;
+          font-family: "Amatic SC", cursive;
           font-size: 1.8rem;
           color: $text-color;
           margin-bottom: 0.5rem;
@@ -420,7 +468,7 @@ $dark-text: #ffffff;
       background: rgba(255, 255, 255, 0.9); // Added background
       padding: 10px; // Added padding
       transition: all 0.3s ease;
-    
+
       &:hover {
         transform: scale(1.1);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -429,18 +477,51 @@ $dark-text: #ffffff;
       @for $i from 1 through 11 {
         &-#{$i} {
           animation: float #{3 + random(3)}s infinite ease-in-out;
-          
-          @if $i == 1 { top: 15%; left: 15%; }
-          @if $i == 2 { top: 25%; right: 20%; }
-          @if $i == 3 { top: 45%; left: 10%; }
-          @if $i == 4 { top: 60%; right: 15%; }
-          @if $i == 5 { bottom: 20%; left: 20%; }
-          @if $i == 6 { bottom: 30%; right: 10%; }
-          @if $i == 7 { bottom: 15%; left: 45%; }
-          @if $i == 8 { top: 35%; left: 25%; }
-          @if $i == 9 { top: 70%; right: 25%; }
-          @if $i == 10 { bottom: 40%; left: 30%; }
-          @if $i == 11 { bottom: 25%; right: 35%; }
+
+          @if $i == 1 {
+            top: 15%;
+            left: 15%;
+          }
+          @if $i == 2 {
+            top: 25%;
+            right: 20%;
+          }
+          @if $i == 3 {
+            top: 45%;
+            left: 10%;
+          }
+          @if $i == 4 {
+            top: 60%;
+            right: 15%;
+          }
+          @if $i == 5 {
+            bottom: 20%;
+            left: 20%;
+          }
+          @if $i == 6 {
+            bottom: 30%;
+            right: 10%;
+          }
+          @if $i == 7 {
+            bottom: 15%;
+            left: 45%;
+          }
+          @if $i == 8 {
+            top: 35%;
+            left: 25%;
+          }
+          @if $i == 9 {
+            top: 70%;
+            right: 25%;
+          }
+          @if $i == 10 {
+            bottom: 40%;
+            left: 30%;
+          }
+          @if $i == 11 {
+            bottom: 25%;
+            right: 35%;
+          }
         }
       }
     }
@@ -521,7 +602,7 @@ $dark-text: #ffffff;
     .quick-actions {
       top: 1rem;
       right: 1rem;
-      
+
       .quick-action-btn {
         width: 35px;
         height: 35px;
@@ -540,4 +621,3 @@ $dark-text: #ffffff;
     }
   }
 }
-

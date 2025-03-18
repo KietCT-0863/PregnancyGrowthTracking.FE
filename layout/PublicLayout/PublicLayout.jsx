@@ -3,7 +3,6 @@ import "./PublicLayout.scss";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import HomePublic from "../../src/pages/HomePublic/HomePublic";
-import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
 
 const PublicLayout = () => {
   const navigate = useNavigate();
@@ -11,6 +10,12 @@ const PublicLayout = () => {
 
   useEffect(() => {
     const handleNavigation = (event) => {
+      // Kiểm tra nếu link là blog thì cho phép truy cập mà không cần đăng nhập
+      const targetHref = event.currentTarget.getAttribute("href");
+      if (targetHref === "/blog") {
+        return; // Cho phép điều hướng bình thường đến blog
+      }
+
       event.preventDefault();
       if (!isLoggedIn) {
         toast.info("Bạn phải đăng nhập để sử dụng tính năng này!");

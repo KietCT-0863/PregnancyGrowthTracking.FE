@@ -4,7 +4,7 @@ export const API_BASE_URL =
 export const ENDPOINTS = {
   AUTH: {
     LOGIN: "/Auth/Login",
-    REGISTER: "/Auth/Register",
+    REGISTER: "/Auth/register",
     FORGOT_PASSWORD: "/Auth/ForgotPassword",
   },
   USER: {
