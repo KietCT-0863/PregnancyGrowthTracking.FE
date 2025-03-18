@@ -18,6 +18,7 @@ import {
 } from "react-icons/fa";
 import "./NavbarMember.scss";
 import reminderService from "../../api/services/reminderService";
+import growthStatsService from "../../api/services/growthStatsService";
 
 const NavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
@@ -48,6 +49,9 @@ const NavBarMember = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showSidebarNotifications, setShowSidebarNotifications] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
+  const [alertHistory, setAlertHistory] = useState([]);
+  const [combinedNotifications, setCombinedNotifications] = useState([]);
+  const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -167,10 +171,152 @@ const NavBarMember = () => {
     }
   };
 
+  const fetchAlertHistory = async () => {
+    try {
+      console.group("Alert History Fetch");
+      console.log("Fetching alert history...");
+      
+      // Lấy dữ liệu foetus từ nguồn tin cậy hơn
+      let foetusListData = [];
+      try {
+        // Lấy danh sách thai nhi từ API hoặc localStorage
+        const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+        
+        // Giả sử bạn có API endpoint để lấy danh sách thai nhi
+        const foetusListResponse = await fetch('/api/foetus/list');
+        if (foetusListResponse.ok) {
+          foetusListData = await foetusListResponse.json();
+        } else {
+          // Fallback: Nếu không thể gọi API, thử lấy từ localStorage
+          if (userData.foetusId) {
+            foetusListData = [{ foetusId: userData.foetusId, name: "Thai nhi" }];
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching foetus list:", error);
+        // Fallback to localStorage
+        const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+        if (userData.foetusId) {
+          foetusListData = [{ foetusId: userData.foetusId, name: "Thai nhi" }];
+        }
+      }
+      
+      // Nếu không có thai nhi nào, trả về mảng rỗng
+      if (!foetusListData || foetusListData.length === 0) {
+        console.log("Không có thai nhi nào");
+        setAlertHistory([]);
+        return;
+      }
+      
+      // Lấy cảnh báo cho từng thai nhi sử dụng API getAlertHistory
+      const allAlerts = [];
+      
+      for (const foetus of foetusListData) {
+        if (!foetus.foetusId) {
+          console.log("Thai nhi không có foetusId, bỏ qua");
+          continue;
+        }
+        
+        try {
+          console.log("Fetching alerts for foetus:", foetus.foetusId);
+          
+          // SỬ DỤNG API getAlertHistory trực tiếp
+          const alertHistoryData = await growthStatsService.getAlertHistory(foetus.foetusId);
+          console.log("Alert history data:", alertHistoryData);
+          
+          if (Array.isArray(alertHistoryData) && alertHistoryData.length > 0) {
+            // Chuyển đổi dữ liệu từ format API sang format hiển thị
+            const processedAlerts = alertHistoryData.flatMap(item => {
+              // Xử lý từng nhóm cảnh báo
+              return item.alerts.map(alert => ({
+                type: 'warning',
+                measure: alert.measure,
+                value: alert.value,
+                range: `${alert.minRange}-${alert.maxRange}`,
+                date: new Date(alert.date),
+                age: alert.age,
+                message: `${alert.measure === 'EFW' ? 'Cân nặng' : alert.measure} ${alert.value} ${alert.measure === 'EFW' ? 'g' : 'mm'} nằm ngoài khoảng an toàn (${alert.minRange}-${alert.maxRange} ${alert.measure === 'EFW' ? 'g' : 'mm'})`,
+                foetusId: foetus.foetusId,
+                foetusName: foetus.name,
+                isAlert: true
+              }));
+            });
+            
+            allAlerts.push(...processedAlerts);
+          }
+        } catch (error) {
+          console.error(`Error fetching alert history for foetus ${foetus.foetusId}:`, error);
+          // Tiếp tục với thai nhi tiếp theo nếu có lỗi
+        }
+      }
+      
+      // Sắp xếp theo thời gian mới nhất
+      allAlerts.sort((a, b) => b.date - a.date);
+      
+      console.log("Final processed alerts:", allAlerts);
+      setAlertHistory(allAlerts);
+      console.groupEnd();
+    } catch (error) {
+      console.group("Alert History Error");
+      console.error('Error fetching alert history:', error);
+      console.groupEnd();
+      setAlertHistory([]); // Đặt mảng rỗng trong trường hợp lỗi
+    }
+  };
+
+  useEffect(() => {
+    // Tạo các đối tượng cho lịch nhắc
+    const reminderNotifications = notifications.map(n => {
+      // Đảm bảo hệ thống lấy đầy đủ dữ liệu từ n
+      console.log("Processing reminder:", n);
+      
+      return {
+        ...n, // Giữ lại tất cả dữ liệu gốc
+        isReminder: true,
+        isAlert: false,
+        date: new Date(`${n.date.split('T')[0]}T${n.time}`),
+        // Đảm bảo các trường thông tin quan trọng
+        remindId: n.remindId || n.id,
+        notification: n.notification || '', // Đảm bảo lấy đúng thông tin thuốc
+        reminderType: n.reminderType || 'Lịch hẹn',
+        title: n.title || 'Lịch hẹn'
+      };
+    });
+    
+    // Đảm bảo alertHistory luôn là mảng
+    const alertArray = Array.isArray(alertHistory) ? alertHistory : [];
+    
+    // Kết hợp và sắp xếp theo thời gian mới nhất
+    const combined = [
+      ...reminderNotifications,
+      ...alertArray
+    ].sort((a, b) => b.date - a.date);
+    
+    setCombinedNotifications(combined);
+    
+    // Log đầy đủ để debug
+    console.log("Reminder notifications:", reminderNotifications);
+    console.log("Combined notifications:", combined);
+  }, [notifications, alertHistory]);
+
+  // Thêm useEffect debug
+  useEffect(() => {
+    // Debug thông tin
+    console.group("Notifications Debug");
+    console.log("Raw notifications:", notifications);
+    console.log("Combined notifications:", combinedNotifications);
+    if (combinedNotifications.length > 0) {
+      console.log("First notification sample:", combinedNotifications[0]);
+    }
+    console.groupEnd();
+  }, [combinedNotifications]);
+
   useEffect(() => {
     fetchReminders();
+    fetchAlertHistory();
     const interval = setInterval(() => {
       fetchReminders();
+      fetchAlertHistory();
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -240,7 +386,13 @@ const NavBarMember = () => {
     };
   }, [showSidebarNotifications]);
 
-  // State cho việc quản lý đã đọc
+  const totalNotifications = combinedNotifications.length;
+
+  // Trong component NavBarMember, thêm constant để tính tổng số cảnh báo
+  const totalAlerts = alertHistory.length;
+  const totalReminders = notifications.length;
+
+  // Thêm state cho việc quản lý đã đọc
   const [readNotifications, setReadNotifications] = useState(() => {
     const saved = localStorage.getItem('readNotifications');
     return saved ? JSON.parse(saved) : [];
@@ -255,8 +407,17 @@ const NavBarMember = () => {
 
   // Hàm kiểm tra thông báo đã đọc chưa
   const isNotificationRead = (notification) => {
-    const notificationId = `reminder_${notification.remindId || notification.title}_${new Date(notification.date).getTime()}`;
+    // Tạo ID duy nhất cho thông báo
+    const notificationId = notification.isAlert 
+      ? `alert_${notification.measure}_${notification.date.getTime()}_${notification.age}` 
+      : `reminder_${notification.remindId || notification.title}_${notification.date.getTime()}`;
+    
     return readNotifications.includes(notificationId);
+  };
+
+  // Hàm tính số thông báo chưa đọc
+  const getUnreadCount = () => {
+    return combinedNotifications.filter(n => !isNotificationRead(n)).length;
   };
 
   return (
@@ -361,17 +522,24 @@ const NavBarMember = () => {
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <FaBell />
-                {notifications.length > 0 && (
-                  <span className="notification-badge">
-                    {notifications.length}
-                  </span>
+                {(totalAlerts + totalReminders) > 0 && (
+                  <div className="notification-badge-container">
+                    <span className="notification-badge">
+                      {totalAlerts + totalReminders}
+                    </span>
+                    {totalAlerts > 0 && (
+                      <span className="alert-badge">
+                        {totalAlerts}
+                      </span>
+                    )}
+                  </div>
                 )}
               </button>
 
               {showNotifications && (
                 <div className="notification-dropdown">
                   <div className="notification-header">
-                    <h3>Lịch nhắc sắp tới</h3>
+                    <h3>Thông báo</h3>
                     <button
                       className="close-button"
                       onClick={() => setShowNotifications(false)}
@@ -380,42 +548,115 @@ const NavBarMember = () => {
                     </button>
                   </div>
 
+                  <div className="notification-tabs">
+                    <button 
+                      className={`tab-button ${activeTab === 'all' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('all')}
+                    >
+                      Tất cả
+                    </button>
+                    <button 
+                      className={`tab-button ${activeTab === 'reminders' ? 'active' : ''}`} 
+                      onClick={() => setActiveTab('reminders')}
+                    >
+                      Lịch hẹn
+                    </button>
+                    <button 
+                      className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`} 
+                      onClick={() => {
+                        console.group("Alert Tab Click");
+                        console.log("Current alert history:", alertHistory);
+                        console.log("Switching to alerts tab");
+                        setActiveTab('alerts');
+                        // Optionally refresh alerts when tab is clicked
+                        fetchAlertHistory();
+                        console.groupEnd();
+                      }}
+                    >
+                      Cảnh báo
+                    </button>
+                  </div>
+
                   <div className="notification-list">
-                    {notifications.length === 0 ? (
+                    {combinedNotifications.length === 0 ? (
                       <div className="no-notifications">
                         <i className="fas fa-bell-slash"></i>
                         <p>Không có thông báo nào</p>
                       </div>
                     ) : (
-                      notifications.map((notification, index) => {
-                        const notificationDate = new Date(`${notification.date.split('T')[0]}T${notification.time}`);
-                        return (
+                      combinedNotifications
+                        .filter(notification => {
+                          if (activeTab === 'reminders') return notification.isReminder === true;
+                          if (activeTab === 'alerts') {
+                            console.log("Filtering notification:", notification);
+                            return notification.isAlert === true;
+                          }
+                          return true;
+                        })
+                        .map((notification, index) => (
                           <div 
                             key={index} 
-                            className={`notification-item reminder ${isNotificationRead(notification) ? 'read' : 'unread'}`}
+                            className={`notification-item ${notification.isAlert ? 'alert' : 'reminder'} ${isNotificationRead(notification) ? 'read' : 'unread'}`}
                             onClick={() => {
-                              const notificationId = `reminder_${notification.remindId || notification.title}_${notificationDate.getTime()}`;
+                              // Tạo ID duy nhất cho thông báo
+                              const notificationId = notification.isAlert 
+                                ? `alert_${notification.measure}_${notification.date.getTime()}_${notification.age}` 
+                                : `reminder_${notification.remindId || notification.title}_${notification.date.getTime()}`;
+                              
                               markAsRead(notificationId);
-                              navigate('/member/calendar');
+                              
+                              // Logic xử lý khi click vào thông báo
+                              if (notification.isAlert) {
+                                console.log("Alert notification clicked:", notification);
+                                navigate('/member/basic-tracking');
+                              } else {
+                                navigate('/member/calendar');
+                              }
                             }}
                           >
-                            <div className="notification-content">
-                              <div className="notification-type">
-                                {notification.reminderType || "Lịch hẹn"}
-                              </div>
-                              <h4>{notification.title}</h4>
-                              {notification.notification && (
-                                <p className="notification-medicine">
-                                  <strong>Thuốc:</strong> {notification.notification}
+                            {notification.isReminder ? (
+                              <div className="notification-content">
+                                <div className="notification-type">
+                                  {notification.reminderType || "Lịch hẹn"}
+                                </div>
+                                <h4>{notification.title}</h4>
+                                {notification.notification && (
+                                  <p className="notification-medicine">
+                                    <strong>Thuốc:</strong> {notification.notification}
+                                  </p>
+                                )}
+                                <p className="notification-time">
+                                  <strong>Thời gian:</strong> {notification.time}, {new Date(notification.date).toLocaleDateString('vi-VN')}
                                 </p>
-                              )}
-                              <p className="notification-time">
-                                <strong>Thời gian:</strong> {notification.time}, {new Date(`${notification.date.split('T')[0]}`).toLocaleDateString('vi-VN')}
-                              </p>
-                            </div>
+                              </div>
+                            ) : (
+                              <div className="notification-content">
+                                <div className="notification-type warning">
+                                  {notification.foetusName ? `${notification.foetusName} - ` : ''}
+                                  Cảnh báo {notification.measure}
+                                </div>
+                                <p className="notification-message">
+                                  {notification.message}
+                                </p>
+                                <p className="notification-details">
+                                  Tuần thai: {notification.age}
+                                </p>
+                                <p className="notification-time">
+                                  {notification.date.toLocaleString('vi-VN')}
+                                </p>
+                                <button 
+                                  className="view-chart-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate('/member/basic-tracking');
+                                  }}
+                                >
+                                  Xem biểu đồ
+                                </button>
+                              </div>
+                            )}
                           </div>
-                        )
-                      })
+                        ))
                     )}
                   </div>
                 </div>
@@ -615,57 +856,112 @@ const NavBarMember = () => {
             onClick={toggleSidebar}
           ></div>
 
-          {/* Dropdown thông báo cho sidebar */}
+          {/* Thêm dropdown thông báo cho sidebar */}
           {showSidebarNotifications && (
             <div className="sidebar-notification-dropdown">
               <div className="sidebar-notification-header">
-                <h3>Lịch nhắc sắp tới</h3>
+                <h3>Thông báo</h3>
                 <button className="close-button" onClick={() => setShowSidebarNotifications(false)}>
                   ×
                 </button>
               </div>
               
               <div className="sidebar-notification-list">
-                {notifications.length === 0 ? (
+                {combinedNotifications.length === 0 ? (
                   <div className="no-notifications">
                     <i className="fas fa-bell-slash"></i>
-                    <p>Không có lịch nhắc nào sắp tới</p>
+                    <p>Không có thông báo nào</p>
                   </div>
                 ) : (
-                  notifications.map((reminder, index) => (
-                    <div key={index} className="sidebar-notification-item">
-                      <div className="notification-type">
-                        {reminder.reminderType || "Lịch hẹn"}
-                      </div>
-                      <div className="notification-content">
-                        <h4>{reminder.title}</h4>
-                        {reminder.notification && (
-                          <p className="notification-medicine">
-                            {reminder.notification}
-                          </p>
-                        )}
-                        <p className="notification-time">
-                          {formatDateTime(reminder.date, reminder.time)}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              
-              <Link
-                to="/member/calendar"
-                className="view-all-link"
-                onClick={() => setShowSidebarNotifications(false)}
-              >
-                Xem tất cả lịch
-              </Link>
-            </div>
-          )}
-        </>
-      )}
-    </>
-  );
-};
-
-export default NavBarMember;
+                  combinedNotifications.map((notification, index) => (
+                    <div 
+                      key={index} 
+                      className={`sidebar-notification-item ${notification.isAlert ? 'alert' : ''}`}
+                      onClick={() => {
+                        // Logic xử lý khi click vào thông báo
+                        const notificationId = notification.isAlert 
+                          ? `alert_${notification.measure}_${notification.date.getTime()}_${notification.age}` 
+                          : `reminder_${notification.remindId || notification.title}_${notification.date.getTime()}`;
+                        
+                        markAsRead(notificationId);
+                        
+                        if (notification.isAlert) {
+                          navigate('/member/basic-tracking');
+                        } else {
+                          navigate('/member/calendar');
+                        }
+                        
+                        setShowSidebarNotifications(false);
+                      }}
+                    >
+                      {notification.isReminder ? (
+                        <>
+                          <div className="notification-type">
+                            {notification.reminderType || "Lịch hẹn"}
+                          </div>
+                          <div className="notification-content">
+                            <h4>{notification.title}</h4>
+                            {notification.notification && (
+                              <p className="notification-medicine">
+                                {notification.notification}
+                              </p>
+                            )}
+                            <p className="notification-time">
+                              {notification.time}, {new Date(notification.date).toLocaleDateString('vi-VN')}
+                            </p>
+                          </div>
+                        </>
+                                      ) : (
+                                        // Hiển thị cảnh báo
+                                        <>
+                                          <div className="notification-type warning">
+                                            {notification.foetusName ? `${notification.foetusName} - ` : ''}
+                                            Cảnh báo {notification.measure}
+                                          </div>
+                                          <div className="notification-content">
+                                            <p className="notification-message">
+                                              {notification.message}
+                                            </p>
+                                            <p className="notification-details">
+                                              Tuần thai: {notification.age}
+                                            </p>
+                                            <p className="notification-time">
+                                              {notification.date.toLocaleString('vi-VN')}
+                                            </p>
+                                          </div>
+                                        </>
+                                      )}
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                              
+                              <div className="sidebar-notification-footer">
+                                <button 
+                                  className="view-all-button"
+                                  onClick={() => {
+                                    setShowSidebarNotifications(false);
+                                    navigate('/member/calendar');
+                                  }}
+                                >
+                                  Xem tất cả lịch hẹn
+                                </button>
+                                <button 
+                                  className="view-alerts-button"
+                                  onClick={() => {
+                                    setShowSidebarNotifications(false);
+                                    navigate('/member/basic-tracking');
+                                  }}
+                                >
+                                  Xem tất cả cảnh báo
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </>
+                  );
+                };
+                
+                export default NavBarMember;
