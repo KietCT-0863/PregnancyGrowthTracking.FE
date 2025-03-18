@@ -115,47 +115,68 @@
 
     .button-group {
       display: flex;
-      gap: 16px;
       justify-content: center;
+      margin-top: 24px;
+      gap: 16px;
 
-      button {
-        min-width: 150px;
-        height: 40px;
-        font-size: 16px;
+      .primary-button, .login-button {
+        background-color: #ff4757;
+        color: #fff;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
         cursor: pointer;
-        padding: 0 24px;
         transition: all 0.3s ease;
-
-        &.home-button {
-          background-color: #1890ff;
-          color: white;
-
-          &:hover {
-            background-color: #40a9ff;
-          }
-
-          &:active {
-            background-color: #096dd9;
-          }
+        font-weight: 500;
+        
+        &:hover {
+          background-color: #ff6b81;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
         }
-
-        &.retry-button {
-          background-color: #ffffff;
-          color: #ff4d4f;
-          border: 1px solid #ff4d4f;
-
-          &:hover {
-            background-color: #fff1f0;
-          }
-
-          &:active {
-            background-color: #ffccc7;
-          }
+      }
+      
+      .secondary-button, .home-button {
+        background-color: #f1f2f6;
+        color: #222;
+        border: 1px solid #dfe4ea;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #dfe4ea;
+        }
+      }
+      
+      .retry-button {
+        background-color: #70a1ff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: #1e90ff;
         }
       }
     }
+  }
+  
+  .success-message {
+    color: #009432;
+    background-color: rgba(0, 148, 50, 0.1);
+    padding: 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    text-align: center;
+    font-weight: 500;
   }
 }
 
@@ -166,4 +187,20 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+  }
+}
+
+.login-button {
+  animation: pulse 2s infinite;
 } 

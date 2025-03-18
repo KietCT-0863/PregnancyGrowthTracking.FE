@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import "./Login.scss";
@@ -16,7 +16,19 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Kiểm tra xem có thông báo từ trang thanh toán không
+    const paymentMessage = localStorage.getItem("paymentSuccessMessage");
+    if (paymentMessage) {
+      setSuccessMessage(paymentMessage);
+      toast.success(paymentMessage);
+      // Xóa thông báo sau khi đã hiển thị
+      localStorage.removeItem("paymentSuccessMessage");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,6 +127,7 @@ const Login = () => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
 
         <form onSubmit={handleSubmit} className="glass-effect">
           <div className="form-group">
