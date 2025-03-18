@@ -6,7 +6,7 @@ import "./PaymentResult.scss";
 const API_URL =
   "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api";
 
-const PaymentResultCard = ({ onBackHome, onRetry, onLoginRedirect }) => {
+const PaymentResultCard = ({ onBackHome, onRetry, onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState(null);
@@ -31,16 +31,6 @@ const PaymentResultCard = ({ onBackHome, onRetry, onLoginRedirect }) => {
         };
         setVnpayDetails(vnpayInfo);
 
-        if (vnpayInfo.responseCode === "00") {
-          console.log("Payment successful based on responseCode");
-          setPaymentSuccess(true);
-        } else {
-          console.log("Payment failed based on responseCode:", vnpayInfo.responseCode);
-          setPaymentSuccess(false);
-          setLoading(false);
-          return;
-        }
-
         const response = await axios.get(
           `${API_URL}/Payment/payment-callback${location.search}`,
           {
@@ -50,8 +40,6 @@ const PaymentResultCard = ({ onBackHome, onRetry, onLoginRedirect }) => {
             },
           }
         );
-
-        console.log("API response:", response.data);
 
         if (response.data.success) {
           setPaymentSuccess(true);
@@ -66,7 +54,6 @@ const PaymentResultCard = ({ onBackHome, onRetry, onLoginRedirect }) => {
       } catch (error) {
         console.error("Error verifying payment:", error);
         setPaymentSuccess(false);
-        
         if (error.code === "ERR_NETWORK" || error.code === "ECONNABORTED") {
           alert(
             "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng và thử lại."
@@ -199,29 +186,29 @@ const PaymentResultCard = ({ onBackHome, onRetry, onLoginRedirect }) => {
 
         <p className="message">
           {paymentSuccess
-            ? "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Vui lòng đăng nhập lại để kích hoạt gói thành viên."
+            ? "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Hóa đơn đã được gửi vào email của bạn."
             : "Rất tiếc, đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."}
         </p>
         
+        {paymentSuccess && (
+          <p className="login-message">
+            Vui lòng đăng nhập lại để chức năng có hiệu lực
+          </p>
+        )}
+        
         <div className="button-group">
-          {paymentSuccess ? (
-            <>
-              <button className="login-button primary-button" onClick={onLoginRedirect}>
-                Đăng nhập lại
-              </button>
-              <button className="home-button secondary-button" onClick={onBackHome}>
-                Đăng xuất & Về trang chủ
-              </button>
-            </>
-          ) : (
-            <>
-              <button className="home-button" onClick={onBackHome}>
-                Đăng xuất & Về trang chủ
-              </button>
-              <button className="retry-button" onClick={onRetry}>
-                Thử lại
-              </button>
-            </>
+          <button className="home-button" onClick={onBackHome}>
+            Về trang chủ
+          </button>
+          {!paymentSuccess && (
+            <button className="retry-button" onClick={onRetry}>
+              Thử lại
+            </button>
+          )}
+          {paymentSuccess && (
+            <button className="logout-button" onClick={onLogout}>
+              Đăng xuất
+            </button>
           )}
         </div>
       </div>
