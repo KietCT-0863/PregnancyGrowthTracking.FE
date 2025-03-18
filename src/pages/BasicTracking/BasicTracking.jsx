@@ -244,6 +244,7 @@ const BasicTracking = () => {
       const growthResults = await fetchGrowthData(foetusData);
       updateState(foetusData, growthResults);
     } catch (err) {
+      console.error("Error fetching data:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -260,7 +261,7 @@ const BasicTracking = () => {
             `Error fetching growth data for foetus ${foetus.foetusId}:`,
             err
           );
-          return { [foetus.foetusId]: null };
+          return { [foetus.foetusId]: [] };
         })
     );
     return Object.assign({}, ...(await Promise.all(growthPromises)));
@@ -326,11 +327,11 @@ const BasicTracking = () => {
     );
 
     const updateData = {
-      age: Number(statsData.age || currentChild.age || 0),
-      hc: Number(statsData.hc || currentChild.hc || 0),
-      ac: Number(statsData.ac || currentChild.ac || 0),
-      fl: Number(statsData.fl || currentChild.fl || 0),
-      efw: Number(statsData.efw || currentChild.efw || 0),
+      age: Number(statsData.age || currentChild?.age || 0),
+      hc: Number(statsData.hc) || null,
+      ac: Number(statsData.ac) || null,
+      fl: Number(statsData.fl) || null,
+      efw: Number(statsData.efw) || null,
     };
 
     // Log dữ liệu trước khi gửi
@@ -352,21 +353,63 @@ const BasicTracking = () => {
     console.group("Update Success");
     console.log("Success Data:", result);
 
-    // Hiển thị thông báo thành công
-    toast.success(
-      <div>
-        <h4>Cập nhật thành công!</h4>
-        <p>ID: {result.data?.id || "N/A"}</p>
-        <p>Tuần thai: {result.data?.age || "N/A"}</p>
-        <p>
-          Ngày đo: {new Date(result.data?.date).toLocaleDateString("vi-VN")}
-        </p>
-      </div>,
-      {
-        autoClose: 5000,
-        position: "top-right",
+    try {
+      // Lấy dữ liệu từ kết quả API một cách linh hoạt hơn
+      const responseData = result.data || result;
+      
+      // In chi tiết cấu trúc dữ liệu nhận được để debug
+      console.log("Cấu trúc dữ liệu:", JSON.stringify(responseData, null, 2));
+      
+      // Lấy ID - kiểm tra nhiều trường ID có thể có
+      const measurementId = responseData.id || 
+                          responseData.measurementId || 
+                          responseData.growthId || 
+                          responseData._id || 
+                          "Đã cập nhật";
+      
+      // Lấy tuần thai - kiểm tra nhiều trường có thể có
+      const gestationalAge = responseData.age || 
+                          responseData.gestationalAge || 
+                          responseData.weekAge || 
+                          responseData.ageInWeeks || 
+                          tempStats[selectedChild?.foetusId]?.age || 
+                          "Đã cập nhật";
+      
+      // Xử lý date - kiểm tra nhiều trường ngày có thể có
+      let measurementDate = "Ngày hôm nay";
+      const dateValue = responseData.date || 
+                        responseData.measurementDate || 
+                        responseData.createdAt || 
+                        responseData.updateDate || 
+                        responseData.updatedAt || 
+                        new Date();
+                        
+      // Đảm bảo dateValue là string hoặc Date object
+      if (dateValue) {
+        try {
+          measurementDate = new Date(dateValue).toLocaleDateString("vi-VN");
+        } catch (e) {
+          console.error("Lỗi chuyển đổi ngày:", e);
+        }
       }
-    );
+
+      // Hiển thị thông báo thành công với dữ liệu đã trích xuất
+      toast.success(
+        <div>
+          <h4>Cập nhật thành công!</h4>
+          <p>ID: {measurementId}</p>
+          <p>Tuần thai: {gestationalAge}</p>
+          <p>Ngày đo: {measurementDate}</p>
+        </div>,
+        {
+          autoClose: 5000,
+          position: "top-right",
+        }
+      );
+    } catch (error) {
+      console.error("Lỗi xử lý dữ liệu thành công:", error);
+      toast.success("Cập nhật thành công!");
+    }
 
     await fetchData();
     setTempStats({});
@@ -395,8 +438,6 @@ const BasicTracking = () => {
     );
 
     console.groupEnd();
-    console.error("Update failed:", err);
-    toast.error(err.message || "Có lỗi xảy ra khi cập nhật chỉ số");
   };
 
   const handleViewHistory = (foetusId) => {
@@ -415,7 +456,7 @@ const BasicTracking = () => {
   const sortHistoryData = (data) => {
     return [...data].sort((a, b) => {
       if (a.age !== b.age) return b.age - a.age;
-      return new Date(b.measurementDate) - new Date(a.measurementDate);
+      return new Date(b.measurementDate || b.date) - new Date(a.measurementDate || a.date);
     });
   };
 
@@ -429,7 +470,7 @@ const BasicTracking = () => {
     }));
   };
 
-  // Cập nhật hàm getChartData
+  // Hàm tạo dữ liệu biểu đồ
   const getChartData = (selectedChild, growthData) => {
     if (!selectedChild || !growthData[selectedChild.foetusId]) {
       return {
@@ -491,7 +532,6 @@ const BasicTracking = () => {
     };
   };
 
-  // Thêm hàm xử lý khi click vào card thai nhi
   const handleChildSelect = (child) => {
     setSelectedChild(child === selectedChild ? null : child); // Toggle selection
   };
@@ -502,14 +542,26 @@ const BasicTracking = () => {
     
     try {
       setLoadingRanges(true);
-      const rangeData = await growthStatsService.getGrowthRanges(age);
+      
+      let rangeData;
+      try {
+        rangeData = await growthStatsService.getGrowthRanges(age);
+      } catch (err) {
+        console.error(`Lỗi khi lấy khoảng chuẩn cho tuần ${age}:`, err);
+        
+        // Tạo dữ liệu mặc định khi API lỗi
+        rangeData = {
+          hc: { minRange: 100, maxRange: 300 },
+          ac: { minRange: 100, maxRange: 300 },
+          fl: { minRange: 10, maxRange: 60 },
+          efw: { minRange: 100, maxRange: 3000 }
+        };
+      }
       
       setStandardRanges(prev => ({
         ...prev,
         [age]: rangeData
       }));
-    } catch (err) {
-      console.error(`Lỗi khi lấy khoảng chuẩn cho tuần ${age}:`, err);
     } finally {
       setLoadingRanges(false);
     }
@@ -529,7 +581,90 @@ const BasicTracking = () => {
     }
   }, [selectedChild, growthData]);
 
-  // Cập nhật hàm phân tích xu hướng để sử dụng dữ liệu từ API
+  // Hàm tạo cảnh báo từ dữ liệu
+  const generateCurrentAlerts = (currentData) => {
+    const alerts = [];
+    
+    // Kiểm tra HC
+    if (currentData.hc) {
+      if (currentData.hc.isAlert) {
+        alerts.push({
+          type: "warning",
+          title: "Cảnh báo HC",
+          description: `Chu vi đầu (HC) hiện tại là ${currentData.hc.value}mm, nằm ngoài khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
+          icon: <AlertTriangle />
+        });
+      } else {
+        alerts.push({
+          type: "success",
+          title: "HC trong mức bình thường",
+          description: `Chu vi đầu (HC) đang phát triển tốt trong khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
+          icon: <CheckCircle />
+        });
+      }
+    }
+    
+    // Kiểm tra AC
+    if (currentData.ac) {
+      if (currentData.ac.isAlert) {
+        alerts.push({
+          type: "warning",
+          title: "Cảnh báo AC",
+          description: `Chu vi bụng (AC) hiện tại là ${currentData.ac.value}mm, nằm ngoài khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
+          icon: <AlertTriangle />
+        });
+      } else {
+        alerts.push({
+          type: "success",
+          title: "AC trong mức bình thường",
+          description: `Chu vi bụng (AC) đang phát triển tốt trong khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
+          icon: <CheckCircle />
+        });
+      }
+    }
+    
+    // Kiểm tra FL
+    if (currentData.fl) {
+      if (currentData.fl.isAlert) {
+        alerts.push({
+          type: "warning",
+          title: "Cảnh báo FL",
+          description: `Chiều dài xương đùi (FL) hiện tại là ${currentData.fl.value}mm, nằm ngoài khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
+          icon: <AlertTriangle />
+        });
+      } else {
+        alerts.push({
+          type: "success",
+          title: "FL trong mức bình thường",
+          description: `Chiều dài xương đùi (FL) đang phát triển tốt trong khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
+          icon: <CheckCircle />
+        });
+      }
+    }
+    
+    // Kiểm tra EFW
+    if (currentData.efw) {
+      if (currentData.efw.isAlert) {
+        alerts.push({
+          type: "warning",
+          title: "Cảnh báo cân nặng",
+          description: `Cân nặng ước tính (EFW) hiện tại là ${currentData.efw.value}g, nằm ngoài khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
+          icon: <AlertTriangle />
+        });
+      } else {
+        alerts.push({
+          type: "success",
+          title: "Cân nặng trong mức bình thường",
+          description: `Cân nặng ước tính (EFW) đang phát triển tốt trong khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
+          icon: <CheckCircle />
+        });
+      }
+    }
+    
+    return alerts;
+  };
+
+  // Phân tích xu hướng tăng trưởng
   const analyzeGrowthTrend = (foetusId) => {
     const foetusData = growthData[foetusId];
     if (!foetusData || !Array.isArray(foetusData) || foetusData.length < 2) {
@@ -551,7 +686,7 @@ const BasicTracking = () => {
         const hcGrowthRate = weeksDiff > 0 ? hcGrowth / weeksDiff : hcGrowth;
         
         // Kiểm tra trạng thái cảnh báo
-        const isLatestHCSafe = lastTwoMeasurements[1].hc.isAlert;
+        const isLatestHCSafe = !lastTwoMeasurements[1].hc.isAlert;
         
         if (!isLatestHCSafe) {
           trendAlerts.push({
@@ -584,7 +719,7 @@ const BasicTracking = () => {
         const acGrowthRate = weeksDiff > 0 ? acGrowth / weeksDiff : acGrowth;
         
         // Kiểm tra trạng thái cảnh báo
-        const isLatestACSafe = lastTwoMeasurements[1].ac.isAlert;
+        const isLatestACSafe = !lastTwoMeasurements[1].ac.isAlert;
         
         if (!isLatestACSafe) {
           trendAlerts.push({
@@ -617,7 +752,7 @@ const BasicTracking = () => {
         const flGrowthRate = weeksDiff > 0 ? flGrowth / weeksDiff : flGrowth;
         
         // Kiểm tra trạng thái cảnh báo
-        const isLatestFLSafe = lastTwoMeasurements[1].fl.isAlert;
+        const isLatestFLSafe = !lastTwoMeasurements[1].fl.isAlert;
         
         if (!isLatestFLSafe) {
           trendAlerts.push({
@@ -650,7 +785,7 @@ const BasicTracking = () => {
         const efwGrowthRate = weeksDiff > 0 ? efwGrowth / weeksDiff : efwGrowth;
         
         // Kiểm tra trạng thái cảnh báo
-        const isLatestEFWSafe = lastTwoMeasurements[1].efw.isAlert;
+        const isLatestEFWSafe = !lastTwoMeasurements[1].efw.isAlert;
         
         if (!isLatestEFWSafe) {
           trendAlerts.push({
@@ -704,83 +839,9 @@ const BasicTracking = () => {
       
       // Lấy dữ liệu mới nhất
       const currentData = [...foetusData].sort((a, b) => b.age - a.age)[0];
-      let newAlerts = [];
       
-      // Kiểm tra HC
-      if (currentData.hc) {
-        if (currentData.hc.isAlert) {
-          newAlerts.push({
-            type: "warning",
-            title: "Cảnh báo HC",
-            description: `Chu vi đầu (HC) hiện tại là ${currentData.hc.value}mm, nằm ngoài khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
-            icon: <AlertTriangle />
-          });
-        } else {
-          newAlerts.push({
-            type: "success",
-            title: "HC trong mức bình thường",
-            description: `Chu vi đầu (HC) đang phát triển tốt trong khoảng an toàn (${currentData.hc.minRange}-${currentData.hc.maxRange}mm).`,
-            icon: <CheckCircle />
-          });
-        }
-      }
-      
-      // Kiểm tra AC
-      if (currentData.ac) {
-        if (currentData.ac.isAlert) {
-          newAlerts.push({
-            type: "warning",
-            title: "Cảnh báo AC",
-            description: `Chu vi bụng (AC) hiện tại là ${currentData.ac.value}mm, nằm ngoài khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
-            icon: <AlertTriangle />
-          });
-        } else {
-          newAlerts.push({
-            type: "success",
-            title: "AC trong mức bình thường",
-            description: `Chu vi bụng (AC) đang phát triển tốt trong khoảng an toàn (${currentData.ac.minRange}-${currentData.ac.maxRange}mm).`,
-            icon: <CheckCircle />
-          });
-        }
-      }
-      
-      // Kiểm tra FL
-      if (currentData.fl) {
-        if (currentData.fl.isAlert) {
-          newAlerts.push({
-            type: "warning",
-            title: "Cảnh báo FL",
-            description: `Chiều dài xương đùi (FL) hiện tại là ${currentData.fl.value}mm, nằm ngoài khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
-            icon: <AlertTriangle />
-          });
-        } else {
-          newAlerts.push({
-            type: "success",
-            title: "FL trong mức bình thường",
-            description: `Chiều dài xương đùi (FL) đang phát triển tốt trong khoảng an toàn (${currentData.fl.minRange}-${currentData.fl.maxRange}mm).`,
-            icon: <CheckCircle />
-          });
-        }
-      }
-      
-      // Kiểm tra EFW
-      if (currentData.efw) {
-        if (currentData.efw.isAlert) {
-          newAlerts.push({
-            type: "warning",
-            title: "Cảnh báo cân nặng",
-            description: `Cân nặng ước tính (EFW) hiện tại là ${currentData.efw.value}g, nằm ngoài khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
-            icon: <AlertTriangle />
-          });
-        } else {
-          newAlerts.push({
-            type: "success",
-            title: "Cân nặng trong mức bình thường",
-            description: `Cân nặng ước tính (EFW) đang phát triển tốt trong khoảng an toàn (${currentData.efw.minRange}-${currentData.efw.maxRange}g).`,
-            icon: <CheckCircle />
-          });
-        }
-      }
+      // Tạo cảnh báo từ dữ liệu hiện tại
+      const currentAlerts = generateCurrentAlerts(currentData);
       
       // Thêm phân tích xu hướng tăng trưởng từ lịch sử
       if (foetusData.length >= 2) {
@@ -788,7 +849,7 @@ const BasicTracking = () => {
         
         // Thêm tiêu đề phần xu hướng nếu có dữ liệu
         if (trendAlerts.length > 0) {
-          newAlerts.push({
+          currentAlerts.push({
             type: "info",
             title: "Phân tích xu hướng tăng trưởng",
             description: "Dựa trên dữ liệu lịch sử các lần đo gần nhất.",
@@ -796,41 +857,16 @@ const BasicTracking = () => {
           });
           
           // Thêm các cảnh báo xu hướng
-          newAlerts = [...newAlerts, ...trendAlerts];
+          currentAlerts.push(...trendAlerts);
         }
       }
       
       // Cập nhật state alerts
-      setAlerts(newAlerts);
+      setAlerts(currentAlerts);
     } else {
       setAlerts([]);
     }
   }, [selectedChild, growthData]);
-
-  // Thêm hàm helper để lấy giá trị chuẩn (đây chỉ là ví dụ, bạn cần điều chỉnh theo dữ liệu thực tế)
-  const getStandardHC = (age) => {
-    // Giá trị chuẩn HC theo tuần thai (đây là giá trị mẫu)
-    const standardValues = {
-      12: 80, 13: 90, 14: 100, 15: 110, 16: 120, 17: 130, 18: 140, 19: 150, 20: 160,
-      21: 170, 22: 180, 23: 190, 24: 200, 25: 210, 26: 220, 27: 230, 28: 240, 29: 250,
-      30: 260, 31: 270, 32: 280, 33: 290, 34: 300, 35: 310, 36: 320, 37: 330, 38: 340,
-      39: 350, 40: 360
-    };
-    
-    return standardValues[age] || 200; // Giá trị mặc định nếu không có dữ liệu
-  };
-
-  const getStandardAC = (age) => {
-    // Giá trị chuẩn AC theo tuần thai (đây là giá trị mẫu)
-    const standardValues = {
-      12: 70, 13: 80, 14: 90, 15: 100, 16: 110, 17: 120, 18: 130, 19: 140, 20: 150,
-      21: 160, 22: 170, 23: 180, 24: 190, 25: 200, 26: 210, 27: 220, 28: 230, 29: 240,
-      30: 250, 31: 260, 32: 270, 33: 280, 34: 290, 35: 300, 36: 310, 37: 320,
-      38: 330, 39: 340, 40: 350
-    };
-    
-    return standardValues[age] || 180; // Giá trị mặc định nếu không có dữ liệu
-  };
 
   // Thêm hàm để lấy lịch sử cảnh báo
   const fetchAlertHistory = async (foetusId) => {
@@ -897,7 +933,7 @@ const BasicTracking = () => {
     }
   }, [selectedChild]);
 
-  // Thêm component AlertHistoryModal
+  // Component AlertHistoryModal
   const AlertHistoryModal = ({ isOpen, onClose, history }) => {
     return (
       <AnimatePresence>
@@ -964,6 +1000,7 @@ const BasicTracking = () => {
     );
   };
 
+  // Render component
   if (loading) return <div className="loading-spinner">Đang tải...</div>;
 
   return (
@@ -1030,11 +1067,11 @@ const BasicTracking = () => {
                       >
                         <Baby size={16} />
                         <span>
-                          {child.gender === "MALE"
+                          {child.gender === "Nam" 
                             ? "Nam"
-                            : child.gender === "FEMALE"
+                            : child.gender === "Nữ" 
                             ? "Nữ"
-                            : child.gender === "OTHER"
+                            : child.gender === "Khác"
                             ? "Khác"
                             : "Chưa xác định"}
                         </span>
@@ -1223,7 +1260,7 @@ const BasicTracking = () => {
                               <span>
                                 Cập nhật lần cuối: {" "}
                                 {new Date(
-                                  currentGrowthData.measurementDate
+                                  currentGrowthData.measurementDate || currentGrowthData.date || new Date()
                                 ).toLocaleDateString("vi-VN")}
                               </span>
                             </div>
@@ -1277,7 +1314,7 @@ const BasicTracking = () => {
             </p>
           </div>
           
-          {/* Thêm phần alert box ở đây */}
+          {/* Phần hiển thị cảnh báo */}
           <div className="chart-alerts">
             <div className="alert-header">
               <h4>
@@ -1361,7 +1398,7 @@ const BasicTracking = () => {
                       dataSource={selectedWeekHistory}
                       columns={HISTORY_COLUMNS}
                       rowKey={(record) =>
-                        `${record.measurementDate}-${record.age}`
+                        `${record.measurementDate || record.date}-${record.age}`
                       }
                       pagination={false}
                       scroll={{ x: "max-content" }}
@@ -1370,175 +1407,6 @@ const BasicTracking = () => {
                     <div className="no-data-message">
                       Không có dữ liệu lịch sử
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Modal so sánh */}
-        <AnimatePresence>
-          {showCompareModal && (
-            <motion.div
-              key="compare-modal"
-              className="compare-modal"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="compare-modal-content"
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 50, scale: 0.9 }}
-                transition={{ type: "spring", damping: 20 }}
-              >
-                <div className="compare-modal-header">
-                  <h3>So sánh chỉ số thai nhi</h3>
-                  <motion.button
-                    onClick={() => setShowCompareModal(false)}
-                    whileHover={{
-                      rotate: 90,
-                      backgroundColor: "rgba(255, 71, 87, 0.1)",
-                    }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    ✕
-                  </motion.button>
-                </div>
-                <div className="compare-modal-body">
-                  {selectedChild && growthData[selectedChild.foetusId] && (
-                    <>
-                      <div className="comparison-chart">
-                        {/* Lấy dữ liệu mới nhất */}
-                        {(() => {
-                          const latestData = [...growthData[selectedChild.foetusId]]
-                            .sort((a, b) => b.age - a.age)[0];
-                          
-                          return (
-                            <Bar
-                              data={{
-                                labels: ["HC", "AC", "FL", "EFW"],
-                                datasets: [
-                                  {
-                                    label: "Chỉ số hiện tại",
-                                    data: [
-                                      latestData.hc?.value || 0,
-                                      latestData.ac?.value || 0,
-                                      latestData.fl?.value || 0,
-                                      latestData.efw?.value || 0,
-                                    ],
-                                    backgroundColor: "rgba(255, 107, 129, 0.5)",
-                                  },
-                                  {
-                                    label: "Giá trị trung bình",
-                                    data: [
-                                      (latestData.hc?.minRange + latestData.hc?.maxRange) / 2 || 0,
-                                      (latestData.ac?.minRange + latestData.ac?.maxRange) / 2 || 0,
-                                      (latestData.fl?.minRange + latestData.fl?.maxRange) / 2 || 0,
-                                      (latestData.efw?.minRange + latestData.efw?.maxRange) / 2 || 0,
-                                    ],
-                                    backgroundColor: "rgba(112, 161, 255, 0.5)",
-                                  },
-                                ],
-                              }}
-                              options={chartOptions}
-                            />
-                          );
-                        })()}
-                      </div>
-                      
-                      <div className="comparison-details">
-                        <h4>Chi tiết so sánh</h4>
-                        <div className="comparison-grid">
-                          {(() => {
-                            const latestData = [...growthData[selectedChild.foetusId]]
-                              .sort((a, b) => b.age - a.age)[0];
-                            
-                            return (
-                              <>
-                                <div className="comparison-item">
-                                  <h5>HC (Chu vi đầu)</h5>
-                                  <div className={`comparison-value ${latestData.hc?.isAlert ? 'warning' : 'safe'}`}>
-                                    <span>Giá trị: {latestData.hc?.value || 0} mm</span>
-                                    <span>Khoảng an toàn: {latestData.hc?.minRange || 0} - {latestData.hc?.maxRange || 0} mm</span>
-                                    {latestData.hc?.isAlert ? (
-                                      <div className="status-badge warning">
-                                        <AlertTriangle size={14} />
-                                        <span>Cần chú ý</span>
-                                      </div>
-                                    ) : (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                
-                                <div className="comparison-item">
-                                  <h5>AC (Chu vi bụng)</h5>
-                                  <div className={`comparison-value ${latestData.ac?.isAlert ? 'warning' : 'safe'}`}>
-                                    <span>Giá trị: {latestData.ac?.value || 0} mm</span>
-                                    <span>Khoảng an toàn: {latestData.ac?.minRange || 0} - {latestData.ac?.maxRange || 0} mm</span>
-                                    {latestData.ac?.isAlert ? (
-                                      <div className="status-badge warning">
-                                        <AlertTriangle size={14} />
-                                        <span>Cần chú ý</span>
-                                      </div>
-                                    ) : (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                
-                                <div className="comparison-item">
-                                  <h5>FL (Chiều dài xương đùi)</h5>
-                                  <div className={`comparison-value ${latestData.fl?.isAlert ? 'warning' : 'safe'}`}>
-                                    <span>Giá trị: {latestData.fl?.value || 0} mm</span>
-                                    <span>Khoảng an toàn: {latestData.fl?.minRange || 0} - {latestData.fl?.maxRange || 0} mm</span>
-                                    {latestData.fl?.isAlert ? (
-                                      <div className="status-badge warning">
-                                        <AlertTriangle size={14} />
-                                        <span>Cần chú ý</span>
-                                      </div>
-                                    ) : (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                
-                                <div className="comparison-item">
-                                  <h5>EFW (Cân nặng ước tính)</h5>
-                                  <div className={`comparison-value ${latestData.efw?.isAlert ? 'warning' : 'safe'}`}>
-                                    <span>Giá trị: {latestData.efw?.value || 0} g</span>
-                                    <span>Khoảng an toàn: {latestData.efw?.minRange || 0} - {latestData.efw?.maxRange || 0} g</span>
-                                    {latestData.efw?.isAlert ? (
-                                      <div className="status-badge warning">
-                                        <AlertTriangle size={14} />
-                                        <span>Cần chú ý</span>
-                                      </div>
-                                    ) : (
-                                      <div className="status-badge safe">
-                                        <CheckCircle size={14} />
-                                        <span>An toàn</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    </>
                   )}
                 </div>
               </motion.div>

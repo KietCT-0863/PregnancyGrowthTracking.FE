@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -19,7 +18,6 @@ import {
 } from "react-icons/fa";
 import "./NavbarMember.scss";
 import reminderService from "../../api/services/reminderService";
-import growthStatsService from "../../api/services/growthStatsService";
 
 const NavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
@@ -50,9 +48,6 @@ const NavBarMember = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showSidebarNotifications, setShowSidebarNotifications] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
-  const [alertHistory, setAlertHistory] = useState([]);
-  const [combinedNotifications, setCombinedNotifications] = useState([]);
-  const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -164,6 +159,7 @@ const NavBarMember = () => {
           return dateA - dateB;
         });
 
+      console.log("Fetched reminders:", upcomingReminders);
       setNotifications(upcomingReminders);
     } catch (error) {
       console.error("Error fetching reminders:", error);
@@ -171,151 +167,10 @@ const NavBarMember = () => {
     }
   };
 
-  const fetchAlertHistory = async () => {
-    try {
-      console.group("Alert History Fetch");
-      console.log("Fetching alert history...");
-      
-      // Get the foetusId from localStorage if available
-      const userData = JSON.parse(localStorage.getItem("userData") || "{}");
-      const foetusId = userData.foetusId;
-      
-      console.log("User data:", userData);
-      console.log("FoetusId:", foetusId);
-      
-      // If we have a foetusId, use it, otherwise fetch without it
-      let response;
-      if (foetusId) {
-        console.log("Fetching with foetusId:", foetusId);
-        response = await growthStatsService.getGrowthData(foetusId);
-      } else {
-        console.log("Fetching without foetusId");
-        // You might need to adjust this if the API requires a foetusId
-        response = await growthStatsService.getGrowthData();
-      }
-      
-      console.log("API Response:", response);
-      
-      if (Array.isArray(response)) {
-        console.log("Response is an array with", response.length, "items");
-        
-        const alerts = response
-          .map(data => {
-            console.log("Processing data item:", data);
-            const alerts = [];
-            const date = new Date(data.date || data.measurementDate);
-            
-            // Check HC
-            if (data.hc) {
-              console.log("HC data:", data.hc, "isAlert:", data.hc.isAlert);
-              if (data.hc.isAlert === true) {
-              alerts.push({
-                type: 'warning',
-                measure: 'HC',
-                value: data.hc.value,
-                range: `${data.hc.minRange}-${data.hc.maxRange}`,
-                date: date,
-                age: data.age,
-                message: `Chu vi đầu (HC) ${data.hc.value}mm nằm ngoài khoảng an toàn`
-              });
-            }
-            }
-            
-            // Check AC
-            if (data.ac) {
-              console.log("AC data:", data.ac, "isAlert:", data.ac.isAlert);
-              if (data.ac.isAlert === true) {
-              alerts.push({
-                type: 'warning',
-                measure: 'AC',
-                value: data.ac.value,
-                range: `${data.ac.minRange}-${data.ac.maxRange}`,
-                date: date,
-                age: data.age,
-                message: `Chu vi bụng (AC) ${data.ac.value}mm nằm ngoài khoảng an toàn`
-              });
-            }
-            }
-            
-            // Check FL
-            if (data.fl) {
-              console.log("FL data:", data.fl, "isAlert:", data.fl.isAlert);
-              if (data.fl.isAlert === true) {
-              alerts.push({
-                type: 'warning',
-                measure: 'FL',
-                value: data.fl.value,
-                range: `${data.fl.minRange}-${data.fl.maxRange}`,
-                date: date,
-                age: data.age,
-                message: `Chiều dài xương đùi (FL) ${data.fl.value}mm nằm ngoài khoảng an toàn`
-              });
-            }
-            }
-            
-            // Check EFW
-            if (data.efw) {
-              console.log("EFW data:", data.efw, "isAlert:", data.efw.isAlert);
-              if (data.efw.isAlert === true) {
-              alerts.push({
-                type: 'warning',
-                measure: 'EFW',
-                value: data.efw.value,
-                range: `${data.efw.minRange}-${data.efw.maxRange}`,
-                date: date,
-                age: data.age,
-                message: `Cân nặng ước tính (EFW) ${data.efw.value}g nằm ngoài khoảng an toàn`
-              });
-            }
-            }
-            
-            console.log("Generated alerts for this item:", alerts);
-            return alerts;
-          })
-          .flat()
-          .sort((a, b) => b.date - a.date);
-
-        console.log("Final processed alerts:", alerts);
-        setAlertHistory(alerts);
-      } else {
-        console.log("Response is not an array:", response);
-        setAlertHistory([]);
-      }
-      console.groupEnd();
-    } catch (error) {
-      console.group("Alert History Error");
-      console.error('Error fetching alert history:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        response: error.response
-      });
-      console.groupEnd();
-    }
-  };
-
-  useEffect(() => {
-    const combined = [
-      ...notifications.map(n => ({
-        ...n,
-        isReminder: true,
-        date: new Date(`${n.date.split('T')[0]}T${n.time}`)
-      })),
-      ...alertHistory.map(a => ({
-        ...a,
-        isAlert: true
-      }))
-    ].sort((a, b) => b.date - a.date);
-    
-    setCombinedNotifications(combined);
-  }, [notifications, alertHistory]);
-
   useEffect(() => {
     fetchReminders();
-    fetchAlertHistory();
     const interval = setInterval(() => {
       fetchReminders();
-      fetchAlertHistory();
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -324,8 +179,16 @@ const NavBarMember = () => {
     try {
       const dateStr = date.includes("T") ? date.split("T")[0] : date;
       const dateObj = new Date(`${dateStr}T${time}`);
-
-      return `${time} ${dateObj.toLocaleDateString("vi-VN")}`;
+      
+      // Định dạng ngày giờ theo tiếng Việt
+      const formattedTime = time;
+      const formattedDate = dateObj.toLocaleDateString("vi-VN", {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      return `${formattedTime}, ${formattedDate}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return "Invalid date";
@@ -377,7 +240,24 @@ const NavBarMember = () => {
     };
   }, [showSidebarNotifications]);
 
-  const totalNotifications = combinedNotifications.length;
+  // State cho việc quản lý đã đọc
+  const [readNotifications, setReadNotifications] = useState(() => {
+    const saved = localStorage.getItem('readNotifications');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Hàm đánh dấu thông báo đã đọc
+  const markAsRead = (notificationId) => {
+    const updatedReadList = [...readNotifications, notificationId];
+    setReadNotifications(updatedReadList);
+    localStorage.setItem('readNotifications', JSON.stringify(updatedReadList));
+  };
+
+  // Hàm kiểm tra thông báo đã đọc chưa
+  const isNotificationRead = (notification) => {
+    const notificationId = `reminder_${notification.remindId || notification.title}_${new Date(notification.date).getTime()}`;
+    return readNotifications.includes(notificationId);
+  };
 
   return (
     <>
@@ -481,9 +361,9 @@ const NavBarMember = () => {
                 onClick={() => setShowNotifications(!showNotifications)}
               >
                 <FaBell />
-                {totalNotifications > 0 && (
+                {notifications.length > 0 && (
                   <span className="notification-badge">
-                    {totalNotifications}
+                    {notifications.length}
                   </span>
                 )}
               </button>
@@ -491,7 +371,7 @@ const NavBarMember = () => {
               {showNotifications && (
                 <div className="notification-dropdown">
                   <div className="notification-header">
-                    <h3>Thông báo</h3>
+                    <h3>Lịch nhắc sắp tới</h3>
                     <button
                       className="close-button"
                       onClick={() => setShowNotifications(false)}
@@ -500,89 +380,42 @@ const NavBarMember = () => {
                     </button>
                   </div>
 
-                  <div className="notification-tabs">
-                    <button 
-                      className={`tab-button ${activeTab === 'all' ? 'active' : ''}`} 
-                      onClick={() => setActiveTab('all')}
-                    >
-                      Tất cả
-                    </button>
-                    <button 
-                      className={`tab-button ${activeTab === 'reminders' ? 'active' : ''}`} 
-                      onClick={() => setActiveTab('reminders')}
-                    >
-                      Lịch hẹn
-                    </button>
-                    <button 
-                      className={`tab-button ${activeTab === 'alerts' ? 'active' : ''}`} 
-                      onClick={() => {
-                        console.group("Alert Tab Click");
-                        console.log("Current alert history:", alertHistory);
-                        console.log("Switching to alerts tab");
-                        setActiveTab('alerts');
-                        // Optionally refresh alerts when tab is clicked
-                        fetchAlertHistory();
-                        console.groupEnd();
-                      }}
-                    >
-                      Cảnh báo
-                    </button>
-                  </div>
-
                   <div className="notification-list">
-                    {combinedNotifications.length === 0 ? (
+                    {notifications.length === 0 ? (
                       <div className="no-notifications">
                         <i className="fas fa-bell-slash"></i>
                         <p>Không có thông báo nào</p>
                       </div>
                     ) : (
-                      combinedNotifications
-                        .filter(notification => {
-                          if (activeTab === 'reminders') return notification.isReminder;
-                          if (activeTab === 'alerts') {
-                            console.log("Filtering alert notification:", notification);
-                            return notification.isAlert;
-                          }
-                          return true;
-                        })
-                        .map((notification, index) => (
+                      notifications.map((notification, index) => {
+                        const notificationDate = new Date(`${notification.date.split('T')[0]}T${notification.time}`);
+                        return (
                           <div 
                             key={index} 
-                            className={`notification-item ${notification.isAlert ? 'alert' : 'reminder'}`}
+                            className={`notification-item reminder ${isNotificationRead(notification) ? 'read' : 'unread'}`}
                             onClick={() => {
-                              if (notification.isAlert) {
-                                console.log("Alert notification clicked:", notification);
-                              }
+                              const notificationId = `reminder_${notification.remindId || notification.title}_${notificationDate.getTime()}`;
+                              markAsRead(notificationId);
+                              navigate('/member/calendar');
                             }}
                           >
-                            {notification.isReminder ? (
-                              <div className="notification-content">
-                                <div className="notification-type">
-                                  {notification.reminderType || "Lịch hẹn"}
-                                </div>
-                                <h4>{notification.title}</h4>
-                                <p className="notification-time">
-                                  {notification.date.toLocaleString('vi-VN')}
-                                </p>
+                            <div className="notification-content">
+                              <div className="notification-type">
+                                {notification.reminderType || "Lịch hẹn"}
                               </div>
-                            ) : (
-                              <div className="notification-content">
-                                <div className="notification-type warning">
-                                  Cảnh báo {notification.measure}
-                                </div>
-                                <p className="notification-message">
-                                  {notification.message}
+                              <h4>{notification.title}</h4>
+                              {notification.notification && (
+                                <p className="notification-medicine">
+                                  <strong>Thuốc:</strong> {notification.notification}
                                 </p>
-                                <p className="notification-details">
-                                  Tuần thai: {notification.age}
-                                </p>
-                                <p className="notification-time">
-                                  {notification.date.toLocaleString('vi-VN')}
-                                </p>
-                              </div>
-                            )}
+                              )}
+                              <p className="notification-time">
+                                <strong>Thời gian:</strong> {notification.time}, {new Date(`${notification.date.split('T')[0]}`).toLocaleDateString('vi-VN')}
+                              </p>
+                            </div>
                           </div>
-                        ))
+                        )
+                      })
                     )}
                   </div>
                 </div>
@@ -782,7 +615,7 @@ const NavBarMember = () => {
             onClick={toggleSidebar}
           ></div>
 
-          {/* Thêm dropdown thông báo cho sidebar */}
+          {/* Dropdown thông báo cho sidebar */}
           {showSidebarNotifications && (
             <div className="sidebar-notification-dropdown">
               <div className="sidebar-notification-header">
@@ -802,10 +635,15 @@ const NavBarMember = () => {
                   notifications.map((reminder, index) => (
                     <div key={index} className="sidebar-notification-item">
                       <div className="notification-type">
-                        {reminder.reminderType || "Khám thai"}
+                        {reminder.reminderType || "Lịch hẹn"}
                       </div>
                       <div className="notification-content">
                         <h4>{reminder.title}</h4>
+                        {reminder.notification && (
+                          <p className="notification-medicine">
+                            {reminder.notification}
+                          </p>
+                        )}
                         <p className="notification-time">
                           {formatDateTime(reminder.date, reminder.time)}
                         </p>

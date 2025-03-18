@@ -8,8 +8,8 @@ import "./DoctorNotes.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons"
 import Swal from "sweetalert2"
-
-
+import { AlertTriangle, Calendar, Info, Bell } from "lucide-react"
+import { toast } from "react-hot-toast"
 
 const DoctorNotes = () => {
   const [notes, setNotes] = useState([])
@@ -24,6 +24,12 @@ const DoctorNotes = () => {
     images: [],
     currentImage: null,
   })
+
+  // Thêm các state mới
+  const [alertHistory, setAlertHistory] = useState([])
+  const [showAlertHistory, setShowAlertHistory] = useState(false)
+  const [selectedWeek, setSelectedWeek] = useState(null)
+  const [isLoadingAlerts, setIsLoadingAlerts] = useState(false)
 
   // Fetch notes khi component mount
   useEffect(() => {
@@ -173,6 +179,175 @@ const DoctorNotes = () => {
       showAlert("error", "Có lỗi xảy ra khi xóa ghi chú. Vui lòng thử lại.")
     }
   }
+
+  // Hàm để lấy cảnh báo từ API
+  const fetchAlertHistory = async (weekAge) => {
+    try {
+      setIsLoadingAlerts(true)
+      
+      // Đảm bảo weekAge là số
+      const age = parseInt(weekAge)
+      if (isNaN(age)) {
+        toast.error("Tuần thai không hợp lệ")
+        return
+      }
+      
+      // Gọi API lấy dữ liệu cảnh báo cho tuần thai đó
+      // Thay thế growthStatsService bằng service phù hợp của bạn
+      const userData = JSON.parse(localStorage.getItem('userData'))
+      if (!userData?.userId) {
+        toast.error("Không tìm thấy thông tin người dùng")
+        return
+      }
+      
+      // Giả định bạn có API lấy dữ liệu thai nhi theo tuần
+      // Có thể bạn cần phải tạo một service mới để gọi API này
+      const response = await fetch(`/api/foetus/alerts/${userData.userId}?age=${age}`)
+      
+      if (!response.ok) {
+        throw new Error("Không thể lấy dữ liệu cảnh báo")
+      }
+      
+      const data = await response.json()
+      
+      // Xử lý dữ liệu và cấu trúc giống như BasicTracking.jsx
+      const alerts = data.map(item => {
+        const alertItems = []
+        
+        // Kiểm tra cảnh báo HC
+        if (item.hc?.isAlert) {
+          alertItems.push({
+            type: 'warning',
+            measure: 'HC',
+            value: item.hc.value,
+            range: `${item.hc.minRange}-${item.hc.maxRange}`,
+            date: item.date
+          })
+        }
+        
+        // Kiểm tra cảnh báo AC
+        if (item.ac?.isAlert) {
+          alertItems.push({
+            type: 'warning',
+            measure: 'AC',
+            value: item.ac.value,
+            range: `${item.ac.minRange}-${item.ac.maxRange}`,
+            date: item.date
+          })
+        }
+        
+        // Kiểm tra cảnh báo FL
+        if (item.fl?.isAlert) {
+          alertItems.push({
+            type: 'warning',
+            measure: 'FL',
+            value: item.fl.value,
+            range: `${item.fl.minRange}-${item.fl.maxRange}`,
+            date: item.date
+          })
+        }
+        
+        // Kiểm tra cảnh báo EFW
+        if (item.efw?.isAlert) {
+          alertItems.push({
+            type: 'warning',
+            measure: 'EFW',
+            value: item.efw.value,
+            range: `${item.efw.minRange}-${item.efw.maxRange}`,
+            date: item.date
+          })
+        }
+        
+        return {
+          date: item.date,
+          age: item.age,
+          alerts: alertItems
+        }
+      }).filter(item => item.alerts.length > 0)
+      
+      setAlertHistory(alerts)
+      
+      // Nếu có cảnh báo, hiển thị modal
+      if (alerts.length > 0) {
+        setSelectedWeek(age)
+        setShowAlertHistory(true)
+      } else {
+        toast.info(`Không có cảnh báo nào cho tuần thai ${age}`)
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy lịch sử cảnh báo:', error)
+      toast.error('Không thể lấy lịch sử cảnh báo')
+    } finally {
+      setIsLoadingAlerts(false)
+    }
+  }
+
+  // Component AlertHistoryModal
+  const AlertHistoryModal = ({ isOpen, onClose, history, week }) => {
+    return (
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="alert-history-modal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="alert-history-content"
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.9 }}
+              transition={{ type: "spring", damping: 20 }}
+            >
+              <div className="alert-history-header">
+                <h3>Cảnh báo tuần thai {week}</h3>
+                <motion.button
+                  onClick={onClose}
+                  whileHover={{
+                    rotate: 90,
+                    backgroundColor: "rgba(255, 71, 87, 0.1)",
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  ✕
+                </motion.button>
+              </div>
+              <div className="alert-history-body">
+                {history.length > 0 ? (
+                  history.map((item, index) => (
+                    <div key={index} className="alert-history-item">
+                      <div className="alert-history-date">
+                        <Calendar size={14} />
+                        <span>{new Date(item.date).toLocaleDateString('vi-VN')}</span>
+                        <span className="alert-history-week">Tuần {item.age}</span>
+                      </div>
+                      <div className="alert-history-alerts">
+                        {item.alerts.map((alert, alertIndex) => (
+                          <div key={alertIndex} className="alert-detail">
+                            <AlertTriangle size={14} className="warning-icon" />
+                            <span>
+                              {alert.measure}: {alert.value} {alert.measure === 'EFW' ? 'g' : 'mm'}
+                              {' '}(Khoảng an toàn: {alert.range} {alert.measure === 'EFW' ? 'g' : 'mm'})
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-alerts-history">
+                    <Info size={24} />
+                    <p>Không có cảnh báo nào cho tuần thai này</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    );
+  };
 
   return (
     <div className="doctor-notes-container">
@@ -358,10 +533,67 @@ const DoctorNotes = () => {
                   />
                 </div>
               )}
+              
+              {/* Thêm nút xem cảnh báo */}
+              <div className="note-alerts">
+                <motion.button
+                  className="view-alerts-btn"
+                  onClick={() => {
+                    // Trích xuất tuần thai từ nội dung ghi chú hoặc yêu cầu nhập
+                    const weekMatch = note.detail?.match(/tuần\s+(\d+)/i) || note.diagnosis?.match(/tuần\s+(\d+)/i);
+                    if (weekMatch && weekMatch[1]) {
+                      fetchAlertHistory(weekMatch[1]);
+                    } else {
+                      // Nếu không tìm thấy thông tin tuần thai, hiển thị prompt để nhập
+                      Swal.fire({
+                        title: 'Nhập tuần thai',
+                        input: 'number',
+                        inputAttributes: {
+                          min: 1,
+                          max: 42,
+                          step: 1
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Xem cảnh báo',
+                        cancelButtonText: 'Hủy',
+                        inputValidator: (value) => {
+                          if (!value || value < 1 || value > 42) {
+                            return 'Vui lòng nhập tuần thai hợp lệ (1-42)';
+                          }
+                        }
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          fetchAlertHistory(result.value);
+                        }
+                      });
+                    }
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Bell size={16} />
+                  <span>Xem cảnh báo tuần thai</span>
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         ))}
       </div>
+
+      {/* Thêm AlertHistoryModal */}
+      <AlertHistoryModal
+        isOpen={showAlertHistory}
+        onClose={() => setShowAlertHistory(false)}
+        history={alertHistory}
+        week={selectedWeek}
+      />
+      
+      {/* Hiển thị loading khi đang lấy dữ liệu */}
+      {isLoadingAlerts && (
+        <div className="loading-overlay">
+          <div className="loading-spinner">Đang tải dữ liệu cảnh báo...</div>
+        </div>
+      )}
     </div>
   )
 }

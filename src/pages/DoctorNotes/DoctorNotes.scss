@@ -572,6 +572,170 @@ $text-medium: #666666;
   }
 }
 
+// Style cho modal cảnh báo
+.alert-history-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  
+  .alert-history-content {
+    background-color: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    
+    .alert-history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      
+      h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #333;
+      }
+      
+      button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+    }
+    
+    .alert-history-body {
+      padding: 15px 20px;
+      max-height: calc(80vh - 60px);
+      overflow-y: auto;
+      
+      .alert-history-item {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        .alert-history-date {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          color: #555;
+          
+          svg {
+            margin-right: 5px;
+            color: #666;
+          }
+          
+          .alert-history-week {
+            margin-left: 15px;
+            background-color: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+          }
+        }
+        
+        .alert-history-alerts {
+          .alert-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            padding: 10px;
+            background-color: #fff3f3;
+            border-radius: 6px;
+            
+            .warning-icon {
+              color: #ff6b6b;
+              margin-right: 8px;
+              margin-top: 2px;
+            }
+          }
+        }
+      }
+      
+      .no-alerts-history {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 0;
+        color: #666;
+        
+        svg {
+          margin-bottom: 10px;
+          color: #999;
+        }
+      }
+    }
+  }
+}
+
+// Style cho nút xem cảnh báo
+.view-alerts-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+  
+  svg {
+    color: #6c757d;
+  }
+}
+
+// Loading overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+  
+  .loading-spinner {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #333;
+  }
+}
+
 // Responsive
 @media (max-width: 1400px) {
   .doctor-notes-container {
