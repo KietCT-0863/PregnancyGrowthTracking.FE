@@ -32,7 +32,7 @@ const GrowthStandardList = () => {
       const token = localStorage.getItem("token"); // Lấy token từ localStorage
 
       const response = await fetch(
-        "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/GrowthStandard",
+        "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api/GrowthStandard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -158,7 +158,7 @@ const GrowthStandardList = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          
+
           <TablePagination
             component="div"
             count={standards.length}

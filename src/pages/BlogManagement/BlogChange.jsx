@@ -10,46 +10,55 @@ import {
   Button,
   Box,
   Chip,
-  Paper
-} from '@mui/material';
+  Paper,
+} from "@mui/material";
 import "./BlogChange.scss";
 import blogService from "../../../api/services/blogService";
-import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import { CloudUpload as CloudUploadIcon } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
 
-const API_URL = "https://pregnancy-growth-tracking-web-app-ctc4dfa7bqgjhpdd.australiasoutheast-01.azurewebsites.net/api/Blog";
+const API_URL =
+  "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api/Blog";
 
 const AVAILABLE_CATEGORIES = [
-  "french", "fiction", "english", "history", "magical",
-  "american", "mystery", "crime", "love", "classic"
+  "french",
+  "fiction",
+  "english",
+  "history",
+  "magical",
+  "american",
+  "mystery",
+  "crime",
+  "love",
+  "classic",
 ];
 
 const EDITOR_CONFIG = {
   plugins: ["anchor", "autolink", "charmap", "lists", "media", "table"],
   toolbar: "undo redo | blocks | bold italic | link image | align | lists",
-  height: 400
+  height: 400,
 };
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
   height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
+  overflow: "hidden",
+  position: "absolute",
   bottom: 0,
   left: 0,
-  whiteSpace: 'nowrap',
+  whiteSpace: "nowrap",
   width: 1,
 });
 
 const BlogChange = ({ open, onClose }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const [post, setPost] = useState({
     title: "",
     body: "",
-    categories: []
+    categories: [],
   });
 
   const [originalImage, setOriginalImage] = useState(null);
@@ -63,19 +72,20 @@ const BlogChange = ({ open, onClose }) => {
       try {
         setIsLoading(true);
         const data = await blogService.getBlogById(id);
-        console.log('Fetched blog data:', data);
-        
+        console.log("Fetched blog data:", data);
+
         setPost({
           title: data.title || "",
           body: data.body || "",
-          categories: data.categories?.map(cat => 
-            typeof cat === 'string' ? cat : cat.categoryName
-          ) || []
+          categories:
+            data.categories?.map((cat) =>
+              typeof cat === "string" ? cat : cat.categoryName
+            ) || [],
         });
-        
+
         if (data.imageUrl || data.blogPhotoUrl) {
           const imageUrl = data.imageUrl || data.blogPhotoUrl;
-          console.log('Setting image from:', imageUrl);
+          console.log("Setting image from:", imageUrl);
           setImagePreview(imageUrl);
           setOriginalImage(imageUrl);
         }
@@ -89,19 +99,19 @@ const BlogChange = ({ open, onClose }) => {
 
     if (id) fetchBlog();
   }, [id]);
-  
+
   console.log(post);
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log('Selected new image:', file.name);
-      
+      console.log("Selected new image:", file.name);
+
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Kích thước ảnh không được vượt quá 5MB");
         return;
       }
 
-      if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
         toast.error("Chỉ chấp nhận file ảnh định dạng JPG, JPEG hoặc PNG");
         return;
       }
@@ -125,14 +135,14 @@ const BlogChange = ({ open, onClose }) => {
       await blogService.updateBlog(id, {
         title: post.title,
         body: post.body,
-        categories: post.categories
+        categories: post.categories,
       });
-      
+
       if (selectedImage) {
-        console.log('Uploading new image...');
+        console.log("Uploading new image...");
         await blogService.replaceBlogPhoto(id, selectedImage);
       }
-      
+
       toast.success("Cập nhật bài viết thành công!");
       setTimeout(() => navigate("/admin/blogs"), 1500);
     } catch (error) {
@@ -147,11 +157,11 @@ const BlogChange = ({ open, onClose }) => {
   };
 
   const handleCategoryToggle = (category) => {
-    setPost(prev => ({
+    setPost((prev) => ({
       ...prev,
       categories: prev.categories.includes(category)
-        ? prev.categories.filter(c => c !== category)
-        : [...prev.categories, category]
+        ? prev.categories.filter((c) => c !== category)
+        : [...prev.categories, category],
     }));
   };
 
@@ -159,16 +169,18 @@ const BlogChange = ({ open, onClose }) => {
     <Dialog open={true} maxWidth="md" fullWidth>
       {isLoading ? (
         <DialogContent>
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", p: 3 }}>
             Đang tải...
           </Box>
         </DialogContent>
       ) : (
         <>
           <DialogTitle>Chỉnh sửa Blog</DialogTitle>
-          
+
           <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 2 }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}
+            >
               <Box>
                 <h4>Tiêu đề</h4>
                 <Editor
@@ -177,9 +189,11 @@ const BlogChange = ({ open, onClose }) => {
                   init={{
                     ...EDITOR_CONFIG,
                     height: 100,
-                    menubar: false
+                    menubar: false,
                   }}
-                  onEditorChange={(content) => setPost(prev => ({ ...prev, title: content }))}
+                  onEditorChange={(content) =>
+                    setPost((prev) => ({ ...prev, title: content }))
+                  }
                 />
               </Box>
 
@@ -189,22 +203,28 @@ const BlogChange = ({ open, onClose }) => {
                   apiKey="wd7qyd7yuks718m18g7067mk6ko2px16rtu4zekc8rmxp3hp"
                   value={post.body}
                   init={EDITOR_CONFIG}
-                  onEditorChange={(content) => setPost(prev => ({ ...prev, body: content }))}
+                  onEditorChange={(content) =>
+                    setPost((prev) => ({ ...prev, body: content }))
+                  }
                 />
               </Box>
 
               <Box>
                 <h4>Ảnh bài viết</h4>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {imagePreview && (
-                    <Box sx={{ position: 'relative', width: 'fit-content' }}>
-                      <img 
-                        src={imagePreview} 
-                        alt="Preview" 
-                        style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                    <Box sx={{ position: "relative", width: "fit-content" }}>
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{
+                          maxWidth: "100%",
+                          maxHeight: "200px",
+                          objectFit: "contain",
+                        }}
                         onError={(e) => {
-                          console.error('Image load error');
-                          e.target.src = '/placeholder-blog.jpg';
+                          console.error("Image load error");
+                          e.target.src = "/placeholder-blog.jpg";
                         }}
                       />
                     </Box>
@@ -215,10 +235,10 @@ const BlogChange = ({ open, onClose }) => {
                     startIcon={<CloudUploadIcon />}
                     disabled={isSubmitting}
                   >
-                    {imagePreview ? 'Thay đổi ảnh' : 'Tải ảnh lên'}
-                    <VisuallyHiddenInput 
-                      type="file" 
-                      onChange={handleImageChange} 
+                    {imagePreview ? "Thay đổi ảnh" : "Tải ảnh lên"}
+                    <VisuallyHiddenInput
+                      type="file"
+                      onChange={handleImageChange}
                       accept="image/*"
                       disabled={isSubmitting}
                     />
@@ -228,13 +248,17 @@ const BlogChange = ({ open, onClose }) => {
 
               <Box>
                 <h4>Danh mục</h4>
-                <Paper sx={{ p: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {AVAILABLE_CATEGORIES.map(category => (
+                <Paper sx={{ p: 2, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  {AVAILABLE_CATEGORIES.map((category) => (
                     <Chip
                       key={category}
                       label={category}
                       onClick={() => handleCategoryToggle(category)}
-                      color={post.categories.includes(category) ? "primary" : "default"}
+                      color={
+                        post.categories.includes(category)
+                          ? "primary"
+                          : "default"
+                      }
                       clickable
                     />
                   ))}
@@ -244,19 +268,19 @@ const BlogChange = ({ open, onClose }) => {
           </DialogContent>
 
           <DialogActions>
-            <Button 
+            <Button
               onClick={() => navigate("/admin/blogs")}
               disabled={isSubmitting}
             >
               Hủy
             </Button>
-            <Button 
-              onClick={handleSubmit} 
-              variant="contained" 
-              color="primary" 
+            <Button
+              onClick={handleSubmit}
+              variant="contained"
+              color="primary"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
+              {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
             </Button>
           </DialogActions>
         </>
