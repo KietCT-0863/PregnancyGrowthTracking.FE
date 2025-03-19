@@ -1,48 +1,90 @@
 import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 
 const ProtectedBasicUserRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const [isLoading, setIsLoading] = useState(true);
+  const [redirectPath, setRedirectPath] = useState(null);
+  const [shouldShowToast, setShouldShowToast] = useState({ show: false, message: "", type: "" });
 
-  if (!token) {
-    toast.error("Vui lòng đăng nhập để truy cập!");
-    return <Navigate to="/login" />;
+  useEffect(() => {
+    if (shouldShowToast.show) {
+      if (shouldShowToast.type === "error") {
+        toast.error(shouldShowToast.message);
+      }
+      setShouldShowToast({ show: false, message: "", type: "" });
+    }
+  }, [shouldShowToast]);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setShouldShowToast({
+          show: true,
+          message: "Vui lòng đăng nhập để truy cập!",
+          type: "error"
+        });
+        setRedirectPath("/login");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const decoded = jwtDecode(token);
+        const userRole =
+          decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+        // Cho phép cả basic user (guest/member) và vip đều truy cập được
+        if (userRole === "member" || userRole === "vip") {
+          setRedirectPath(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Nếu là admin, cho phép truy cập (admin có thể xem trang người dùng)
+        if (userRole === "admin") {
+          setRedirectPath(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Trường hợp còn lại (role không hợp lệ)
+        setShouldShowToast({
+          show: true,
+          message: "Bạn không có quyền truy cập trang này!",
+          type: "error"
+        });
+        setRedirectPath("/");
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Token decode error:", err);
+        setShouldShowToast({
+          show: true,
+          message: "Phiên đăng nhập không hợp lệ!",
+          type: "error"
+        });
+        localStorage.removeItem("token");
+        setRedirectPath("/login");
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isLoading) {
+    return <div className="loading">Đang tải...</div>;
   }
 
-  try {
-    const decoded = jwtDecode(token);
-    const userRole =
-      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-    // Nếu là guest, tự động chuyển hướng đến /basic-user
-    if (userRole === "member" && window.location.pathname === "/") {
-      return <Navigate to="/basic-user" />;
-    }
-
-    // Nếu là guest và đang ở /basic-user hoặc các route con của nó, cho phép truy cập
-    if (
-      userRole === "member" &&
-      window.location.pathname.startsWith("/basic-user")
-    ) {
-      return children;
-    }
-
-    // Nếu không phải guest, cho phép truy cập các route khác
-    if (userRole !== "member") {
-      return children;
-    }
-
-    // Trường hợp còn lại (guest cố truy cập route không được phép)
-    toast.error("Bạn không có quyền truy cập trang này!");
-    return <Navigate to="/basic-user" />;
-  } catch (err) {
-    console.error("Token decode error:", err);
-    toast.error("Phiên đăng nhập không hợp lệ!");
-    localStorage.removeItem("token");
-    return <Navigate to="/login" />;
+  if (redirectPath) {
+    return <Navigate to={redirectPath} />;
   }
+
+  return children;
 };
 
 ProtectedBasicUserRoute.propTypes = {

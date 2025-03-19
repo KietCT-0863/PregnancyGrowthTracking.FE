@@ -48,14 +48,6 @@ const NavBarGuest = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        console.group('NavBarGuest - User Information');
-        console.log('Decoded Token:', decoded);
-        console.log('User Data:', userData);
-        console.log('Full Name:', decoded?.fullName);
-        console.log('Email:', decoded?.email);
-        console.log('Role:', decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
-        console.groupEnd();
-
         setUserInfo(decoded);
         setIsLoggedIn(true);
         setIsAdmin(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] === "admin");

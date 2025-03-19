@@ -42,10 +42,7 @@ const Login = () => {
 
       const response = await authService.login(formData);
 
-      console.log("Login response:", response);
-
       const storedUserData = localStorage.getItem("userData");
-      console.log("Stored user data:", storedUserData);
 
       if (response && response.token) {
         const decoded = jwtDecode(response.token);
@@ -66,7 +63,6 @@ const Login = () => {
         throw new Error("Đăng nhập thất bại: Không nhận được token");
       }
     } catch (err) {
-      console.error("Login error:", err);
       if (err.response) {
         switch (err.response.status) {
           case 400:

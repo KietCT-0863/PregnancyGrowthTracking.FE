@@ -197,13 +197,26 @@ const chartOptions = {
       },
       color: "#ff6b81",
     },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          const label = context.dataset.label || '';
+          // Lấy dữ liệu gốc nếu có
+          const originalValue = context.dataset.originalData?.[context.dataIndex];
+          if (originalValue !== undefined) {
+            return `${label}: ${originalValue}`;
+          }
+          return `${label}: ${context.raw}`;
+        }
+      }
+    }
   },
   scales: {
     y: {
       beginAtZero: true,
       title: {
         display: true,
-        text: "Chỉ số (mm/g)",
+        text: "Chỉ số (mm/g) - Đã chuẩn hóa",
         font: {
           family: "'Quicksand', sans-serif",
         },
@@ -269,10 +282,7 @@ const BasicTracking = () => {
       growthStatsService
         .getGrowthData(foetus.foetusId)
         .then((data) => ({ [foetus.foetusId]: data }))
-        .catch((err) => {
-          console.error(`Error fetching growth data for foetus ${foetus.foetusId}:`, err)
-          return { [foetus.foetusId]: [] }
-        }),
+        .catch(() => ({ [foetus.foetusId]: [] })),
     )
     return Object.assign({}, ...(await Promise.all(growthPromises)))
   }
@@ -291,21 +301,10 @@ const BasicTracking = () => {
   const handleStatsUpdate = async (foetusId) => {
     try {
       const statsData = tempStats[foetusId] || {}
-
-      // Log thông tin cập nhật
-      console.group("Updating Growth Stats")
-      console.log("Foetus ID:", foetusId)
-      console.log("Stats Data:", statsData)
-
       validateStats(statsData)
       const result = await updateStats(foetusId, statsData)
 
-      // Log kết quả
-      console.log("Update Result:", result)
-      console.groupEnd()
-
       if (result.success) {
-        // Truyền toàn bộ result làm alertData
         setAlertData(result)
         setShowGrowthAlert(true)
         handleUpdateSuccess(result)
@@ -316,19 +315,11 @@ const BasicTracking = () => {
   }
 
   const validateStats = (statsData) => {
-    console.group("Validating Stats")
-
     const age = Number(statsData.age || 0)
-    console.log("Age:", age)
-
-    if (!age || age < 0 || age > 42) {
-      console.error("Invalid age:", age)
-      console.groupEnd()
-      throw new Error("Tuần tuổi thai nhi không hợp lệ (0-42 tuần)")
+    
+    if (!age || age < 12 || age > 40) {
+      throw new Error("Tuần tuổi thai nhi không hợp lệ (12-40 tuần)")
     }
-
-    console.log("Validation passed")
-    console.groupEnd()
   }
 
   const updateStats = async (foetusId, statsData) => {
@@ -342,28 +333,13 @@ const BasicTracking = () => {
       efw: Number(statsData.efw) || null,
     }
 
-    // Log dữ liệu trước khi gửi
-    console.group("Sending Update Request")
-    console.log("Update Data:", updateData)
-
-    const response = await growthStatsService.updateGrowthStats(foetusId, updateData)
-
-    console.log("Response:", response)
-    console.groupEnd()
-
-    return response
+    return await growthStatsService.updateGrowthStats(foetusId, updateData)
   }
 
   const handleUpdateSuccess = async (result) => {
-    console.group("Update Success")
-    console.log("Success Data:", result)
-
     try {
       // Lấy dữ liệu từ kết quả API một cách linh hoạt hơn
       const responseData = result.data || result
-
-      // In chi tiết cấu trúc dữ liệu nhận được để debug
-      console.log("Cấu trúc dữ liệu:", JSON.stringify(responseData, null, 2))
 
       // Lấy ID - kiểm tra nhiều trường ID có thể có
       const measurementId =
@@ -393,7 +369,7 @@ const BasicTracking = () => {
         try {
           measurementDate = new Date(dateValue).toLocaleDateString("vi-VN")
         } catch (e) {
-          console.error("Lỗi chuyển đổi ngày:", e)
+          // Bỏ qua lỗi xử lý ngày
         }
       }
 
@@ -408,24 +384,17 @@ const BasicTracking = () => {
         {
           autoClose: 5000,
           position: "top-right",
-        },
+        }
       )
     } catch (error) {
-      console.error("Lỗi xử lý dữ liệu thành công:", error)
       toast.success("Cập nhật thành công!")
     }
 
     await fetchData()
     setTempStats({})
-    console.groupEnd()
   }
 
   const handleUpdateError = (err) => {
-    // Log chi tiết lỗi
-    console.group("Update Error")
-    console.error("Error Details:", err)
-
-    // Hiển thị thông báo lỗi với chi tiết
     toast.error(
       <div>
         <h4>Lỗi cập nhật!</h4>
@@ -435,10 +404,8 @@ const BasicTracking = () => {
       {
         autoClose: 5000,
         position: "top-right",
-      },
+      }
     )
-
-    console.groupEnd()
   }
 
   const handleViewHistory = (foetusId) => {
@@ -462,6 +429,23 @@ const BasicTracking = () => {
   }
 
   const handleInputChange = (foetusId, field, value) => {
+    // Kiểm tra giá trị tuần thai nếu đang cập nhật trường age
+    if (field === 'age') {
+      const numValue = Number(value);
+      if (numValue && (numValue < 12 || numValue > 40)) {
+        toast.warning(
+          <div>
+            <h4>Cảnh báo tuần thai</h4>
+            <p>Tuần thai hợp lệ phải từ 12 đến 40 tuần</p>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 3000,
+          }
+        );
+      }
+    }
+    
     setTempStats((prev) => ({
       ...prev,
       [foetusId]: {
@@ -488,11 +472,48 @@ const BasicTracking = () => {
       }
     }
 
-    // Lấy 4 tuần gần nhất và sắp xếp theo tuần tăng dần
-    const recentWeeks = [...foetusData]
-      .sort((a, b) => b.age - a.age)
-      .slice(0, 4)
-      .sort((a, b) => a.age - b.age)
+    // Sắp xếp dữ liệu theo tuần mới nhất trước
+    const sortedData = [...foetusData].sort((a, b) => {
+      // Sắp xếp theo tuổi thai (age) giảm dần
+      if (a.age !== b.age) return b.age - a.age;
+      // Nếu cùng tuần, sắp xếp theo ngày đo
+      return new Date(b.date || b.measurementDate) - new Date(a.date || a.measurementDate);
+    });
+
+    // Lọc ra các tuần khác nhau (chỉ lấy bản ghi mới nhất cho mỗi tuần)
+    const uniqueWeeks = [];
+    const processedWeeks = new Set();
+    
+    sortedData.forEach(data => {
+      if (!processedWeeks.has(data.age)) {
+        uniqueWeeks.push(data);
+        processedWeeks.add(data.age);
+      }
+    });
+    
+    // Lấy tối đa 4 tuần gần nhất
+    const recentWeeks = uniqueWeeks.slice(0, 4).sort((a, b) => a.age - b.age);
+    
+    // Hàm xử lý giá trị bất thường (outliers)
+    const normalizeValue = (value, maxThreshold = 1000) => {
+      if (!value) return 0;
+      // Nếu giá trị vượt quá ngưỡng, trả về giá trị có ý nghĩa hơn
+      return value > maxThreshold ? maxThreshold : value;
+    };
+
+    // Tạo dữ liệu chuẩn hóa cho biểu đồ
+    const hcData = recentWeeks.map(data => normalizeValue(data.hc?.value, 500));
+    const acData = recentWeeks.map(data => normalizeValue(data.ac?.value, 500));
+    const flData = recentWeeks.map(data => normalizeValue(data.fl?.value, 200));
+    const efwData = recentWeeks.map(data => normalizeValue(data.efw?.value, 5000));
+
+    // Lưu dữ liệu gốc để hiển thị trong tooltip
+    const originalData = {
+      hc: recentWeeks.map(data => data.hc?.value || 0),
+      ac: recentWeeks.map(data => data.ac?.value || 0),
+      fl: recentWeeks.map(data => data.fl?.value || 0),
+      efw: recentWeeks.map(data => data.efw?.value || 0),
+    };
 
     return {
       labels: recentWeeks.map((data) => `Tuần ${data.age}`),
@@ -500,42 +521,46 @@ const BasicTracking = () => {
         {
           type: "bar",
           label: "HC (mm)",
-          data: recentWeeks.map((data) => data.hc?.value || 0),
+          data: hcData,
           backgroundColor: "rgba(255, 99, 132, 0.7)",
           borderColor: "rgb(255, 99, 132)",
           borderWidth: 1,
           borderRadius: 6,
           hoverBackgroundColor: "rgba(255, 99, 132, 0.9)",
+          originalData: originalData.hc,
         },
         {
           type: "bar",
           label: "AC (mm)",
-          data: recentWeeks.map((data) => data.ac?.value || 0),
+          data: acData,
           backgroundColor: "rgba(54, 162, 235, 0.7)",
           borderColor: "rgb(54, 162, 235)",
           borderWidth: 1,
           borderRadius: 6,
           hoverBackgroundColor: "rgba(54, 162, 235, 0.9)",
+          originalData: originalData.ac,
         },
         {
           type: "bar",
           label: "FL (mm)",
-          data: recentWeeks.map((data) => data.fl?.value || 0),
+          data: flData,
           backgroundColor: "rgba(75, 192, 192, 0.7)",
           borderColor: "rgb(75, 192, 192)",
           borderWidth: 1,
           borderRadius: 6,
           hoverBackgroundColor: "rgba(75, 192, 192, 0.9)",
+          originalData: originalData.fl,
         },
         {
           type: "bar",
           label: "EFW (g)",
-          data: recentWeeks.map((data) => data.efw?.value || 0),
+          data: efwData,
           backgroundColor: "rgba(153, 102, 255, 0.7)",
           borderColor: "rgb(153, 102, 255)",
           borderWidth: 1,
           borderRadius: 6,
           hoverBackgroundColor: "rgba(153, 102, 255, 0.9)",
+          originalData: originalData.efw,
         },
       ],
     }
@@ -547,34 +572,26 @@ const BasicTracking = () => {
 
   // Thêm hàm để lấy khoảng chuẩn từ API
   const fetchStandardRanges = async (age) => {
-    if (!age || standardRanges[age]) return
-
+    if (!age || standardRanges[age]) return;
+    
     try {
-      setLoadingRanges(true)
-
-      let rangeData
-      try {
-        rangeData = await growthStatsService.getGrowthRanges(age)
-      } catch (err) {
-        console.error(`Lỗi khi lấy khoảng chuẩn cho tuần ${age}:`, err)
-
-        // Tạo dữ liệu mặc định khi API lỗi
-        rangeData = {
-          hc: { minRange: 100, maxRange: 300 },
-          ac: { minRange: 100, maxRange: 300 },
-          fl: { minRange: 10, maxRange: 60 },
-          efw: { minRange: 100, maxRange: 3000 },
-        }
-      }
-
+      setLoadingRanges(true);
+      
+      // Gọi hàm lấy khoảng chuẩn, không cần try-catch ở đây
+      // vì đã xử lý lỗi bên trong growthStatsService
+      const rangeData = await growthStatsService.getGrowthRanges(age);
+      
+      // Kiểm tra xem dữ liệu trả về có đúng định dạng không
+ 
+      
       setStandardRanges((prev) => ({
         ...prev,
         [age]: rangeData,
-      }))
+      }));
     } finally {
-      setLoadingRanges(false)
+      setLoadingRanges(false);
     }
-  }
+  };
 
   // Cập nhật useEffect để lấy khoảng chuẩn khi chọn thai nhi
   useEffect(() => {
@@ -687,16 +704,16 @@ const BasicTracking = () => {
     // Phân tích xu hướng HC
     if (sortedData.length >= 2) {
       const lastTwoMeasurements = sortedData.slice(-2)
-
+      
       // Phân tích HC
       if (lastTwoMeasurements[0].hc?.value && lastTwoMeasurements[1].hc?.value) {
         const hcGrowth = lastTwoMeasurements[1].hc.value - lastTwoMeasurements[0].hc.value
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age
         const hcGrowthRate = weeksDiff > 0 ? hcGrowth / weeksDiff : hcGrowth
-
+        
         // Kiểm tra trạng thái cảnh báo
         const isLatestHCSafe = !lastTwoMeasurements[1].hc.isAlert
-
+        
         if (!isLatestHCSafe) {
           trendAlerts.push({
             type: "danger",
@@ -720,16 +737,16 @@ const BasicTracking = () => {
           })
         }
       }
-
+      
       // Phân tích AC
       if (lastTwoMeasurements[0].ac?.value && lastTwoMeasurements[1].ac?.value) {
         const acGrowth = lastTwoMeasurements[1].ac.value - lastTwoMeasurements[0].ac.value
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age
         const acGrowthRate = weeksDiff > 0 ? acGrowth / weeksDiff : acGrowth
-
+        
         // Kiểm tra trạng thái cảnh báo
         const isLatestACSafe = !lastTwoMeasurements[1].ac.isAlert
-
+        
         if (!isLatestACSafe) {
           trendAlerts.push({
             type: "danger",
@@ -753,16 +770,16 @@ const BasicTracking = () => {
           })
         }
       }
-
+      
       // Phân tích FL
       if (lastTwoMeasurements[0].fl?.value && lastTwoMeasurements[1].fl?.value) {
         const flGrowth = lastTwoMeasurements[1].fl.value - lastTwoMeasurements[0].fl.value
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age
         const flGrowthRate = weeksDiff > 0 ? flGrowth / weeksDiff : flGrowth
-
+        
         // Kiểm tra trạng thái cảnh báo
         const isLatestFLSafe = !lastTwoMeasurements[1].fl.isAlert
-
+        
         if (!isLatestFLSafe) {
           trendAlerts.push({
             type: "danger",
@@ -786,16 +803,16 @@ const BasicTracking = () => {
           })
         }
       }
-
+      
       // Phân tích EFW (cân nặng ước tính)
       if (lastTwoMeasurements[0].efw?.value && lastTwoMeasurements[1].efw?.value) {
         const efwGrowth = lastTwoMeasurements[1].efw.value - lastTwoMeasurements[0].efw.value
         const weeksDiff = lastTwoMeasurements[1].age - lastTwoMeasurements[0].age
         const efwGrowthRate = weeksDiff > 0 ? efwGrowth / weeksDiff : efwGrowth
-
+        
         // Kiểm tra trạng thái cảnh báo
         const isLatestEFWSafe = !lastTwoMeasurements[1].efw.isAlert
-
+        
         if (!isLatestEFWSafe) {
           trendAlerts.push({
             type: "danger",
@@ -806,7 +823,7 @@ const BasicTracking = () => {
         } else {
           const currentAge = lastTwoMeasurements[1].age
           let expectedGrowthRate
-
+          
           if (currentAge < 20) {
             expectedGrowthRate = 25 // g/tuần
           } else if (currentAge < 30) {
@@ -814,7 +831,7 @@ const BasicTracking = () => {
           } else {
             expectedGrowthRate = 200 // g/tuần
           }
-
+          
           if (efwGrowthRate < expectedGrowthRate * 0.7) {
             trendAlerts.push({
               type: "warning",
@@ -833,7 +850,7 @@ const BasicTracking = () => {
         }
       }
     }
-
+    
     return trendAlerts
   }
 
@@ -845,17 +862,17 @@ const BasicTracking = () => {
         setAlerts([])
         return
       }
-
+      
       // Lấy dữ liệu mới nhất
       const currentData = [...foetusData].sort((a, b) => b.age - a.age)[0]
 
       // Tạo cảnh báo từ dữ liệu hiện tại
       const currentAlerts = generateCurrentAlerts(currentData)
-
+      
       // Thêm phân tích xu hướng tăng trưởng từ lịch sử
       if (foetusData.length >= 2) {
         const trendAlerts = analyzeGrowthTrend(selectedChild.foetusId)
-
+        
         // Thêm tiêu đề phần xu hướng nếu có dữ liệu
         if (trendAlerts.length > 0) {
           currentAlerts.push({
@@ -864,12 +881,12 @@ const BasicTracking = () => {
             description: "Dựa trên dữ liệu lịch sử các lần đo gần nhất.",
             icon: <BarChart2 />,
           })
-
+          
           // Thêm các cảnh báo xu hướng
           currentAlerts.push(...trendAlerts)
         }
       }
-
+      
       // Cập nhật state alerts
       setAlerts(currentAlerts)
     } else {
@@ -885,45 +902,45 @@ const BasicTracking = () => {
         const alerts = response
           .map((data) => {
             const alerts = []
-            if (data.hc?.isAlert) {
-              alerts.push({
+          if (data.hc?.isAlert) {
+            alerts.push({
                 type: "warning",
                 measure: "HC",
-                value: data.hc.value,
-                range: `${data.hc.minRange}-${data.hc.maxRange}`,
+              value: data.hc.value,
+              range: `${data.hc.minRange}-${data.hc.maxRange}`,
                 date: data.date,
               })
-            }
-            if (data.ac?.isAlert) {
-              alerts.push({
+          }
+          if (data.ac?.isAlert) {
+            alerts.push({
                 type: "warning",
                 measure: "AC",
-                value: data.ac.value,
-                range: `${data.ac.minRange}-${data.ac.maxRange}`,
+              value: data.ac.value,
+              range: `${data.ac.minRange}-${data.ac.maxRange}`,
                 date: data.date,
               })
-            }
-            if (data.fl?.isAlert) {
-              alerts.push({
+          }
+          if (data.fl?.isAlert) {
+            alerts.push({
                 type: "warning",
                 measure: "FL",
-                value: data.fl.value,
-                range: `${data.fl.minRange}-${data.fl.maxRange}`,
+              value: data.fl.value,
+              range: `${data.fl.minRange}-${data.fl.maxRange}`,
                 date: data.date,
               })
-            }
-            if (data.efw?.isAlert) {
-              alerts.push({
+          }
+          if (data.efw?.isAlert) {
+            alerts.push({
                 type: "warning",
                 measure: "EFW",
-                value: data.efw.value,
-                range: `${data.efw.minRange}-${data.efw.maxRange}`,
+              value: data.efw.value,
+              range: `${data.efw.minRange}-${data.efw.maxRange}`,
                 date: data.date,
               })
-            }
-            return {
-              date: data.date,
-              age: data.age,
+          }
+          return {
+            date: data.date,
+            age: data.age,
               alerts,
             }
           })
@@ -1229,10 +1246,10 @@ const BasicTracking = () => {
         <div className="input-section">
           <motion.div
             className="children-list"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
             {childrenHistory.map((child, index) => (
               <motion.div
                 key={child.foetusId}
@@ -1299,7 +1316,7 @@ const BasicTracking = () => {
                       </motion.div>
                       <span>Thông tin cơ bản</span>
                     </div>
-
+                    
                     <div className="info-grid">
                       <motion.div
                         className="info-item"
@@ -1321,13 +1338,13 @@ const BasicTracking = () => {
                           {selectedChild.gender === "Nam"
                             ? "Nam"
                             : selectedChild.gender === "Nữ"
-                              ? "Nữ"
+                            ? "Nữ"
                               : selectedChild.gender === "Khác"
-                                ? "Khác"
-                                : "Chưa xác định"}
+                            ? "Khác"
+                            : "Chưa xác định"}
                         </span>
                       </motion.div>
-
+                      
                       <motion.div
                         className="info-item"
                         whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
@@ -1356,8 +1373,8 @@ const BasicTracking = () => {
                                   : selectedChild.age || ""
                             }
                             onChange={(e) => handleInputChange(selectedChild.foetusId, "age", e.target.value)}
-                            min="0"
-                            max="42"
+                            min="12"
+                            max="40"
                             className="week-input"
                           />
                         </div>
@@ -1365,7 +1382,7 @@ const BasicTracking = () => {
                     </div>
                   </motion.div>
 
-                  {selectedChild.age < 12 ? (
+                  {selectedChild.age < 12 || selectedChild.age > 40 ? (
                     <motion.div
                       className="warning-message"
                       initial={{ opacity: 0, scale: 0.9 }}
@@ -1384,7 +1401,7 @@ const BasicTracking = () => {
                       >
                         <AlertCircle size={16} />
                       </motion.div>
-                      <span>Thai nhi chưa đủ tuần tuổi để đo chỉ số</span>
+                      <span>{selectedChild.age < 12 ? "Thai nhi chưa đủ tuần tuổi để đo chỉ số (tối thiểu 12 tuần)" : "Tuần thai vượt quá giới hạn cho phép (tối đa 40 tuần)"}</span>
                     </motion.div>
                   ) : (
                     <>
@@ -1409,7 +1426,7 @@ const BasicTracking = () => {
                           </motion.div>
                           <span>Chỉ số phát triển</span>
                         </div>
-
+                        
                         <div className="stats-grid">
                           <motion.div
                             className="stat-item"
@@ -1451,7 +1468,7 @@ const BasicTracking = () => {
                               <span className="stat-unit">mm</span>
                             </div>
                           </motion.div>
-
+                          
                           <motion.div
                             className="stat-item"
                             whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
@@ -1492,7 +1509,7 @@ const BasicTracking = () => {
                               <span className="stat-unit">mm</span>
                             </div>
                           </motion.div>
-
+                          
                           <motion.div
                             className="stat-item"
                             whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
@@ -1533,7 +1550,7 @@ const BasicTracking = () => {
                               <span className="stat-unit">mm</span>
                             </div>
                           </motion.div>
-
+                          
                           <motion.div
                             className="stat-item"
                             whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
@@ -1662,8 +1679,8 @@ const BasicTracking = () => {
                     </>
                   )}
                 </div>
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
           ) : (
             <motion.div
               className="select-child-prompt"
@@ -1684,65 +1701,65 @@ const BasicTracking = () => {
               >
                 <Baby size={60} />
                 <p>Vui lòng chọn một thai nhi để bắt đầu theo dõi</p>
+        </motion.div>
+            </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* Modal hiển thị lịch sử */}
+        <AnimatePresence>
+          {showHistory && (
+            <motion.div
+              key="history-modal"
+              className="history-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="history-modal-content"
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 50, scale: 0.9 }}
+                transition={{ type: "spring", damping: 20 }}
+              >
+                <div className="history-modal-header">
+                  <h3>Lịch sử đo thai nhi</h3>
+                  <motion.button
+                    onClick={() => setShowHistory(false)}
+                    whileHover={{
+                      rotate: 90,
+                      backgroundColor: "rgba(255, 71, 87, 0.1)",
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    ✕
+                  </motion.button>
+                </div>
+
+                <div className="history-modal-body">
+                  {selectedWeekHistory && selectedWeekHistory.length > 0 ? (
+                    <Table
+                      dataSource={selectedWeekHistory}
+                      columns={HISTORY_COLUMNS}
+                    rowKey={(record) => `${record.measurementDate || record.date}-${record.age}`}
+                      pagination={false}
+                      scroll={{ x: "max-content" }}
+                    />
+                  ) : (
+                  <div className="no-data-message">Không có dữ liệu lịch sử</div>
+                  )}
+                </div>
               </motion.div>
             </motion.div>
           )}
-        </div>
-      </div>
-
-      {/* Modal hiển thị lịch sử */}
-      <AnimatePresence>
-        {showHistory && (
-          <motion.div
-            key="history-modal"
-            className="history-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div
-              className="history-modal-content"
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.9 }}
-              transition={{ type: "spring", damping: 20 }}
-            >
-              <div className="history-modal-header">
-                <h3>Lịch sử đo thai nhi</h3>
-                <motion.button
-                  onClick={() => setShowHistory(false)}
-                  whileHover={{
-                    rotate: 90,
-                    backgroundColor: "rgba(255, 71, 87, 0.1)",
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  ✕
-                </motion.button>
-              </div>
-
-              <div className="history-modal-body">
-                {selectedWeekHistory && selectedWeekHistory.length > 0 ? (
-                  <Table
-                    dataSource={selectedWeekHistory}
-                    columns={HISTORY_COLUMNS}
-                    rowKey={(record) => `${record.measurementDate || record.date}-${record.age}`}
-                    pagination={false}
-                    scroll={{ x: "max-content" }}
-                  />
-                ) : (
-                  <div className="no-data-message">Không có dữ liệu lịch sử</div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
 
       <GrowthAlert isOpen={showGrowthAlert} onClose={() => setShowGrowthAlert(false)} alertData={alertData} />
 
       <AlertHistoryModal isOpen={showAlertHistory} onClose={() => setShowAlertHistory(false)} history={alertHistory} />
-    </div>
+                      </div>
   )
 }
 

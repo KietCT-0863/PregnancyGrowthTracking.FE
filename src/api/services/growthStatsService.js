@@ -5,18 +5,19 @@ const growthStatsService = {
   // Lấy dữ liệu tăng trưởng của thai nhi
   getGrowthData: async (foetusId) => {
     try {
-      // Nếu không có foetusId, ném lỗi sớm thay vì gửi yêu cầu không hợp lệ tới server
+      // Kiểm tra tham số
       if (!foetusId) {
         throw new Error("foetusId is required");
       }
       
+      // Gọi API
       const response = await axiosInstance.get(
         ENDPOINTS.GROWTHDATA.GET_BY_FOETUS(foetusId)
       );
+      
       return response.data;
     } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu tăng trưởng:", error);
-      // Trả về mảng rỗng thay vì ném lỗi
+      // Xử lý lỗi và trả về mảng rỗng
       return [];
     }
   },
@@ -29,15 +30,6 @@ const growthStatsService = {
         throw new Error("Vui lòng đăng nhập để thực hiện chức năng này");
       }
 
-      // Log chi tiết dữ liệu đầu vào
-      console.group("Growth Stats Update - Input Data");
-      console.log("Stats Data:", {
-        foetusId,
-        userId: userData.userId,
-        ...statsData,
-      });
-      console.groupEnd();
-
       const requestData = {
         foetusId: foetusId,
         userId: userData.userId,
@@ -49,23 +41,10 @@ const growthStatsService = {
         measurementDate: new Date().toISOString(),
       };
 
-      // Log request details
-      console.group("Growth Stats Update - Request");
-      console.log("URL:", ENDPOINTS.GROWTHDATA.CREATE(foetusId));
-      console.log("Request Data:", requestData);
-      console.groupEnd();
-
       const response = await axiosInstance.post(
         ENDPOINTS.GROWTHDATA.CREATE(foetusId),
         requestData
       );
-
-      // Log response details
-      console.group("Growth Stats Update - Response");
-      console.log("Status:", response.status);
-      console.log("Status Text:", response.statusText);
-      console.log("Response Data:", response.data);
-      console.groupEnd();
 
       return {
         success: true,
@@ -73,14 +52,6 @@ const growthStatsService = {
         message: "Cập nhật chỉ số thành công",
       };
     } catch (error) {
-      // Log error details
-      console.group("Growth Stats Update - Error");
-      console.error("Error Type:", error.name);
-      console.error("Error Message:", error.message);
-      console.error("Response Status:", error.response?.status);
-      console.error("Response Data:", error.response?.data);
-      console.groupEnd();
-
       throw {
         success: false,
         error: error.response?.data || error.message,
@@ -92,26 +63,19 @@ const growthStatsService = {
   // Thêm method để lấy ranges từ BE
   getGrowthRanges: async (age) => {
     try {
-      console.log(`Gọi API lấy khoảng cho tuần ${age}`);
-      
-      // Nếu API đúng URL:
+      // Thử gọi API với URL được định nghĩa
       const response = await axiosInstance.get(
         ENDPOINTS.GROWTHDATA.GET_RANGES(age)
       );
       
-      // Nếu API đang bị sai đường dẫn, cần cập nhật URL đúng:
-      // const response = await axios.get(`${API_URL}/growth-stats/ranges/${age}`);
-      
       return response.data;
     } catch (error) {
-      console.error("Lỗi khi lấy khoảng chuẩn:", error);
-      
-      // Trả về dữ liệu giả khi API lỗi
+      // Trả về dữ liệu có cấu trúc giống với API thật
       return {
-        hc: { min: 100, max: 300 },
-        ac: { min: 100, max: 300 },
-        fl: { min: 10, max: 60 },
-        efw: { min: 100, max: 3000 }
+        hc: { minRange: 100, maxRange: 300 },
+        ac: { minRange: 100, maxRange: 300 },
+        fl: { minRange: 10, maxRange: 60 },
+        efw: { minRange: 100, maxRange: 3000 }
       };
     }
   },
@@ -194,8 +158,10 @@ const growthStatsService = {
       
       return alertHistory;
     } catch (error) {
-      console.error("Lỗi khi lấy lịch sử cảnh báo:", error);
-      throw error;
+      throw {
+        message: error.response?.data?.message || "Không thể lấy dữ liệu",
+        status: error.response?.status || 500
+      };
     }
   },
 };

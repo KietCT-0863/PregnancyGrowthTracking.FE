@@ -19,9 +19,7 @@ const BlogAll = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        console.log('Fetching blogs...');
         const data = await blogService.getBlogs();
-        console.log('Blog data:', data);
         
         if (!data || !data.posts) {
           throw new Error("Không thể tải danh sách bài viết");
@@ -39,7 +37,6 @@ const BlogAll = () => {
           return acc;
         }, new Set());
         
-        console.log('Available categories:', [...allCategories]);
         setAvailableCategories([...allCategories]);
       } catch (err) {
         console.error("Error fetching blogs:", err);

@@ -9,6 +9,8 @@ import { motion } from "framer-motion"
 import "./Footer.scss"
 import { Link } from "react-router-dom"
 
+const MotionLink = motion.create(Link);
+
 const footerSections = [
   {
     title: "Liên kết",
@@ -106,19 +108,19 @@ const Footer = () => {
             <h3 className="section-title">Liên hệ</h3>
             <ul className="contact-info">
               <li>
-                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                <MotionLink to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
                   Email: KhangDGSE184442@fpt.edu.vn
-                </Link>
+                </MotionLink>
               </li>
               <li>
-                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                <MotionLink to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
                   Hotline: 0383989481
-                </Link>
+                </MotionLink>
               </li>
               <li>
-                <Link to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
+                <MotionLink to="/contact" className="contact-link" whileHover={{ scale: 1.1 }}>
                 Địa chỉ: 874/44/21 Đoàn Văn Bơ, Phường 16, Quận 4, Hồ Chí Minh, Vietnam
-                </Link> </li>
+                </MotionLink> </li>
               <li>
       
               </li>

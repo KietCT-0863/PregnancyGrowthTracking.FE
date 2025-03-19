@@ -4,7 +4,7 @@ import "./ChatAI.scss";
 import ChatForm from "./ChatForm";
 import ChatMessage from "./ChatMessage";
 import { useRef, useEffect } from "react";
-import { companyInfo } from "../../companyInfo";
+import { companyInfo } from "../../../companyInfo";
 const ChatAI = () => {
   const [chatHistory, setChatHistory] = useState([
     {

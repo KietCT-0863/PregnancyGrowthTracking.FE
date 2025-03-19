@@ -39,11 +39,9 @@ const DoctorNotes = () => {
   const fetchNotes = async () => {
     try {
       const response = await userNoteService.getUserNotes()
-      console.log("Fetched notes raw data:", response)
 
       // Xử lý dữ liệu trước khi set vào state
       const processedNotes = response.map((note) => {
-        console.log("Processing note:", note)
         return {
           ...note,
           // Thêm baseURL nếu cần
@@ -54,7 +52,6 @@ const DoctorNotes = () => {
         }
       })
 
-      console.log("Processed notes:", processedNotes)
       setNotes(processedNotes)
     } catch (error) {
       console.error("Lỗi khi lấy danh sách ghi chú:", error)

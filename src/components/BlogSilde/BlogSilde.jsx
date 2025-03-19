@@ -19,20 +19,17 @@ const BlogSlide = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        console.log('Fetching blog posts...')
         const data = await blogService.getBlogs()
-        console.log('Blog response:', data)
         
         if (data && data.posts) {
           const sortedPosts = data.posts
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 8)
           
-          console.log('Sorted posts:', sortedPosts)
           setPosts(sortedPosts)
         }
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error)
+        // Xử lý lỗi mà không cần log
       } finally {
         setIsLoading(false)
       }
@@ -99,7 +96,6 @@ const BlogSlide = () => {
           src={blogImageUrl}
           alt={title}
           onError={(e) => {
-            console.error('Error loading blog slide image:', id);
             e.target.style.display = 'none';
           }}
         />
@@ -192,4 +188,3 @@ const BlogSlide = () => {
 }
 
 export default BlogSlide
-

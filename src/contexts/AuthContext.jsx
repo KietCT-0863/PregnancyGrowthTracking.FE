@@ -18,18 +18,22 @@ export const AuthProvider = ({ children }) => {
         if (userData) {
           const parsedUser = JSON.parse(userData);
           
-          const isValid = await authService.validateToken(parsedUser.token);
-          
-          if (isValid) {
-            setCurrentUser(parsedUser);
-            console.log("User authenticated:", parsedUser);
-          } else {
-            console.log("Token invalid, logging out");
+          try {
+            const isValid = await authService.checkToken(parsedUser.token);
+            
+            if (isValid) {
+              setCurrentUser(parsedUser);
+              console.log("User authenticated:", parsedUser);
+            } else {
+              console.log("Token invalid, logging out");
+              localStorage.removeItem("userData");
+              setCurrentUser(null);
+            }
+          } catch (tokenErr) {
             localStorage.removeItem("userData");
             setCurrentUser(null);
           }
         } else {
-          console.log("No user data found");
           setCurrentUser(null);
         }
       } catch (err) {

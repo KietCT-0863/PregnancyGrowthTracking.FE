@@ -27,9 +27,10 @@ import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
 import PaymentResult from "./pages/Payment/PaymentResult";
-import ChatAI from "./components/ChatBoxAI/ChatAI";
+import ChatAI from "./components/FoetusList/ChatBoxAI/ChatAI";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
 import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
+import ProtectedMemberRoute from "./components/ProtectedMemberRoute/ProtectedMemberRoute";
 import Member from "../layout/Member/Member";
 import BlogManagement from "./pages/BlogManagement/BlogManagement";
 import BlogAllPublic from "./pages/BlogPublic/BlogAllPublic";
@@ -97,10 +98,10 @@ const AppRoutes = () => {
       >
         <Route index element={<BasicUserLayout />} />
         <Route path="community" element={<Community />} />
-        <Route path="/basic-user/choose-vip" element={<ChooseVip />} />
-        <Route path="/basic-user/payment-result" element={<PaymentResult />} />
-        <Route path="/basic-user/profile/edit" element={<EditProfile />} />
-        <Route path="/basic-user/blog" element={<BlogGuest />}>
+        <Route path="choose-vip" element={<ChooseVip />} />
+        <Route path="payment-result" element={<PaymentResult />} />
+        <Route path="profile/edit" element={<EditProfile />} />
+        <Route path="blog" element={<BlogGuest />}>
           <Route index element={<GuestBlogAll />} />
           <Route path=":id" element={<GuestBlogDetail />} />
         </Route>
@@ -110,14 +111,16 @@ const AppRoutes = () => {
       <Route
         path="/member"
         element={
-          <ProtectedBasicUserRoute>
-            <NavBarMember />
-            <div style={{ margin: "10px 0" }} />
-            <Outlet />
-            <div style={{ margin: "300px 0" }} />
-            <ChatAI />
-            <FooterMember />
-          </ProtectedBasicUserRoute>
+          <ProtectedMemberRoute>
+            <>
+              <NavBarMember />
+              <div style={{ margin: "10px 0" }} />
+              <Outlet />
+              <div style={{ margin: "300px 0" }} />
+              <ChatAI />
+              <FooterMember />
+            </>
+          </ProtectedMemberRoute>
         }
       >
         <Route index element={<Member />} />
@@ -145,8 +148,8 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="/admin/users" element={<UserManagement />} />
-        <Route path="/admin/blogs" element={<BlogManagement />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="blogs" element={<BlogManagement />} />
         <Route path="growth-standard" element={<GrowthStandardList />} />
       </Route>
 
