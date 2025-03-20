@@ -1,0 +1,180 @@
+.weeks-filter-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+  z-index: 10;
+
+  .weeks-filter-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #fff;
+    border: 1px solid rgba(255, 107, 129, 0.3);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #ff6b81;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(255, 107, 129, 0.1);
+
+    &:hover {
+      background-color: rgba(255, 107, 129, 0.05);
+      box-shadow: 0 4px 15px rgba(255, 107, 129, 0.15);
+    }
+
+    .chevron {
+      transition: transform 0.3s ease;
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .weeks-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    width: 220px;
+    overflow: hidden;
+    z-index: 20;
+
+    .dropdown-header {
+      padding: 10px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 600;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .options-container {
+      max-height: 250px;
+      overflow-y: auto;
+
+      .option {
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        font-size: 14px;
+        
+        &:hover {
+          background-color: rgba(255, 107, 129, 0.05);
+        }
+        
+        &.active {
+          background-color: rgba(255, 107, 129, 0.1);
+          color: #ff6b81;
+          font-weight: 500;
+          position: relative;
+          
+          &::after {
+            content: "✓";
+            position: absolute;
+            right: 15px;
+            color: #ff6b81;
+          }
+        }
+      }
+      
+      .custom-input-container {
+        padding: 10px 15px;
+        border-top: 1px solid #f0f0f0;
+        background-color: rgba(255, 107, 129, 0.05);
+        
+        .custom-weeks-input {
+          width: 100%;
+          padding: 8px 10px;
+          border: 1px solid rgba(255, 107, 129, 0.3);
+          border-radius: 6px;
+          font-size: 14px;
+          margin-bottom: 8px;
+          
+          &:focus {
+            outline: none;
+            border-color: #ff6b81;
+            box-shadow: 0 0 0 2px rgba(255, 107, 129, 0.2);
+          }
+        }
+        
+        .custom-input-actions {
+          display: flex;
+          justify-content: space-between;
+          
+          .apply-button, .cancel-button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+          }
+          
+          .apply-button {
+            background-color: #ff6b81;
+            color: white;
+            flex-grow: 1;
+            margin-right: 8px;
+            
+            &:hover {
+              background-color: darken(#ff6b81, 10%);
+            }
+          }
+          
+          .cancel-button {
+            background-color: #f0f0f0;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            &:hover {
+              background-color: darken(#f0f0f0, 5%);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .weeks-filter-container {
+    .weeks-filter-button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    
+    .weeks-dropdown {
+      width: 200px;
+      
+      .dropdown-header {
+        font-size: 12px;
+      }
+      
+      .options-container {
+        .option {
+          font-size: 12px;
+        }
+        
+        .custom-input-container {
+          .custom-weeks-input {
+            font-size: 12px;
+            padding: 6px 8px;
+          }
+          
+          .custom-input-actions {
+            .apply-button, .cancel-button {
+              padding: 5px 10px;
+              font-size: 11px;
+            }
+          }
+        }
+      }
+    }
+  }
+} 

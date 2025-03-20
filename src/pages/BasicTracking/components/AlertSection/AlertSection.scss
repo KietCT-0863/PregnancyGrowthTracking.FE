@@ -1,0 +1,122 @@
+.chart-alerts {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-top: 24px;
+
+  .alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h4 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 16px;
+      color: #444;
+
+      .has-alerts {
+        color: #ff6b81;
+      }
+    }
+
+    .alert-toggle {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .alert-content {
+    overflow: hidden;
+
+    &.open {
+      margin-top: 8px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background-color: #f8f9fa;
+      transition: all 0.3s ease;
+
+      &.warning {
+        background-color: rgba(255, 152, 0, 0.1);
+        .alert-icon {
+          color: #ff9800;
+        }
+      }
+
+      &.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        .alert-icon {
+          color: #4caf50;
+        }
+      }
+
+      &.danger {
+        background-color: rgba(244, 67, 54, 0.1);
+        .alert-icon {
+          color: #f44336;
+        }
+      }
+
+      &.info {
+        background-color: rgba(33, 150, 243, 0.1);
+        .alert-icon {
+          color: #2196f3;
+        }
+      }
+
+      .alert-text {
+        flex: 1;
+
+        .alert-title {
+          margin: 0 0 4px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #333;
+        }
+
+        .alert-description {
+          margin: 0;
+          font-size: 13px;
+          color: #666;
+          line-height: 1.4;
+        }
+      }
+    }
+
+    .no-alerts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      text-align: center;
+      color: #666;
+
+      svg {
+        color: #ccc;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+      }
+    }
+  }
+} 
