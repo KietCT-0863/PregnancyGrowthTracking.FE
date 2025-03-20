@@ -1,21 +1,16 @@
-import { motion } from "framer-motion";
-import {
-  Baby,
-  AlertCircle,
-  Heart,
-  Activity,
-  Scale,
-  Ruler,
-  Clock,
-  FileText,
-  Info,
-  BarChart2,
-  AlertTriangle,
-  CheckCircle,
-} from "lucide-react";
+import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, Clock, History, Baby, RefreshCw, User, Circle, TrendingUp, AlertTriangle, FileText, CheckCircle, Info } from 'lucide-react';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/vi';
+import { Modal, Table } from 'antd';
 import "./ChildInfoCard.scss";
-import { Modal, Table } from "antd";
-import { useState, useMemo } from "react";
+import { fetchStandardRanges, getAuthToken } from '../../utils/apiHandler'
+import { format } from 'date-fns'
+
+dayjs.extend(relativeTime);
+dayjs.locale('vi');
 
 const ChildInfoCard = ({
   selectedChild,
@@ -25,6 +20,132 @@ const ChildInfoCard = ({
   handleStatsUpdate,
 }) => {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [standardRange, setStandardRange] = useState(null)
+  const [loadingRange, setLoadingRange] = useState(false)
+  const [error, setError] = useState(null)
+  const [chartError, setChartError] = useState(null)
+
+  // Lấy dữ liệu tuần thai hiện tại
+  const currentAge = useMemo(() => {
+    if (!selectedChild) return "";
+    
+    const childStats = tempStats[selectedChild.foetusId];
+    if (childStats?.age !== undefined) return childStats.age;
+    
+    const childGrowthData = growthData[selectedChild.foetusId];
+    if (childGrowthData?.length > 0) {
+      return childGrowthData[0].age || selectedChild.age || "";
+    }
+    
+    return selectedChild.age || "";
+  }, [selectedChild, tempStats, growthData]);
+
+  // Lấy ngày cập nhật gần nhất
+  const latestUpdate = useMemo(() => {
+    if (!selectedChild || !growthData[selectedChild.foetusId]?.length) return null;
+    
+    const data = growthData[selectedChild.foetusId][0];
+    return data.measurementDate || data.date;
+  }, [selectedChild, growthData]);
+
+  // Kiểm tra xem có bất kỳ thay đổi nào trong dữ liệu không
+  const isAnyStatUpdated = () => {
+    if (!selectedChild) return false;
+    
+    const stats = tempStats[selectedChild.foetusId] || {};
+    console.log("Stats for update check:", stats);
+    
+    // Kiểm tra xem có bất kỳ giá trị nào không phải null, undefined, hoặc chuỗi rỗng
+    return Object.values(stats).some(value => 
+      value !== null && 
+      value !== undefined && 
+      value !== '' && 
+      (typeof value !== 'string' || value.trim() !== '')
+    );
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchStandardRangesData = async () => {
+      if (!selectedChild || !currentAge) {
+        return;
+      }
+      
+      console.log('Fetching standard ranges for age:', currentAge);
+      
+      // Kiểm tra token
+      const token = getAuthToken();
+      if (!token) {
+        if (isMounted) {
+          setError('Cần đăng nhập để xem chỉ số chuẩn');
+          setStandardRange(null);
+        }
+        return;
+      }
+      
+      if (currentAge < 12 || currentAge > 40) {
+        if (isMounted) {
+          setStandardRange(null);
+          setError('Tuần thai không hợp lệ (12-40)');
+        }
+        return;
+      }
+
+      try {
+        if (isMounted) {
+          setLoadingRange(true);
+          setError(null);
+        }
+        
+        const rangeData = await fetchStandardRanges(currentAge);
+        
+        if (isMounted) {
+          if (rangeData) {
+            console.log('Received standard range data:', rangeData);
+            setStandardRange(rangeData);
+          } else {
+            setError('Không có dữ liệu chuẩn cho tuần thai này');
+            setStandardRange(null);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching standard ranges:', error);
+        if (isMounted) {
+          const errorMessage = error.message?.includes('401')
+            ? 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại'
+            : 'Lỗi khi lấy dữ liệu chuẩn';
+            
+          setError(errorMessage);
+          setStandardRange(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingRange(false);
+        }
+      }
+    };
+
+    // Chỉ fetch khi currentAge thay đổi để tránh render loop
+    fetchStandardRangesData();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedChild?.foetusId, currentAge]); // Chỉ phụ thuộc vào foetusId và currentAge
+
+  // Theo dõi thay đổi của tempStats
+  useEffect(() => {
+    if (selectedChild?.foetusId) {
+      console.log('tempStats changed for foetus:', selectedChild.foetusId, tempStats[selectedChild.foetusId]);
+    }
+  }, [tempStats, selectedChild?.foetusId]);
+
+  // Theo dõi thay đổi của currentAge
+  useEffect(() => {
+    console.log('currentAge changed:', currentAge);
+  }, [currentAge]);
 
   const historyColumns = [
     {
@@ -73,77 +194,16 @@ const ChildInfoCard = ({
       title: "Trạng thái",
       key: "status",
       width: 400,
-      render: (_, record) => (
-        <div className="status-indicators">
-          {record.hc && (
-            <span className={`status-badge ${record.hc.isAlert ? "warning" : "safe"}`}>
-              {record.hc.isAlert ? (
-                <>
-                  <AlertTriangle size={14} />
-                  <span>HC: Cần chú ý</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle size={14} />
-                  <span>HC: An toàn</span>
-                </>
-              )}
-            </span>
-          )}
-          {record.ac && (
-            <span className={`status-badge ${record.ac.isAlert ? "warning" : "safe"}`}>
-              {record.ac.isAlert ? (
-                <>
-                  <AlertTriangle size={14} />
-                  <span>AC: Cần chú ý</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle size={14} />
-                  <span>AC: An toàn</span>
-                </>
-              )}
-            </span>
-          )}
-          {record.fl && (
-            <span className={`status-badge ${record.fl.isAlert ? "warning" : "safe"}`}>
-              {record.fl.isAlert ? (
-                <>
-                  <AlertTriangle size={14} />
-                  <span>FL: Cần chú ý</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle size={14} />
-                  <span>FL: An toàn</span>
-                </>
-              )}
-            </span>
-          )}
-          {record.efw && (
-            <span className={`status-badge ${record.efw.isAlert ? "warning" : "safe"}`}>
-              {record.efw.isAlert ? (
-                <>
-                  <AlertTriangle size={14} />
-                  <span>EFW: Cần chú ý</span>
-                </>
-              ) : (
-                <>
-                  <CheckCircle size={14} />
-                  <span>EFW: An toàn</span>
-                </>
-              )}
-            </span>
-          )}
-        </div>
-      ),
+      render: renderStatusIndicators,
     },
   ];
 
+  // Hàm mở modal xem lịch sử
   const handleViewHistory = () => {
     setIsHistoryModalOpen(true);
   };
 
+  // Hàm đóng modal lịch sử
   const handleCloseHistory = () => {
     setIsHistoryModalOpen(false);
   };
@@ -155,404 +215,192 @@ const ChildInfoCard = ({
     });
   }, [selectedChild, growthData]);
 
+  const handleChartError = (error) => {
+    setChartError(error);
+  };
+
+  // Hàm render trạng thái
+  function renderStatusIndicators(_, record) {
+    const renderBadge = (metric, label) => {
+      if (!record[metric]) return null;
+      
+      const isAlert = record[metric].isAlert;
+      const className = `status-badge ${isAlert ? "warning" : "safe"}`;
+      
+      return (
+        <span className={className}>
+          {isAlert ? <AlertTriangle size={14} /> : <CheckCircle size={14} />}
+          <span>{label}: {isAlert ? "Cần chú ý" : "An toàn"}</span>
+        </span>
+      );
+    };
+    
+    return (
+      <div className="status-indicators">
+        {renderBadge("hc", "HC")}
+        {renderBadge("ac", "AC")}
+        {renderBadge("fl", "FL")}
+        {renderBadge("efw", "EFW")}
+      </div>
+    );
+  }
+  
+  // Hàm render trường đầu vào metric
+  const renderMetricInput = (metricName, label, color, unit = "mm") => {
+    // Cải thiện cách lấy giá trị hiện tại
+    const currentValue = tempStats[selectedChild?.foetusId]?.[metricName];
+    console.log(`Current ${metricName} value:`, currentValue, typeof currentValue);
+    
+    // Xử lý undefined, null thành chuỗi rỗng để tránh lỗi "uncontrolled to controlled"
+    const displayValue = currentValue === null || currentValue === undefined || currentValue === '' ? '' : currentValue;
+    
+    return (
+      <div className="metric-item">
+        <label>
+          <Circle className="icon" style={{ color }} />
+          {label}
+        </label>
+        <div className="input-with-units">
+          <input
+            type="number"
+            name={metricName}
+            value={displayValue}
+            onChange={(e) => {
+              // Ngăn chặn hành vi mặc định có thể gây ra việc mất focus
+              e.preventDefault();
+              
+              // Thêm console.log để debug
+              const newValue = e.target.value;
+              console.log(`Changing ${metricName} from ${displayValue} to:`, newValue);
+              
+              // Gọi hàm xử lý sự kiện với tham số phù hợp
+              handleInputChange(selectedChild.foetusId, metricName, newValue);
+            }}
+            placeholder="0"
+            min="0"
+            step="any"
+          />
+          <span className="unit">{unit}</span>
+        </div>
+        <div className="metric-standard">
+          <div className="standard-label">
+            <Info className="info-icon" size={14} />
+            Chỉ số chuẩn: {standardRange?.[metricName]?.median || '0'} {unit}
+          </div>
+          <div className="standard-range">
+            Khoảng cho phép: {standardRange?.[metricName]?.min || '0'} - {standardRange?.[metricName]?.max || '0'} {unit}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="child-card">
-      <div className="card-header">
-        <motion.h3
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          {selectedChild.name}
-        </motion.h3>
+    <div className="child-info-card">
+      <div className="card-header" style={{ background: 'linear-gradient(135deg, #FF85A2, #FF9A8B)' }}>
+        <h2>{selectedChild?.name}</h2>
       </div>
 
       <div className="card-content">
-        <motion.div
-          className="basic-info"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          <div className="info-title">
-            <motion.div
-              animate={{
-                rotate: [0, 10, 0, -10, 0],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-            >
-              <Info size={16} className="info-icon" />
-            </motion.div>
-            <span>Thông tin cơ bản</span>
+        {/* Thông tin cơ bản */}
+        <div className="info-section">
+          <h3>
+            <User size={16} className="icon" />
+            Thông tin cơ bản
+          </h3>
+          <div className="basic-info">
+            <div className="info-row">
+              <div className="info-item">
+                <label>
+                  <Baby className="icon" />
+                  Giới tính
+                </label>
+                <span>{selectedChild?.gender}</span>
+              </div>
+              <div className="info-item">
+                <label>
+                  <Calendar className="icon" />
+                  Tuần
+                </label>
+                <div className="input-with-units">
+                  <input
+                    type="number"
+                    name="age"
+                    value={currentAge === null || currentAge === undefined || currentAge === '' ? '' : currentAge}
+                    onChange={(e) => {
+                      // Ngăn chặn hành vi mặc định có thể gây ra việc mất focus
+                      e.preventDefault();
+                      
+                      // Thêm console.log để debug
+                      const newValue = e.target.value;
+                      console.log(`Changing age from ${currentAge} to:`, newValue);
+                      
+                      // Gọi hàm xử lý sự kiện với tham số phù hợp
+                      handleInputChange(selectedChild.foetusId, "age", newValue);
+                    }}
+                    min="1"
+                    max="42"
+                    step="1"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          
-          <div className="info-grid">
-            <motion.div
-              className="info-item"
-              whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-            >
-              <motion.div
-                animate={{
-                  y: [0, -5, 0],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              >
-                <Baby size={16} className="gender-icon" />
-              </motion.div>
-              <span>
-                {selectedChild.gender === "Nam"
-                  ? "Nam"
-                  : selectedChild.gender === "Nữ"
-                  ? "Nữ"
-                    : selectedChild.gender === "Khác"
-                  ? "Khác"
-                  : "Chưa xác định"}
-              </span>
-            </motion.div>
-            
-            <motion.div
-              className="info-item"
-              whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-            >
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              >
-                <Activity size={16} className="age-icon" />
-              </motion.div>
-              <div className="age-input-container">
-                <span>Tuần</span>
-                <input
-                  type="number"
-                  value={
-                    tempStats[selectedChild.foetusId]?.age !== undefined
-                      ? tempStats[selectedChild.foetusId].age
-                      : growthData[selectedChild.foetusId]?.length > 0
-                        ? growthData[selectedChild.foetusId][0].age || selectedChild.age || ""
-                        : selectedChild.age || ""
-                  }
-                  onChange={(e) => handleInputChange(selectedChild.foetusId, "age", e.target.value)}
-                  min="12"
-                  max="40"
-                  className="week-input"
-                />
-              </div>
-            </motion.div>
+        </div>
+
+        {/* Chỉ số phát triển */}
+        <div className="info-section">
+          <h3>
+            <TrendingUp size={16} className="icon" />
+            Chỉ số phát triển
+          </h3>
+          <div className="growth-metrics">
+            <div className="metrics-row">
+              {renderMetricInput("hc", "HC", "#FF6384")}
+              {renderMetricInput("ac", "AC", "#36A2EB")}
+            </div>
+
+            <div className="metrics-row">
+              {renderMetricInput("fl", "FL", "#4BC0C0")}
+              {renderMetricInput("efw", "EFW", "#9966FF", "g")}
+            </div>
           </div>
-        </motion.div>
+        </div>
 
-        {selectedChild.age < 12 || selectedChild.age > 40 ? (
-          <motion.div
-            className="warning-message"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 0.7 }}
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-            >
-              <AlertCircle size={16} />
-            </motion.div>
-            <span>{selectedChild.age < 12 ? "Thai nhi chưa đủ tuần tuổi để đo chỉ số (tối thiểu 12 tuần)" : "Tuần thai vượt quá giới hạn cho phép (tối đa 40 tuần)"}</span>
-          </motion.div>
-        ) : (
-          <>
-            <motion.div
-              className="stats-container"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              <div className="stats-title">
-                <motion.div
-                  animate={{
-                    rotate: [0, 10, 0, -10, 0],
-                  }}
-                  transition={{
-                    duration: 5,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <BarChart2 size={16} className="stats-icon" />
-                </motion.div>
-                <span>Chỉ số phát triển</span>
-              </div>
-              
-              <div className="stats-grid">
-                <motion.div
-                  className="stat-item"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <div className="stat-header">
-                    <motion.div
-                      animate={{
-                        rotate: [0, 10, 0, -10, 0],
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <Ruler size={16} className="hc-icon" />
-                    </motion.div>
-                    <span className="stat-label">HC</span>
-                  </div>
-                  <div className="stat-input">
-                    <input
-                      type="number"
-                      value={
-                        tempStats[selectedChild.foetusId]?.hc !== undefined
-                          ? tempStats[selectedChild.foetusId].hc
-                          : growthData[selectedChild.foetusId]?.length > 0
-                            ? growthData[selectedChild.foetusId][0].hc?.value || ""
-                            : ""
-                      }
-                      onChange={(e) => handleInputChange(selectedChild.foetusId, "hc", e.target.value)}
-                      min="0"
-                      placeholder="Nhập HC"
-                      className="stat-input-field"
-                    />
-                    <span className="stat-unit">mm</span>
-                  </div>
-                </motion.div>
-                
-                <motion.div
-                  className="stat-item"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9 }}
-                >
-                  <div className="stat-header">
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.2, 1],
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <Heart size={16} className="ac-icon" />
-                    </motion.div>
-                    <span className="stat-label">AC</span>
-                  </div>
-                  <div className="stat-input">
-                    <input
-                      type="number"
-                      value={
-                        tempStats[selectedChild.foetusId]?.ac !== undefined
-                          ? tempStats[selectedChild.foetusId].ac
-                          : growthData[selectedChild.foetusId]?.length > 0
-                            ? growthData[selectedChild.foetusId][0].ac?.value || ""
-                            : ""
-                      }
-                      onChange={(e) => handleInputChange(selectedChild.foetusId, "ac", e.target.value)}
-                      min="0"
-                      placeholder="Nhập AC"
-                      className="stat-input-field"
-                    />
-                    <span className="stat-unit">mm</span>
-                  </div>
-                </motion.div>
-                
-                <motion.div
-                  className="stat-item"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.0 }}
-                >
-                  <div className="stat-header">
-                    <motion.div
-                      animate={{
-                        y: [0, -5, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <Scale size={16} className="fl-icon" />
-                    </motion.div>
-                    <span className="stat-label">FL</span>
-                  </div>
-                  <div className="stat-input">
-                    <input
-                      type="number"
-                      value={
-                        tempStats[selectedChild.foetusId]?.fl !== undefined
-                          ? tempStats[selectedChild.foetusId].fl
-                          : growthData[selectedChild.foetusId]?.length > 0
-                            ? growthData[selectedChild.foetusId][0].fl?.value || ""
-                            : ""
-                      }
-                      onChange={(e) => handleInputChange(selectedChild.foetusId, "fl", e.target.value)}
-                      min="0"
-                      placeholder="Nhập FL"
-                      className="stat-input-field"
-                    />
-                    <span className="stat-unit">mm</span>
-                  </div>
-                </motion.div>
-                
-                <motion.div
-                  className="stat-item"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                >
-                  <div className="stat-header">
-                    <motion.div
-                      animate={{
-                        rotate: [0, 10, 0, -10, 0],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <Activity size={16} className="efw-icon" />
-                    </motion.div>
-                    <span className="stat-label">EFW</span>
-                  </div>
-                  <div className="stat-input">
-                    <input
-                      type="number"
-                      value={
-                        tempStats[selectedChild.foetusId]?.efw !== undefined
-                          ? tempStats[selectedChild.foetusId].efw
-                          : growthData[selectedChild.foetusId]?.length > 0
-                            ? growthData[selectedChild.foetusId][0].efw?.value || ""
-                            : ""
-                      }
-                      onChange={(e) => handleInputChange(selectedChild.foetusId, "efw", e.target.value)}
-                      min="0"
-                      placeholder="Nhập EFW"
-                      className="stat-input-field"
-                    />
-                    <span className="stat-unit">g</span>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="actions-container"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
-            >
-              {growthData[selectedChild.foetusId]?.length > 0 && (
-                <motion.div
-                  className="history-section"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(255, 107, 129, 0.2)" }}
-                >
-                  <div className="last-updated">
-                    <motion.div
-                      animate={{
-                        rotate: [0, 360],
-                      }}
-                      transition={{
-                        duration: 20,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
-                    >
-                      <Clock size={14} className="clock-icon" />
-                    </motion.div>
-                    <span>
-                      Cập nhật lần cuối:{" "}
-                      {new Date(
-                        growthData[selectedChild.foetusId][0].measurementDate ||
-                          growthData[selectedChild.foetusId][0].date ||
-                          new Date(),
-                      ).toLocaleDateString("vi-VN")}
-                    </span>
-                  </div>
-
-                  <motion.button
-                    className="view-history-button"
-                    onClick={handleViewHistory}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                  >
-                    <motion.div
-                      animate={{
-                        y: [0, -3, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      <FileText size={16} className="history-icon" />
-                    </motion.div>
-                    <span>Xem tất cả lịch sử</span>
-                  </motion.button>
-                </motion.div>
-              )}
-
-              <motion.button
-                className="update-stats-button"
-                onClick={() => handleStatsUpdate(selectedChild.foetusId)}
-                whileHover={{ scale: 1.03, y: -5 }}
-                whileTap={{ scale: 0.97 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3 }}
+        {/* Thông tin cập nhật */}
+        <div className="info-section">
+          <div className="update-info">
+            <div className="update-date">
+              <Clock className="icon" />
+              Cập nhật lần cuối: {latestUpdate ? format(new Date(latestUpdate), 'dd/MM/yyyy') : 'Chưa có dữ liệu'}
+            </div>
+            {selectedChild && (
+              <motion.button 
+                className="view-history" 
+                onClick={handleViewHistory}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  animate={{
-                    rotate: [0, 10, 0, -10, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeInOut",
-                  }}
-                >
-                  <Ruler size={16} className="update-icon" />
-                </motion.div>
-                <span>Cập nhật chỉ số</span>
-                <motion.div className="button-shine" />
+                <History className="icon" /> Xem tất cả lịch sử
               </motion.button>
-            </motion.div>
-          </>
-        )}
+            )}
+          </div>
+        </div>
+
+        {/* Nút cập nhật */}
+        <motion.button
+          className="update-button"
+          onClick={() => handleStatsUpdate(selectedChild.foetusId)}
+          disabled={!isAnyStatUpdated()}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          style={{ background: 'linear-gradient(135deg, #FF85A2, #FF9A8B)' }}
+        >
+          <RefreshCw className="icon" /> Cập nhật chỉ số
+        </motion.button>
       </div>
 
+      {/* Modal lịch sử */}
       <Modal
         title={
           <motion.div

@@ -1,0 +1,60 @@
+.stat-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+
+  &.success {
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
+  }
+
+  &.warning {
+    background-color: #fffbe6;
+    border: 1px solid #ffe58f;
+  }
+
+  .suggestion-icon {
+    color: #1890ff;
+    margin-top: 2px;
+  }
+
+  .suggestion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+
+    span {
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .range {
+      color: #666;
+    }
+
+    .median {
+      color: #1890ff;
+      font-weight: 500;
+    }
+
+    .status {
+      margin-top: 2px;
+      font-weight: 500;
+
+      &.success {
+        color: #52c41a;
+      }
+
+      &.warning {
+        color: #faad14;
+      }
+    }
+  }
+} 

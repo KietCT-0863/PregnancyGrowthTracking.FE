@@ -1,0 +1,407 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+// Variables - matching the pink theme from ChildInfoCard
+$pink-primary: #FF85A2;
+$pink-secondary: #FF9A8B;
+$pink-light: #FFCAD4;
+$pink-dark: #FF6B8B;
+$pink-gradient: linear-gradient(135deg, $pink-primary, $pink-secondary);
+
+$text-primary: #333333;
+$text-secondary: #666666;
+$text-muted: rgba(51, 51, 51, 0.7);
+
+$white: #ffffff;
+$background-light: #FFF9F9;
+$border-radius: 16px;
+$box-shadow: 0 8px 30px rgba($pink-primary, 0.15);
+$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// Animation Keyframes
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba($pink-primary, 0.3); }
+  50% { box-shadow: 0 0 15px rgba($pink-primary, 0.6); }
+}
+
+.weekly-stats-chart {
+  width: 100%;
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  padding: 20px;
+  margin-bottom: 24px;
+  transition: $transition;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Quicksand', sans-serif;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba($pink-primary, 0.2);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: $pink-gradient;
+    z-index: 1;
+  }
+  
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+    
+    h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: $pink-dark;
+      position: relative;
+      padding-left: 15px;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 20px;
+        background: $pink-gradient;
+        border-radius: 3px;
+      }
+    }
+    
+    .chart-legend {
+      display: flex;
+      gap: 15px;
+      
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        color: $text-secondary;
+        
+        .legend-color {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          
+          &.standard {
+            background-color: rgba(54, 162, 235, 1);
+          }
+          
+          &.actual {
+            background-color: rgba(255, 99, 132, 1);
+          }
+        }
+      }
+    }
+  }
+  
+  .chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-bottom: 20px;
+    background: rgba($pink-light, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid rgba($pink-primary, 0.1);
+    
+    canvas {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+  }
+  
+  .metric-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    
+    .metric-item {
+      background: rgba($pink-light, 0.1);
+      border-radius: 12px;
+      padding: 15px;
+      transition: $transition;
+      border: 1px solid rgba($pink-primary, 0.1);
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba($pink-primary, 0.1);
+        background: rgba($pink-light, 0.2);
+      }
+      
+      .metric-name {
+        font-weight: 600;
+        color: $pink-dark;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: $pink-primary;
+        }
+      }
+      
+      .metric-values {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        
+        .actual-value, .standard-value {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 0.9rem;
+          
+          strong {
+            font-weight: 600;
+            color: $pink-dark;
+          }
+        }
+        
+        .actual-value {
+          color: $text-primary;
+        }
+        
+        .standard-value {
+          color: $text-secondary;
+        }
+        
+        .percentage {
+          align-self: flex-end;
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          margin-top: 5px;
+          
+          &.normal {
+            background-color: rgba(75, 192, 192, 0.15);
+            color: rgb(75, 192, 192);
+            
+            &::before {
+              content: '✓';
+            }
+          }
+          
+          &.abnormal {
+            background-color: rgba(255, 99, 132, 0.15);
+            color: rgb(255, 99, 132);
+            
+            &::before {
+              content: '!';
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  &.loading, &.no-data {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    
+    svg {
+      color: $pink-primary;
+      font-size: 40px;
+      margin-bottom: 20px;
+      opacity: 0.8;
+    }
+    
+    span {
+      color: $text-secondary;
+      font-size: 1rem;
+      font-weight: 500;
+      max-width: 300px;
+      line-height: 1.5;
+    }
+    
+    .loading-spinner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      
+      .spin {
+        animation: spin 2s linear infinite;
+      }
+    }
+  }
+  
+  &.loading {
+    svg {
+      animation: spin 2s linear infinite;
+    }
+  }
+  
+  &.no-data {
+    svg {
+      animation: pulse 2s infinite;
+    }
+  }
+}
+
+// Custom styles for Chart.js tooltips
+:global(.chartjs-tooltip) {
+  background: rgba($white, 0.95) !important;
+  backdrop-filter: blur(4px);
+  border-radius: 10px !important;
+  box-shadow: 0 4px 15px rgba($pink-primary, 0.2) !important;
+  padding: 10px !important;
+  border: 1px solid rgba($pink-primary, 0.1) !important;
+  
+  :global(.tooltip-title) {
+    font-weight: 600 !important;
+    color: $pink-dark !important;
+    margin-bottom: 5px !important;
+  }
+  
+  :global(.tooltip-body) {
+    font-size: 0.9rem !important;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 992px) {
+  .weekly-stats-chart {
+    padding: 15px;
+    
+    .chart-container {
+      height: 250px;
+    }
+    
+    .metric-details {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .weekly-stats-chart {
+    padding: 15px;
+    
+    .chart-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      
+      h3 {
+        font-size: 1.1rem;
+      }
+      
+      .chart-legend {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+    
+    .chart-container {
+      height: 220px;
+    }
+    
+    .metric-details {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      
+      .metric-item {
+        padding: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .weekly-stats-chart {
+    padding: 12px;
+    
+    .chart-container {
+      height: 200px;
+      padding: 8px;
+    }
+    
+    .chart-header h3 {
+      font-size: 1rem;
+    }
+    
+    .metric-details .metric-item {
+      padding: 10px;
+      
+      .metric-name {
+        font-size: 0.9rem;
+      }
+      
+      .metric-values {
+        .actual-value, .standard-value {
+          font-size: 0.85rem;
+        }
+        
+        .percentage {
+          font-size: 0.8rem;
+          padding: 3px 10px;
+        }
+      }
+    }
+    
+    &.loading, &.no-data {
+      padding: 20px;
+      
+      svg {
+        font-size: 30px;
+      }
+      
+      span {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+

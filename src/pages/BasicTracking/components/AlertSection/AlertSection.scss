@@ -1,122 +1,325 @@
-.chart-alerts {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  margin-top: 24px;
+@import '../../BasicTracking.scss';
 
+// Thêm các biến màu hồng
+$pink-primary: #FF85A2;
+$pink-secondary: #FF9A8B;
+$pink-light: #FFCAD4;
+$pink-dark: #FF6B8B;
+
+.chart-alerts {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
   .alert-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-
-    h4 {
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(94, 96, 206, 0.1);
+    margin-bottom: 4px;
+    
+    h3 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4844c0;
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin: 0;
-      font-size: 16px;
-      color: #444;
-
-      .has-alerts {
-        color: #ff6b81;
+      gap: 4px;
+      
+      svg {
+        color: #5e60ce;
+        
+        &.has-alerts {
+          color: #ff4d6d;
+        }
       }
     }
-
+    
     .alert-toggle {
       background: none;
       border: none;
-      padding: 4px;
+      color: #5e60ce;
       cursor: pointer;
-      color: #666;
+      width: 20px;
+      height: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(200, 182, 255, 0.2);
+      }
     }
   }
-
+  
   .alert-content {
-    overflow: hidden;
-
-    &.open {
-      margin-top: 8px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 6px;
+    
+    &::-webkit-scrollbar {
+      width: 4px;
     }
-
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(94, 96, 206, 0.2);
+      border-radius: 10px;
+    }
+    
     .alert-item {
+      margin-bottom: 4px;
+      padding: 4px;
+      border-radius: 4px;
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      background-color: #f8f9fa;
-      transition: all 0.3s ease;
-
-      &.warning {
-        background-color: rgba(255, 152, 0, 0.1);
-        .alert-icon {
-          color: #ff9800;
-        }
+      gap: 4px;
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
       }
-
-      &.success {
-        background-color: rgba(76, 175, 80, 0.1);
-        .alert-icon {
-          color: #4caf50;
-        }
+      
+      &:last-child {
+        margin-bottom: 0;
       }
-
-      &.danger {
-        background-color: rgba(244, 67, 54, 0.1);
-        .alert-icon {
-          color: #f44336;
-        }
-      }
-
+      
       &.info {
-        background-color: rgba(33, 150, 243, 0.1);
+        background: rgba(112, 161, 255, 0.1);
+        border-left: 2px solid #70a1ff;
+        
         .alert-icon {
-          color: #2196f3;
+          color: #70a1ff;
         }
       }
-
+      
+      &.warning {
+        background: rgba(255, 177, 66, 0.1);
+        border-left: 2px solid #ffb142;
+        
+        .alert-icon {
+          color: #ffb142;
+        }
+      }
+      
+      &.danger {
+        background: rgba(255, 107, 107, 0.1);
+        border-left: 2px solid #ff6b6b;
+        
+        .alert-icon {
+          color: #ff6b6b;
+        }
+      }
+      
+      &.success {
+        background: rgba(46, 213, 115, 0.1);
+        border-left: 2px solid #2ed573;
+        
+        .alert-icon {
+          color: #2ed573;
+        }
+      }
+      
+      .alert-icon {
+        flex-shrink: 0;
+        font-size: 13px;
+      }
+      
       .alert-text {
         flex: 1;
-
+        
         .alert-title {
-          margin: 0 0 4px;
-          font-size: 14px;
+          margin: 0;
+          font-size: 10px;
           font-weight: 600;
-          color: #333;
+          color: #4844c0;
         }
-
+        
         .alert-description {
           margin: 0;
-          font-size: 13px;
-          color: #666;
-          line-height: 1.4;
+          font-size: 9px;
+          color: rgba(72, 68, 192, 0.8);
         }
       }
     }
-
+    
     .no-alerts {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
-      padding: 24px;
+      justify-content: center;
+      height: 100%;
+      min-height: 60px;
+      color: rgba(72, 68, 192, 0.5);
       text-align: center;
-      color: #666;
-
+      
       svg {
-        color: #ccc;
+        color: rgba(94, 96, 206, 0.3);
+        margin-bottom: 4px;
+        font-size: 20px;
       }
-
+      
       p {
         margin: 0;
-        font-size: 14px;
+        font-weight: 500;
+        font-size: 10px;
       }
+    }
+  }
+}
+
+.alert-badge {
+  background-color: $pink-primary;
+  color: white;
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.alert-item {
+  &.alert-warning {
+    background-color: rgba($pink-dark, 0.1);
+    border-left: 4px solid $pink-dark;
+  }
+
+  &.alert-success {
+    background-color: rgba($pink-dark, 0.1);
+    border-left: 4px solid $pink-dark;
+  }
+
+  &.alert-danger {
+    background-color: rgba($pink-dark, 0.1);
+    border-left: 4px solid $pink-dark;
+  }
+
+  &.alert-info {
+    background-color: rgba($pink-dark, 0.1);
+    border-left: 4px solid $pink-dark;
+  }
+
+  .alert-timestamp {
+    font-size: 12px;
+    color: rgba($pink-dark, 0.5);
+    margin-top: 4px;
+    display: block;
+  }
+}
+
+.has-alerts {
+    color: $pink-dark;
+}
+
+.chart-alerts.compact {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  .alert-header {
+    margin-bottom: 16px;
+    
+    h4 {
+      font-size: 16px;
+      margin: 0;
+      color: $pink-dark;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      
+      svg {
+        color: $pink-primary;
+      }
+    }
+  }
+  
+  .alert-content {
+    flex-grow: 1;
+    overflow: hidden;
+    
+    &.open {
+      max-height: none !important;
+    }
+    
+    .alert-scroll-container {
+      height: 100%;
+      overflow-y: auto;
+      
+      /* Kiểu thanh cuộn */
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: rgba($pink-primary, 0.3);
+        border-radius: 10px;
+      }
+    }
+  }
+  
+  .alert-item {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    
+    .alert-icon {
+      min-width: 18px;
+      
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
+    
+    .alert-text {
+      .alert-title {
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: $pink-dark;
+      }
+      
+      .alert-description {
+        font-size: 13px;
+        color: rgba($pink-dark, 0.8);
+      }
+      
+      .alert-timestamp {
+        font-size: 11px;
+        color: rgba($pink-dark, 0.6);
+        margin-top: 6px;
+      }
+    }
+  }
+  
+  .no-alerts {
+    padding: 30px 12px;
+    font-size: 13px;
+    color: rgba($pink-dark, 0.7);
+    text-align: center;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+      margin-bottom: 10px;
+      color: rgba($pink-primary, 0.4);
+    }
+    
+    p {
+      margin: 0;
     }
   }
 } 
