@@ -13,4 +13,11 @@ export const ENDPOINTS = {
     // Thêm endpoint cập nhật tuần thai
     UPDATE_AGE: (id) => `/Foetus/UpdateAge?foetusId=${id}`, // Endpoint mới
   },
+  // Thêm endpoint cho Community/Posts
+  POSTS: {
+    LIST: "/posts",
+    CREATE: "/posts",
+    UPDATE: "/posts",
+    DELETE: (postId) => `/posts?postID=${postId}`,
+  },
 };
