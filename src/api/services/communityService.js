@@ -191,17 +191,8 @@ const communityService = {
       if (postTagsStr) {
         try {
           // Parse JSON string thành object
-          let parsedTags = JSON.parse(postTagsStr);
-          console.log("Parsed tags từ formData:", parsedTags);
-
-          // Kiểm tra cấu trúc của parsedTags
-          if (Array.isArray(parsedTags)) {
-            // Nếu là mảng [{"tagName": "tag1"}, {"tagName": "tag2"}]
-            postTags = parsedTags;
-          } else if (typeof parsedTags === "object" && parsedTags !== null) {
-            // Nếu là object đơn {"tagName": "tag"} - cấu trúc backend muốn
-            postTags = parsedTags;
-          }
+          postTags = JSON.parse(postTagsStr);
+          console.log("Parsed tags:", postTags);
         } catch (err) {
           console.error("Lỗi parse tags JSON:", err);
         }
@@ -213,12 +204,8 @@ const communityService = {
         body: formData.get("body"),
       };
 
-      // Thêm tags vào payload tùy theo cấu trúc
-      if (Array.isArray(postTags) && postTags.length > 0) {
-        // Nếu backend muốn dạng mảng
-        payload.postTags = postTags;
-      } else if (typeof postTags === "object" && postTags !== null) {
-        // Nếu backend muốn dạng object đơn
+      // Thêm tags vào payload nếu có
+      if (postTags.length > 0) {
         payload.postTags = postTags;
       }
 
@@ -234,20 +221,8 @@ const communityService = {
         multipartFormData.append("postImage", formData.get("postImage"));
 
         // Thêm tags vào FormData theo cấu trúc backend mong muốn
-        if (payload.postTags) {
-          if (Array.isArray(payload.postTags)) {
-            // Nếu backend cần từng tag riêng lẻ
-            multipartFormData.append(
-              "postTags",
-              JSON.stringify(payload.postTags)
-            );
-          } else {
-            // Nếu backend cần object đơn
-            multipartFormData.append(
-              "postTags",
-              JSON.stringify(payload.postTags)
-            );
-          }
+        if (postTags.length > 0) {
+          multipartFormData.append("postTags", JSON.stringify(postTags));
         }
 
         console.log("Gửi multipart request với ảnh");

@@ -101,25 +101,16 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
       formData.append("postImage", image);
     }
 
-    // Xử lý tags
+    // Thêm các tags nếu có - chỉ sử dụng một phương thức nhất quán
     if (tags.length > 0) {
-      // Lấy tag đầu tiên để tạo đối tượng tag đơn
-      const firstTag = tags[0].trim();
+      // Gửi mảng các tag theo đúng định dạng backend yêu cầu: [{ "tagName": "string" }]
+      const tagsArray = tags.map((tag) => ({ tagName: tag.trim() }));
 
-      // Tạo object theo định dạng {"tagName": "dog"}
-      const tagObj = { tagName: firstTag };
+      // Chuyển thành JSON string và thêm vào formData
+      formData.append("postTags", JSON.stringify(tagsArray));
 
-      // Chuyển đổi thành chuỗi JSON và thêm vào formData
-      formData.append("postTags", JSON.stringify(tagObj));
-
-      console.log("Tag được gửi đi:", JSON.stringify(tagObj));
-
-      // Nếu có nhiều tag, hiển thị cảnh báo (hoặc bạn có thể điều chỉnh logic tùy thuộc vào yêu cầu)
-      if (tags.length > 1) {
-        console.warn(
-          "Backend chỉ hỗ trợ một tag duy nhất. Chỉ tag đầu tiên được gửi đi."
-        );
-      }
+      // In ra console để kiểm tra
+      console.log("Tags JSON được gửi:", JSON.stringify(tagsArray));
     }
 
     // Log FormData để kiểm tra
@@ -209,7 +200,7 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
               <div className="tag-form">
                 <input
                   type="text"
-                  placeholder="Nhập tag và nhấn Enter (chỉ tag đầu tiên được áp dụng)"
+                  placeholder="Thêm thẻ (gõ và nhấn Enter)"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   onKeyDown={handleKeyDown}
@@ -218,15 +209,6 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
                   Thêm
                 </button>
               </div>
-
-              {tags.length === 0 && (
-                <div className="tag-hint">
-                  <small>
-                    * Bài đăng có thể có một tag duy nhất theo định dạng của hệ
-                    thống
-                  </small>
-                </div>
-              )}
 
               {tags.length > 0 && (
                 <div className="tags-list">
@@ -241,14 +223,6 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
                       </span>
                     </div>
                   ))}
-                  {tags.length > 1 && (
-                    <div className="tag-warning">
-                      <small>
-                        * Lưu ý: Hệ thống hiện chỉ hỗ trợ một tag. Chỉ tag đầu
-                        tiên sẽ được lưu.
-                      </small>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -340,13 +314,13 @@ const Community = () => {
               post.postTags
             );
 
-            // Cố gắng xử lý tất cả các trường hợp có thể
             if (Array.isArray(post.postTags)) {
-              // Nếu postTags là mảng
               normalizedTags = post.postTags.map((tag, tagIndex) => {
                 if (typeof tag === "string") {
+                  // Nếu tag là string, chuyển về đúng format {id, name}
                   return { id: `tag_${index}_${tagIndex}`, name: tag };
                 } else if (typeof tag === "object") {
+                  // Nếu tag đã là object, đảm bảo nó có id và name
                   return {
                     id: tag.id || tag.tagId || `tag_${index}_${tagIndex}`,
                     name: tag.name || tag.tagName || "Unknown",
@@ -355,25 +329,14 @@ const Community = () => {
                 return { id: `tag_${index}_${tagIndex}`, name: "Unknown" };
               });
             } else if (typeof post.postTags === "object") {
-              // Nếu postTags là object dạng {"tagName": "dog"}
-              const tagName = post.postTags.tagName;
-              if (tagName) {
-                normalizedTags = [
-                  {
-                    id: `tag_${index}_0`,
-                    name: tagName,
-                  },
-                ];
-              } else {
-                // Trường hợp object nhưng không có tagName
-                const tagEntries = Object.entries(post.postTags);
-                normalizedTags = tagEntries.map(([key, value], tagIndex) => {
-                  return {
-                    id: `tag_${index}_${tagIndex}`,
-                    name: typeof value === "string" ? value : key,
-                  };
-                });
-              }
+              // Nếu postTags là một object, cố gắng chuyển đổi thành mảng
+              const tagEntries = Object.entries(post.postTags);
+              normalizedTags = tagEntries.map(([key, value], tagIndex) => {
+                return {
+                  id: `tag_${index}_${tagIndex}`,
+                  name: typeof value === "string" ? value : key,
+                };
+              });
             }
           }
 
