@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+
+// Variables
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$accent-color: #70a1ff;
+$text-color: #2f3542;
+$background: #f8f9fa;
+$white: #ffffff;
+
+// Font variables
+$font-heading: "Playfair Display", serif;
+$font-main: "Roboto", sans-serif;
+$font-accent: "Amatic SC", cursive;
+
+.sidebar {
+  font-family: $font-main;
+  
+  .sidebar-header {
+    font-family: $font-heading;
+  }
+  
+  .sidebar-menu {
+    .menu-item {
+      font-family: $font-main;
+      
+      &.accent {
+        font-family: $font-accent;
+      }
+    }
+  }
+}

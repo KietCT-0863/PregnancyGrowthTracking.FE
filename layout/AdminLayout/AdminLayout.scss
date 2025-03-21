@@ -1,0 +1,94 @@
+@import '../../src/styles/variables.scss';
+
+/* 
+ * AdminLayout Component
+ * Main layout styling for admin dashboard and administrative pages
+ */
+
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  background-color: $bg-secondary;
+  font-family: $font-primary;
+  
+  /* Sidebar styling */
+  &__sidebar {
+    width: 280px;
+    background-color: $white;
+    box-shadow: $shadow-md;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    transition: $transition-base;
+    z-index: $z-index-fixed;
+    
+    /* Scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba($black, 0.03);
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba($primary-pink, 0.2);
+      border-radius: 10px;
+    }
+  }
+  
+  /* Main content area */
+  &__content {
+    flex: 1;
+    margin-left: 280px;
+    padding: $spacing-lg;
+    transition: $transition-base;
+    
+    &--full {
+      margin-left: 0;
+    }
+  }
+  
+  /* Header styling */
+  &__header {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 $spacing-lg;
+    background-color: $white;
+    box-shadow: $shadow-sm;
+    margin-bottom: $spacing-lg;
+    border-radius: $border-radius-md;
+  }
+  
+  /* Collapsed sidebar state */
+  &--collapsed {
+    .admin-layout__sidebar {
+      width: 80px;
+    }
+    
+    .admin-layout__content {
+      margin-left: 80px;
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: $breakpoint-lg) {
+    .admin-layout__sidebar {
+      width: 0;
+      transform: translateX(-100%);
+    }
+    
+    .admin-layout__content {
+      margin-left: 0;
+    }
+    
+    &--mobile-open {
+      .admin-layout__sidebar {
+        width: 280px;
+        transform: translateX(0);
+      }
+    }
+  }
+} 

@@ -1,7 +1,8 @@
+/* Import fonts */
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Variables - matching Member.scss
+/* Core Variables - matching Member.scss */
 $primary: #ff6b81;
 $accent: #70a1ff;
 $text-dark: #2f3542;
@@ -12,12 +13,12 @@ $shadow: rgba(0, 0, 0, 0.1);
 $transition: 0.3s ease;
 $border-radius: 8px;
 
-// Font variables
+/* Typography */
 $font-heading: "Playfair Display", serif;
 $font-main: "Roboto", sans-serif;
 $font-accent: "Amatic SC", cursive;
 
-// Mixins
+/* Mixins */
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -30,28 +31,6 @@ $font-accent: "Amatic SC", cursive;
   justify-content: space-between;
 }
 
-// Animations
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-// Tạo mixin cho nút đóng
 @mixin close-button {
   background: none;
   border: none;
@@ -81,7 +60,28 @@ $font-accent: "Amatic SC", cursive;
   }
 }
 
-// Main Navbar Styles
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Main Navbar Component */
 .navbar {
   position: fixed;
   top: 0;

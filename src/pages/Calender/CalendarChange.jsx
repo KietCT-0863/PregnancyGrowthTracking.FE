@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import reminderService from "../../api/services/reminderService";
 import "./CalendarChange.scss";
 
@@ -38,7 +39,7 @@ const CalendarChange = () => {
       
       if (!currentReminder) {
         toast.error("Không tìm thấy lịch nhắc nhở");
-        navigate("/member/calendar-history");
+        navigate("/member/calendar/history");
         return;
       }
 
@@ -51,7 +52,7 @@ const CalendarChange = () => {
       });
     } catch (error) {
       toast.error("Không thể tải thông tin lịch nhắc nhở");
-      navigate("/member/calendar-history");
+      navigate("/member/calendar/history");
     } finally {
       setLoading(false);
     }
@@ -110,7 +111,7 @@ const CalendarChange = () => {
 
       await reminderService.updateReminder(remindId, reminder);
       toast.success("Cập nhật lịch nhắc nhở thành công!");
-      navigate("/member/calendar-history");
+      navigate("/member/calendar/history");
     } catch (error) {
       toast.error(error.message || "Không thể cập nhật lịch nhắc nhở");
     }
@@ -130,7 +131,7 @@ const CalendarChange = () => {
       <div className="change-header">
         <motion.button
           className="back-button"
-          onClick={() => navigate("/member/calendar-history")}
+          onClick={() => navigate("/member/calendar/history")}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -217,7 +218,7 @@ const CalendarChange = () => {
           <motion.button
             type="button"
             className="cancel-button"
-            onClick={() => navigate("/member/calendar-history")}
+            onClick={() => navigate("/member/calendar/history")}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -233,6 +234,8 @@ const CalendarChange = () => {
           </motion.button>
         </div>
       </form>
+      
+      <ToastContainer position="bottom-right" />
     </motion.div>
   );
 };

@@ -1,5 +1,5 @@
 import HomeBasicUser from "../../src/pages/HomeBasicUser/HomeBasicUser";
-import ChatAI from "../../src/components/FoetusList/ChatBoxAI/ChatAI";
+import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
 
 const BasicUserLayout = () => {
   return (

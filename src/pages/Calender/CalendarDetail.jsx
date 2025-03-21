@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Tag, AlertCircle } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Tag, AlertCircle, Edit, FileText, User } from "lucide-react";
 import { toast } from "react-toastify";
 import reminderService from "../../api/services/reminderService";
 import "./CalendarDetail.scss";
@@ -11,15 +11,16 @@ const CalendarDetail = () => {
   const { remindId } = useParams();
   const [loading, setLoading] = useState(true);
   const [reminder, setReminder] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Danh sách loại nhắc nhở
-  const categories = [
-    { id: "Cuộc hẹn bác sĩ", label: "Cuộc hẹn bác sĩ", color: "#FF6B6B" },
-    { id: "Uống thuốc", label: "Uống thuốc", color: "#4ECDC4" },
-    { id: "Khám thai", label: "Khám thai", color: "#45B7D1" },
-    { id: "Tập thể dục", label: "Tập thể dục", color: "#FFA07A" },
-    { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8" },
-  ];
+  // Ánh xạ reminderType sang loại sự kiện và màu sắc
+  const reminderTypeMap = {
+    "Cuộc hẹn bác sĩ": { color: "#FF6B81", icon: <User size={20} /> },
+    "Uống thuốc": { color: "#4CAF50", icon: <FileText size={20} /> },
+    "Khám thai": { color: "#FF6B81", icon: <User size={20} /> },
+    "Tập thể dục": { color: "#9C27B0", icon: <Calendar size={20} /> },
+    "Dinh dưỡng": { color: "#2196F3", icon: <Calendar size={20} /> }
+  };
 
   useEffect(() => {
     fetchReminderDetails();
@@ -34,16 +35,16 @@ const CalendarDetail = () => {
       );
 
       if (!currentReminder) {
+        setError("Không tìm thấy lịch nhắc nhở");
         toast.error("Không tìm thấy lịch nhắc nhở");
-        navigate("/member/calendar");
         return;
       }
 
       setReminder(currentReminder);
     } catch (error) {
       console.error("Error fetching reminder details:", error);
+      setError("Không thể tải thông tin lịch nhắc nhở");
       toast.error("Không thể tải thông tin lịch nhắc nhở");
-      navigate("/member/calendar");
     } finally {
       setLoading(false);
     }
@@ -56,44 +57,50 @@ const CalendarDetail = () => {
       year: "numeric",
       month: "long",
       day: "numeric",
-      weekday: "long",
     });
   };
 
-  const getCategoryColor = (reminderType) => {
-    const category = categories.find((cat) => cat.id === reminderType);
-    return category?.color || "#98D8C8"; // Default color if not found
+  const getReminderTypeInfo = (type) => {
+    return reminderTypeMap[type] || { color: "#98D8C8", icon: <Calendar size={20} /> };
   };
 
-  const getCategoryLabel = (reminderType) => {
-    const category = categories.find((cat) => cat.id === reminderType);
-    return category?.label || reminderType; // Return original type if not found
+  const handleEdit = () => {
+    navigate(`/member/calendar/change/${remindId}`);
   };
 
   if (loading) {
     return (
       <div className="calendar-detail">
-        <div className="loading">Đang tải thông tin...</div>
-      </div>
-    );
-  }
-
-  if (!reminder) {
-    return (
-      <div className="calendar-detail">
-        <div className="error-message">
-          Không tìm thấy thông tin lịch nhắc nhở
+        <div className="loading-container">
+          <div className="spinner"></div>
+          <p>Đang tải thông tin...</p>
         </div>
       </div>
     );
   }
+
+  if (error || !reminder) {
+    return (
+      <div className="calendar-detail">
+        <div className="error-container">
+          <AlertCircle size={40} />
+          <p>{error || "Không tìm thấy thông tin lịch nhắc nhở"}</p>
+          <button onClick={() => navigate("/member/calendar")}>
+            Quay lại lịch
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const { color, icon } = getReminderTypeInfo(reminder.reminderType);
 
   return (
     <motion.div
       className="calendar-detail"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <div className="detail-header">
         <motion.button
@@ -105,79 +112,58 @@ const CalendarDetail = () => {
           <ArrowLeft size={20} />
           <span>Quay lại</span>
         </motion.button>
-        <h1>Chi tiết lịch nhắc nhở</h1>
+        <h1>Chi tiết sự kiện</h1>
+      </div>
+
+      <div className="event-date-container">
+        <Calendar size={20} className="date-icon" />
+        <span>{formatDate(reminder.date)}</span>
       </div>
 
       <motion.div
-        className="detail-card"
+        className="reminder-card"
+        style={{ borderTopColor: color }}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <div
-          className="detail-title"
-          style={{
-            borderColor: getCategoryColor(reminder.reminderType),
-          }}
-        >
-          <h2>{reminder.title}</h2>
-          <div
-            className="category-badge"
-            style={{
-              backgroundColor: getCategoryColor(reminder.reminderType),
-            }}
-          >
-            {getCategoryLabel(reminder.reminderType)}
+        <div className="card-header">
+          <div className="reminder-title">
+            <div className="title-icon" style={{ backgroundColor: color }}>
+              <Edit size={20} />
+            </div>
+            <h2>{reminder.title}</h2>
+          </div>
+          <div className="action-buttons">
+            <button className="edit-button" onClick={handleEdit}>
+              <Edit size={16} />
+            </button>
+            <button className="delete-button">
+              <AlertCircle size={16} />
+            </button>
           </div>
         </div>
 
-        <div className="detail-info">
+        <div className="reminder-info">
           <div className="info-item">
-            <Calendar size={24} />
-            <div className="info-content">
-              <span className="info-label">Ngày</span>
-              <span className="info-value">{formatDate(reminder.date)}</span>
-            </div>
+            <Clock size={20} className="info-icon" />
+            <span>{reminder.time}</span>
           </div>
-
+          
           <div className="info-item">
-            <Clock size={24} />
-            <div className="info-content">
-              <span className="info-label">Giờ</span>
-              <span className="info-value">{reminder.time}</span>
-            </div>
+            <Tag size={20} className="info-icon" />
+            <span>{reminder.reminderType}</span>
           </div>
-        </div>
-
-        {reminder.notification && (
-          <div className="notification-section">
-            <div className="notification-header">
-              <AlertCircle size={20} />
-              <h3>Ghi chú</h3>
+          
+          {reminder.notification && (
+            <div className="reminder-note">
+              <div className="note-header">
+                <FileText size={20} className="note-icon" />
+                <span>Ghi chú</span>
+              </div>
+              <p>{reminder.notification}</p>
             </div>
-            <p>{reminder.notification}</p>
-          </div>
-        )}
-
-        <div className="detail-actions">
-          <motion.button
-            className="edit-button"
-            onClick={() =>
-              navigate(`/member/calendar-change/${reminder.remindId}`)
-            }
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Chỉnh sửa
-          </motion.button>
-          <motion.button
-            className="back-to-calendar"
-            onClick={() => navigate("/member/calendar")}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Xem lịch
-          </motion.button>
+          )}
         </div>
       </motion.div>
     </motion.div>

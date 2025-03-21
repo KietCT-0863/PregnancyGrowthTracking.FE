@@ -1,25 +1,27 @@
+@import '../../src/styles/variables.scss';
+/* Typography Imports */
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Variables
-$primary-color: #ff6b81;
-$accent-color: #70a1ff;
-$text-color: #2f3542;
-$background: #f8f9fa;
-$secondary-color: #ffdde1;
+/* Member-specific Variables */
+$member-primary: $primary-pink;
+$member-accent: $pastel-blue;
+$member-text: $text-secondary;
+$member-background: $bg-secondary;
+$member-secondary: $light-pink;
 
-// Reset styles
+/* Main Layout Styles */
 body.member-page {
   margin: 0;
   padding: 0;
   background: linear-gradient(
     135deg,
-    rgba($background, 0.95),
-    rgba($secondary-color, 0.85)
+    rgba($member-background, 0.95),
+    rgba($member-secondary, 0.85)
   );
   min-height: 100vh;
   padding-top: 0 !important;
-  overflow-x: hidden; // Ngăn cuộn ngang
+  overflow-x: hidden; // Prevent horizontal scrolling
 
   * {
     margin: 0;
@@ -28,23 +30,24 @@ body.member-page {
   }
 }
 
+/* Container Component */
 .member-container {
-  position: relative; // Thêm position relative
+  position: relative;
   padding-top: 70px;
   margin: 0;
   min-height: calc(100vh - 70px);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  overflow: hidden; // Ngăn overflow từ container chính
+  gap: $spacing-lg;
+  overflow: hidden; // Prevent overflow from main container
 
   > * {
     margin: 0 !important;
-    padding: 0 1.5rem !important;
+    padding: 0 $spacing-lg !important;
   }
 
-  // Thêm hiệu ứng sóng nước
+  /* Background Effects */
   &::before {
     content: "";
     position: fixed;
@@ -54,13 +57,13 @@ body.member-page {
     height: 100%;
     background: linear-gradient(
       135deg,
-      rgba($background, 0.95),
-      rgba($secondary-color, 0.85)
+      rgba($member-background, 0.95),
+      rgba($member-secondary, 0.85)
     );
     z-index: -2;
   }
 
-  // Wave background
+  /* Wave Background */
   &::after {
     content: "";
     position: fixed;
@@ -72,34 +75,34 @@ body.member-page {
     pointer-events: none;
     background: radial-gradient(
         circle at 20% 35%,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0) 50%
+        rgba($white, 0.1) 0%,
+        rgba($white, 0) 50%
       ),
       radial-gradient(
         circle at 75% 65%,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0) 50%
+        rgba($white, 0.1) 0%,
+        rgba($white, 0) 50%
       );
   }
 }
 
-// Wave background
+/* Wave Animation Component */
 .member-waves {
-  position: fixed; // Thay đổi thành fixed
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; // Cho phép click xuyên qua
+  pointer-events: none; // Allow clicks to pass through
   z-index: -1;
-  overflow: hidden; // Ngăn overflow từ waves
+  overflow: hidden; // Prevent overflow from waves
 
   .wave {
     position: absolute;
     left: 50%;
     width: 200%;
     height: 200%;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba($white, 0.05);
     border-radius: 43%;
     transform-origin: center;
     animation: waterWave 15s infinite linear;
@@ -139,7 +142,7 @@ body.member-page {
 .notes-list,
 .blog-slide-member {
   margin: 0 !important;
-  padding: 1rem !important;
+  padding: $spacing-md !important;
   width: 100%;
 }
 
@@ -150,7 +153,7 @@ body.member-page {
 
 .pregnancy-timeline {
   margin-top: 0 !important;
-  padding-top: 1rem !important;
+  padding-top: $spacing-md !important;
 
   h2 {
     margin-top: 0 !important;
@@ -158,12 +161,12 @@ body.member-page {
   }
 
   .timeline-note {
-    margin-top: 1rem !important;
+    margin-top: $spacing-md !important;
   }
 }
 
 // Responsive styles
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-md) {
   .member-container {
     padding-top: 60px;
   }
@@ -178,7 +181,7 @@ h5,
 h6 {
   line-height: 1.5;
   letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
+  margin-bottom: $spacing-sm;
 }
 
 p,

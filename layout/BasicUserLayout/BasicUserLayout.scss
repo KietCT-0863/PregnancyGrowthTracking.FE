@@ -1,0 +1,91 @@
+@import '../../src/styles/variables.scss';
+
+/* 
+ * BasicUserLayout Component
+ * Main layout styling for basic user pages
+ */
+
+.basic-user-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $bg-light;
+  font-family: $font-primary;
+  
+  /* Header area styling */
+  &__header {
+    background-color: $white;
+    box-shadow: $shadow-sm;
+    position: sticky;
+    top: 0;
+    z-index: $z-index-sticky;
+  }
+  
+  /* Main content area */
+  &__content {
+    flex: 1;
+    padding: $spacing-lg 0;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    
+    @media (max-width: $breakpoint-md) {
+      padding: $spacing-md $spacing-sm;
+    }
+  }
+  
+  /* Footer styling */
+  &__footer {
+    background-color: $bg-secondary;
+    padding: $spacing-lg 0;
+    margin-top: auto;
+  }
+  
+  /* Container for page components */
+  &__container {
+    background-color: $white;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-md;
+    margin-bottom: $spacing-lg;
+    
+    &--accent {
+      border-left: 4px solid $primary-pink;
+    }
+  }
+  
+  /* Section headers */
+  &__section-title {
+    font-size: $font-size-lg * 1.5;
+    color: $text-primary;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 1px solid $light-pink;
+    font-weight: $font-weight-bold;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 80px;
+      height: 3px;
+      background: $gradient-primary;
+      border-radius: $border-radius-sm;
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: $breakpoint-md) {
+    &__container {
+      padding: $spacing-md;
+      border-radius: $border-radius-md;
+    }
+    
+    &__section-title {
+      font-size: $font-size-lg * 1.2;
+      margin-bottom: $spacing-sm;
+    }
+  }
+} 

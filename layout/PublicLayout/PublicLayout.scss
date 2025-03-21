@@ -1,0 +1,40 @@
+@import '../../src/styles/variables.scss';
+
+/* 
+ * PublicLayout Component
+ * Main layout styling for public-facing pages
+ */
+
+.public-layout {
+  min-height: 100vh;
+  background-color: $bg-primary;
+  font-family: $font-primary;
+}
+
+.public-content {
+  flex: 1;
+  padding: $spacing-lg 0;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.public-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba($black, 0.5);
+  z-index: $z-index-modal-backdrop;
+  display: none;
+}
+
+/* Toast notification styling */
+.toast-container {
+  .Toastify__toast {
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-md;
+    font-family: $font-primary;
+  }
+}

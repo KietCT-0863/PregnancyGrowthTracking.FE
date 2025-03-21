@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import HomeMember from "../../src/pages/HomeMember/HomeMember";
-import ChatAI from "../../src/components/FoetusList/ChatBoxAI/ChatAI";
+import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
 import "./Member.scss";
 
 const Member = () => {

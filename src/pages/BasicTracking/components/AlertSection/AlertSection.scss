@@ -1,10 +1,10 @@
 @import '../../BasicTracking.scss';
 
-// Thêm các biến màu hồng
-$pink-primary: #FF85A2;
-$pink-secondary: #FF9A8B;
-$pink-light: #FFCAD4;
-$pink-dark: #FF6B8B;
+/* Alert Section Local Variables - Using imported variables */
+$alert-pink-primary: $pink-primary;
+$alert-pink-secondary: $pink-secondary;
+$alert-pink-light: $pink-light;
+$alert-pink-dark: $pink-dark;
 
 .chart-alerts {
   height: 100%;
@@ -32,7 +32,7 @@ $pink-dark: #FF6B8B;
         color: #5e60ce;
         
         &.has-alerts {
-          color: #ff4d6d;
+          color: $alert-pink-dark;
         }
       }
     }
@@ -47,8 +47,8 @@ $pink-dark: #FF6B8B;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 50%;
-      transition: all 0.3s ease;
+      border-radius: $border-radius-circle;
+      transition: $transition-fast;
       
       &:hover {
         background: rgba(200, 182, 255, 0.2);
@@ -77,7 +77,7 @@ $pink-dark: #FF6B8B;
     .alert-item {
       margin-bottom: 4px;
       padding: 4px;
-      border-radius: 4px;
+      border-radius: $border-radius-sm;
       display: flex;
       gap: 4px;
       transition: transform 0.2s ease;
@@ -91,38 +91,38 @@ $pink-dark: #FF6B8B;
       }
       
       &.info {
-        background: rgba(112, 161, 255, 0.1);
-        border-left: 2px solid #70a1ff;
+        background: rgba($alert-info, 0.1);
+        border-left: 2px solid $alert-info;
         
         .alert-icon {
-          color: #70a1ff;
+          color: $alert-info;
         }
       }
       
       &.warning {
-        background: rgba(255, 177, 66, 0.1);
-        border-left: 2px solid #ffb142;
+        background: rgba($alert-warning, 0.1);
+        border-left: 2px solid $alert-warning;
         
         .alert-icon {
-          color: #ffb142;
+          color: $alert-warning;
         }
       }
       
       &.danger {
-        background: rgba(255, 107, 107, 0.1);
-        border-left: 2px solid #ff6b6b;
+        background: rgba($alert-danger, 0.1);
+        border-left: 2px solid $alert-danger;
         
         .alert-icon {
-          color: #ff6b6b;
+          color: $alert-danger;
         }
       }
       
       &.success {
-        background: rgba(46, 213, 115, 0.1);
-        border-left: 2px solid #2ed573;
+        background: rgba($alert-success, 0.1);
+        border-left: 2px solid $alert-success;
         
         .alert-icon {
-          color: #2ed573;
+          color: $alert-success;
         }
       }
       
@@ -175,9 +175,9 @@ $pink-dark: #FF6B8B;
 }
 
 .alert-badge {
-  background-color: $pink-primary;
-  color: white;
-  border-radius: 10px;
+  background-color: $alert-pink-primary;
+  color: $white;
+  border-radius: $border-radius-md;
   padding: 2px 6px;
   font-size: 12px;
   margin-left: 8px;
@@ -185,41 +185,41 @@ $pink-dark: #FF6B8B;
 
 .alert-item {
   &.alert-warning {
-    background-color: rgba($pink-dark, 0.1);
-    border-left: 4px solid $pink-dark;
+    background-color: rgba($alert-pink-dark, 0.1);
+    border-left: 4px solid $alert-pink-dark;
   }
 
   &.alert-success {
-    background-color: rgba($pink-dark, 0.1);
-    border-left: 4px solid $pink-dark;
+    background-color: rgba($alert-pink-dark, 0.1);
+    border-left: 4px solid $alert-pink-dark;
   }
 
   &.alert-danger {
-    background-color: rgba($pink-dark, 0.1);
-    border-left: 4px solid $pink-dark;
+    background-color: rgba($alert-pink-dark, 0.1);
+    border-left: 4px solid $alert-pink-dark;
   }
 
   &.alert-info {
-    background-color: rgba($pink-dark, 0.1);
-    border-left: 4px solid $pink-dark;
+    background-color: rgba($alert-pink-dark, 0.1);
+    border-left: 4px solid $alert-pink-dark;
   }
 
   .alert-timestamp {
     font-size: 12px;
-    color: rgba($pink-dark, 0.5);
+    color: rgba($alert-pink-dark, 0.5);
     margin-top: 4px;
     display: block;
   }
 }
 
 .has-alerts {
-    color: $pink-dark;
+    color: $alert-pink-dark;
 }
 
 .chart-alerts.compact {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: $tracking-white;
+  border-radius: $tracking-border-radius;
+  box-shadow: $tracking-box-shadow;
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -231,13 +231,13 @@ $pink-dark: #FF6B8B;
     h4 {
       font-size: 16px;
       margin: 0;
-      color: $pink-dark;
+      color: $alert-pink-dark;
       display: flex;
       align-items: center;
       gap: 8px;
       
       svg {
-        color: $pink-primary;
+        color: $alert-pink-primary;
       }
     }
   }
@@ -264,7 +264,7 @@ $pink-dark: #FF6B8B;
       }
       
       &::-webkit-scrollbar-thumb {
-        background: rgba($pink-primary, 0.3);
+        background: rgba($alert-pink-primary, 0.3);
         border-radius: 10px;
       }
     }
@@ -273,7 +273,7 @@ $pink-dark: #FF6B8B;
   .alert-item {
     padding: 10px 12px;
     margin-bottom: 10px;
-    border-radius: 8px;
+    border-radius: $border-radius-md;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     
     .alert-icon {
@@ -289,17 +289,17 @@ $pink-dark: #FF6B8B;
       .alert-title {
         font-size: 14px;
         margin-bottom: 4px;
-        color: $pink-dark;
+        color: $alert-pink-dark;
       }
       
       .alert-description {
         font-size: 13px;
-        color: rgba($pink-dark, 0.8);
+        color: rgba($alert-pink-dark, 0.8);
       }
       
       .alert-timestamp {
         font-size: 11px;
-        color: rgba($pink-dark, 0.6);
+        color: rgba($alert-pink-dark, 0.6);
         margin-top: 6px;
       }
     }
@@ -308,14 +308,14 @@ $pink-dark: #FF6B8B;
   .no-alerts {
     padding: 30px 12px;
     font-size: 13px;
-    color: rgba($pink-dark, 0.7);
+    color: rgba($alert-pink-dark, 0.7);
     text-align: center;
     
     svg {
       width: 24px;
       height: 24px;
       margin-bottom: 10px;
-      color: rgba($pink-primary, 0.4);
+      color: rgba($alert-pink-primary, 0.4);
     }
     
     p {

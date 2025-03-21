@@ -4,7 +4,7 @@ import "./ChatAI.scss";
 import ChatForm from "./ChatForm";
 import ChatMessage from "./ChatMessage";
 import { useRef, useEffect } from "react";
-import { companyInfo } from "../../../companyInfo";
+import { companyInfo } from "../../companyInfo";
 const ChatAI = () => {
   const [chatHistory, setChatHistory] = useState([
     {
@@ -64,24 +64,10 @@ const ChatAI = () => {
         id="chatbot-toggler"
       >
         <span className="material-symbols-rounded">
-          <ChatboxIcon
-            style={{
-              width: "50px",
-              height: "50px",
-              color: "white",
-              backgroundColor: "white",
-            }}
-          />
+          <ChatboxIcon />
         </span>
         <span className="material-symbols-rounded">
-          <ChatboxIcon
-            style={{
-              width: "50px",
-              height: "50px",
-              color: "white",
-              backgroundColor: "white",
-            }}
-          />
+          <ChatboxIcon />
         </span>
       </button>
       <div className="chatboot-popup">
@@ -95,7 +81,7 @@ const ChatAI = () => {
         {/* body */}
         <div className="chat-body" ref={chatBodyRef}>
           <div className="message bot-message">
-            <ChatboxIcon />
+            <ChatboxIcon style={{ width: "20px", height: "20px" }} />
             <p className="message-text">
               Hello there <br />
               how can I help you today?

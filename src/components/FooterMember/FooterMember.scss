@@ -1,12 +1,14 @@
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Define variables
 $primary-color: #ffc2d1;
 $secondary-color: #ffebf2;
 $background: #fff9f9;
 $text-color: #6a0572;
-$font-primary: "Nunito", sans-serif;
+$font-primary: "Roboto", sans-serif;
 $font-secondary: "Amatic SC", cursive;
+$font-heading: "Playfair Display", serif;
 $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
 
 @keyframes float {
@@ -81,7 +83,7 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
 
     .brand-name {
-      font-family: "Dancing Script", cursive;
+      font-family: $font-heading;
       color: $primary-color;
       text-shadow: $shadow-sm;
       font-size: 4.5rem;
@@ -232,6 +234,14 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
     &:hover {
       color: $primary-color;
     }
+  }
+
+  .footer-heading {
+    font-family: $font-heading;
+  }
+
+  .copyright {
+    font-family: $font-primary;
   }
 }
 

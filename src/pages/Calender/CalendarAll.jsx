@@ -12,12 +12,15 @@ import {
   Baby,
   Dumbbell,
   Apple,
+  History,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import "./CalendarAll.scss";
 import reminderService from "../../api/services/reminderService";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import moment from "moment";
 
 const CalendarAll = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -28,8 +31,8 @@ const CalendarAll = () => {
 
   const [newEvent, setNewEvent] = useState({
     title: "",
-    date: "",
-    time: "",
+    date: moment().format('YYYY-MM-DD'),
+    time: moment().format('HH:mm'),
     reminderType: "",
     notification: "",
   });
@@ -92,6 +95,8 @@ const CalendarAll = () => {
         time: newEvent.time,
         reminderType: newEvent.reminderType,
         notification: newEvent.notification || "",
+        location: "",
+        description: "",
       };
 
       const response = await reminderService.createReminder(reminderData);
@@ -143,8 +148,8 @@ const CalendarAll = () => {
     setShowAddModal(false);
     setNewEvent({
       title: "",
-      date: "",
-      time: "",
+      date: moment().format('YYYY-MM-DD'),
+      time: moment().format('HH:mm'),
       reminderType: categories[0].id,
       notification: "",
     });
@@ -166,6 +171,7 @@ const CalendarAll = () => {
 
       setEvents(formattedData);
     } catch (error) {
+      console.error("Lỗi khi tải danh sách nhắc nhở:", error);
       toast.error("Không thể tải danh sách lịch nhắc nhở");
     }
   };
@@ -258,7 +264,7 @@ const CalendarAll = () => {
           whileTap={{ scale: 0.95 }}
         >
           <span className="filter-label">Tất cả</span>
-          <span className="filter-count">({getCategoryStats().all})</span>
+          <span className="filter-count">({getCategoryStats().all || 0})</span>
         </motion.button>
 
         {categories.map((cat) => (
@@ -276,9 +282,9 @@ const CalendarAll = () => {
               borderColor: cat.color,
             }}
           >
-            <cat.icon size={16} />
+            {cat.icon && <cat.icon size={16} />}
             <span className="filter-label">{cat.label}</span>
-            <span className="filter-count">({getCategoryStats()[cat.id]})</span>
+            <span className="filter-count">({getCategoryStats()[cat.id] || 0})</span>
           </motion.button>
         ))}
       </div>
@@ -295,9 +301,9 @@ const CalendarAll = () => {
       <div className="calendar-header">
         <h1>Lịch thai kỳ</h1>
         <div className="header-actions">
-          <Link to="/member/calendar-history" className="history-btn">
-            <Clock size={20} />
-            Lịch sử
+          <Link to="/member/calendar/history" className="history-btn">
+            <History size={18} />
+            <span>Lịch sử</span>
           </Link>
           <motion.button
             className="add-event-btn"
@@ -305,8 +311,8 @@ const CalendarAll = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Plus size={20} />
-            Thêm sự kiện
+            <Plus size={18} />
+            <span>Thêm sự kiện</span>
           </motion.button>
         </div>
       </div>
@@ -317,7 +323,7 @@ const CalendarAll = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft size={20} />
         </motion.button>
         <motion.span
           className="current-month"
@@ -334,13 +340,13 @@ const CalendarAll = () => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <ChevronRight size={24} />
+          <ChevronRight size={20} />
         </motion.button>
       </div>
 
       <div className="calendar-tools">
         <div className="search-box">
-          <Search size={20} />
+          <Search size={16} />
           <input
             type="text"
             placeholder="Tìm kiếm sự kiện..."
@@ -385,7 +391,7 @@ const CalendarAll = () => {
                     )
                     .map((event) => (
                       <Link
-                        to={`/member/calendar-detail/${event.id}`}
+                        to={`/member/calendar/detail/${event.id}`}
                         key={event.id}
                         className={`event-pill ${event.reminderType}`}
                         style={{
@@ -419,12 +425,14 @@ const CalendarAll = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => setShowAddModal(false)}
           >
             <motion.div
               className="modal-content"
               initial={{ scale: 0.8, y: -50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
+              onClick={(e) => e.stopPropagation()}
             >
               <h2>Thêm sự kiện mới</h2>
               <form onSubmit={handleAddEvent}>
@@ -464,6 +472,7 @@ const CalendarAll = () => {
                   }
                   required
                 >
+                  <option value="">-- Chọn loại sự kiện --</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
                       {cat.label}
@@ -482,6 +491,7 @@ const CalendarAll = () => {
                 <div className="modal-actions">
                   <motion.button
                     type="button"
+                    className="cancel-btn"
                     onClick={() => setShowAddModal(false)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -490,6 +500,7 @@ const CalendarAll = () => {
                   </motion.button>
                   <motion.button
                     type="submit"
+                    className="save-btn"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -501,6 +512,8 @@ const CalendarAll = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      <ToastContainer position="bottom-right" />
     </motion.div>
   );
 };

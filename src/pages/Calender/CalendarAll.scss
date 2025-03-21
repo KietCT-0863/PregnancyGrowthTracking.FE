@@ -1,28 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import '../../styles/variables.scss';
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Import grid system
-@import '../../styles/variables';
+// Fallback variables (in case variables.scss doesn't have these)
+$primary-color: #ff6b81 !default;
+$secondary-color: #ffdde1 !default;
+$bg-color: #fff !default;
+$text-color: #333 !default;
+$border-color: #eaeaea !default;
+$shadow-color: rgba(0, 0, 0, 0.1) !default;
 
-// Variables
-$primary-color: #ff6b81;
-$secondary-color: #ffdde1;
-$light-pink: #fff5f7;
-$white: #ffffff;
-$shadow-color: rgba($primary-color, 0.15);
-$text-shadow: 0 1px 2px rgba($primary-color, 0.2);
+// Category colors
+$appointment-color: #FF6B6B;
+$medication-color: #4ECDC4;
+$checkup-color: #45B7D1;
+$exercise-color: #FFA07A;
+$nutrition-color: #98D8C8;
 
-// Animation Keyframes
+/* Animation keyframes */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-@keyframes slideUp {
-  from { 
+@keyframes fadeInUp {
+  from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -34,103 +40,92 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
   100% { transform: scale(1); }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
 .calendar-container {
-  font-family: 'Poppins', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: $white;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px $shadow-color, 0 5px 15px rgba($primary-color, 0.1);
-  animation: fadeIn 0.5s ease-out;
+  background-color: $bg-color;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px $shadow-color;
+  font-family: 'Roboto', sans-serif;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    border-radius: 10px;
+  }
 
+  /* Calendar Header */
   .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid rgba($primary-color, 0.1);
-
+    
     h1 {
-      font-size: 2.8rem;
-      color: $primary-color;
-      margin: 0;
+      font-size: 1.8rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: $text_shadow;
-      animation: float 6s ease-in-out infinite;
+      color: $text-color;
+      margin: 0;
+      position: relative;
+      font-family: 'Playfair Display', serif;
       
       &::after {
         content: '';
         display: block;
-        width: 60px;
-        height: 4px;
+        width: 40px;
+        height: 3px;
+        background: $primary-color;
         margin-top: 8px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
         border-radius: 2px;
-        box-shadow: 0 2px 4px rgba($primary-color, 0.3);
       }
     }
-
+    
     .header-actions {
       display: flex;
       gap: 1rem;
-
-      .history-btn,
-      .add-event-btn {
+      
+      .history-btn, .add-event-btn {
         display: flex;
         align-items: center;
-        padding: 0.75rem 1.25rem;
+        gap: 0.5rem;
+        padding: 0.6rem 1.2rem;
         border-radius: 50px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        text-decoration: none;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        letter-spacing: 0.5px;
-
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Roboto', sans-serif;
+        
         svg {
-          margin-right: 0.5rem;
           transition: transform 0.3s ease;
         }
       }
-
+      
       .history-btn {
-        background-color: $light-pink;
-        color: $primary-color;
-        border: 1px solid rgba($primary-color, 0.1);
-        box-shadow: 0 4px 10px rgba($primary-color, 0.1);
-
+        background-color: transparent;
+        border: 1px solid $border-color;
+        color: $text-color;
+        text-decoration: none;
+        
         &:hover {
-          background-color: rgba($primary-color, 0.1);
-          transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba($primary-color, 0.2);
+          background-color: rgba($primary-color, 0.05);
+          border-color: $primary-color;
+          color: $primary-color;
           
           svg {
-            transform: rotate(-15deg);
+            transform: translateX(-2px);
           }
         }
       }
-
+      
       .add-event-btn {
-        background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-        color: $white;
+        background: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
+        color: white;
         border: none;
         box-shadow: 0 4px 10px rgba($primary-color, 0.3);
-
+        
         &:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+          box-shadow: 0 6px 15px rgba($primary-color, 0.4);
           
           svg {
             transform: rotate(90deg);
@@ -138,669 +133,442 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         }
       }
     }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      
+      .header-actions {
+        width: 100%;
+        
+        .history-btn, .add-event-btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+    }
   }
 
+  /* Calendar Navigation */
   .calendar-navigation {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, $light-pink, rgba($secondary-color, 0.3));
-    padding: 1rem 1.5rem;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba($primary-color, 0.08), inset 0 1px 1px rgba($white, 0.8);
-
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    
     button {
-      background: $white;
-      border: none;
+      background: transparent;
+      border: 1px solid $border-color;
+      border-radius: 50%;
       width: 40px;
       height: 40px;
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: $primary-color;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 10px rgba($primary-color, 0.15);
-
+      color: $text-color;
+      transition: all 0.3s ease;
+      
       &:hover {
-        background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-        color: $white;
-        transform: scale(1.15) rotate(5deg);
-        box-shadow: 0 6px 15px rgba($primary-color, 0.3);
+        background-color: rgba($primary-color, 0.1);
+        border-color: $primary-color;
+        color: $primary-color;
       }
     }
-
+    
     .current-month {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: $primary-color;
-      position: relative;
-      padding: 0.5rem 1.5rem;
-      text-shadow: $text_shadow;
-      letter-spacing: 0.5px;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 3px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        border-radius: 3px;
-        box-shadow: 0 2px 4px rgba($primary-color, 0.2);
-      }
+      margin: 0 1.5rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-width: 160px;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
     }
   }
 
+  /* Calendar Tools */
   .calendar-tools {
     display: flex;
-    flex-direction: column;
     gap: 1.5rem;
     margin-bottom: 2rem;
-
+    flex-wrap: wrap;
+    
     .search-box {
-      display: flex;
-      align-items: center;
-      background-color: $light-pink;
-      border-radius: 50px;
-      padding: 0.75rem 1.25rem;
-      box-shadow: 0 6px 15px rgba($primary-color, 0.08), inset 0 1px 1px rgba($white, 0.8);
-      width: 100%;
-      max-width: 400px;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-      &:focus-within {
-        box-shadow: 0 8px 25px rgba($primary-color, 0.15);
-        transform: translateY(-3px) scale(1.02);
-      }
-
+      position: relative;
+      min-width: 250px;
+      flex: 1;
+      
       svg {
-        color: $primary-color;
-        margin-right: 0.75rem;
-        filter: drop-shadow(0 1px 1px rgba($primary-color, 0.3));
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
       }
-
+      
       input {
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        color: $primary-color;
-        background: transparent;
         width: 100%;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-
-        &::placeholder {
-          color: rgba($primary-color, 0.6);
-          font-weight: 400;
-          font-style: italic;
+        padding: 0.7rem 1rem 0.7rem 2.5rem;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        font-family: 'Roboto', sans-serif;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
         }
       }
     }
-
+    
     .category-filters {
       display: flex;
+      gap: 0.5rem;
       flex-wrap: wrap;
-      gap: 0.75rem;
-      padding: 1.25rem;
-      background: linear-gradient(135deg, $light-pink, rgba($secondary-color, 0.3));
-      border-radius: 15px;
-      box-shadow: 0 6px 20px rgba($primary-color, 0.08), inset 0 1px 1px rgba($white, 0.8);
-
+      
       .filter-btn {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1rem;
-        border: 2px solid;
+        gap: 0.4rem;
+        padding: 0.5rem 0.8rem;
         border-radius: 50px;
-        background: $white;
-        font-size: 0.9rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        background-color: transparent;
+        border: 1px solid $border-color;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        color: $primary-color;
-        letter-spacing: 0.3px;
-        box-shadow: 0 4px 10px rgba($primary-color, 0.1);
-
-        &.all {
-          background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-          border-color: $primary-color;
-          color: $white;
-          text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-
-          &.active {
-            background: linear-gradient(135deg, darken($primary-color, 10%), darken($primary-color, 15%));
-            box-shadow: 0 6px 15px rgba($primary-color, 0.3), inset 0 -2px 5px rgba(0, 0, 0, 0.1);
-          }
-
-          .filter-count {
-            background: rgba($white, 0.2);
-          }
-        }
-
-        &:hover {
-          transform: translateY(-3px) scale(1.05);
-          box-shadow: 0 8px 20px rgba($primary-color, 0.2);
-        }
-
-        &.active {
-          color: $white;
-          background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-          box-shadow: 0 6px 15px rgba($primary-color, 0.3), inset 0 -2px 5px rgba(0, 0, 0, 0.1);
-          text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-
-          .filter-count {
-            background: rgba($white, 0.2);
-          }
-        }
-
+        transition: all 0.2s ease;
+        font-family: 'Roboto', sans-serif;
+        
         .filter-label {
-          font-weight: 600;
+          white-space: nowrap;
         }
-
+        
         .filter-count {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-width: 20px;
-          height: 20px;
-          padding: 0 6px;
-          border-radius: 10px;
-          background: rgba($primary-color, 0.1);
           font-size: 0.75rem;
-          font-weight: 700;
-          box-shadow: inset 0 1px 3px rgba($primary-color, 0.2);
+          opacity: 0.8;
         }
-
-        svg {
-          width: 16px;
-          height: 16px;
-          filter: drop-shadow(0 1px 1px rgba($primary-color, 0.3));
+        
+        &:hover {
+          transform: translateY(-2px);
         }
-
-        // Colors for different categories - all in pink shades
-        &[data-type="Cuộc hẹn bác sĩ"] {
-          &.active, &:hover { 
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 5%));
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        
+        &.active {
+          color: white;
+          border-color: transparent;
+        }
+        
+        &.all {
+          &.active {
+            background-color: $text-color;
+            color: white;
           }
-          border-color: $primary-color;
-          &:not(.active) { color: $primary-color; }
         }
-
-        &[data-type="Uống thuốc"] {
-          &.active, &:hover { 
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 8%));
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-          }
-          border-color: $primary-color;
-          &:not(.active) { color: $primary-color; }
+      }
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+      
+      .category-filters {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        flex-wrap: nowrap;
+        
+        &::-webkit-scrollbar {
+          height: 4px;
         }
-
-        &[data-type="Khám thai"] {
-          &.active, &:hover { 
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 12%));
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-          }
-          border-color: $primary-color;
-          &:not(.active) { color: $primary-color; }
-        }
-
-        &[data-type="Tập thể dục"] {
-          &.active, &:hover { 
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 3%));
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-          }
-          border-color: $primary-color;
-          &:not(.active) { color: $primary-color; }
-        }
-
-        &[data-type="Dinh dưỡng"] {
-          &.active, &:hover { 
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-          }
-          border-color: $primary-color;
-          &:not(.active) { color: $primary-color; }
+        
+        &::-webkit-scrollbar-thumb {
+          background: rgba($primary-color, 0.2);
+          border-radius: 4px;
         }
       }
     }
   }
 
+  /* Calendar Grid */
   .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 0.75rem;
-
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    
     .calendar-day-header {
       text-align: center;
       font-weight: 700;
-      color: $primary-color;
-      padding: 0.75rem;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      text-shadow: $text_shadow;
+      padding: 0.5rem;
+      color: $text-color;
+      font-size: 1.3rem;
+      font-family: 'Amatic SC', cursive;
     }
-
+    
     .calendar-day {
-      background-color: $white;
-      border-radius: 15px;
-      padding: 0.75rem;
       min-height: 100px;
-      box-shadow: 0 6px 15px rgba($primary-color, 0.08);
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border: 1px solid rgba($primary-color, 0.05);
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      padding: 0.5rem;
       position: relative;
-      overflow: hidden;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba($light-pink, 0.5), rgba($white, 0.8));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        z-index: -1;
-      }
-
+      background-color: white;
+      transition: all 0.2s ease;
+      
       &:hover {
-        transform: translateY(-5px) scale(1.03);
-        box-shadow: 0 12px 30px rgba($primary-color, 0.15);
-        
-        &::before {
-          opacity: 1;
-        }
+        box-shadow: 0 3px 12px rgba($primary-color, 0.1);
       }
-
+      
       &.empty {
-        background-color: transparent;
-        box-shadow: none;
-        border: none;
+        background-color: rgba($border-color, 0.15);
+        border-color: transparent;
       }
-
+      
       &.today {
-        border: 2px solid $primary-color;
-        box-shadow: 0 8px 25px rgba($primary-color, 0.2);
-        background: linear-gradient(135deg, rgba($light-pink, 0.5), rgba($white, 0.9));
+        border-color: $primary-color;
+        box-shadow: 0 0 0 1px rgba($primary-color, 0.2);
         
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0.5rem;
-          right: 0.5rem;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: $primary-color;
-          box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
-          animation: pulse 2s infinite;
+        .day-number {
+          color: white;
+          background-color: $primary-color;
         }
       }
-
+      
       .day-number {
-        font-size: 1rem;
-        color: $primary-color;
-        margin-bottom: 0.75rem;
-        display: block;
-        font-weight: 700;
-        text-shadow: $text_shadow;
-        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        font-family: 'Roboto', sans-serif;
       }
-
+      
       .day-events {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-        max-height: 80px;
+        gap: 0.3rem;
+        max-height: calc(100% - 30px);
         overflow-y: auto;
-
+        
         &::-webkit-scrollbar {
-          width: 4px;
+          width: 3px;
         }
-
+        
         &::-webkit-scrollbar-thumb {
-          background-color: rgba($primary-color, 0.3);
-          border-radius: 2px;
+          background: rgba($primary-color, 0.2);
+          border-radius: 4px;
         }
-      }
-
-      .event-pill {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        color: $white;
-        text-decoration: none;
-        background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 3px 10px rgba($primary-color, 0.25);
-        font-weight: 600;
-        letter-spacing: 0.3px;
-        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-
-        &:hover {
-          transform: translateX(3px) scale(1.05);
-          box-shadow: 0 5px 15px rgba($primary-color, 0.35);
-        }
-
-        .event-icon {
+        
+        .event-pill {
           display: flex;
           align-items: center;
-          justify-content: center;
-          min-width: 16px;
-          
-          svg {
-            width: 14px;
-            height: 14px;
-            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-          }
-        }
-
-        .event-title {
+          gap: 0.3rem;
+          padding: 0.2rem 0.4rem;
+          border-radius: 4px;
+          font-size: 0.7rem;
+          color: white;
+          white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
-          flex: 1;
+          text-decoration: none;
+          animation: fadeInUp 0.3s ease;
+          font-family: 'Roboto', sans-serif;
+          
+          .event-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          
+          .event-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Roboto', sans-serif;
+          }
+          
+          &:hover {
+            transform: translateX(2px);
+          }
         }
       }
-
-      // Styling for different event types - all in pink shades with gradients
-      .event-pill.Uống-thuốc {
-        background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+    }
+    
+    @media (max-width: 1024px) {
+      gap: 0.3rem;
+      
+      .calendar-day {
+        min-height: 80px;
+        
+        .day-events .event-pill {
+          font-size: 0.65rem;
+        }
       }
-
-      .event-pill.Cuộc-hẹn-bác-sĩ {
-        background: linear-gradient(135deg, lighten($primary-color, 5%), $primary-color);
+    }
+    
+    @media (max-width: 768px) {
+      .calendar-day-header {
+        font-size: 0.8rem;
+        padding: 0.3rem;
       }
-
-      .event-pill.Khám-thai {
-        background: linear-gradient(135deg, darken($primary-color, 5%), darken($primary-color, 15%));
+      
+      .calendar-day {
+        min-height: 60px;
+        padding: 0.3rem;
+        
+        .day-number {
+          width: 20px;
+          height: 20px;
+          font-size: 0.75rem;
+        }
+        
+        .day-events .event-pill {
+          padding: 0.1rem 0.2rem;
+          
+          .event-icon {
+            display: none;
+          }
+        }
       }
-
-      .event-pill.Tập-thể-dục {
-        background: linear-gradient(135deg, lighten($primary-color, 8%), lighten($primary-color, 2%));
-      }
-
-      .event-pill.Dinh-dưỡng {
-        background: linear-gradient(135deg, darken($primary-color, 8%), darken($primary-color, 18%));
+    }
+    
+    @media (max-width: 600px) {
+      .calendar-day {
+        min-height: 50px;
       }
     }
   }
 
+  /* Modal */
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba($primary-color, 0.15);
-    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
-
+    padding: 1rem;
+    backdrop-filter: blur(2px);
+    
     .modal-content {
-      background-color: $white;
-      padding: 2.5rem;
-      border-radius: 20px;
-      width: 90%;
+      background-color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
       max-width: 500px;
-      box-shadow: 0 20px 50px rgba($primary-color, 0.25), 0 10px 20px rgba($primary-color, 0.15);
-      position: relative;
-      overflow: hidden;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 8px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        box-shadow: 0 2px 10px rgba($primary-color, 0.3);
-      }
-
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      
       h2 {
-        color: $primary-color;
-        margin-bottom: 2rem;
-        font-size: 2rem;
-        text-align: center;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-        text-shadow: $text_shadow;
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        color: $text-color;
+        font-size: 1.3rem;
+        font-weight: 600;
+        position: relative;
+        font-family: 'Playfair Display', serif;
         
         &::after {
           content: '';
           display: block;
-          width: 80px;
-          height: 4px;
-          margin: 0.75rem auto 0;
-          background: linear-gradient(90deg, $primary-color, $secondary-color);
+          width: 40px;
+          height: 3px;
+          background: $primary-color;
+          margin-top: 8px;
           border-radius: 2px;
-          box-shadow: 0 2px 4px rgba($primary-color, 0.3);
         }
       }
-
+      
       form {
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
-
-        input,
-        select,
-        textarea {
-          padding: 1rem 1.25rem;
-          border-radius: 15px;
-          border: 2px solid $light-pink;
-          font-size: 1rem;
-          color: $primary-color;
-          background: $white;
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          font-weight: 500;
-          letter-spacing: 0.3px;
-          box-shadow: 0 4px 10px rgba($primary-color, 0.05);
-
-          &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 8px 20px rgba($primary-color, 0.15);
-            transform: translateY(-3px);
-          }
-
-          &::placeholder {
-            color: rgba($primary-color, 0.5);
-            font-weight: 400;
-            font-style: italic;
-          }
-        }
-
-        textarea {
-          resize: vertical;
-          min-height: 120px;
-        }
-
-        .modal-actions {
-          display: flex;
-          justify-content: center;
-          gap: 1.5rem;
-          margin-top: 1.5rem;
-
-          button {
-            padding: 0.9rem 2rem;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: none;
-            letter-spacing: 0.5px;
-
-            &:first-child {
-              background-color: $light-pink;
-              color: $primary-color;
-              border: 1px solid rgba($primary-color, 0.1);
-              box-shadow: 0 4px 10px rgba($primary-color, 0.1);
-
-              &:hover {
-                background-color: rgba($primary-color, 0.1);
-                transform: translateY(-3px) scale(1.05);
-                box-shadow: 0 8px 20px rgba($primary-color, 0.2);
-              }
-            }
-
-            &:last-child {
-              background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-              color: $white;
-              box-shadow: 0 4px 10px rgba($primary-color, 0.3);
-              text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-
-              &:hover {
-                transform: translateY(-3px) scale(1.05);
-                box-shadow: 0 8px 20px rgba($primary-color, 0.4);
-              }
-            }
-          }
-        }
-      }
-
-      select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b81' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1.2em;
-        padding-right: 2.5rem;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .calendar-container {
-    padding: 1.5rem;
-
-    .calendar-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-
-      h1 {
-        font-size: 2.2rem;
-      }
-
-      .header-actions {
-        width: 100%;
-        justify-content: space-between;
-      }
-    }
-
-    .calendar-tools {
-      .search-box {
-        width: 100%;
-      }
-    }
-
-    .calendar-grid {
-      gap: 0.5rem;
-
-      .calendar-day {
-        min-height: 80px;
-        padding: 0.5rem;
-
-        .day-number {
-          font-size: 0.85rem;
-        }
-
-        .event-pill {
-          padding: 0.3rem 0.5rem;
-          font-size: 0.7rem;
-
-          .event-icon svg {
-            width: 12px;
-            height: 12px;
-          }
-        }
-      }
-    }
-
-    .category-filters {
-      padding: 1rem;
-      gap: 0.5rem;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      -webkit-overflow-scrolling: touch;
-      
-      &::-webkit-scrollbar {
-        height: 4px;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        background: rgba($primary-color, 0.3);
-        border-radius: 2px;
-      }
-
-      .filter-btn {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.8rem;
-        white-space: nowrap;
-
-        .filter-label {
-          display: none;
-        }
-
-        &.all .filter-label {
-          display: inline;
-        }
-
-        .filter-count {
-          min-width: 16px;
-          height: 16px;
-          font-size: 0.7rem;
-        }
-
-        svg {
-          width: 14px;
-          height: 14px;
-        }
-      }
-    }
-
-    .modal-content {
-      padding: 1.5rem;
-      
-      h2 {
-        font-size: 1.5rem;
-      }
-      
-      form {
         gap: 1rem;
         
         input, select, textarea {
-          padding: 0.75rem 1rem;
+          padding: 0.7rem 1rem;
+          border: 1px solid $border-color;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-family: 'Roboto', sans-serif;
+          
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
+        }
+        
+        textarea {
+          min-height: 100px;
+          resize: vertical;
         }
         
         .modal-actions {
-          flex-direction: column;
-          gap: 0.75rem;
+          display: flex;
+          gap: 1rem;
+          margin-top: 1rem;
           
           button {
-            width: 100%;
+            flex: 1;
+            padding: 0.7rem 0;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-family: 'Roboto', sans-serif;
+            
+            &.cancel-btn {
+              background-color: #f1f1f1;
+              color: $text-color;
+              border: none;
+              
+              &:hover {
+                background-color: #e5e5e5;
+              }
+            }
+            
+            &.save-btn {
+              background: linear-gradient(135deg, $primary-color, darken($primary-color, 15%));
+              color: white;
+              border: none;
+              box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+              
+              &:hover {
+                box-shadow: 0 6px 15px rgba($primary-color, 0.4);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .modal-content {
+        padding: 1.2rem;
+        
+        h2 {
+          font-size: 1.2rem;
+        }
+        
+        form {
+          gap: 0.8rem;
+          
+          .modal-actions {
+            flex-direction: column;
+            
+            button {
+              width: 100%;
+            }
           }
         }
       }
     }
   }
 }
-

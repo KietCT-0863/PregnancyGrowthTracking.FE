@@ -300,7 +300,7 @@ const NavBar = () => {
               </div>
               <div className="nav-item">
                 <NavLink
-                  to="/member/community"
+                  to="/community"
                   icon={<FaUsers className="nav-icon" />}
                   onClick={closeMobileMenu}
                 >

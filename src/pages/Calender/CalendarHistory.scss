@@ -1,11 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+@import '../../styles/variables.scss';
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Variables
-$primary-color: #ff6b81;
-$secondary-color: #ffdde1;
-$light-pink: #fff5f7;
-$white: #ffffff;
-$shadow-color: rgba($primary-color, 0.1);
+$primary-color: #ff6b81 !default;
+$secondary-color: #ffdde1 !default;
+$light-pink: #fff5f7 !default;
+$white: #ffffff !default;
+$gray: #f3f4f6 !default;
+$success-color: #4caf50 !default;
+$warning-color: #ff9800 !default;
+$info-color: #2196f3 !default;
+$shadow-color: rgba($primary-color, 0.15) !default;
+$text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
 
 // Animation Keyframes
 @keyframes fadeIn {
@@ -30,62 +37,58 @@ $shadow-color: rgba($primary-color, 0.1);
   100% { transform: scale(1); }
 }
 
-.calendar-history {
-  font-family: 'Quicksand', sans-serif;
-  max-width: 1200px;
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba($warning-color, 0.5); }
+  50% { box-shadow: 0 0 15px rgba($warning-color, 0.8); }
+  100% { box-shadow: 0 0 5px rgba($warning-color, 0.5); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.calendar-history-container {
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: $white;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px $shadow-color;
-  animation: fadeIn 0.5s ease-out;
-
+  font-family: "Roboto", sans-serif;
+  
   .history-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid rgba($primary-color, 0.1);
-
+    margin-bottom: 2rem;
+    
     h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      color: $primary-color;
       margin: 0;
-      font-weight: 600;
+      font-size: 1.8rem;
+      color: $primary-color;
+      font-weight: 700;
       letter-spacing: -0.5px;
-      
-      &::after {
-        content: '';
-        display: block;
-        width: 60px;
-        height: 4px;
-        margin-top: 8px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        border-radius: 2px;
-      }
+      text-shadow: $text-shadow;
+      font-family: "Playfair Display", serif;
     }
 
     .back-button {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
+      padding: 0.6rem 1.2rem;
       border: none;
-      background: $light-pink;
-      color: $primary-color;
+      background: linear-gradient(135deg, $light-pink, rgba($secondary-color, 0.3));
       border-radius: 50px;
-      font-weight: 600;
-      font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
+      color: $primary-color;
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: "Roboto", sans-serif;
 
       &:hover {
         transform: translateX(-5px);
-        background: $primary-color;
-        color: $white;
-        box-shadow: 0 6px 15px rgba($primary-color, 0.3);
+        background: linear-gradient(135deg, rgba($primary-color, 0.1), $light-pink);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.2);
       }
 
       svg {
@@ -98,209 +101,611 @@ $shadow-color: rgba($primary-color, 0.1);
     }
   }
 
-  .reminders-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-    padding: 0.5rem;
-  }
-
-  .reminder-card {
-    background: $white;
-    border-radius: 20px;
-    padding: 1.8rem;
-    box-shadow: 0 5px 20px $shadow-color;
-    transition: all 0.3s ease;
-    animation: slideUp 0.5s ease-out;
-    border: 1px solid rgba($primary-color, 0.1);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, $primary-color, $secondary-color);
-    }
-
-    &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba($primary-color, 0.15);
-    }
-
-    .reminder-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.8rem;
-
-      h3 {
-        font-family: 'Playfair Display', serif;
-        margin: 0;
-        font-size: 1.5rem;
-        color: $primary-color;
-        font-weight: 600;
-        letter-spacing: -0.3px;
-      }
-
-      .reminder-actions {
-        display: flex;
-        gap: 0.8rem;
-
-        button {
-          width: 40px;
-          height: 40px;
-          border: none;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          background: $light-pink;
-
-          svg {
-            color: $primary-color;
-            transition: all 0.3s ease;
-          }
-
-          &:hover {
-            background: $primary-color;
-            transform: translateY(-3px);
-
-            svg {
-              color: $white;
-              transform: scale(1.1);
-            }
-          }
-
-          &.edit-button:hover {
-            background: #4ECDC4;
-          }
-
-          &.delete-button:hover {
-            background: #ff6b6b;
-          }
+  .filter-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    
+    .search-container {
+      flex: 2;
+      position: relative;
+      
+      input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        background-color: $white;
+        box-shadow: 0 4px 10px rgba($shadow-color, 0.5);
+        font-family: "Roboto", sans-serif;
+        color: #333;
+        
+        &:focus {
+          outline: none;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.25);
+        }
+        
+        &::placeholder {
+          color: #aaa;
+          font-family: "Roboto", sans-serif;
         }
       }
+      
+      .search-icon {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $primary-color;
+        pointer-events: none;
+      }
     }
+    
+    .type-filter {
+      flex: 1;
+      position: relative;
+      
+      select {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        appearance: none;
+        border: none;
+        border-radius: 50px;
+        background-color: $white;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b81' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        box-shadow: 0 4px 10px rgba($shadow-color, 0.5);
+        font-family: "Roboto", sans-serif;
+        color: #333;
+        cursor: pointer;
+        
+        &:focus {
+          outline: none;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.25);
+        }
+      }
+      
+      .filter-icon {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $primary-color;
+        pointer-events: none;
+      }
+    }
+  }
+  
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba($primary-color, 0.2);
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    
+    p {
+      color: $primary-color;
+      font-weight: 500;
+      margin: 0;
+      font-family: "Amatic SC", cursive;
+      font-size: 1.5rem;
+    }
+  }
+  
+  .empty-state {
+    background-color: $white;
+    border-radius: 20px;
+    text-align: center;
+    padding: 3rem 2rem;
+    box-shadow: 0 15px 40px $shadow-color;
+    
+    .empty-icon {
+      color: $primary-color;
+      opacity: 0.7;
+      margin-bottom: 1.5rem;
+    }
+    
+    h2 {
+      margin: 0 0 1rem;
+      color: #333;
+      font-weight: 600;
+      font-family: "Playfair Display", serif;
+    }
+    
+    p {
+      color: #666;
+      margin-bottom: 2rem;
+      font-family: "Roboto", sans-serif;
+    }
+    
+    .create-button {
+      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      color: $white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      transition: all 0.3s ease;
+      font-family: "Roboto", sans-serif;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+      }
+    }
+  }
 
-    .reminder-details {
+  .events-by-date {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .event-date-group {
       display: flex;
       flex-direction: column;
       gap: 1rem;
 
-      .detail-item {
+      .date-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        padding: 1rem;
-        background: $light-pink;
-        border-radius: 12px;
-        transition: all 0.3s ease;
+        gap: 0.8rem;
+        padding: 0.8rem 1.2rem;
+        background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($secondary-color, 0.1));
+        border-radius: 50px;
+        border-left: 4px solid $primary-color;
+        box-shadow: 0 2px 8px rgba($shadow-color, 0.3);
 
-        &:hover {
-          transform: translateX(5px);
-          background: rgba($primary-color, 0.08);
+        h2 {
+          margin: 0;
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: #333;
+          font-family: "Playfair Display", serif;
         }
 
         svg {
           color: $primary-color;
-          min-width: 20px;
         }
+      }
 
-        span {
-          font-size: 1rem;
-          color: $primary-color;
-          font-weight: 500;
-        }
+      .events-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding-left: 1rem;
       }
     }
 
-    .reminder-notification {
-      margin-top: 1.5rem;
-      padding: 1.2rem;
-      background: $light-pink;
-      border-radius: 12px;
-      border-left: 4px solid $primary-color;
-
-      p {
-        margin: 0;
-        color: $primary-color;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        font-weight: 500;
+    .add-event-button {
+      align-self: center;
+      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      color: $white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      transition: all 0.3s ease;
+      margin-top: 2rem;
+      font-family: "Roboto", sans-serif;
+      
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.4);
       }
     }
   }
-
-  .loading, .no-reminders {
-    text-align: center;
-    padding: 3rem;
-    color: $primary-color;
-    font-size: 1.2rem;
-    font-weight: 500;
-    background: $light-pink;
-    border-radius: 20px;
-    margin: 2rem 0;
+  
+  .event-card {
+    background-color: $white;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px $shadow-color;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
     
-    &::before {
-      content: '📅';
-      display: block;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      animation: pulse 2s infinite;
+    &:hover {
+      box-shadow: 0 12px 30px rgba($primary-color, 0.2);
     }
-  }
-}
 
-// Responsive styles
-@media (max-width: 768px) {
-  .calendar-history {
-    padding: 1.5rem;
+    &.upcoming {
+      border: 2px solid $warning-color;
+      animation: glow 2s infinite;
+    }
 
-    .history-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1rem;
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      .back-button {
-        padding: 0.6rem 1rem;
-        font-size: 0.95rem;
+    &.past {
+      opacity: 0.85;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 75%, transparent 75%, transparent);
+        background-size: 8px 8px;
+        pointer-events: none;
+        z-index: 1;
       }
     }
+    
+    .event-header {
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: $white;
+      position: relative;
+      
+      .event-title-container {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        max-width: 70%;
 
-    .reminders-list {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-
-    .reminder-card {
-      padding: 1.5rem;
-
-      .reminder-header {
+        .event-icon {
+          background-color: rgba($white, 0.2);
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
         h3 {
-          font-size: 1.3rem;
+          margin: 0;
+          font-weight: 600;
+          font-size: 1.1rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-family: "Playfair Display", serif;
         }
       }
-
-      .reminder-details {
-        .detail-item {
-          padding: 0.8rem;
+      
+      .event-actions {
+        display: flex;
+        gap: 0.5rem;
+        z-index: 5;
+        
+        button {
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          background-color: rgba($white, 0.2);
+          color: $white;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: rgba($white, 0.3);
+          }
+          
+          &.delete-button:hover {
+            background-color: rgba(#ff4d4d, 0.9);
+          }
+        }
+      }
+    }
+    
+    .event-content {
+      padding: 1rem;
+      position: relative;
+      
+      .event-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        
+        .info-row {
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+          
+          svg {
+            color: $primary-color;
+            flex-shrink: 0;
+          }
           
           span {
             font-size: 0.95rem;
+            color: #444;
+            font-family: "Roboto", sans-serif;
+          }
+        }
+      }
+      
+      .event-description {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba($primary-color, 0.2);
+        
+        h4 {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 1.1rem;
+          color: $primary-color;
+          margin: 0 0 0.5rem;
+          font-family: "Amatic SC", cursive;
+          
+          svg {
+            color: $primary-color;
+          }
+        }
+        
+        p {
+          margin: 0;
+          font-size: 0.9rem;
+          color: #666;
+          line-height: 1.5;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          font-family: "Roboto", sans-serif;
+        }
+      }
+
+      .event-badge {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        font-family: "Roboto", sans-serif;
+
+        &.upcoming-badge {
+          background-color: rgba($warning-color, 0.15);
+          color: darken($warning-color, 10%);
+          
+          svg {
+            color: $warning-color;
+          }
+        }
+
+        &.past-badge {
+          background-color: rgba($success-color, 0.15);
+          color: darken($success-color, 10%);
+          
+          svg {
+            color: $success-color;
           }
         }
       }
     }
   }
+  
+  .delete-confirmation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    
+    .confirmation-modal {
+      background-color: $white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      padding: 2rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      
+      .modal-icon {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        
+        svg {
+          color: #ff4d4d;
+          filter: drop-shadow(0 2px 4px rgba(#ff4d4d, 0.3));
+        }
+      }
+      
+      h2 {
+        text-align: center;
+        margin: 0 0 1rem;
+        color: #333;
+        font-size: 1.5rem;
+        font-family: "Playfair Display", serif;
+      }
+      
+      p {
+        text-align: center;
+        margin: 0 0 2rem;
+        color: #666;
+        font-family: "Roboto", sans-serif;
+      }
+      
+      .modal-actions {
+        display: flex;
+        gap: 1rem;
+        
+        button {
+          flex: 1;
+          padding: 0.8rem;
+          border: none;
+          border-radius: 50px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: "Roboto", sans-serif;
+          
+          &.cancel-button {
+            background-color: #eee;
+            color: #666;
+            
+            &:hover {
+              background-color: #e0e0e0;
+            }
+          }
+          
+          &.confirm-button {
+            background-color: #ff4d4d;
+            color: $white;
+            
+            &:hover {
+              background-color: darken(#ff4d4d, 10%);
+              box-shadow: 0 4px 10px rgba(#ff4d4d, 0.3);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Modal styles for adding new events
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    backdrop-filter: blur(5px);
+  }
+  
+  .modal-content {
+    background-color: $white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    
+    h2 {
+      margin: 0 0 1.5rem;
+      text-align: center;
+      color: $primary-color;
+      font-weight: 700;
+      font-family: "Playfair Display", serif;
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      
+      input, select, textarea {
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-family: "Roboto", sans-serif;
+        
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+        }
+      }
+      
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+      
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1rem;
+        
+        button {
+          padding: 0.8rem 1.5rem;
+          border-radius: 50px;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          transition: all 0.3s ease;
+          font-family: "Roboto", sans-serif;
+          
+          &.cancel-button {
+            background-color: #eee;
+            color: #666;
+            
+            &:hover {
+              background-color: #e0e0e0;
+            }
+          }
+          
+          &.confirm-button {
+            background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+            color: $white;
+            
+            &:hover {
+              box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Responsive styles
+  @media (max-width: 768px) {
+    padding: 1rem;
+    
+    .history-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    .filter-section {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .events-by-date {
+      .event-date-group {
+        .events-list {
+          grid-template-columns: 1fr;
+          padding-left: 0;
+        }
+      }
+    }
+  }
 }
-

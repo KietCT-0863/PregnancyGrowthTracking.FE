@@ -25,8 +25,9 @@ const ChatForm = ({chatHistory, setChatHistory, generateResponse}) => {
     <form action="#" className='chat-form' onSubmit={handleFormSubmit}>
           <input ref={inputRef} type='text' placeholder='Type here...'
           className='message-input' required style={{borderRadius: "25px", backgroundColor: "whitesmoke"}}
-          />        <button className="material-symbols-rounded">
-   
+          />
+          <button type="submit">
+            Gửi
           </button>
         </form>
   )

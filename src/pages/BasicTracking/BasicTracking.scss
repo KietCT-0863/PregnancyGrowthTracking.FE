@@ -1,35 +1,36 @@
+@import '../../styles/variables.scss';
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap");
 
-// Variables - Pink Theme
-$pink-primary: #FF85A2;
+/* BasicTracking Local Variables */
+$pink-primary: $primary-pink;
 $pink-secondary: #FF9A8B;
-$pink-light: #FFCAD4;
+$pink-light: $light-pink;
 $pink-dark: #FF6B8B;
 $pink-gradient: linear-gradient(135deg, $pink-primary, $pink-secondary);
 
-$text-primary: #333333;
-$text-secondary: #666666;
-$text-muted: rgba(51, 51, 51, 0.7);
+$tracking-text-primary: $text-primary;
+$tracking-text-secondary: $text-secondary;
+$tracking-text-muted: rgba(51, 51, 51, 0.7);
 
-$white: #ffffff;
+$tracking-white: $white;
 $background-light: #FFF9F9;
-$border-radius: 16px;
-$box-shadow: 0 8px 30px rgba($pink-primary, 0.15);
-$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+$tracking-border-radius: $border-radius-lg;
+$tracking-box-shadow: $shadow-primary;
+$tracking-transition: $transition-base;
 
-// Alert colors
+/* Alert Colors */
 $alert-info: #70a1ff;
 $alert-warning: #ffb142;
 $alert-danger: #ff6b6b;
 $alert-success: #2ed573;
 
-// Mixins
+/* Component Mixins */
 @mixin card {
-  background: $white;
-  border-radius: $border-radius;
-  box-shadow: 0 10px 30px rgba($pink-primary, 0.15);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: $tracking-white;
+  border-radius: $tracking-border-radius;
+  box-shadow: $tracking-box-shadow;
+  transition: $tracking-transition;
   overflow: hidden;
   border: 1px solid rgba($pink-primary, 0.1);
 }
@@ -41,10 +42,10 @@ $alert-success: #2ed573;
 }
 
 @mixin glass-effect {
-  background: rgba($white, 0.8);
+  background: rgba($tracking-white, 0.8);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba($white, 0.2);
-  box-shadow: 0 8px 32px rgba($pink-primary, 0.15);
+  border: 1px solid rgba($tracking-white, 0.2);
+  box-shadow: $shadow-md;
 }
 
 @mixin gradient-text {
@@ -56,15 +57,15 @@ $alert-success: #2ed573;
 }
 
 @mixin input-field {
-  background: $white;
+  background: $tracking-white;
   border: 1px solid rgba($pink-primary, 0.2);
-  border-radius: 10px;
-  padding: 0.8rem 1rem;
-  font-size: 0.95rem;
-  color: $text-primary;
+  border-radius: $border-radius-md;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base * 0.95;
+  color: $tracking-text-primary;
   width: 100%;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba($pink-primary, 0.05);
+  transition: $transition-fast;
+  box-shadow: $shadow-sm;
   font-family: 'Quicksand', sans-serif;
   
   &:focus {
@@ -75,11 +76,11 @@ $alert-success: #2ed573;
   }
   
   &::placeholder {
-    color: lighten($text-secondary, 15%);
+    color: lighten($tracking-text-secondary, 15%);
   }
 }
 
-// Animation Keyframes
+/* Animation Keyframes */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -199,7 +200,7 @@ $alert-success: #2ed573;
     background: rgba($alert-danger, 0.1);
     color: $alert-danger;
     padding: 1rem 1.5rem;
-    border-radius: $border-radius;
+    border-radius: $tracking-border-radius;
     margin-bottom: 1.5rem;
     font-weight: 500;
     border-left: 4px solid $alert-danger;
@@ -271,12 +272,12 @@ $alert-success: #2ed573;
   
   .child-card {
     background: $white;
-    border-radius: $border-radius;
+    border-radius: $tracking-border-radius;
     min-width: 180px;
     padding: 1rem;
     box-shadow: 0 8px 25px rgba($pink-primary, 0.15);
     cursor: pointer;
-    transition: $transition;
+    transition: $tracking-transition;
     border: 2px solid transparent;
     
     &:hover {
@@ -463,8 +464,8 @@ $alert-success: #2ed573;
       color: $pink-primary;
       cursor: pointer;
       padding: 0.5rem;
-      border-radius: 50%;
-      transition: $transition;
+      border-radius: $border-radius-circle;
+      transition: $tracking-transition;
       
       &:hover {
         background: rgba($pink-light, 0.2);
@@ -500,7 +501,7 @@ $alert-success: #2ed573;
       display: flex;
       align-items: flex-start;
       padding: 1rem;
-      border-radius: $border-radius;
+      border-radius: $tracking-border-radius;
       margin-bottom: 1rem;
       transition: transform 0.3s ease;
       
@@ -561,7 +562,7 @@ $alert-success: #2ed573;
         .alert-description {
           margin: 0;
           font-size: 0.9rem;
-          color: $text-secondary;
+          color: $tracking-text-secondary;
         }
       }
       
@@ -573,7 +574,7 @@ $alert-success: #2ed573;
     .no-alerts {
       text-align: center;
       padding: 2rem;
-      color: $text-secondary;
+      color: $tracking-text-secondary;
       
       svg {
         color: $pink-light;
@@ -605,7 +606,7 @@ $alert-success: #2ed573;
   
   p {
     font-size: 1.2rem;
-    color: $text-secondary;
+    color: $tracking-text-secondary;
     margin: 0;
   }
 }
@@ -613,12 +614,12 @@ $alert-success: #2ed573;
 // Child Info Card
 .child-info-card {
   width: 100%;
-  border-radius: $border-radius;
+  border-radius: $tracking-border-radius;
   overflow: hidden;
-  box-shadow: $box-shadow;
-  background: $white;
+  box-shadow: $tracking-box-shadow;
+  background: $tracking-white;
   position: relative;
-  transition: $transition;
+  transition: $tracking-transition;
   
   &:hover {
     transform: translateY(-5px);
@@ -645,7 +646,7 @@ $alert-success: #2ed573;
     
     h2 {
       margin: 0;
-      color: $white;
+      color: $tracking-white;
       font-size: 1.3rem;
       font-weight: 600;
       display: flex;
@@ -659,15 +660,15 @@ $alert-success: #2ed573;
   
   .card-content {
     padding: 1.5rem;
-    background: linear-gradient(135deg, $white, $background-light);
+    background: linear-gradient(135deg, $tracking-white, $background-light);
     
     .info-section {
       margin-bottom: 1.5rem;
-      background: $white;
-      border-radius: $border-radius;
+      background: $tracking-white;
+      border-radius: $tracking-border-radius;
       padding: 1.2rem;
       box-shadow: 0 4px 15px rgba($pink-primary, 0.08);
-      transition: $transition;
+      transition: $tracking-transition;
       
       &:hover {
         box-shadow: 0 8px 20px rgba($pink-primary, 0.12);
@@ -703,7 +704,7 @@ $alert-success: #2ed573;
               gap: 8px;
               margin-bottom: 0.6rem;
               font-weight: 500;
-              color: $text-primary;
+              color: $tracking-text-primary;
               font-size: 0.95rem;
               
               .icon {
@@ -725,12 +726,12 @@ $alert-success: #2ed573;
                 flex: 1;
                 padding: 0.6rem 0.8rem;
                 border: 1px solid rgba($pink-primary, 0.2);
-                border-radius: 10px;
+                border-radius: $border-radius-md;
                 font-size: 0.95rem;
-                color: $text-primary;
+                color: $tracking-text-primary;
                 height: 100%;
                 font-family: 'Quicksand', sans-serif;
-                transition: $transition;
+                transition: $tracking-transition;
                 
                 &:focus {
                   outline: none;
@@ -752,7 +753,7 @@ $alert-success: #2ed573;
               
               .unit {
                 margin-left: 10px;
-                color: $text-secondary;
+                color: $tracking-text-secondary;
                 font-weight: 500;
                 font-size: 0.95rem;
                 min-width: 30px;
@@ -784,7 +785,7 @@ $alert-success: #2ed573;
               gap: 8px;
               margin-bottom: 0.6rem;
               font-weight: 500;
-              color: $text-primary;
+              color: $tracking-text-primary;
               font-size: 0.95rem;
               
               .icon {
@@ -802,11 +803,11 @@ $alert-success: #2ed573;
                 flex: 1;
                 padding: 0.6rem 0.8rem;
                 border: 1px solid rgba($pink-primary, 0.2);
-                border-radius: 10px;
+                border-radius: $border-radius-md;
                 font-size: 0.95rem;
-                color: $text-primary;
+                color: $tracking-text-primary;
                 font-family: 'Quicksand', sans-serif;
-                transition: $transition;
+                transition: $tracking-transition;
                 
                 &:focus {
                   outline: none;
@@ -828,7 +829,7 @@ $alert-success: #2ed573;
               
               .unit {
                 margin-left: 10px;
-                color: $text-secondary;
+                color: $tracking-text-secondary;
                 font-weight: 500;
                 font-size: 0.95rem;
               }
@@ -836,7 +837,7 @@ $alert-success: #2ed573;
             
             .metric-standard {
               font-size: 0.85rem;
-              color: $text-muted;
+              color: $tracking-text-muted;
               
               .standard-label {
                 display: flex;
@@ -871,7 +872,7 @@ $alert-success: #2ed573;
           display: flex;
           align-items: center;
           gap: 8px;
-          color: $text-muted;
+          color: $tracking-text-muted;
           font-size: 0.9rem;
           
           .icon {
@@ -886,12 +887,12 @@ $alert-success: #2ed573;
           padding: 8px 16px;
           background-color: rgba($pink-light, 0.3);
           border: none;
-          border-radius: 10px;
+          border-radius: $border-radius-md;
           cursor: pointer;
           font-size: 0.9rem;
           font-weight: 500;
           color: $pink-dark;
-          transition: $transition;
+          transition: $tracking-transition;
           font-family: 'Quicksand', sans-serif;
           
           &:hover {
@@ -915,13 +916,13 @@ $alert-success: #2ed573;
       width: 100%;
       padding: 14px;
       background: $pink-gradient;
-      color: $white;
+      color: $tracking-white;
       border: none;
-      border-radius: $border-radius;
+      border-radius: $tracking-border-radius;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      transition: $transition;
+      transition: $tracking-transition;
       position: relative;
       overflow: hidden;
       font-family: 'Quicksand', sans-serif;

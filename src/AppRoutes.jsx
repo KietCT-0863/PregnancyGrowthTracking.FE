@@ -27,7 +27,7 @@ import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
 import PaymentResult from "./pages/Payment/PaymentResult";
-import ChatAI from "./components/FoetusList/ChatBoxAI/ChatAI";
+import ChatAI from "./components/ChatBoxAI/ChatAI";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute/ProtectedAdminRoute";
 import ProtectedBasicUserRoute from "./components/ProtectedBasicUserRoute/ProtectedBasicUserRoute";
 import ProtectedMemberRoute from "./components/ProtectedMemberRoute/ProtectedMemberRoute";
@@ -69,6 +69,7 @@ const AppRoutes = () => {
         <Route path="/register" element={<Register />} />
         {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
         {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
+        <Route path="/community" element={<Community/>}/>
         <Route path="/blog" element={<BlogPublic />}>
           <Route index element={<BlogAllPublic />} />
           <Route path=":id" element={<BlogDetailPublic />} />
@@ -126,9 +127,9 @@ const AppRoutes = () => {
         <Route index element={<Member />} />
         <Route path="basic-tracking" element={<BasicTracking />} />
         <Route path="calendar" element={<CalendarAll />} />
-        <Route path="calendar-history" element={<CalendarHistory />} />
-        <Route path="calendar-change/:remindId" element={<CalendarChange />} />
-        <Route path="calendar-detail/:remindId" element={<CalendarDetail />} />
+        <Route path="calendar/history" element={<CalendarHistory />} />
+        <Route path="calendar/change/:remindId" element={<CalendarChange />} />
+        <Route path="calendar/detail/:remindId" element={<CalendarDetail />} />
         <Route path="doctor-notes" element={<DoctorNotes />} />
         <Route path="community" element={<Community />} />
         <Route path="blog" element={<Blog />}>

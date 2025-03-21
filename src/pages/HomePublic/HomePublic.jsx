@@ -1,7 +1,7 @@
 import HeaderContent from "../../components/HeaderContent/HeaderContent";
 import BlogSilde from "../../components/BlogSilde/BlogSilde";
 import FooterContent from "../../components/FooterContent/FooterContent";
-import ChatAI from "../../components/FoetusList/ChatBoxAI/ChatAI";
+import ChatAI from "../../components/ChatBoxAI/ChatAI";
 import "./HomePublic.scss"; // Thêm file SCSS nếu bạn muốn sử dụng
 
 const HomePublic = () => {

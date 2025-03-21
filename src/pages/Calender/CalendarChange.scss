@@ -1,12 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import '../../styles/variables.scss';
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 // Variables
-$primary-color: #ff6b81;
-$secondary-color: #ffdde1;
-$light-pink: #fff5f7;
-$white: #ffffff;
-$shadow-color: rgba($primary-color, 0.15);
-$text-shadow: 0 1px 2px rgba($primary-color, 0.2);
+$primary-color: #ff6b81 !default;
+$secondary-color: #ffdde1 !default;
+$light-pink: #fff5f7 !default;
+$white: #ffffff !default;
+$gray: #f3f4f6 !default;
+$shadow-color: rgba($primary-color, 0.15) !default;
+$text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
 
 // Animation Keyframes
 @keyframes fadeIn {
@@ -41,20 +44,62 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
   50% { transform: translateY(-5px); }
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .calendar-change {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Poppins', sans-serif;
-  animation: fadeIn 0.5s ease-out;
+  font-family: "Roboto", sans-serif;
+  background-color: $white;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px $shadow-color, 0 5px 15px rgba($primary-color, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(90deg, $primary-color, $secondary-color);
+    box-shadow: 0 2px 10px rgba($primary-color, 0.3);
+  }
 
   .change-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 2rem;
-    gap: 1.5rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid rgba($primary-color, 0.1);
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: $primary-color;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: $text-shadow;
+      font-family: "Playfair Display", serif;
+      
+      &::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        margin-top: 8px;
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+      }
+    }
 
     .back-button {
       display: flex;
@@ -69,8 +114,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
       color: $primary-color;
       font-weight: 600;
       font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 10px rgba($primary-color, 0.1);
+      font-family: "Roboto", sans-serif;
 
       &:hover {
         transform: translateX(-5px);
@@ -79,68 +123,41 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
       }
 
       svg {
-        width: 20px;
-        height: 20px;
         transition: transform 0.3s ease;
-        filter: drop-shadow(0 1px 1px rgba($primary-color, 0.3));
       }
 
       &:hover svg {
         transform: translateX(-3px);
       }
     }
+  }
 
-    h1 {
-      margin: 0;
-      font-size: 2.5rem;
-      color: $primary-color;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: $text-shadow;
-      animation: float 6s ease-in-out infinite;
-      
-      &::after {
-        content: '';
-        display: block;
-        width: 60px;
-        height: 4px;
-        margin-top: 8px;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        border-radius: 2px;
-        box-shadow: 0 2px 4px rgba($primary-color, 0.3);
-      }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    font-size: 1.2rem;
+    color: $primary-color;
+    font-weight: 500;
+    
+    &::before {
+      content: "";
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba($primary-color, 0.3);
+      border-top-color: $primary-color;
+      border-radius: 50%;
+      margin-right: 12px;
+      animation: spin 1s linear infinite;
     }
   }
 
   .reminder-form {
-    background: $white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px $shadow-color, 0 5px 15px rgba($primary-color, 0.1);
     animation: slideUp 0.5s ease-out;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, $primary-color, $secondary-color);
-      box-shadow: 0 2px 10px rgba($primary-color, 0.3);
-    }
-
+    
     .form-group {
       margin-bottom: 1.5rem;
-      animation: slideUp 0.5s ease-out;
-
-      @for $i from 1 through 5 {
-        &:nth-child(#{$i}) {
-          animation-delay: #{$i * 0.1}s;
-        }
-      }
 
       label {
         display: block;
@@ -148,25 +165,21 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         font-weight: 600;
         color: $primary-color;
         font-size: 1rem;
-        letter-spacing: 0.3px;
-        text-shadow: 0 1px 1px rgba($primary-color, 0.1);
+        font-family: "Roboto", sans-serif;
       }
 
       input,
       select,
       textarea {
         width: 100%;
-        padding: 1rem 1.25rem;
+        padding: 1rem;
         border: 2px solid $light-pink;
         border-radius: 15px;
         font-size: 1rem;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        font-family: 'Poppins', sans-serif;
-        color: $primary-color;
-        font-weight: 500;
-        letter-spacing: 0.3px;
+        font-family: "Roboto", sans-serif;
+        color: #333;
         background: $white;
-        box-shadow: 0 4px 10px rgba($primary-color, 0.05);
 
         &:focus {
           outline: none;
@@ -176,9 +189,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         }
 
         &::placeholder {
-          color: rgba($primary-color, 0.5);
-          font-weight: 400;
-          font-style: italic;
+          color: rgba(#333, 0.5);
         }
       }
 
@@ -186,42 +197,31 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         resize: vertical;
         min-height: 120px;
       }
-
+      
       .input-with-icon {
         position: relative;
-
+        
         svg {
           position: absolute;
-          left: 1rem;
+          left: 12px;
           top: 50%;
           transform: translateY(-50%);
           color: $primary-color;
-          filter: drop-shadow(0 1px 1px rgba($primary-color, 0.3));
-          z-index: 1;
         }
-
+        
         input {
-          padding-left: 3rem;
+          padding-left: 40px;
         }
-      }
-
-      select {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b81' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1.2em;
-        padding-right: 3rem;
       }
     }
-
+    
     .form-actions {
       display: flex;
       gap: 1.5rem;
-      justify-content: flex-end;
       margin-top: 2.5rem;
 
       button {
+        flex: 1;
         padding: 1rem 2rem;
         border: none;
         border-radius: 50px;
@@ -229,19 +229,19 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        font-family: 'Poppins', sans-serif;
-        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-family: "Roboto", sans-serif;
 
         &.cancel-button {
           background: $light-pink;
           color: $primary-color;
-          border: 1px solid rgba($primary-color, 0.1);
-          box-shadow: 0 4px 10px rgba($primary-color, 0.1);
 
           &:hover {
             background: rgba($primary-color, 0.1);
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 20px rgba($primary-color, 0.2);
+            transform: translateY(-3px);
           }
         }
 
@@ -249,38 +249,13 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
           background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
           color: $white;
           box-shadow: 0 4px 10px rgba($primary-color, 0.3);
-          text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 
           &:hover {
-            transform: translateY(-3px) scale(1.05);
+            transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba($primary-color, 0.4);
           }
         }
       }
-    }
-  }
-
-  // Loading state
-  .loading {
-    text-align: center;
-    padding: 3rem;
-    font-size: 1.2rem;
-    color: $primary-color;
-    font-weight: 500;
-    background: $light-pink;
-    border-radius: 20px;
-    margin: 2rem 0;
-    box-shadow: 0 10px 30px $shadow-color;
-    animation: pulse 2s infinite;
-    letter-spacing: 0.5px;
-    text-shadow: $text-shadow;
-    
-    &::before {
-      content: '📅';
-      display: block;
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      animation: float 3s ease-in-out infinite;
     }
   }
 
@@ -292,9 +267,11 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
       flex-direction: column;
       align-items: flex-start;
       gap: 1rem;
+      margin-bottom: 1.5rem;
 
       h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin: 0.5rem 0;
       }
 
       .back-button {
@@ -304,8 +281,6 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
     }
 
     .reminder-form {
-      padding: 1.5rem;
-
       .form-group {
         margin-bottom: 1.25rem;
 
@@ -314,6 +289,16 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         textarea {
           padding: 0.75rem 1rem;
           font-size: 0.95rem;
+        }
+        
+        .input-with-icon {
+          svg {
+            left: 10px;
+          }
+          
+          input {
+            padding-left: 35px;
+          }
         }
       }
 
@@ -327,25 +312,6 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2);
         }
       }
     }
-  }
-
-  // Animation classes
-  .fade-enter {
-    opacity: 0;
-  }
-
-  .fade-enter-active {
-    opacity: 1;
-    transition: opacity 300ms ease-in;
-  }
-
-  .fade-exit {
-    opacity: 1;
-  }
-
-  .fade-exit-active {
-    opacity: 0;
-    transition: opacity 300ms ease-in;
   }
 }
 
