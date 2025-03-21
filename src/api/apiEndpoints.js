@@ -20,4 +20,10 @@ export const ENDPOINTS = {
     UPDATE: "/posts",
     DELETE: (postId) => `/posts?postID=${postId}`,
   },
+  COMMENTS: {
+    LIST: "/Comments",
+    CREATE: "/Comments",
+    UPDATE: (commentId) => `/Comments/${commentId}`,
+    DELETE: (commentId) => `/Comments/${commentId}`,
+  },
 };

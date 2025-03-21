@@ -9,11 +9,14 @@ import {
   User,
   Edit,
   Trash,
+  Send,
+  MoreVertical,
 } from "lucide-react";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
 import "./Community.scss";
 import communityService from "../../api/services/communityService";
+import commentService from "../../api/services/commentService";
 import { toast } from "react-toastify";
 
 // Modal component for creating/editing post
@@ -251,6 +254,231 @@ PostModal.propTypes = {
   isLoading: PropTypes.bool.isRequired,
 };
 
+// Comment component
+const CommentSection = ({ postId, initialComments = [] }) => {
+  const [comments, setComments] = useState(initialComments);
+  const [newComment, setNewComment] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [showDropdown, setShowDropdown] = useState(null);
+
+  useEffect(() => {
+    fetchComments();
+  }, [postId]);
+
+  const fetchComments = async () => {
+    try {
+      setIsLoading(true);
+      const fetchedComments = await commentService.getCommentsByPostId(postId);
+      console.log(
+        `Fetched ${fetchedComments.length} comments for post ${postId}:`,
+        fetchedComments
+      );
+      setComments(fetchedComments || []);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    try {
+      setIsLoading(true);
+      const commentData = {
+        postId: postId,
+        comment: newComment.trim(),
+      };
+
+      await commentService.createComment(commentData);
+      setNewComment("");
+      fetchComments(); // Làm mới danh sách bình luận
+      toast.success("Đã đăng bình luận thành công");
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      toast.error(
+        "Không thể đăng bình luận: " + (error.message || "Lỗi không xác định")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditComment = (comment) => {
+    setEditingCommentId(comment.commentId);
+    setEditText(comment.comment);
+    setShowDropdown(null);
+  };
+
+  const submitEditComment = async () => {
+    if (!editText.trim() || !editingCommentId) return;
+
+    try {
+      setIsLoading(true);
+      await commentService.updateComment(editingCommentId, editText);
+      setEditingCommentId(null);
+      setEditText("");
+      fetchComments(); // Làm mới danh sách bình luận
+      toast.success("Bình luận đã được cập nhật");
+    } catch (error) {
+      console.error("Error updating comment:", error);
+      toast.error(
+        "Không thể cập nhật bình luận: " +
+          (error.message || "Lỗi không xác định")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa bình luận này?")) {
+      try {
+        setIsLoading(true);
+        await commentService.deleteComment(commentId);
+        setComments(comments.filter((c) => c.commentId !== commentId));
+        toast.success("Bình luận đã được xóa");
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+        toast.error(
+          "Không thể xóa bình luận: " + (error.message || "Lỗi không xác định")
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    setShowDropdown(null);
+  };
+
+  const formatDate = (dateString) => {
+    try {
+      return format(new Date(dateString), "dd/MM/yyyy HH:mm");
+    } catch (error) {
+      return dateString;
+    }
+  };
+
+  return (
+    <div className="comments-section">
+      <h4>Bình luận ({comments.length})</h4>
+
+      {isLoading && (
+        <div className="comments-loading">Đang tải bình luận...</div>
+      )}
+
+      <div className="comments-list">
+        {comments.map((comment) => (
+          <div key={comment.commentId} className="comment-item">
+            <div className="comment-avatar">
+              <User size={24} />
+            </div>
+            <div className="comment-content">
+              <div className="comment-header">
+                <div className="comment-author">
+                  {comment.userName || "Người dùng"}
+                </div>
+                <div className="comment-datetime">
+                  {formatDate(comment.createdDate)}
+                </div>
+              </div>
+
+              {editingCommentId === comment.commentId ? (
+                <div className="edit-comment-form">
+                  <textarea
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    placeholder="Chỉnh sửa bình luận..."
+                  />
+                  <div className="edit-actions">
+                    <button
+                      onClick={submitEditComment}
+                      disabled={isLoading || !editText.trim()}
+                    >
+                      Lưu
+                    </button>
+                    <button onClick={() => setEditingCommentId(null)}>
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="comment-text">{comment.comment}</div>
+              )}
+            </div>
+
+            <div className="comment-actions">
+              <button
+                className="comment-menu-button"
+                onClick={() =>
+                  setShowDropdown(
+                    showDropdown === comment.commentId
+                      ? null
+                      : comment.commentId
+                  )
+                }
+              >
+                <MoreVertical size={16} />
+              </button>
+
+              {showDropdown === comment.commentId && (
+                <div className="comment-dropdown">
+                  <button onClick={() => handleEditComment(comment)}>
+                    <Edit size={14} /> Chỉnh sửa
+                  </button>
+                  <button
+                    onClick={() => handleDeleteComment(comment.commentId)}
+                  >
+                    <Trash size={14} /> Xóa
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {comments.length === 0 && !isLoading && (
+          <div className="no-comments">
+            Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+          </div>
+        )}
+      </div>
+
+      <div className="add-comment">
+        <form onSubmit={handleSubmitComment}>
+          <div className="comment-input-wrapper">
+            <div className="comment-avatar">
+              <User size={24} />
+            </div>
+            <input
+              type="text"
+              placeholder="Viết bình luận..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              className="send-comment-btn"
+              disabled={isLoading || !newComment.trim()}
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+CommentSection.propTypes = {
+  postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  initialComments: PropTypes.array,
+};
+
 const Community = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -258,6 +486,15 @@ const Community = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState({});
   const [showDropdown, setShowDropdown] = useState(null);
+  const [expandedComments, setExpandedComments] = useState({});
+
+  // Hàm để toggle phần bình luận
+  const toggleComments = (postId) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
 
   const fetchPosts = async () => {
     try {
@@ -579,11 +816,17 @@ const Community = () => {
                   <Heart size={18} />
                   Thích
                 </button>
-                <button className="reaction-button">
+                <button
+                  className="reaction-button"
+                  onClick={() => toggleComments(post.id)}
+                >
                   <MessageCircle size={18} />
                   Bình luận
                 </button>
               </div>
+
+              {/* Hiển thị phần bình luận nếu đã mở rộng */}
+              {expandedComments[post.id] && <CommentSection postId={post.id} />}
             </div>
           ))
         ) : (
