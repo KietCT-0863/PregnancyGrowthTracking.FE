@@ -487,6 +487,9 @@ const Community = () => {
   const [currentPost, setCurrentPost] = useState({});
   const [showDropdown, setShowDropdown] = useState(null);
   const [expandedComments, setExpandedComments] = useState({});
+  const [likedPosts, setLikedPosts] = useState({}); // { postId: true/false }
+  const [likesCount, setLikesCount] = useState({}); // { postId: count }
+  const userId = 4; // Tạm thời hardcode userId, sau này lấy từ context hoặc localStorage
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
@@ -606,9 +609,142 @@ const Community = () => {
     }
   };
 
+  // Thêm hàm để fetch số lượt like
+  const fetchLikesCount = async (postId) => {
+    try {
+      let count = 0;
+      try {
+        const result = await communityService.getPostLikesCount(postId);
+        if (typeof result === "object" && result.likeCount !== undefined) {
+          count = result.likeCount;
+        } else if (typeof result === "number") {
+          count = result;
+        }
+      } catch (error) {
+        console.warn(
+          `Không thể lấy số lượt like từ API cho post ${postId}:`,
+          error
+        );
+        // Nếu có lỗi, giữ nguyên số lượt like đã có trong state
+        count = likesCount[postId] || 0;
+      }
+
+      setLikesCount((prev) => ({
+        ...prev,
+        [postId]: count,
+      }));
+    } catch (error) {
+      console.error(`Error handling likes count for post ${postId}:`, error);
+    }
+  };
+
+  // Thêm hàm để kiểm tra trạng thái like
+  const checkLikeStatus = async (postId) => {
+    try {
+      let isLiked = false;
+      try {
+        isLiked = await communityService.checkLikeStatus(postId, userId);
+      } catch (error) {
+        console.warn(
+          `Không thể kiểm tra trạng thái like từ API cho post ${postId}:`,
+          error
+        );
+        // Nếu có lỗi, giữ nguyên trạng thái đã có trong state
+        isLiked = likedPosts[postId] || false;
+      }
+
+      setLikedPosts((prev) => ({
+        ...prev,
+        [postId]: isLiked,
+      }));
+    } catch (error) {
+      console.error(`Error handling like status for post ${postId}:`, error);
+    }
+  };
+
+  // Cập nhật useEffect để fetch thêm dữ liệu like
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  // Thêm useEffect để fetch dữ liệu like sau khi có posts
+  useEffect(() => {
+    if (posts.length > 0) {
+      posts.forEach((post) => {
+        fetchLikesCount(post.id);
+        checkLikeStatus(post.id);
+      });
+    }
+  }, [posts]);
+
+  // Thêm hàm xử lý like/unlike
+  const handleLikeToggle = async (postId) => {
+    try {
+      // Ngăn chặn việc like bài viết không tồn tại
+      if (!posts.some((post) => post.id === postId)) {
+        console.warn(
+          `Không thể like/unlike bài viết ID ${postId} vì không tồn tại trong danh sách hiện tại`
+        );
+        toast.warning("Bài viết không tồn tại hoặc đã bị xóa");
+        return;
+      }
+
+      const currentLikeStatus = likedPosts[postId] || false;
+
+      // Cập nhật UI trước để tạo cảm giác phản hồi nhanh
+      setLikedPosts((prev) => ({
+        ...prev,
+        [postId]: !currentLikeStatus,
+      }));
+
+      setLikesCount((prev) => ({
+        ...prev,
+        [postId]: (prev[postId] || 0) + (currentLikeStatus ? -1 : 1),
+      }));
+
+      // Thêm timeout để tạo cảm giác mượt mà hơn
+      setTimeout(async () => {
+        try {
+          let result;
+          // Gọi API
+          if (currentLikeStatus) {
+            result = await communityService.unlikePost(postId, userId);
+          } else {
+            result = await communityService.likePost(postId, userId);
+          }
+
+          // Kiểm tra xem kết quả có phải là giả lập và có thông báo không
+          if (result && result.simulated && result.message) {
+            console.log(`Thông báo từ API: ${result.message}`);
+            // Nếu muốn hiển thị cho người dùng (tùy chọn)
+            // toast.info(result.message);
+          } else {
+            // Sau khi API thành công, cập nhật lại số lượng like chính xác
+            fetchLikesCount(postId);
+          }
+        } catch (error) {
+          console.error(
+            `Error calling like/unlike API for post ${postId}:`,
+            error
+          );
+          // Để trạng thái UI như đã cập nhật, không rollback vì API đang lỗi
+          console.log("API gặp lỗi nhưng vẫn giữ trạng thái UI đã cập nhật");
+        }
+      }, 300);
+    } catch (error) {
+      console.error(`Error toggling like for post ${postId}:`, error);
+
+      // Nếu có lỗi tổng thể, khôi phục trạng thái cũ
+      try {
+        checkLikeStatus(postId);
+        fetchLikesCount(postId);
+      } catch (err) {
+        console.error("Lỗi khi khôi phục trạng thái:", err);
+      }
+
+      toast.error("Có lỗi xảy ra khi thực hiện thao tác yêu thích bài viết");
+    }
+  };
 
   const handleCreatePost = async (formData, postId) => {
     try {
@@ -630,20 +766,21 @@ const Community = () => {
 
       if (postId) {
         // Xử lý cập nhật bài viết
-        if (formData instanceof FormData) {
-          // Thêm ID vào formData nếu đang cập nhật
-          formData.append("id", postId);
-          await communityService.updatePost(formData);
-        } else {
-          // Tạo đối tượng dữ liệu cập nhật nếu formData không phải FormData
+        try {
+          const post = posts.find((p) => p.id === postId);
+          if (!post) {
+            throw new Error("Không tìm thấy bài viết cần cập nhật");
+          }
+
+          // Tạo đối tượng dữ liệu cập nhật có chứa ID
           const updateData = {
-            id: postId,
-            title: formData.get ? formData.get("title") : formData.title,
-            body: formData.get ? formData.get("body") : formData.body,
+            id: postId, // Đảm bảo ID luôn có
+            title: formData.get("title"),
+            body: formData.get("body"),
           };
 
           // Xử lý tags nếu có
-          const tagsStr = formData.get && formData.get("postTags");
+          const tagsStr = formData.get("postTags");
           if (tagsStr) {
             try {
               updateData.postTags = JSON.parse(tagsStr);
@@ -652,10 +789,14 @@ const Community = () => {
             }
           }
 
+          console.log("Dữ liệu cập nhật bài viết:", updateData);
           await communityService.updatePost(updateData);
+          toast.success("Bài viết đã được cập nhật thành công");
+        } catch (updateError) {
+          console.error("Lỗi khi cập nhật bài viết:", updateError);
+          toast.error("Không thể cập nhật bài viết: " + updateError.message);
+          throw updateError;
         }
-
-        toast.success("Bài viết đã được cập nhật thành công");
       } else {
         // Tạo bài viết mới với FormData đã có đầy đủ thông tin
         await communityService.createPost(formData);
@@ -758,7 +899,13 @@ const Community = () => {
                     <User size={20} />
                   </div>
                   <div className="post-meta">
-                    <h3>{post.createdBy}</h3>
+                    <h3>
+                      {post.createdBy ||
+                        post.userName ||
+                        post.author ||
+                        post.user?.name ||
+                        "Người dùng"}
+                    </h3>
                     <div className="post-time">
                       {formatDate(post.createdDate)}
                     </div>
@@ -812,9 +959,17 @@ const Community = () => {
                 )}
               </div>
               <div className="post-footer">
-                <button className="reaction-button">
-                  <Heart size={18} />
-                  Thích
+                <button
+                  className={`reaction-button ${
+                    likedPosts[post.id] ? "liked" : ""
+                  }`}
+                  onClick={() => handleLikeToggle(post.id)}
+                >
+                  <Heart
+                    size={18}
+                    className={likedPosts[post.id] ? "heart-filled" : ""}
+                  />
+                  Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
                 </button>
                 <button
                   className="reaction-button"

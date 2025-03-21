@@ -268,8 +268,21 @@
           cursor: pointer;
           transition: color 0.2s;
 
-          &:hover {
-            color: #8e8e8e;
+          &:hover,
+          &.active {
+            background-color: #f0f2f5;
+            color: #1877f2;
+          }
+
+          &.liked {
+            color: #ed4956;
+            font-weight: 500;
+
+            .heart-filled {
+              fill: #ed4956;
+              stroke: #ed4956;
+              animation: likeAnimation 0.3s ease-in-out;
+            }
           }
 
           svg {
@@ -898,13 +911,15 @@
   }
 }
 
-/* Cập nhật CSS cho reaction button */
-.post-footer {
-  .reaction-button {
-    &:hover,
-    &.active {
-      background-color: #f0f2f5;
-      color: #1877f2;
-    }
+/* Animation cho nút like */
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }

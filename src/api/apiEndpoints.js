@@ -19,6 +19,12 @@ export const ENDPOINTS = {
     CREATE: "/posts",
     UPDATE: "/posts",
     DELETE: (postId) => `/posts?postID=${postId}`,
+    // Sửa endpoints cho chức năng like với cấu trúc đúng
+    LIKE: (postId) => `/posts/${postId}/likes`,
+    UNLIKE: (postId) => `/posts/${postId}/likes`,
+    GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
+    // Không có API check nên sẽ mô phỏng bằng mảng local
+    GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
   },
   COMMENTS: {
     LIST: "/Comments",
