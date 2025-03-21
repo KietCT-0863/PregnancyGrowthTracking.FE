@@ -2,15 +2,30 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Bell, ChevronUp, ChevronDown } from "lucide-react"
 import { renderAlertContent, renderEmptyState } from "../../utils/notificationHandler"
 import "./AlertSection.scss"
+import { useState } from "react"
+import PropTypes from 'prop-types'
 
 const AlertSection = ({
-  alertHistory,
+  alertHistory = [],
   alertsOpen,
   setAlertsOpen,
-  alerts,
+  alerts = [],
   selectedChild,
 }) => {
-  const hasNewAlerts = alertHistory.length > 0
+  // Sử dụng state nội bộ khi props không được cung cấp
+  const [internalAlertsOpen, setInternalAlertsOpen] = useState(false)
+  
+  // Sử dụng props nếu được cung cấp, ngược lại sử dụng state nội bộ
+  const isAlertsOpen = alertsOpen !== undefined ? alertsOpen : internalAlertsOpen
+  const handleToggleAlerts = () => {
+    if (setAlertsOpen) {
+      setAlertsOpen(!isAlertsOpen)
+    } else {
+      setInternalAlertsOpen(!isAlertsOpen)
+    }
+  }
+
+  const hasNewAlerts = alertHistory && alertHistory.length > 0
 
   return (
     <div className="chart-alerts compact">
@@ -45,16 +60,16 @@ const AlertSection = ({
         </h4>
         <motion.button
           className="alert-toggle"
-          onClick={() => setAlertsOpen(!alertsOpen)}
+          onClick={handleToggleAlerts}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          {alertsOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          {isAlertsOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </motion.button>
       </div>
 
       <AnimatePresence>
-        {alertsOpen && (
+        {isAlertsOpen && (
           <motion.div
             className="alert-content open"
             initial={{ opacity: 0, height: 0 }}
@@ -64,7 +79,7 @@ const AlertSection = ({
           >
             <div className="alert-scroll-container">
               {selectedChild ? (
-                alerts.length > 0 ? (
+                alerts && alerts.length > 0 ? (
                   alerts.map((alert, index) => renderAlertContent(alert, index))
                 ) : (
                   renderEmptyState(selectedChild)
@@ -78,6 +93,14 @@ const AlertSection = ({
       </AnimatePresence>
     </div>
   )
+}
+
+AlertSection.propTypes = {
+  alertHistory: PropTypes.array,
+  alertsOpen: PropTypes.bool,
+  setAlertsOpen: PropTypes.func,
+  alerts: PropTypes.array,
+  selectedChild: PropTypes.object
 }
 
 export default AlertSection 

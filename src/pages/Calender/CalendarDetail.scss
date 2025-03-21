@@ -1,14 +1,17 @@
 @import '../../styles/variables.scss';
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 
 // Variables
-$primary-color: #ff6b81 !default;
-$secondary-color: #ffdde1 !default;
-$light-pink: #fff5f7 !default;
-$white: #ffffff !default;
-$shadow-color: rgba($primary-color, 0.15) !default;
-$text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
+$primary-color: #ff6b81;
+$secondary-color: #ffdde1;
+$accent-color: #45B7D1;
+$light-bg: #f8f9fa;
+$white: #ffffff;
+$border-color: rgba(0, 0, 0, 0.1);
+$shadow-color: rgba(0, 0, 0, 0.08);
+$text-dark: #333333;
+$text-muted: #6c757d;
 
 // Animation Keyframes
 @keyframes fadeIn {
@@ -27,67 +30,61 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   }
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
 .calendar-detail {
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 1.5rem;
-  font-family: "Roboto", sans-serif;
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
+  animation: fadeIn 0.5s ease;
   
   .loading-container, .error-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 200px;
-    padding: 2rem;
-    border-radius: 16px;
+    height: 250px;
+    padding: 2.5rem;
+    border-radius: 20px;
     background-color: $white;
-    box-shadow: 0 10px 25px $shadow-color;
+    box-shadow: 0 10px 30px $shadow-color;
     text-align: center;
     
     .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba($primary-color, 0.2);
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba($primary-color, 0.2);
       border-top-color: $primary-color;
       border-radius: 50%;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       animation: spin 1s linear infinite;
     }
     
     p {
-      color: $primary-color;
+      color: $text-dark;
       font-weight: 500;
-      margin-bottom: 1.5rem;
-      font-family: "Amatic SC", cursive;
-      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
     }
     
     button {
-      padding: 0.6rem 1.2rem;
+      padding: 1rem 2rem;
       border: none;
-      border-radius: 50px;
-      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      border-radius: 15px;
+      background: $primary-color;
       color: $white;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: "Roboto", sans-serif;
+      font-size: 1rem;
       
       &:hover {
         transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba($primary-color, 0.3);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.3);
       }
     }
   }
@@ -95,7 +92,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   .error-container {
     svg {
       color: #ff4d4d;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
     
     p {
@@ -107,12 +104,12 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     
     h1 {
       margin: 0;
-      font-size: 1.8rem;
-      color: #333;
+      font-size: 2.2rem;
+      color: $text-dark;
       font-weight: 700;
       font-family: "Playfair Display", serif;
     }
@@ -120,24 +117,25 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     .back-button {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      gap: 0.7rem;
+      padding: 0.8rem 1.5rem;
       border: none;
-      background-color: $light-pink;
-      border-radius: 50px;
+      background: $light-bg;
+      border-radius: 15px;
       cursor: pointer;
       transition: all 0.3s ease;
-      color: $primary-color;
+      color: $text-dark;
       font-weight: 500;
-      font-size: 0.9rem;
-      font-family: "Roboto", sans-serif;
+      font-size: 1rem;
 
       &:hover {
         transform: translateX(-5px);
-        background-color: rgba($primary-color, 0.1);
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
       }
 
       svg {
+        color: $primary-color;
         transition: transform 0.3s ease;
       }
 
@@ -150,11 +148,11 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   .event-date-container {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: $light-pink;
-    border-radius: 50px;
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: $light-bg;
+    border-radius: 15px;
     width: fit-content;
     
     .date-icon {
@@ -162,82 +160,88 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     }
     
     span {
-      color: #333;
+      color: $text-dark;
       font-weight: 500;
-      font-size: 0.95rem;
-      font-family: "Roboto", sans-serif;
+      font-size: 1.05rem;
     }
   }
 
   .reminder-card {
     background-color: $white;
-    border-radius: 16px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px $shadow-color;
     overflow: hidden;
-    border-top: 5px solid;
+    border-top: 6px solid;
     animation: slideUp 0.5s ease;
     
     .card-header {
-      padding: 1.25rem;
+      padding: 1.75rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid $border-color;
       
       .reminder-title {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
         
         .title-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          border-radius: 15px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: $white;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         h2 {
           margin: 0;
-          font-size: 1.4rem;
+          font-size: 1.6rem;
           font-weight: 700;
-          color: #333;
+          color: $text-dark;
           font-family: "Playfair Display", serif;
         }
       }
       
       .action-buttons {
         display: flex;
-        gap: 0.75rem;
+        gap: 1rem;
         
         button {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
+          width: 45px;
+          height: 45px;
+          border-radius: 15px;
           border: none;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: all 0.2s ease;
-          background-color: $light-pink;
-          font-family: "Roboto", sans-serif;
+          transition: all 0.3s ease;
           
           &.edit-button {
+            background-color: rgba($primary-color, 0.1);
             color: $primary-color;
             
             &:hover {
-              background-color: rgba($primary-color, 0.15);
+              background-color: $primary-color;
+              color: $white;
+              transform: translateY(-3px);
+              box-shadow: 0 5px 15px rgba($primary-color, 0.3);
             }
           }
           
           &.delete-button {
+            background-color: rgba(#ff4d4d, 0.1);
             color: #ff4d4d;
             
             &:hover {
-              background-color: rgba(#ff4d4d, 0.15);
+              background-color: #ff4d4d;
+              color: $white;
+              transform: translateY(-3px);
+              box-shadow: 0 5px 15px rgba(#ff4d4d, 0.3);
             }
           }
         }
@@ -245,40 +249,48 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     }
     
     .reminder-info {
-      padding: 1.25rem;
+      padding: 1.75rem;
       
       .info-item {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        padding: 1rem;
+        background-color: $light-bg;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          transform: translateX(5px);
+          background-color: rgba($primary-color, 0.05);
+        }
         
         .info-icon {
           color: $primary-color;
         }
         
         span {
-          font-size: 1rem;
-          color: #333;
+          font-size: 1.1rem;
+          color: $text-dark;
           font-weight: 500;
-          font-family: "Roboto", sans-serif;
         }
       }
       
       .reminder-note {
-        margin-top: 1.5rem;
-        padding-top: 1.5rem;
-        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+        padding: 1.5rem;
+        border-radius: 15px;
+        background-color: rgba($primary-color, 0.03);
         
         .note-header {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 0.75rem;
+          gap: 1rem;
+          margin-bottom: 1rem;
           color: $primary-color;
           font-weight: 600;
-          font-family: "Amatic SC", cursive;
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           
           .note-icon {
             color: $primary-color;
@@ -287,10 +299,46 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         
         p {
           margin: 0;
-          color: #666;
-          line-height: 1.5;
-          font-size: 0.95rem;
-          font-family: "Roboto", sans-serif;
+          color: $text-dark;
+          line-height: 1.6;
+          font-size: 1.05rem;
+        }
+      }
+    }
+    
+    .reminder-actions {
+      display: flex;
+      gap: 1rem;
+      padding: 0 1.75rem 1.75rem;
+      
+      button {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        border-radius: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        
+        &.back-button {
+          background-color: $light-bg;
+          color: $text-dark;
+          
+          &:hover {
+            background-color: darken($light-bg, 5%);
+            transform: translateY(-3px);
+          }
+        }
+        
+        &.edit-button {
+          background-color: $primary-color;
+          color: $white;
+          
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba($primary-color, 0.3);
+          }
         }
       }
     }
@@ -298,25 +346,57 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
 
   // Responsive styles
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 1.5rem;
 
     .detail-header {
       flex-direction: column;
       align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
 
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
+      }
+      
+      .back-button {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
       }
     }
     
     .reminder-card {
       .card-header {
+        padding: 1.25rem;
+        
         .reminder-title {
-          h2 {
-            font-size: 1.2rem;
+          gap: 1rem;
+          
+          .title-icon {
+            width: 40px;
+            height: 40px;
           }
+          
+          h2 {
+            font-size: 1.4rem;
+          }
+        }
+        
+        .action-buttons button {
+          width: 38px;
+          height: 38px;
+        }
+      }
+      
+      .reminder-info {
+        padding: 1.25rem;
+      }
+      
+      .reminder-actions {
+        padding: 0 1.25rem 1.25rem;
+        flex-direction: column;
+        
+        button {
+          width: 100%;
         }
       }
     }

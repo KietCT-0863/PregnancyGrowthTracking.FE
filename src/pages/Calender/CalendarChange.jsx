@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import { 
+  ArrowLeft, 
+  Calendar, 
+  Clock, 
+  Tag, 
+  FileText, 
+  Save, 
+  X,
+  MapPin
+} from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import reminderService from "../../api/services/reminderService";
@@ -15,19 +24,21 @@ const CalendarChange = () => {
     title: "",
     date: "",
     time: "",
-    reminderType: "medication",
-    notification: ""
+    reminderType: "Uống thuốc",
+    notification: "",
+    location: ""
   });
 
   // Danh sách loại nhắc nhở
   const reminderTypes = [
-    { id: "medication", label: "Uống thuốc" },
-    { id: "appointment", label: "Cuộc hẹn" },
-    { id: "other", label: "Khác" }
+    { id: "Cuộc hẹn bác sĩ", label: "Cuộc hẹn bác sĩ", color: "#FF6B81" },
+    { id: "Uống thuốc", label: "Uống thuốc", color: "#4CAF50" },
+    { id: "Khám thai", label: "Khám thai", color: "#FF6B81" },
+    { id: "Tập thể dục", label: "Tập thể dục", color: "#9C27B0" },
+    { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#2196F3" }
   ];
 
   useEffect(() => {
-    console.log('Current remindId:', remindId);
     fetchReminderDetails();
   }, [remindId]);
 
@@ -47,8 +58,9 @@ const CalendarChange = () => {
         title: currentReminder.title || "",
         date: currentReminder.date?.split('T')[0] || "",
         time: currentReminder.time || "",
-        reminderType: currentReminder.reminderType || "medication",
-        notification: currentReminder.notification || ""
+        reminderType: currentReminder.reminderType || "Uống thuốc",
+        notification: currentReminder.notification || "",
+        location: currentReminder.location || ""
       });
     } catch (error) {
       toast.error("Không thể tải thông tin lịch nhắc nhở");
@@ -118,7 +130,13 @@ const CalendarChange = () => {
   };
 
   if (loading) {
-    return <div className="loading">Đang tải...</div>;
+    return (
+      <div className="calendar-change">
+        <div className="loading">
+          Đang tải thông tin...
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -138,7 +156,7 @@ const CalendarChange = () => {
           <ArrowLeft size={20} />
           <span>Quay lại</span>
         </motion.button>
-        <h1>Chỉnh sửa lịch nhắc nhở</h1>
+        <h1>Chỉnh sửa sự kiện</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="reminder-form">
@@ -150,7 +168,7 @@ const CalendarChange = () => {
             name="title"
             value={reminder.title}
             onChange={handleInputChange}
-            placeholder="Nhập tiêu đề"
+            placeholder="Nhập tiêu đề sự kiện"
             required
           />
         </div>
@@ -187,31 +205,52 @@ const CalendarChange = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="reminderType">Loại nhắc nhở</label>
-          <select
-            id="reminderType"
-            name="reminderType"
-            value={reminder.reminderType}
-            onChange={handleInputChange}
-          >
-            {reminderTypes.map(type => (
-              <option key={type.id} value={type.id}>
-                {type.label}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="reminderType">Loại sự kiện</label>
+          <div className="input-with-icon">
+            <Tag size={20} />
+            <select
+              id="reminderType"
+              name="reminderType"
+              value={reminder.reminderType}
+              onChange={handleInputChange}
+            >
+              {reminderTypes.map(type => (
+                <option key={type.id} value={type.id}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="location">Địa điểm</label>
+          <div className="input-with-icon">
+            <MapPin size={20} />
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={reminder.location}
+              onChange={handleInputChange}
+              placeholder="Nhập địa điểm (không bắt buộc)"
+            />
+          </div>
         </div>
 
         <div className="form-group">
           <label htmlFor="notification">Ghi chú</label>
-          <textarea
-            id="notification"
-            name="notification"
-            value={reminder.notification}
-            onChange={handleInputChange}
-            placeholder="Nhập ghi chú (không bắt buộc)"
-            rows={4}
-          />
+          <div className="input-with-icon textarea-container">
+            <FileText size={20} className="textarea-icon" />
+            <textarea
+              id="notification"
+              name="notification"
+              value={reminder.notification}
+              onChange={handleInputChange}
+              placeholder="Nhập ghi chú (không bắt buộc)"
+              rows={4}
+            />
+          </div>
         </div>
 
         <div className="form-actions">
@@ -222,6 +261,7 @@ const CalendarChange = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
+            <X size={18} />
             Hủy
           </motion.button>
           <motion.button
@@ -230,6 +270,7 @@ const CalendarChange = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
+            <Save size={18} />
             Lưu thay đổi
           </motion.button>
         </div>

@@ -132,8 +132,8 @@ const BasicTracking = () => {
       console.log('New state:', { ...foetusStats, [field]: processedValue });
       
       return {
-        ...prev,
-        [foetusId]: {
+      ...prev,
+      [foetusId]: {
           ...foetusStats,
           [field]: processedValue,
         },
@@ -285,18 +285,18 @@ const BasicTracking = () => {
                 onWeeksChange={setWeeksToShow}
               />
             </div>
-            
+
             {/* Form nhập thông tin (đã chuyển từ cột phải sang) */}
-            <div className="input-section">
-              {selectedChild ? (
-                <motion.div
-                  className="child-input-form"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
-                  layout
-                >
+        <div className="input-section">
+          {selectedChild ? (
+            <motion.div
+              className="child-input-form"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              layout
+            >
                   <ChildInfoCard
                     selectedChild={selectedChild}
                     growthData={growthData}
@@ -304,33 +304,33 @@ const BasicTracking = () => {
                     handleInputChange={handleInputChange}
                     handleStatsUpdate={handleStatsUpdate}
                   />
-                </motion.div>
-              ) : (
-                <motion.div
-                  className="select-child-prompt"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <motion.div
-                    animate={{
-                      y: [0, -10, 0],
-                      opacity: [0.7, 1, 0.7],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    <Baby size={60} />
-                    <p>Vui lòng chọn một thai nhi để bắt đầu theo dõi</p>
-                  </motion.div>
-                </motion.div>
-              )}
-            </div>
+              </motion.div>
+          ) : (
+            <motion.div
+              className="select-child-prompt"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              >
+                <Baby size={60} />
+                <p>Vui lòng chọn một thai nhi để bắt đầu theo dõi</p>
+        </motion.div>
+            </motion.div>
+            )}
           </div>
-          
+        </div>
+
           {/* Cột phải chứa biểu đồ chỉ số và cảnh báo */}
           <div className="form-alerts-column">
             {/* Biểu đồ chỉ số (đã chuyển từ cột trái sang) */}
@@ -356,7 +356,7 @@ const BasicTracking = () => {
                   }}
                   onError={(msg) => toast.error(msg)}
                 />
-              </div>
+                </div>
             )}
             
             {/* Phần cảnh báo */}
@@ -368,13 +368,13 @@ const BasicTracking = () => {
                 alerts={alerts}
                 selectedChild={selectedChild}
               />
-            </div>
+                </div>
           </div>
         </div>
 
-        <GrowthAlert isOpen={showGrowthAlert} onClose={() => setShowGrowthAlert(false)} alertData={alertData} />
+      <GrowthAlert isOpen={showGrowthAlert} onClose={() => setShowGrowthAlert(false)} alertData={alertData} />
       </div>
-    </div>
+                      </div>
   )
 }
 

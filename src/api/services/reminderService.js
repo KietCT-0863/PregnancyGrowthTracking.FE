@@ -60,9 +60,34 @@ const reminderService = {
   // Lấy danh sách lịch nhắc nhở
   getReminderHistory: async () => {
     try {
+      console.log('DEBUG: Bắt đầu gọi API getReminderHistory');
+      console.log('DEBUG: URL endpoint:', ENDPOINTS.REMINDER.LIST);
+      
       const response = await axiosInstance.get(ENDPOINTS.REMINDER.LIST);
-      return response.data;
+      
+      console.log('DEBUG: API Status:', response.status);
+      console.log('DEBUG: API Response data ban đầu:', response.data);
+      
+      // Chuyển đổi dữ liệu sang định dạng mong muốn
+      const formattedData = Array.isArray(response.data) 
+        ? response.data.map(item => ({
+            remindId: item.remindId || item.id,
+            date: item.date || "",
+            time: item.time || "",
+            title: item.title || "",
+            notification: item.notification || "",
+            reminderType: item.reminderType || ""
+          })) 
+        : [];
+      
+      console.log('DEBUG: Dữ liệu sau khi format:', formattedData);
+      
+      return formattedData;
     } catch (error) {
+      console.error('DEBUG: Lỗi khi gọi API getReminderHistory:', error);
+      console.error('DEBUG: Response lỗi:', error.response?.data);
+      console.error('DEBUG: Status lỗi:', error.response?.status);
+      
       handleApiError(error, "Không thể lấy danh sách lịch nhắc nhở");
     }
   },

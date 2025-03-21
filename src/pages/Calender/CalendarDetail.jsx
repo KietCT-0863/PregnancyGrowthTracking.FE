@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Tag, AlertCircle, Edit, FileText, User } from "lucide-react";
+import { 
+  ArrowLeft, 
+  Calendar, 
+  Clock, 
+  Tag, 
+  AlertCircle, 
+  Edit, 
+  FileText, 
+  User, 
+  MapPin,
+  MessageCircle
+} from "lucide-react";
 import { toast } from "react-toastify";
+import moment from "moment";
 import reminderService from "../../api/services/reminderService";
 import "./CalendarDetail.scss";
 
@@ -52,12 +64,7 @@ const CalendarDetail = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    return moment(dateString).format('dddd, DD/MM/YYYY');
   };
 
   const getReminderTypeInfo = (type) => {
@@ -130,16 +137,13 @@ const CalendarDetail = () => {
         <div className="card-header">
           <div className="reminder-title">
             <div className="title-icon" style={{ backgroundColor: color }}>
-              <Edit size={20} />
+              {icon}
             </div>
             <h2>{reminder.title}</h2>
           </div>
           <div className="action-buttons">
             <button className="edit-button" onClick={handleEdit}>
               <Edit size={16} />
-            </button>
-            <button className="delete-button">
-              <AlertCircle size={16} />
             </button>
           </div>
         </div>
@@ -154,16 +158,42 @@ const CalendarDetail = () => {
             <Tag size={20} className="info-icon" />
             <span>{reminder.reminderType}</span>
           </div>
+
+          {reminder.location && (
+            <div className="info-item">
+              <MapPin size={20} className="info-icon" />
+              <span>{reminder.location}</span>
+            </div>
+          )}
           
           {reminder.notification && (
             <div className="reminder-note">
               <div className="note-header">
-                <FileText size={20} className="note-icon" />
+                <MessageCircle size={20} className="note-icon" />
                 <span>Ghi chú</span>
               </div>
               <p>{reminder.notification}</p>
             </div>
           )}
+        </div>
+
+        <div className="reminder-actions">
+          <motion.button
+            className="back-button"
+            onClick={() => navigate("/member/calendar")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Quay lại lịch
+          </motion.button>
+          <motion.button
+            className="edit-button"
+            onClick={handleEdit}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Chỉnh sửa
+          </motion.button>
         </div>
       </motion.div>
     </motion.div>

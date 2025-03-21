@@ -1,0 +1,307 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import '../../../styles/variables.scss';
+
+// Variables
+$primary-color: #63b3ed;
+$secondary-color: #90cdf4;
+$accent-color: #4fc3f7;
+$light-bg: #f8fafb;
+$light-gray: #f0f2f5;
+$white: #ffffff;
+$gray: #f3f4f6;
+$success-color: #68d391;
+$warning-color: #f6ad55;
+$info-color: #63b3ed;
+$error-color: #fc8181;
+$border-color: #e2e8f0;
+$shadow-color: rgba(0, 0, 0, 0.05);
+$text-dark: #4a5568;
+$text-muted: #a0aec0;
+
+// Event card
+.event-card {
+  font-family: 'Poppins', sans-serif;
+  background-color: $white;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px $shadow-color;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba($primary-color, 0.15);
+  }
+
+  &.upcoming {
+    border-left: 4px solid $warning-color;
+  }
+
+  &.past {
+    opacity: 0.9;
+    border-left: 4px solid $success-color;
+  }
+  
+  .event-header {
+    padding: 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    
+    .event-title-container {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      max-width: 80%;
+
+      .event-icon {
+        background-color: rgba($primary-color, 0.15);
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba($primary-color, 0.1);
+        
+        svg {
+          color: $primary-color;
+          font-size: 1.2rem;
+          transition: transform 0.3s ease;
+        }
+      }
+      
+      h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: $text-dark;
+        font-family: "Poppins", sans-serif;
+      }
+    }
+    
+    .event-actions {
+      display: flex;
+      gap: 0.6rem;
+      z-index: 5;
+      
+      button {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background-color: $light-bg;
+        color: $text-dark;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: rgba($primary-color, 0.1);
+          color: $primary-color;
+          transform: translateY(-2px);
+        }
+        
+        &.delete-button:hover {
+          background-color: rgba($error-color, 0.1);
+          color: $error-color;
+        }
+        
+        svg {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+  
+  .event-content {
+    padding: 0 1.2rem 1.2rem;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    .event-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      
+      .info-row {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        
+        svg {
+          color: $primary-color;
+          flex-shrink: 0;
+          font-size: 1rem;
+        }
+        
+        span {
+          font-size: 0.95rem;
+          color: $text-dark;
+        }
+      }
+    }
+    
+    .event-description {
+      margin-top: 1.2rem;
+      padding-top: 1.2rem;
+      border-top: 1px dashed $border-color;
+      flex: 1;
+      
+      h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: $text-dark;
+        margin: 0 0 0.8rem;
+        font-weight: 600;
+        
+        svg {
+          color: $primary-color;
+        }
+      }
+      
+      p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: $text-muted;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .event-badge {
+      position: absolute;
+      top: -3.5rem;
+      right: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 1rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      z-index: 10;
+
+      &.upcoming-badge {
+        background-color: rgba($warning-color, 0.15);
+        color: darken($warning-color, 10%);
+        
+        svg {
+          color: $warning-color;
+        }
+      }
+
+      &.past-badge {
+        background-color: rgba($success-color, 0.15);
+        color: darken($success-color, 10%);
+        
+        svg {
+          color: $success-color;
+        }
+      }
+    }
+  }
+  
+  // Hover animations
+  &:hover {
+    .event-title-container {
+      .event-icon {
+        svg {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+}
+
+// Event type colors
+.appointment {
+  border-top: 4px solid $primary-color;
+  
+  .event-type-indicator {
+    background-color: $primary-color;
+  }
+}
+
+.checkup {
+  border-top: 4px solid $success-color;
+  
+  .event-type-indicator {
+    background-color: $success-color;
+  }
+}
+
+.reminder {
+  border-top: 4px solid $warning-color;
+  
+  .event-type-indicator {
+    background-color: $warning-color;
+  }
+}
+
+.medicine {
+  border-top: 4px solid $info-color;
+  
+  .event-type-indicator {
+    background-color: $info-color;
+  }
+}
+
+.other {
+  border-top: 4px solid $accent-color;
+  
+  .event-type-indicator {
+    background-color: $accent-color;
+  }
+}
+
+// Event type indicator
+.event-type-indicator {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 25%;
+  height: 4px;
+  z-index: 1;
+}
+
+// Responsive styles for smaller screens
+@media (max-width: 768px) {
+  .event-card {
+    .event-header {
+      .event-title-container {
+        max-width: 70%;
+        
+        .event-icon {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+    
+    .event-content {
+      .event-description {
+        p {
+          -webkit-line-clamp: 2;
+        }
+      }
+    }
+  }
+} 

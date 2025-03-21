@@ -49,6 +49,12 @@ import CalendarDetail from "./pages/Calender/CalendarDetail";
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Các trang đăng nhập và đăng ký - không có NavBar và Footer */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
+      {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
+
       {/* Route công khai - không cần đăng nhập */}
       <Route
         path="/"
@@ -65,10 +71,6 @@ const AppRoutes = () => {
       >
         <Route index element={<HomePublic />} />
         <Route path="about" element={<AboutUs />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
-        {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
         <Route path="/community" element={<Community/>}/>
         <Route path="/blog" element={<BlogPublic />}>
           <Route index element={<BlogAllPublic />} />

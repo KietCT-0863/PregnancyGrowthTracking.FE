@@ -1,18 +1,21 @@
 @import '../../styles/variables.scss';
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap");
 
 // Variables
-$primary-color: #ff6b81 !default;
-$secondary-color: #ffdde1 !default;
-$light-pink: #fff5f7 !default;
-$white: #ffffff !default;
-$gray: #f3f4f6 !default;
-$success-color: #4caf50 !default;
-$warning-color: #ff9800 !default;
-$info-color: #2196f3 !default;
-$shadow-color: rgba($primary-color, 0.15) !default;
-$text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
+$primary-color: #63b3ed;
+$secondary-color: #90cdf4;
+$accent-color: #4fc3f7;
+$light-bg: #f8fafb;
+$white: #ffffff;
+$gray: #f3f4f6;
+$success-color: #68d391;
+$warning-color: #f6ad55;
+$info-color: #63b3ed;
+$border-color: #e2e8f0;
+$shadow-color: rgba(0, 0, 0, 0.05);
+$text-dark: #4a5568;
+$text-muted: #a0aec0;
 
 // Animation Keyframes
 @keyframes fadeIn {
@@ -31,12 +34,6 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   }
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
 @keyframes glow {
   0% { box-shadow: 0 0 5px rgba($warning-color, 0.5); }
   50% { box-shadow: 0 0 15px rgba($warning-color, 0.8); }
@@ -52,7 +49,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: "Roboto", sans-serif;
+  font-family: "Poppins", sans-serif;
   
   .history-header {
     display: flex;
@@ -63,10 +60,8 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     h1 {
       margin: 0;
       font-size: 1.8rem;
-      color: $primary-color;
+      color: $text-dark;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: $text-shadow;
       font-family: "Playfair Display", serif;
     }
 
@@ -74,24 +69,26 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.6rem 1.2rem;
+      padding: 0.8rem 1.4rem;
       border: none;
-      background: linear-gradient(135deg, $light-pink, rgba($secondary-color, 0.3));
-      border-radius: 50px;
+      background: $light-bg;
+      border-radius: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
-      color: $primary-color;
-      font-weight: 600;
+      color: $text-dark;
+      font-weight: 500;
       font-size: 0.95rem;
-      font-family: "Roboto", sans-serif;
+      box-shadow: 0 4px 12px $shadow-color;
 
       &:hover {
         transform: translateX(-5px);
-        background: linear-gradient(135deg, rgba($primary-color, 0.1), $light-pink);
-        box-shadow: 0 8px 20px rgba($primary-color, 0.2);
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+        box-shadow: 0 4px 15px rgba($primary-color, 0.2);
       }
 
       svg {
+        color: $primary-color;
         transition: transform 0.3s ease;
       }
 
@@ -112,28 +109,29 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       
       input {
         width: 100%;
-        padding: 0.8rem 1rem 0.8rem 2.5rem;
-        border: none;
-        border-radius: 50px;
+        padding: 1rem 1.2rem 1rem 3rem;
+        border: 1px solid $border-color;
+        border-radius: 16px;
         background-color: $white;
-        box-shadow: 0 4px 10px rgba($shadow-color, 0.5);
-        font-family: "Roboto", sans-serif;
-        color: #333;
+        box-shadow: 0 4px 12px $shadow-color;
+        color: $text-dark;
+        transition: all 0.3s;
         
         &:focus {
           outline: none;
-          box-shadow: 0 4px 15px rgba($primary-color, 0.25);
+          border-color: $primary-color;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.2);
+          transform: translateY(-2px);
         }
         
         &::placeholder {
-          color: #aaa;
-          font-family: "Roboto", sans-serif;
+          color: $text-muted;
         }
       }
       
       .search-icon {
         position: absolute;
-        left: 0.8rem;
+        left: 1rem;
         top: 50%;
         transform: translateY(-50%);
         color: $primary-color;
@@ -147,28 +145,30 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       
       select {
         width: 100%;
-        padding: 0.8rem 1rem 0.8rem 2.5rem;
+        padding: 1rem 1.2rem 1rem 3rem;
         appearance: none;
-        border: none;
-        border-radius: 50px;
+        border: 1px solid $border-color;
+        border-radius: 16px;
         background-color: $white;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff6b81' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2363b3ed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 1rem center;
-        box-shadow: 0 4px 10px rgba($shadow-color, 0.5);
-        font-family: "Roboto", sans-serif;
-        color: #333;
+        box-shadow: 0 4px 12px $shadow-color;
+        color: $text-dark;
         cursor: pointer;
+        transition: all 0.3s;
         
         &:focus {
           outline: none;
-          box-shadow: 0 4px 15px rgba($primary-color, 0.25);
+          border-color: $primary-color;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.2);
+          transform: translateY(-2px);
         }
       }
       
       .filter-icon {
         position: absolute;
-        left: 0.8rem;
+        left: 1rem;
         top: 50%;
         transform: translateY(-50%);
         color: $primary-color;
@@ -195,20 +195,18 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     }
     
     p {
-      color: $primary-color;
+      color: $text-dark;
       font-weight: 500;
       margin: 0;
-      font-family: "Amatic SC", cursive;
-      font-size: 1.5rem;
     }
   }
   
   .empty-state {
     background-color: $white;
-    border-radius: 20px;
+    border-radius: 24px;
     text-align: center;
     padding: 3rem 2rem;
-    box-shadow: 0 15px 40px $shadow-color;
+    box-shadow: 0 10px 25px $shadow-color;
     
     .empty-icon {
       color: $primary-color;
@@ -218,33 +216,31 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     
     h2 {
       margin: 0 0 1rem;
-      color: #333;
+      color: $text-dark;
       font-weight: 600;
       font-family: "Playfair Display", serif;
     }
     
     p {
-      color: #666;
+      color: $text-muted;
       margin-bottom: 2rem;
-      font-family: "Roboto", sans-serif;
     }
     
     .create-button {
-      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      background: $primary-color;
       color: $white;
       border: none;
-      border-radius: 50px;
-      padding: 0.8rem 2rem;
+      border-radius: 16px;
+      padding: 0.9rem 2rem;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.2);
       transition: all 0.3s ease;
-      font-family: "Roboto", sans-serif;
       
       &:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.3);
       }
     }
   }
@@ -263,17 +259,16 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         display: flex;
         align-items: center;
         gap: 0.8rem;
-        padding: 0.8rem 1.2rem;
-        background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($secondary-color, 0.1));
-        border-radius: 50px;
-        border-left: 4px solid $primary-color;
-        box-shadow: 0 2px 8px rgba($shadow-color, 0.3);
+        padding: 0.9rem 1.4rem;
+        background: $light-bg;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px $shadow-color;
 
         h2 {
           margin: 0;
           font-size: 1.2rem;
           font-weight: 600;
-          color: #333;
+          color: $text-dark;
           font-family: "Playfair Display", serif;
         }
 
@@ -292,37 +287,37 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
 
     .add-event-button {
       align-self: center;
-      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+      background: $primary-color;
       color: $white;
       border: none;
-      border-radius: 50px;
-      padding: 0.8rem 2rem;
+      border-radius: 16px;
+      padding: 0.9rem 2rem;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.2);
       transition: all 0.3s ease;
       margin-top: 2rem;
-      font-family: "Roboto", sans-serif;
       
       &:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba($primary-color, 0.4);
+        box-shadow: 0 8px 20px rgba($primary-color, 0.3);
       }
     }
   }
   
   .event-card {
     background-color: $white;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px $shadow-color;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px $shadow-color;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
     
     &:hover {
-      box-shadow: 0 12px 30px rgba($primary-color, 0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba($primary-color, 0.15);
     }
 
     &.upcoming {
@@ -340,7 +335,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.05) 50%, rgba(0,0,0,0.05) 75%, transparent 75%, transparent);
+        background-image: linear-gradient(45deg, rgba(0,0,0,0.03) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.03) 50%, rgba(0,0,0,0.03) 75%, transparent 75%, transparent);
         background-size: 8px 8px;
         pointer-events: none;
         z-index: 1;
@@ -348,7 +343,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     }
     
     .event-header {
-      padding: 1rem;
+      padding: 1.2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -363,12 +358,13 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
 
         .event-icon {
           background-color: rgba($white, 0.2);
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
+          width: 36px;
+          height: 36px;
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
         h3 {
@@ -384,24 +380,25 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       
       .event-actions {
         display: flex;
-        gap: 0.5rem;
+        gap: 0.6rem;
         z-index: 5;
         
         button {
-          width: 30px;
-          height: 30px;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
           border: none;
           background-color: rgba($white, 0.2);
           color: $white;
-          border-radius: 50%;
+          border-radius: 12px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
           
           &:hover {
             background-color: rgba($white, 0.3);
+            transform: translateY(-2px);
           }
           
           &.delete-button:hover {
@@ -412,7 +409,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     }
     
     .event-content {
-      padding: 1rem;
+      padding: 1.2rem;
       position: relative;
       
       .event-info {
@@ -432,8 +429,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
           
           span {
             font-size: 0.95rem;
-            color: #444;
-            font-family: "Roboto", sans-serif;
+            color: $text-dark;
           }
         }
       }
@@ -441,16 +437,16 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       .event-description {
         margin-top: 1rem;
         padding-top: 1rem;
-        border-top: 1px dashed rgba($primary-color, 0.2);
+        border-top: 1px dashed $border-color;
         
         h4 {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          font-size: 1.1rem;
-          color: $primary-color;
+          font-size: 1rem;
+          color: $text-dark;
           margin: 0 0 0.5rem;
-          font-family: "Amatic SC", cursive;
+          font-weight: 600;
           
           svg {
             color: $primary-color;
@@ -460,28 +456,26 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         p {
           margin: 0;
           font-size: 0.9rem;
-          color: #666;
+          color: $text-muted;
           line-height: 1.5;
           display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          font-family: "Roboto", sans-serif;
         }
       }
 
       .event-badge {
         position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
+        top: 0.6rem;
+        right: 0.6rem;
         display: flex;
         align-items: center;
-        gap: 0.3rem;
-        padding: 0.3rem 0.7rem;
-        border-radius: 50px;
+        gap: 0.4rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
         font-size: 0.75rem;
         font-weight: 500;
-        font-family: "Roboto", sans-serif;
 
         &.upcoming-badge {
           background-color: rgba($warning-color, 0.15);
@@ -513,17 +507,17 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     z-index: 1000;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(4px);
     
     .confirmation-modal {
       background-color: $white;
-      border-radius: 16px;
+      border-radius: 24px;
       width: 90%;
       max-width: 400px;
-      padding: 2rem;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
       
       .modal-icon {
         display: flex;
@@ -532,14 +526,14 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         
         svg {
           color: #ff4d4d;
-          filter: drop-shadow(0 2px 4px rgba(#ff4d4d, 0.3));
+          filter: drop-shadow(0 4px 8px rgba(#ff4d4d, 0.3));
         }
       }
       
       h2 {
         text-align: center;
         margin: 0 0 1rem;
-        color: #333;
+        color: $text-dark;
         font-size: 1.5rem;
         font-family: "Playfair Display", serif;
       }
@@ -547,8 +541,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
       p {
         text-align: center;
         margin: 0 0 2rem;
-        color: #666;
-        font-family: "Roboto", sans-serif;
+        color: $text-muted;
       }
       
       .modal-actions {
@@ -557,20 +550,20 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
         
         button {
           flex: 1;
-          padding: 0.8rem;
+          padding: 1rem;
           border: none;
-          border-radius: 50px;
+          border-radius: 16px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          font-family: "Roboto", sans-serif;
           
           &.cancel-button {
-            background-color: #eee;
-            color: #666;
+            background-color: $light-bg;
+            color: $text-dark;
             
             &:hover {
-              background-color: #e0e0e0;
+              background-color: rgba($primary-color, 0.1);
+              transform: translateY(-2px);
             }
           }
           
@@ -579,7 +572,8 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
             color: $white;
             
             &:hover {
-              background-color: darken(#ff4d4d, 10%);
+              background-color: darken(#ff4d4d, 5%);
+              transform: translateY(-2px);
               box-shadow: 0 4px 10px rgba(#ff4d4d, 0.3);
             }
           }
@@ -595,26 +589,26 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1100;
-    backdrop-filter: blur(5px);
   }
   
   .modal-content {
     background-color: $white;
-    border-radius: 16px;
+    border-radius: 24px;
     width: 90%;
     max-width: 500px;
-    padding: 2rem;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    padding: 2.5rem;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
     
     h2 {
       margin: 0 0 1.5rem;
       text-align: center;
-      color: $primary-color;
+      color: $text-dark;
       font-weight: 700;
       font-family: "Playfair Display", serif;
     }
@@ -622,56 +616,62 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
     form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.2rem;
       
       input, select, textarea {
-        padding: 0.8rem 1rem;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        font-family: "Roboto", sans-serif;
+        padding: 1rem 1.2rem;
+        border-radius: 16px;
+        border: 1px solid $border-color;
+        color: $text-dark;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         
         &:focus {
           outline: none;
           border-color: $primary-color;
-          box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+          box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+          transform: translateY(-2px);
         }
       }
       
       textarea {
-        min-height: 80px;
+        min-height: 100px;
         resize: vertical;
       }
       
       .modal-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
         gap: 1rem;
-        margin-top: 1rem;
+        margin-top: 1.5rem;
         
         button {
-          padding: 0.8rem 1.5rem;
-          border-radius: 50px;
+          flex: 1;
+          padding: 1rem 1.5rem;
+          border-radius: 16px;
           font-weight: 600;
           cursor: pointer;
           border: none;
           transition: all 0.3s ease;
-          font-family: "Roboto", sans-serif;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
           
           &.cancel-button {
-            background-color: #eee;
-            color: #666;
+            background-color: $light-bg;
+            color: $text-dark;
             
             &:hover {
-              background-color: #e0e0e0;
+              background-color: rgba($primary-color, 0.1);
+              transform: translateY(-2px);
             }
           }
           
           &.confirm-button {
-            background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+            background: $primary-color;
             color: $white;
             
             &:hover {
-              box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+              box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+              transform: translateY(-2px);
             }
           }
         }
@@ -681,7 +681,7 @@ $text-shadow: 0 1px 2px rgba($primary-color, 0.2) !default;
   
   // Responsive styles
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 1.5rem;
     
     .history-header {
       flex-direction: column;
