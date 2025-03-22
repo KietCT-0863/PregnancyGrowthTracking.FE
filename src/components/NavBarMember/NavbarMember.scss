@@ -938,878 +938,466 @@ $font-accent: "Amatic SC", cursive;
   }
 }
 
-// Điều chỉnh sidebar cho mobile
+/* ===== MOBILE SIDEBAR MENU ===== */
 .sidebar-menu {
   position: fixed;
   top: 0;
-  left: -100%; // Bắt đầu ẩn bên trái
+  left: -100%; /* Start completely offscreen */
   width: 280px;
   height: 100vh;
-  background: linear-gradient(to bottom, #ffe6e6, #ffb3b3);
-  z-index: 1001; // Tăng z-index để đảm bảo hiển thị trên cùng
-  transition: left 0.3s ease;
+  background-color: #fff;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
   overflow-y: auto;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  display: block !important; // Đảm bảo luôn hiển thị
-
+  transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  
   &.open {
-    left: 0; // Hiện ra khi có class open
+    left: 0; /* Slide in when open */
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+    
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .sidebar-logo-image {
+        height: 36px;
+      }
+      
+      .sidebar-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+      }
+    }
+    
+    .close-sidebar {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #555;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
+  
+  .sidebar-user-profile {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    
+    .sidebar-user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sidebar-user-icon {
+      font-size: 48px;
+      color: #ccc;
+    }
+    
+    .sidebar-user-info {
+      margin-left: 12px;
+      
+      .sidebar-user-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0 0 4px;
+      }
+      
+      .sidebar-user-email {
+        font-size: 13px;
+        color: #888;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+      }
+    }
+  }
+  
+  .sidebar-items {
+    flex: 1;
+    padding: 8px;
+    
+    .sidebar-menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      color: #555;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      
+      &:hover, &:focus {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+      
+      &.active {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--primary-color);
+      }
+      
+      .sidebar-icon {
+        font-size: 20px;
+        min-width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        
+        .sidebar-notification-badge {
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          font-size: 10px;
+          background-color: var(--accent-color);
+          color: white;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+      
+      .sidebar-text {
+        font-size: 15px;
+        font-weight: 500;
+        margin-left: 12px;
+      }
+      
+      .notification-count {
+        margin-left: auto;
+        background-color: #f0f0f0;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        color: #666;
+      }
+    }
+  }
+  
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid #eee;
+    
+    .sidebar-logout-button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background-color: #f8f8f8;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: #e74c3c;
+      transition: background-color 0.2s;
+      
+      &:hover {
+        background-color: #ffeaea;
+      }
+      
+      .sidebar-icon {
+        font-size: 18px;
+        margin-right: 12px;
+      }
+    }
   }
 }
 
-// Overlay khi sidebar mở
 .sidebar-overlay {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.3s, opacity 0.3s;
+  
   &.open {
-    display: block !important; // Đảm bảo hiển thị khi có class open
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
   }
 }
 
-// Điều chỉnh nút toggle sidebar
+/* Only show the sidebar toggle on mobile */
 .sidebar-toggle {
   display: none;
-
-  @media (max-width: 768px) {
-    display: flex !important; // Đảm bảo hiển thị trên mobile
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: #333;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 5px;
-    margin-left: 10px;
-  }
-}
-
-// Thêm style cho sidebar user profile
-.sidebar-user-profile {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  
-  .sidebar-user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 15px;
-    border: 2px solid white;
-  }
-  
-  .sidebar-user-icon {
-    font-size: 50px;
-    color: #70a1ff;
-    margin-right: 15px;
-  }
-  
-  .sidebar-user-info {
-    .sidebar-user-name {
-      margin: 0 0 5px 0;
-      font-size: 1.1rem;
-      font-weight: 500;
-    }
-    
-    .sidebar-user-email {
-      margin: 0;
-      font-size: 0.8rem;
-      color: #666;
-    }
-  }
-}
-
-// Style cho nút đóng sidebar
-.close-sidebar {
-  background: none;
+  background: transparent;
   border: none;
-  color: #333;
-  font-size: 20px;
+  font-size: 24px;
+  color: var(--primary-color, $primary);
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
   
-  &:hover {
-    color: $primary;
-  }
-}
-
-// Style cho footer sidebar
-.sidebar-footer {
-  margin-top: 30px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  
-  .sidebar-logout-button {
+  @media (max-width: 768px) {
     display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 12px 15px;
-    background-color: rgba(255, 107, 129, 0.1);
-    border: none;
-    border-radius: 8px;
-    color: #ff6b81;
-    font-weight: 500;
-    cursor: pointer;
-    
-    &:hover {
-      background-color: rgba(255, 107, 129, 0.2);
-    }
-    
-    .sidebar-icon {
-      margin-right: 10px;
-    }
+  }
+  
+  .toggle-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover .toggle-icon {
+    transform: rotate(90deg);
   }
 }
 
-// Style cho dropdown thông báo trong sidebar
+/* Hide desktop menu on mobile */
+@media (max-width: 768px) {
+  .menu-section {
+    display: none !important;
+  }
+  
+  .navbar-content {
+    display: none !important;
+  }
+  
+  .logo-section {
+    width: 100%;
+    justify-content: space-between !important;
+  }
+}
+
+/* Hide mobile menu on desktop */
+@media (min-width: 769px) {
+  .sidebar-menu,
+  .sidebar-overlay {
+    display: none;
+  }
+}
+
+/* Add body class when sidebar is open to prevent scrolling */
+body.sidebar-open {
+  overflow: hidden;
+}
+
+/* Sidebar Notification Dropdown */
 .sidebar-notification-dropdown {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  max-width: 320px;
+  max-width: 350px;
+  max-height: 80vh;
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  z-index: 1002; // Cao hơn sidebar
-  display: block !important; // Đảm bảo hiển thị
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1200;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInScale 0.3s ease-out forwards;
+  
+  @keyframes fadeInScale {
+    from {
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
   
   .sidebar-notification-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    border-bottom: 1px solid #eee;
     
     h3 {
       margin: 0;
-      color: #ff6b81;
+      font-size: 18px;
+      font-weight: 600;
     }
     
     .close-button {
-      @include close-button;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      line-height: 1;
+      color: #aaa;
+      cursor: pointer;
+      transition: transform 0.2s, color 0.2s;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      
+      &:hover {
+        color: #555;
+        transform: rotate(90deg);
+      }
     }
   }
   
   .sidebar-notification-list {
-    max-height: 300px;
+    padding: 8px;
     overflow-y: auto;
-    padding: 15px;
-  }
-  
-  .sidebar-notification-item {
-    padding: 10px;
-    border-radius: 8px;
-    background-color: rgba(255, 221, 225, 0.3);
-    margin-bottom: 10px;
-    border-left: 3px solid #ff6b81;
+    max-height: calc(80vh - 130px); // Account for header and footer
     
-    .notification-type {
-      font-size: 0.8rem;
-      color: #ff6b81;
-      margin-bottom: 5px;
-    }
-    
-    .notification-content {
-      h4 {
-        margin: 0 0 5px 0;
-        font-size: 1rem;
+    .no-notifications {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      color: #aaa;
+      
+      i {
+        font-size: 36px;
+        margin-bottom: 12px;
       }
       
-      .notification-time {
+      p {
+        font-size: 16px;
+        text-align: center;
         margin: 0;
-        font-size: 0.8rem;
-        color: #666;
       }
     }
-  }
-  
-  .view-all-link {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    color: #ff6b81;
-    text-decoration: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
     
-    &:hover {
-      background-color: rgba(255, 107, 129, 0.05);
-    }
-  }
-}
-
-// Thêm style cho badge thông báo trong sidebar
-.sidebar-notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: #ff6b81;
-  color: white;
-  border-radius: 50%;
-  min-width: 18px;
-  height: 18px;
-  font-size: 0.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
-
-// Đảm bảo sidebar hiển thị đúng trên mobile
-@media (max-width: 768px) {
-  .sidebar-menu, .sidebar-overlay {
-    display: block !important; // Đảm bảo luôn hiển thị
-  }
-  
-  .sidebar-menu.open {
-    left: 0 !important; // Đảm bảo hiển thị khi có class open
-  }
-  
-  .sidebar-overlay.open {
-    display: block !important; // Đảm bảo hiển thị khi có class open
-  }
-}
-
-// Cập nhật badge để hiển thị tổng số thông báo
-.notification-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
-  min-width: 18px;
-  text-align: center;
-}
-
-// Thêm style cho nút xem biểu đồ
-.view-chart-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: #2980b9;
-  }
-}
-
-// Cải thiện hiển thị cảnh báo
-.notification-item.alert {
-  background-color: #fff8f8;
-  border-left: 3px solid #ff6b6b;
-  
-  .notification-type.warning {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  
-  .notification-message {
-    font-weight: 500;
-    color: #444;
-    margin: 4px 0;
-  }
-  
-  .notification-details {
-    font-size: 0.85rem;
-    color: #666;
-    margin: 4px 0;
-  }
-  
-  .notification-time {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 4px;
-  }
-}
-
-// Thêm style cho container badge
-.notification-badge-container {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-// Điều chỉnh badge thông báo chính
-.notification-badge {
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  min-width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// Thêm badge cho cảnh báo
-.alert-badge {
-  background-color: #ffd32a;
-  color: #333;
-  border-radius: 8px;
-  font-size: 0.6rem;
-  padding: 1px 4px;
-  position: absolute;
-  bottom: -8px;
-  right: -5px;
-  border: 1px solid white;
-}
-
-// Style cho thông báo đã đọc/chưa đọc
-.notification-item {
-  &.unread {
-    position: relative;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 8px;
-      height: 8px;
-      background-color: #3498db;
-      border-radius: 50%;
-    }
-    
-    &.alert::before {
-      background-color: #ff6b6b;
-    }
-  }
-  
-  &.read {
-    opacity: 0.8;
-  }
-}
-
-// Thêm style cho phần mô tả thông báo
-.notification-description {
-  font-size: 0.9rem;
-  color: #555;
-  margin: 4px 0;
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-// Thêm style cho thông tin thuốc
-.notification-medicine {
-  background-color: #f8f9fa;
-  border-left: 3px solid #17a2b8;
-  padding: 6px 10px;
-  margin: 8px 0;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-// Style cho notification-badge-container
-.notification-badge-container {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-// Điều chỉnh badge thông báo chính
-.notification-badge {
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  min-width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-// Thêm badge cho cảnh báo
-.alert-badge {
-  background-color: #ffd32a;
-  color: #333;
-  border-radius: 8px;
-  font-size: 0.6rem;
-  padding: 1px 4px;
-  position: absolute;
-  bottom: -8px;
-  right: -5px;
-  border: 1px solid white;
-}
-
-// Cập nhật style cho notification-content
-.notification-content {
-  padding: 8px 0;
-  
-  h4 {
-    font-size: 1rem;
-    margin: 5px 0;
-    color: #444;
-  }
-  
-  .notification-time {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: 5px;
-  }
-}
-
-// Style cho nút xem biểu đồ
-.view-chart-btn {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: #2980b9;
-  }
-}
-
-// Style cho thông báo đã đọc/chưa đọc
-.notification-item {
-  &.unread {
-    position: relative;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 8px;
-      height: 8px;
-      background-color: #3498db;
-      border-radius: 50%;
-    }
-    
-    &.alert::before {
-      background-color: #ff6b6b;
-    }
-  }
-  
-  &.read {
-    opacity: 0.8;
-  }
-}
-
-// Cải thiện hiển thị cảnh báo
-.notification-item.alert {
-  background-color: #fff8f8;
-  border-left: 3px solid #ff6b6b;
-  
-  .notification-type.warning {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  
-  .notification-message {
-    font-weight: 500;
-    color: #444;
-    margin: 4px 0;
-  }
-  
-  .notification-details {
-    font-size: 0.85rem;
-    color: #666;
-    margin: 4px 0;
-  }
-  
-  .notification-time {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 4px;
-  }
-}
-
-// Style cho sidebar notification footer
-.sidebar-notification-footer {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 15px;
-  border-top: 1px solid #eee;
-  
-  button {
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .view-all-button {
-    background-color: #f1f1f1;
-    color: #333;
-    
-    &:hover {
-      background-color: #e0e0e0;
-    }
-  }
-  
-  .view-alerts-button {
-    background-color: #ff6b6b;
-    color: white;
-    
-    &:hover {
-      background-color: #ff5252;
-    }
-  }
-}
-
-// Cập nhật hiển thị notification trong sidebar
-.sidebar-notification-item {
-  padding: 10px 15px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: #f9f9f9;
-  }
-  
-  &.alert {
-    background-color: #fff8f8;
-    
-    &:hover {
-      background-color: #ffefef;
-    }
-    
-    .notification-type.warning {
-      background-color: #ff6b6b;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      display: inline-block;
-      margin-bottom: 4px;
-    }
-  }
-  
-  .notification-type {
-    font-weight: 500;
-    font-size: 0.8rem;
-    color: #555;
-    margin-bottom: 5px;
-  }
-  
-  .notification-content {
-    h4 {
-      font-size: 0.95rem;
-      margin: 5px 0;
-      color: #333;
-    }
-    
-    .notification-medicine {
-      font-size: 0.85rem;
-      background-color: #f8f9fa;
-      padding: 4px 8px;
-      border-radius: 4px;
-      margin: 5px 0;
-    }
-    
-    .notification-time {
-      font-size: 0.8rem;
-      color: #777;
-    }
-  }
-}
-
-// Áp dụng mixin cho các nút đóng
-.notification-dropdown .notification-header .close-button,
-.sidebar-notification-dropdown .sidebar-notification-header .close-button {
-  @include close-button;
-}
-
-// Cải thiện hiển thị thông báo lịch hẹn
-.notification-item.reminder {
-  background-color: rgba(46, 213, 115, 0.1);
-  border-left: 3px solid #2ed573;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
-    background-color: rgba(46, 213, 115, 0.15);
-  }
-  
-  // Badge cho lịch hẹn thuốc
-  &.medication::after {
-    content: '💊';
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 14px;
-  }
-  
-  .notification-type {
-    display: inline-block;
-    background-color: rgba(46, 213, 115, 0.2);
-    color: #2ed573;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  
-  .notification-content {
-    h4 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #333;
-      margin: 5px 0;
-    }
-    
-    .notification-medicine {
-      background-color: #f1f9ff;
-      border-left: 3px solid #70a1ff;
-      padding: 8px 10px;
-      border-radius: 4px;
-      margin: 8px 0;
-      font-size: 0.9rem;
+    .sidebar-notification-item {
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      position: relative;
+      border-left: 4px solid #ddd;
       
-      strong {
-        color: #3d5af1;
+      &:hover {
+        background-color: #f0f0f0;
+      }
+      
+      &.unread {
+        border-left-color: var(--primary-color);
+        background-color: rgba(var(--primary-color-rgb), 0.05);
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background-color: var(--primary-color);
+        }
+      }
+      
+      .notification-type {
+        font-size: 11px;
         font-weight: 600;
-      }
-    }
-    
-    .notification-time {
-      display: flex;
-      align-items: center;
-      font-size: 0.85rem;
-      color: #777;
-      margin-top: 8px;
-      
-      &:before {
-        content: '🕒';
-        margin-right: 5px;
-        font-size: 14px;
+        color: var(--primary-color);
+        margin-bottom: 4px;
+        text-transform: uppercase;
       }
       
-      strong {
-        margin-right: 5px;
-        font-weight: 500;
-        color: #555;
+      .notification-content {
+        h4 {
+          font-size: 14px;
+          margin: 0 0 4px;
+          line-height: 1.3;
+        }
+        
+        .notification-medicine {
+          font-size: 12px;
+          color: #666;
+          margin: 0 0 4px;
+        }
+        
+        .notification-time {
+          font-size: 12px;
+          color: #888;
+          margin: 0;
+        }
+        
+        .notification-id {
+          margin: 4px 0 0;
+          font-size: 10px;
+          color: #aaa;
+        }
       }
-    }
-    
-    .notification-email-status {
-      display: inline-block;
-      background-color: #dff9fb;
-      color: #22a6b3;
-      border-radius: 4px;
-      padding: 2px 6px;
-      margin-top: 5px;
-      font-size: 0.75rem;
-      
-      &:before {
-        content: '✉️';
-        margin-right: 3px;
-        font-size: 12px;
-      }
-    }
-    
-    .notification-id {
-      font-size: 0.7rem;
-      color: #aaa;
-      margin-top: 5px;
-      text-align: right;
     }
   }
   
-  // Style cho thông báo đã đọc
-  &.read {
-    opacity: 0.7;
+  .sidebar-notification-footer {
+    padding: 12px 16px;
+    border-top: 1px solid #eee;
     
-    .notification-type {
-      background-color: rgba(46, 213, 115, 0.1);
-    }
-  }
-  
-  // Style cho thông báo chưa đọc
-  &.unread {
-    &::before {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: -6px;
-      width: 8px;
-      height: 8px;
-      background-color: #2ed573;
-      border-radius: 50%;
-      border: 1px solid #fff;
-    }
-  }
-}
-
-// Cập nhật style cho sidebar notifications
-.sidebar-notification-item {
-  &.reminder {
-    position: relative;
-    border-left: 3px solid #2ed573;
-    background-color: rgba(46, 213, 115, 0.05);
-    
-    .notification-type {
-      display: inline-block;
-      background-color: rgba(46, 213, 115, 0.15);
-      color: #2ed573;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.75rem;
+    .view-all-button {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 500;
-    }
-    
-    .notification-medicine {
-      color: #636e72;
-      background-color: #f8f9fa;
-      padding: 5px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      border-left: 2px solid #70a1ff;
-      margin: 5px 0;
-    }
-    
-    .notification-time {
-      display: flex;
-      align-items: center;
-      font-size: 0.8rem;
-      color: #777;
-      margin-top: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
       
-      &:before {
-        content: '🕒';
-        margin-right: 4px;
-        font-size: 12px;
+      &:hover {
+        background-color: var(--primary-dark-color);
       }
     }
+  }
+}
+
+// Mobile responsive adjustments for notification dropdown
+@media (max-width: 480px) {
+  .sidebar-notification-dropdown {
+    width: 95%;
+    max-width: 320px;
     
-    .notification-id {
-      font-size: 0.7rem;
-      color: #aaa;
-      margin-top: 3px;
+    .sidebar-notification-list {
+      max-height: 50vh;
     }
   }
 }
 
-// Cập nhật nút tải lại
-.notification-header, .sidebar-notification-header {
-  position: relative;
-  
-  .refresh-button {
-    position: absolute;
-    right: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #70a1ff;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background-color: rgba(112, 161, 255, 0.1);
-      transform: translateY(-50%) rotate(30deg);
-    }
-    
-    &.loading {
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: translateY(-50%) rotate(0deg); }
-      100% { transform: translateY(-50%) rotate(360deg); }
-    }
-  }
-}
-
-// Thêm header rõ ràng hơn cho dropdown notifications
-.notification-dropdown .notification-header,
-.sidebar-notification-dropdown .sidebar-notification-header {
-  background: linear-gradient(135deg, #70a1ff 0%, #ff6b81 100%);
-  color: white;
-  
-  h3 {
-    color: white;
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-  
-  .close-button {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
-    
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
-  }
-}
-
-// Cập nhật nút xem tất cả
-.notification-footer .view-all-button,
-.sidebar-notification-footer .view-all-button {
-  background-color: #70a1ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: #5352ed;
-    transform: translateY(-2px);
-  }
-}
