@@ -1,0 +1,72 @@
+@import "../../styles/variables.scss";
+
+.validation-errors {
+  background-color: #fff8f8;
+  border: 1px solid #ffdbdb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(255, 0, 0, 0.05);
+
+  .error-field {
+    padding: 8px 0;
+    border-bottom: 1px dashed #ffdbdb;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .field-name {
+      font-weight: 700;
+      color: #e57282;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    
+    .error-messages {
+      padding-left: 16px;
+      
+      .error-message {
+        position: relative;
+        color: #cc5050;
+        font-size: 13px;
+        line-height: 1.4;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: flex-start;
+        
+        &:before {
+          content: "•";
+          display: inline-block;
+          margin-right: 6px;
+          color: #e57282;
+        }
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .validation-errors {
+    padding: 12px;
+    
+    .error-field {
+      .field-name {
+        font-size: 13px;
+      }
+      
+      .error-messages {
+        padding-left: 12px;
+        
+        .error-message {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+} 

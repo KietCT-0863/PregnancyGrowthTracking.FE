@@ -469,6 +469,21 @@ $box-shadow: 0 20px 60px rgba($primary-color, 0.15);
       transform: translateY(-1px);
     }
   }
+  
+  .validation-test-link {
+    margin-top: 15px;
+    text-align: center;
+    
+    a {
+      color: #ff92a5;
+      font-size: 14px;
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
 .register-right {

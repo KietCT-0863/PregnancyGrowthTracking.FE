@@ -1,10 +1,11 @@
 "use client"
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Mail, Lock, User, Calendar, Phone, Eye, EyeOff, Apple, Twitter } from "lucide-react"
+import { Mail, Lock, User, Calendar, Phone, Eye, EyeOff, Twitter } from "lucide-react"
 import { register } from "../../services/authService"
 import { validateEmail, validatePassword } from "../../utils/validation"
 import "./Register.scss"
+import ValidationErrors from "./ValidationErrors"
 
 const formFields = [
   {
@@ -68,41 +69,140 @@ const formFields = [
 const Register = () => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({})
-  const [error, setError] = useState("")
+  const [structuredErrors, setStructuredErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [error, setError] = useState("")
+
+  const validateField = (name, value) => {
+    let fieldErrors = {};
+
+    switch (name) {
+      case 'email':
+        if (!validateEmail(value)) {
+          fieldErrors.Email = "Email không hợp lệ.";
+        } else if (!value.toLowerCase().endsWith('@gmail.com')) {
+          fieldErrors.Email = "Email phải có định dạng @gmail.com.";
+        }
+        break;
+      case 'phone':
+        if (value && !value.match(/^\d{10}$/)) {
+          fieldErrors.Phone = "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0.";
+        }
+        break;
+      case 'fullName':
+        if (value.trim().length < 4) {
+          fieldErrors.FullName = "Họ và tên phải có ít nhất 4 ký tự.";
+        } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(value)) {
+          fieldErrors.FullName = "Họ và tên chỉ được chứa chữ cái và khoảng trắng.";
+        }
+        break;
+      case 'username':
+        if (value.trim().length < 4) {
+          fieldErrors.Username = "Tên đăng nhập phải có ít nhất 4 ký tự.";
+        }
+        break;
+      case 'password':
+        if (value.length < 6) {
+          fieldErrors.Password = "Mật khẩu phải có ít nhất 6 ký tự.";
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+          fieldErrors.Password = "Mật khẩu phải chứa ít nhất một chữ cái thường, một chữ cái viết hoa và một chữ số.";
+        }
+        break;
+      case 'confirmPassword':
+        if (value !== formData.password) {
+          fieldErrors.ConfirmPassword = "Mật khẩu xác nhận không khớp.";
+        }
+        break;
+      default:
+        break;
+    }
+
+    return fieldErrors;
+  };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
+    
+    // Update form data
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
-    }))
+    }));
+    
+    // Validate field on change
+    const fieldErrors = validateField(name, value);
+    
+    // Update errors state
+    setStructuredErrors(prevErrors => {
+      // If there are errors for this field, add them
+      if (Object.keys(fieldErrors).length > 0) {
+        return { ...prevErrors, ...fieldErrors };
+      }
+      
+      // If there are no errors for this field but there were before, remove them
+      const newErrors = { ...prevErrors };
+      const fieldErrorKey = Object.keys(fieldErrors).length === 0 
+        ? Object.keys(prevErrors).find(key => key.toLowerCase() === name.toLowerCase())
+        : null;
+        
+      if (fieldErrorKey) {
+        delete newErrors[fieldErrorKey];
+      }
+      
+      return newErrors;
+    });
   }
 
   const validateForm = () => {
-    const emailError = validateEmail(formData.email)
-    if (emailError) return emailError
+    const validationErrors = {}
 
-    const passwordError = validatePassword(formData.password, formData.confirmPassword)
-    if (passwordError) return passwordError
-
-    if (!formData.phone?.match(/^\d{10}$/)) {
-      return "Số điện thoại không hợp lệ"
+    if (!formData.email || !validateEmail(formData.email)) {
+      validationErrors.Email = ["Email không hợp lệ."]
+    } else if (!formData.email.toLowerCase().endsWith('@gmail.com')) {
+      validationErrors.Email = ["Email phải có định dạng @gmail.com."]
     }
 
-    return null
+    if (!formData.phone?.match(/^\d{10}$/)) {
+      validationErrors.Phone = ["Số điện thoại phải có 10 chữ số và bắt đầu bằng 0."]
+    }
+
+    if (!formData.fullName || formData.fullName.trim().length < 4) {
+      validationErrors.FullName = [
+        "Họ và tên phải có ít nhất 4 ký tự.",
+        "Họ và tên chỉ được chứa chữ cái và khoảng trắng, không chứa số hoặc ký tự đặc biệt."
+      ]
+    }
+
+    if (!formData.password || formData.confirmPassword) {
+      const passwordError = validatePassword(formData.password, formData.confirmPassword)
+      if (passwordError) {
+        validationErrors.Password = [passwordError]
+      }
+    } else if (!formData.password || formData.password.length < 6) {
+      validationErrors.Password = [
+        "Mật khẩu phải có ít nhất 6 ký tự.",
+        "Mật khẩu phải chứa ít nhất một chữ cái thường, một chữ cái viết hoa và một chữ số."
+      ]
+    }
+
+    if (!formData.username || formData.username.length < 4) {
+      validationErrors.Username = ["Username phải có ít nhất 4 ký tự."]
+    }
+
+    return Object.keys(validationErrors).length > 0 ? validationErrors : null
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
+    setStructuredErrors({})
     setLoading(true)
 
-    const validationError = validateForm()
-    if (validationError) {
-      setError(validationError)
+    const validationErrors = validateForm()
+    if (validationErrors) {
+      setStructuredErrors(validationErrors)
       setLoading(false)
       return
     }
@@ -120,7 +220,11 @@ const Register = () => {
       await register(userData)
       navigate("/login")
     } catch (err) {
-      setError(err.response?.data?.message || "Có lỗi xảy ra khi đăng ký")
+      if (err.response?.data?.errors) {
+        setStructuredErrors(err.response.data.errors)
+      } else {
+        setError(err.response?.data?.message || "Có lỗi xảy ra khi đăng ký")
+      }
     } finally {
       setLoading(false)
     }
@@ -208,6 +312,7 @@ const Register = () => {
             </div>
 
             {error && <div className="error-message">{error}</div>}
+            {Object.keys(structuredErrors).length > 0 && <ValidationErrors errors={structuredErrors} />}
 
             <form onSubmit={handleSubmit} className="register-form">
               <div className="form-grid">

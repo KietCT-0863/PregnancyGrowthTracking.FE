@@ -2,6 +2,7 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import HomePublic from "./pages/HomePublic/HomePublic";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
+import ValidationErrorsTest from "./pages/Register/ValidationErrorsTest";
 // import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 // import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
 import BasicTracking from "./pages/BasicTracking/BasicTracking";
@@ -52,6 +53,7 @@ const AppRoutes = () => {
       {/* Các trang đăng nhập và đăng ký - không có NavBar và Footer */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/register/test-validation" element={<ValidationErrorsTest />} />
       {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
       {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
 
