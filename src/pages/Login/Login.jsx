@@ -280,7 +280,7 @@ const Login = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.5 }}
           >
-            hoặc
+            <span>hoặc</span>
           </motion.div>
 
           {error && (
@@ -361,7 +361,7 @@ const Login = () => {
               type="submit" 
               className="login-button" 
               disabled={isLoading}
-              whileHover={!isLoading ? { scale: 1.03, y: -3 } : {}}
+              whileHover={!isLoading ? { scale: 1.03, y: -3, boxShadow: "0 8px 20px rgba(255, 143, 171, 0.4)" } : {}}
               whileTap={!isLoading ? { scale: 0.98 } : {}}
             >
             {isLoading ? (
@@ -448,7 +448,7 @@ const Login = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2, duration: 0.8 }}
-              whileHover={{ scale: 1.05, y: -5 }}
+              whileHover={{ scale: 1.05, y: -5, boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)" }}
               whileTap={{ scale: 0.98 }}
             >
               Trải nghiệm ngay hôm nay!

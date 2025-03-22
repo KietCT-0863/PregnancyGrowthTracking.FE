@@ -125,6 +125,13 @@ $duration: 0.3s;
       align-items: center;
       gap: 8px;
 
+      button {
+        @include button-base;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .today-btn {
         @include primary-button;
         padding: 8px 16px;

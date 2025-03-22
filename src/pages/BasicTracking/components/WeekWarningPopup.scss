@@ -1,0 +1,56 @@
+.week-warning-modal {
+  .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .week-warning-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    .warning-icon {
+      color: #f5a623;
+    }
+    
+    .success-icon {
+      color: #52c41a;
+    }
+  }
+
+  .week-warning-content {
+    padding: 16px 0;
+    
+    p {
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    
+    .issues-warning {
+      margin-top: 12px;
+      padding: 12px;
+      background-color: #fff3e0;
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      
+      svg {
+        color: #f5a623;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      
+      span {
+        font-size: 14px;
+        color: #d46b08;
+      }
+    }
+  }
+
+  .ant-modal-footer {
+    border-top: 1px solid #f0f0f0;
+    padding: 12px 24px;
+  }
+} 

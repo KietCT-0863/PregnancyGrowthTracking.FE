@@ -8,6 +8,7 @@ import { Modal, Table } from 'antd';
 import "./ChildInfoCard.scss";
 import { fetchStandardRanges, getAuthToken } from '../../utils/apiHandler'
 import { format } from 'date-fns'
+import WeekWarningPopup from '../WeekWarningPopup';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -24,6 +25,13 @@ const ChildInfoCard = ({
   const [loadingRange, setLoadingRange] = useState(false)
   const [error, setError] = useState(null)
   const [chartError, setChartError] = useState(null)
+  const [isWeekWarningVisible, setIsWeekWarningVisible] = useState(false);
+  const [weekWarningDetails, setWeekWarningDetails] = useState({
+    weekNumber: '',
+    weekExists: false,
+    hasIssues: false,
+    isValidWeek: true
+  });
 
   // Lấy dữ liệu tuần thai hiện tại
   const currentAge = useMemo(() => {
@@ -295,6 +303,63 @@ const ChildInfoCard = ({
     );
   };
 
+  // Add this function to check if the week exists
+  const checkWeekExists = (foetusId, weekNumber) => {
+    if (!growthData[foetusId]) return false;
+    
+    return growthData[foetusId].some(record => {
+      return parseInt(record.age) === parseInt(weekNumber);
+    });
+  };
+  
+  // Add this function to check if there are issues with the data
+  const checkForIssues = (foetusId, weekNumber) => {
+    if (!growthData[foetusId]) return false;
+    
+    const weekData = growthData[foetusId].find(record => 
+      parseInt(record.age) === parseInt(weekNumber)
+    );
+    
+    if (!weekData) return false;
+    
+    // Check if any metric has an alert flag
+    return ['hc', 'ac', 'fl', 'efw'].some(metric => 
+      weekData[metric]?.isAlert === true
+    );
+  };
+  
+  // Add this handler for week change
+  const handleWeekChange = (foetusId, weekNumber) => {
+    // First update the state as usual
+    handleInputChange(foetusId, "age", weekNumber);
+    
+    // Check if week is in valid range (12-40)
+    const isValidWeek = weekNumber >= 12 && weekNumber <= 40;
+    
+    // Check if this week exists in data
+    const weekExists = isValidWeek ? checkWeekExists(foetusId, weekNumber) : false;
+    const hasIssues = weekExists ? checkForIssues(foetusId, weekNumber) : false;
+    
+    // Show warning popup
+    setWeekWarningDetails({
+      weekNumber,
+      weekExists,
+      hasIssues,
+      isValidWeek
+    });
+    setIsWeekWarningVisible(true);
+  };
+  
+  // Add these handlers for the popup
+  const handleWeekWarningClose = () => {
+    setIsWeekWarningVisible(false);
+  };
+  
+  const handleWeekWarningConfirm = () => {
+    setIsWeekWarningVisible(false);
+    // You can add additional logic here if needed when the user confirms
+  };
+
   return (
     <div className="child-info-card">
       <div className="card-header" style={{ background: 'linear-gradient(135deg, #FF85A2, #FF9A8B)' }}>
@@ -328,15 +393,12 @@ const ChildInfoCard = ({
                     name="age"
                     value={currentAge === null || currentAge === undefined || currentAge === '' ? '' : currentAge}
                     onChange={(e) => {
-                      // Ngăn chặn hành vi mặc định có thể gây ra việc mất focus
+                      // Prevent default behavior
                       e.preventDefault();
                       
-                      // Thêm console.log để debug
                       const newValue = e.target.value;
-                      console.log(`Changing age from ${currentAge} to:`, newValue);
-                      
-                      // Gọi hàm xử lý sự kiện với tham số phù hợp
-                      handleInputChange(selectedChild.foetusId, "age", newValue);
+                      // Use the new handler instead
+                      handleWeekChange(selectedChild.foetusId, newValue);
                     }}
                     min="1"
                     max="42"
@@ -436,6 +498,17 @@ const ChildInfoCard = ({
           />
         </motion.div>
       </Modal>
+
+      {/* Add this new popup component */}
+      <WeekWarningPopup 
+        visible={isWeekWarningVisible}
+        onClose={handleWeekWarningClose}
+        onConfirm={handleWeekWarningConfirm}
+        weekExists={weekWarningDetails.weekExists}
+        weekNumber={weekWarningDetails.weekNumber}
+        hasIssues={weekWarningDetails.hasIssues}
+        isValidWeek={weekWarningDetails.isValidWeek}
+      />
     </div>
   );
 };

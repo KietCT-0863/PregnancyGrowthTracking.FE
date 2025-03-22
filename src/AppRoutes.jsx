@@ -22,7 +22,6 @@ import NavBarGuest from "./components/NavBarGuest/NavBarGuest";
 import FooterGuest from "./components/FooterGuest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
 import NavBarMember from "./components/NavBarMember/NavBarMember";
-import FooterMember from "./components/FooterMember/FooterMember";
 import NavBar from "./components/NavBar/NavBar";
 import Footer from "./components/Footer/Footer";
 import GrowthStandardList from "./pages/GrowthStandard/GrowthStandardList";
@@ -45,6 +44,7 @@ import BlogDetail from "./pages/blog/BlogDetail";
 import EditProfile from "./pages/Profile/EditProfile";
 import CalendarChange from "./pages/Calender/CalendarChange";
 import CalendarDetail from "./pages/Calender/CalendarDetail";
+import NoteChange from "./pages/DoctorNotes/NoteChange";
 
 const AppRoutes = () => {
   return (
@@ -121,7 +121,7 @@ const AppRoutes = () => {
               <Outlet />
               <div style={{ margin: "300px 0" }} />
               <ChatAI />
-              <FooterMember />
+              
             </>
           </ProtectedMemberRoute>
         }
@@ -133,6 +133,7 @@ const AppRoutes = () => {
         <Route path="calendar/change/:remindId" element={<CalendarChange />} />
         <Route path="calendar/detail/:remindId" element={<CalendarDetail />} />
         <Route path="doctor-notes" element={<DoctorNotes />} />
+        <Route path="doctor-notes/edit/:noteId" element={<NoteChange />} />
         <Route path="community" element={<Community />} />
         <Route path="blog" element={<Blog />}>
           <Route index element={<BlogAll />} />

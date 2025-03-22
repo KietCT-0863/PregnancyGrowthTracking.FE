@@ -11,6 +11,14 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
   console.log('CalendarWeekFilter - currentTimePosition:', currentTimePosition);
   
   useEffect(() => {
+    // Log để kiểm tra CSS đã được áp dụng chưa
+    console.log("CSS classes kiểm tra:", {
+      calendarFilter: document.querySelector('.calendar-filter') !== null,
+      filterHeader: document.querySelector('.filter-header') !== null,
+      todayBtn: document.querySelector('.today-btn') !== null,
+      navBtn: document.querySelector('.nav-btn') !== null,
+    });
+    
     if (currentWeekStart && onWeekChange) {
       console.log('CalendarWeekFilter useEffect - Gọi handleWeekChange với tuần bắt đầu từ:', currentWeekStart.format('DD/MM/YYYY'));
       handleWeekChange(currentWeekStart);

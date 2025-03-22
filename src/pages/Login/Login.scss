@@ -134,7 +134,7 @@ $text-color: #6d6d6d;
 .login-box {
   width: 100%;
   max-width: 1200px;
-  min-height: 600px;
+  min-height: 650px;
   background: $light-color;
   border-radius: 30px;
   overflow: hidden;
@@ -157,10 +157,12 @@ $text-color: #6d6d6d;
   padding: 3rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   
   // Brand section
   .brand {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -168,21 +170,22 @@ $text-color: #6d6d6d;
     
     .brand-name {
       font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
-      font-weight: 600;
+      font-size: 2.5rem;
+      font-weight: 700;
       color: $primary-dark;
       margin: 0;
       letter-spacing: -0.5px;
       position: relative;
+      text-align: center;
       
       &::after {
         content: '';
         position: absolute;
-        bottom: -5px;
+        bottom: -8px;
         left: 50%;
         transform: translateX(-50%);
-        width: 0;
-        height: 2px;
+        width: 50px;
+        height: 3px;
         background-color: $primary-color;
         transition: width 0.3s ease;
       }
@@ -193,17 +196,18 @@ $text-color: #6d6d6d;
     }
     
     .tagline {
-      font-size: 0.95rem;
+      font-size: 1rem;
       color: $text-color;
-      margin-top: 0.25rem;
+      margin-top: 1rem;
       opacity: 0;
       animation: fadeIn 0.8s ease-out 0.3s forwards;
+      text-align: center;
     }
   }
 
   // Logo image
   .brand-logo {
-    max-width: 150px;
+    max-width: 120px;
     height: auto;
     margin: 0 auto 1.5rem;
     display: block;
@@ -221,7 +225,9 @@ $text-color: #6d6d6d;
   .action-buttons {
     display: flex;
     gap: 1rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 350px;
     opacity: 0;
     animation: fadeIn 0.8s ease-out 0.4s forwards;
     
@@ -303,7 +309,7 @@ $text-color: #6d6d6d;
   .login-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem;
-    font-weight: 600;
+    font-weight: 700;
     color: $dark-color;
     margin-bottom: 0.5rem;
     text-align: center;
@@ -339,7 +345,7 @@ $text-color: #6d6d6d;
   // Social login
   .social-login {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     margin-bottom: 1.5rem;
     justify-content: center;
     opacity: 0;
@@ -378,34 +384,38 @@ $text-color: #6d6d6d;
   
   // Divider
   .divider {
-    display: flex;
-    align-items: center;
+    position: relative;
     text-align: center;
     color: $text-color;
     font-size: 0.9rem;
     margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 350px;
     opacity: 0;
     animation: fadeIn 0.8s ease-out 0.8s forwards;
     
     &::before,
     &::after {
       content: '';
-      flex: 1;
-      border-bottom: 1px solid $border-color;
+      position: absolute;
+      top: 50%;
+      width: calc(50% - 20px);
+      height: 1px;
+      background-color: $border-color;
       transition: all 0.3s ease;
     }
     
     &::before {
-      margin-right: 1rem;
+      left: 0;
     }
     
     &::after {
-      margin-left: 1rem;
+      right: 0;
     }
     
     &:hover::before,
     &:hover::after {
-      border-color: $primary-color;
+      background-color: $primary-color;
     }
   }
   
@@ -418,6 +428,8 @@ $text-color: #6d6d6d;
     border-radius: 8px;
     margin-bottom: 1.5rem;
     font-size: 0.9rem;
+    width: 100%;
+    max-width: 350px;
     animation: slideInUp 0.3s ease-out;
   }
   
@@ -426,6 +438,8 @@ $text-color: #6d6d6d;
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    width: 100%;
+    max-width: 350px;
     opacity: 0;
     animation: fadeIn 0.8s ease-out 0.9s forwards;
     
@@ -433,6 +447,7 @@ $text-color: #6d6d6d;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      width: 100%;
       
       label {
         font-size: 0.9rem;
@@ -446,18 +461,28 @@ $text-color: #6d6d6d;
       }
       
       input {
+        width: 100%;
+        height: 50px;
         padding: 0.9rem 1rem;
         border-radius: 12px;
         border: 1px solid $border-color;
         font-size: 1rem;
         transition: all 0.3s ease;
         font-family: 'Poppins', sans-serif;
+        background-color: rgba($light-color, 0.8);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        
+        &:hover {
+          border-color: rgba($primary-color, 0.5);
+          background-color: rgba($light-color, 0.95);
+        }
         
         &:focus {
           outline: none;
           border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
           transform: translateY(-2px);
+          background-color: $light-color;
         }
         
         &::placeholder {
@@ -472,8 +497,10 @@ $text-color: #6d6d6d;
       
       .password-field {
         position: relative;
+        width: 100%;
         
         input {
+          width: 100%;
           padding-right: 3rem;
         }
         
@@ -500,6 +527,8 @@ $text-color: #6d6d6d;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
+      margin-top: 0.5rem;
       
       .checkbox-container {
         display: flex;
@@ -523,6 +552,7 @@ $text-color: #6d6d6d;
           color: $text-color;
           cursor: pointer;
           transition: color 0.3s ease;
+          margin: 0;
           
           &:hover {
             color: $primary-dark;
@@ -536,6 +566,7 @@ $text-color: #6d6d6d;
         text-decoration: none;
         transition: all 0.3s ease;
         position: relative;
+        padding: 0.25rem 0;
         
         &::after {
           content: '';
@@ -683,21 +714,6 @@ $text-color: #6d6d6d;
   position: relative;
   overflow: hidden;
   
-  // Background image
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    z-index: 0;
-    transition: opacity 0.8s ease, transform 1s ease;
-  }
-  
-  // Overlay
   &::after {
     content: '';
     position: absolute;
@@ -705,7 +721,7 @@ $text-color: #6d6d6d;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, rgba($primary-color, 0.4), rgba($primary-color, 0.1));
+    background: linear-gradient(135deg, rgba($primary-color, 0.4), rgba($primary-color, 0.2));
     z-index: 1;
   }
   
@@ -714,12 +730,12 @@ $text-color: #6d6d6d;
     position: absolute;
     top: 2rem;
     right: 2rem;
-    background: $card-bg;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
     padding: 1.5rem;
     border-radius: 16px;
     max-width: 280px;
     z-index: 2;
-    backdrop-filter: blur(5px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transform: translateX(50px);
     opacity: 0;
@@ -733,7 +749,7 @@ $text-color: #6d6d6d;
     
     .info-title {
       font-family: 'Playfair Display', serif;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1.2rem;
       color: $primary-dark;
       margin-top: 0;
@@ -757,7 +773,7 @@ $text-color: #6d6d6d;
     }
     
     .info-desc {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: $text-color;
       line-height: 1.6;
       margin-bottom: 0.75rem;
@@ -767,7 +783,7 @@ $text-color: #6d6d6d;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: $text-color;
       
       .pin-icon {
@@ -802,8 +818,8 @@ $text-color: #6d6d6d;
     
     .tagline-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: 2rem;
+      font-weight: 700;
       color: $light-color;
       margin: 0;
       line-height: 1.3;
@@ -815,13 +831,14 @@ $text-color: #6d6d6d;
     
     .experience-button {
       margin-top: 1.5rem;
-      padding: 0.8rem 1.5rem;
-      background: rgba($light-color, 0.2);
+      padding: 1rem 2rem;
+      background: rgba($light-color, 0.25);
       backdrop-filter: blur(5px);
       color: $light-color;
       border: 1px solid rgba($light-color, 0.3);
       border-radius: 50px;
-      font-size: 0.9rem;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       font-family: 'Poppins', sans-serif;
@@ -870,8 +887,8 @@ $text-color: #6d6d6d;
     animation: fadeIn 0.8s ease-out 1.4s forwards;
     
     .dot {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: rgba($light-color, 0.2);
       backdrop-filter: blur(5px);
@@ -922,6 +939,10 @@ $text-color: #6d6d6d;
 }
 
 @media (max-width: 768px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
   .login-box {
     flex-direction: column-reverse;
     max-height: none;
@@ -933,11 +954,19 @@ $text-color: #6d6d6d;
   }
   
   .login-form-container {
-    padding: 2rem;
+    padding: 2rem 1.5rem;
+    
+    .form-group, 
+    form, 
+    .error-message, 
+    .divider, 
+    .action-buttons {
+      max-width: 100%;
+    }
   }
   
   .image-container {
-    height: 300px;
+    height: 350px;
     
     .info-card {
       top: 1rem;
@@ -952,17 +981,18 @@ $text-color: #6d6d6d;
       .tagline-title {
         font-size: 1.5rem;
       }
+      
+      .experience-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+      }
     }
-  }
-  
-  .brand-logo {
-    max-width: 80px;
   }
 }
 
 @media (max-width: 480px) {
   .login-container {
-    padding: 1rem;
+    padding: 0.5rem;
   }
   
   .login-box {
@@ -970,13 +1000,13 @@ $text-color: #6d6d6d;
   }
   
   .login-form-container {
-    padding: 1.5rem;
+    padding: 1.5rem 1rem;
     
     .brand {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       
       .brand-name {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
       }
     }
     
@@ -985,26 +1015,47 @@ $text-color: #6d6d6d;
     }
     
     .social-login {
+      gap: 1rem;
+    }
+    
+    .form-options {
       flex-direction: column;
-      
-      .social-btn {
-        height: 40px;
-      }
+      align-items: flex-start;
+      gap: 0.75rem;
     }
   }
   
   .image-container {
-    height: 250px;
-  }
-  
-  .form-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  
-  .brand-logo {
-    max-width: 70px;
+    height: 280px;
+    
+    .info-card {
+      max-width: 180px;
+      font-size: 0.8rem;
+      
+      .info-title {
+        font-size: 1rem;
+      }
+      
+      .info-desc {
+        font-size: 0.8rem;
+      }
+    }
+    
+    .tagline {
+      .tagline-title {
+        font-size: 1.3rem;
+      }
+      
+      .experience-button {
+        padding: 0.7rem 1.3rem;
+        font-size: 0.8rem;
+      }
+    }
+    
+    .navigation-dots .dot {
+      width: 36px;
+      height: 36px;
+    }
   }
 }
 
