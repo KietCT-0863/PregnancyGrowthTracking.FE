@@ -223,20 +223,7 @@ const CalendarChange = () => {
           </div>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="location">Địa điểm</label>
-          <div className="input-with-icon">
-            <MapPin size={20} />
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={reminder.location}
-              onChange={handleInputChange}
-              placeholder="Nhập địa điểm (không bắt buộc)"
-            />
-          </div>
-        </div>
+
 
         <div className="form-group">
           <label htmlFor="notification">Ghi chú</label>

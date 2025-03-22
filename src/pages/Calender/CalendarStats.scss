@@ -1,0 +1,209 @@
+.calendar-stats {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  .stats-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    
+    .stats-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background-color: rgba(255, 107, 107, 0.1);
+      margin-right: 10px;
+      
+      svg {
+        color: #FF6B6B;
+      }
+    }
+    
+    h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+  
+  .stats-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    
+    .stat-item {
+      flex: 1;
+      background-color: rgba(245, 245, 245, 0.6);
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      
+      &.total {
+        margin-right: 10px;
+        border-left: 3px solid #FF6B6B;
+      }
+      
+      &.completed {
+        border-left: 3px solid #4ECDC4;
+      }
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        svg {
+          color: #4ECDC4;
+          margin-right: 5px;
+        }
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+  }
+  
+  .category-stats {
+    h5 {
+      font-size: 14px;
+      margin: 0 0 15px 0;
+      color: #555;
+      font-weight: 600;
+    }
+    
+    .category-stat-item {
+      margin-bottom: 12px;
+      
+      .category-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+        
+        .category-color {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-right: 8px;
+        }
+        
+        .category-name {
+          flex: 1;
+          font-size: 13px;
+          color: #555;
+        }
+        
+        .category-count {
+          font-weight: 600;
+          font-size: 13px;
+          color: #333;
+        }
+      }
+      
+      .category-progress {
+        height: 6px;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        overflow: hidden;
+        
+        .category-progress-bar {
+          height: 100%;
+          border-radius: 3px;
+        }
+      }
+    }
+  }
+  
+  .completion-rate {
+    background-color: rgba(245, 245, 245, 0.6);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 3px solid #FF9A8B;
+    
+    .rate-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      
+      .rate-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: rgba(255, 154, 139, 0.2);
+        margin-right: 8px;
+        
+        svg {
+          color: #FF9A8B;
+        }
+      }
+      
+      span {
+        font-size: 13px;
+        color: #555;
+      }
+      
+      .rate-value {
+        margin-left: auto;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+    
+    .rate-progress {
+      height: 6px;
+      background-color: #f0f0f0;
+      border-radius: 3px;
+      overflow: hidden;
+      
+      .rate-progress-bar {
+        height: 100%;
+        border-radius: 3px;
+        background: linear-gradient(to right, #FF9A8B, #FF6B6B);
+      }
+    }
+  }
+}
+
+// Styling for the loading state
+.calendar-stats-loading {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+// For a more pink theme matching the screenshot
+@media (max-width: 768px) {
+  .calendar-stats {
+    background-color: rgba(255, 182, 193, 0.15);
+    
+    .stats-icon svg {
+      color: #FF69B4;
+    }
+    
+    .stat-item {
+      &.total {
+        border-left-color: #FF69B4;
+      }
+    }
+  }
+} 

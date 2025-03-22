@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import moment from "moment"
-import {
+import { FaUserCircle } from "react-icons/fa"
+import { useNavigate } from "react-router-dom"
+import { 
   Plus,
   Clock,
   ChevronLeft,
@@ -13,20 +15,18 @@ import {
   Apple,
   Calendar,
   MapPin,
-  History
+  History,
+  X
 } from "lucide-react"
-import { FaUserCircle } from "react-icons/fa"
-import { Link, useNavigate } from "react-router-dom"
 import "./CalendarAll.scss"
 import reminderService from "../../api/services/reminderService"
 import userService from "../../api/services/userService"
 import profileImageService from "../../api/services/profileImageService"
-import { toast, ToastContainer } from "react-toastify"
+import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import CalendarWeekly from "./CalendarWeekly"
-import CalendarDay from "./CalendarDay"
-
-
+import { getColorByType } from './calendarHelpers'
+import CalendarStats from './CalendarStats'
+import CalendarDayFilter from "./CalendarDayFilter"
 
 const CalendarAll = () => {
   const navigate = useNavigate();
@@ -34,18 +34,19 @@ const CalendarAll = () => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [events, setEvents] = useState([])
   const [showAddModal, setShowAddModal] = useState(false)
-  const [showEventModal, setShowEventModal] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [viewMode, setViewMode] = useState("week") // Mặc định xem theo tuần
   const [selectedDay, setSelectedDay] = useState(new Date())
   const [miniCalendarDate, setMiniCalendarDate] = useState(new Date())
-  const [currentTimePosition, setCurrentTimePosition] = useState('0px');
+  const [currentTimePosition, setCurrentTimePosition] = useState('0px')
+  const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState({
-    name: "",
-    role: "Mẹ bầu",
-    avatar: ""
+    id: 0,
+    name: "Người dùng",
+    email: "",
+    role: "Thành viên",
+    avatar: null
   })
 
   const [newEvent, setNewEvent] = useState({
@@ -57,7 +58,12 @@ const CalendarAll = () => {
     location: "",
   })
 
-  const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState('month')
+  const [weekDates, setWeekDates] = useState(() => {
+    const today = moment().startOf('week');
+    return Array.from({length: 7}, (_, i) => moment(today).add(i, 'days').toDate());
+  })
+  const [selectedDayDate, setSelectedDayDate] = useState(new Date())
 
   // Lấy thông tin người dùng từ API
   useEffect(() => {
@@ -100,8 +106,10 @@ const CalendarAll = () => {
         }
 
         setUserData({
+          id: userInfo.id,
           name: userInfo.fullName || "Người dùng",
-          role: "Mẹ bầu",
+          email: userInfo.email,
+          role: "Thành viên",
           avatar: profileImageUrl || "https://randomuser.me/api/portraits/women/65.jpg" // Ảnh mặc định nếu không có
         });
       } catch (error) {
@@ -131,8 +139,6 @@ const CalendarAll = () => {
     { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8", icon: Apple },
   ]
 
-  const timeSlots = Array.from({ length: 14 }, (_, i) => i + 6) // 6am to 7pm
-
   const getDaysInMonth = (date) => {
     const year = date.getFullYear()
     const month = date.getMonth()
@@ -149,19 +155,6 @@ const CalendarAll = () => {
     }
 
     return days
-  }
-
-  const getDaysInWeek = (date) => {
-    const day = date.getDay()
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1) // Adjust for starting week on Monday
-
-    return Array(7)
-      .fill()
-      .map((_, i) => {
-        const d = new Date(date)
-        d.setDate(diff + i)
-        return d
-      })
   }
 
   const navigateMiniCalendar = (direction) => {
@@ -241,7 +234,6 @@ const CalendarAll = () => {
 
   const resetForm = () => {
     setShowAddModal(false)
-    setShowEventModal(false)
     setSelectedEvent(null)
     setNewEvent({
       title: "",
@@ -268,7 +260,8 @@ const CalendarAll = () => {
         const formattedEvents = response.map(event => {
           // Format lại event theo cấu trúc cần thiết
           const formattedEvent = {
-            id: event.remindId,
+            id: event.remindId, // Giữ nguyên remindId làm id
+            remindId: event.remindId, // Đảm bảo luôn có remindId
             title: event.title || '',
             date: event.date,
             time: event.time || '09:00',
@@ -284,6 +277,7 @@ const CalendarAll = () => {
         
         setEvents(formattedEvents);
         console.log('DEBUG fetchEvents - Đã cập nhật events state với', formattedEvents.length, 'sự kiện');
+        console.log('DEBUG fetchEvents - Chi tiết events:', formattedEvents);
       } else {
         console.error('DEBUG fetchEvents - Dữ liệu không hợp lệ:', response);
         setEvents([]);
@@ -330,14 +324,60 @@ const CalendarAll = () => {
   }
 
   const getEventsForDay = (events, date) => {
-    return events.filter((event) => {
-      const eventDate = new Date(event.date)
-      return (
-        eventDate.getDate() === date.getDate() &&
-        eventDate.getMonth() === date.getMonth() &&
-        eventDate.getFullYear() === date.getFullYear()
-      )
-    })
+    console.log('DEBUG getEventsForDay - Ngày cần lọc:', moment(date).format('DD/MM/YYYY'));
+    console.log('DEBUG getEventsForDay - Tổng số sự kiện trước khi lọc:', events.length);
+    
+    // Debug chi tiết từng sự kiện
+    events.forEach((event, index) => {
+      console.log(`DEBUG getEventsForDay - Chi tiết sự kiện ${index}:`, 
+        { id: event.id, remindId: event.remindId, title: event.title, date: event.date });
+    });
+    
+    const filteredEvents = events.filter((event) => {
+      if (!event || !event.date) {
+        console.log('DEBUG getEventsForDay - Sự kiện bị bỏ qua do không có event hoặc date:', event);
+        return false;
+      }
+      
+      // So sánh theo từng phần của ngày
+      const eventDate = new Date(event.date);
+      const eventDay = eventDate.getDate();
+      const eventMonth = eventDate.getMonth();
+      const eventYear = eventDate.getFullYear();
+      
+      const compareDate = new Date(date);
+      const compareDay = compareDate.getDate();
+      const compareMonth = compareDate.getMonth();
+      const compareYear = compareDate.getFullYear();
+      
+      // Log chi tiết các giá trị so sánh
+      console.log('DEBUG getEventsForDay - So sánh ngày:', {
+        event: { id: event.id, title: event.title },
+        eventDate: `${eventDay}/${eventMonth}/${eventYear}`,
+        compareDate: `${compareDay}/${compareMonth}/${compareYear}`
+      });
+      
+      const result = (
+        eventDay === compareDay &&
+        eventMonth === compareMonth &&
+        eventYear === compareYear
+      );
+      
+      if (result) {
+        console.log('DEBUG getEventsForDay - Sự kiện phù hợp:', event);
+      } else {
+        console.log('DEBUG getEventsForDay - Sự kiện không phù hợp do khác ngày', { 
+          eventDate: event.date, 
+          compareDate: date.toISOString().split('T')[0] 
+        });
+      }
+      
+      return result;
+    });
+    
+    console.log('DEBUG getEventsForDay - Số sự kiện sau khi lọc:', filteredEvents.length);
+    console.log('DEBUG getEventsForDay - Sự kiện sau khi lọc:', filteredEvents);
+    return filteredEvents;
   }
 
   const hasEventOnDay = (date) => {
@@ -388,26 +428,13 @@ const CalendarAll = () => {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + direction, 1))
   }
 
-  const navigateWeek = (direction) => {
-    const newDate = new Date(selectedDay)
-    newDate.setDate(newDate.getDate() + direction * 7)
-    setSelectedDay(newDate)
-  }
-
   const formatMonthYear = (date) => {
     const formatted = date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" })
     return formatted.charAt(0).toUpperCase() + formatted.slice(1)
   }
-  
-  const formatDayMonth = (date) => {
-    const formatted = date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" })
-    return formatted.charAt(0).toUpperCase() + formatted.slice(1)
-  }
 
-  const formatWeekDay = (date) => {
-    const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"]
-    const day = days[date.getDay()]
-    return day.charAt(0).toUpperCase() + day.slice(1)
+  const handleDayClick = (day) => {
+    setSelectedDay(day)
   }
 
   const updateEventsAfterAdd = (newEvent) => {
@@ -421,53 +448,10 @@ const CalendarAll = () => {
     if (!day) return;
     setSelectedDay(day);
     setSelectedDate(day);
-    setViewMode("day");
   };
 
   const handleEventClick = (event) => {
-    console.log('Sự kiện được click:', event);
     setSelectedEvent(event);
-    setShowEventModal(true);
-  };
-
-  const handleDayClick = (day) => {
-    setSelectedDay(day)
-    setViewMode("day")
-  }
-
-  const getEventPosition = (time) => {
-    if (!time) return '0px';
-    
-    try {
-      const [hours, minutes] = time.split(':').map(Number);
-      
-      // Kiểm tra tính hợp lệ của giờ và phút
-      if (isNaN(hours) || isNaN(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) {
-        console.error(`Thời gian không hợp lệ: ${time}`);
-        return '0px';
-      }
-      
-      const startHour = 6; // 6am
-      // Tính toán vị trí dựa trên giờ và phút
-      const position = (hours - startHour) + (minutes / 60);
-      
-      // Trả về vị trí tính bằng pixel (80px cho mỗi giờ)
-      if (position < 0) {
-        return '0px'; // Nếu thời gian trước 6am
-      } else if (position > 14) {
-        return `${14 * 80}px`; // Nếu thời gian sau 8pm
-      }
-      
-      return `${position * 80}px`;
-    } catch (error) {
-      console.error(`Lỗi khi xử lý thời gian: ${time}`, error);
-      return '0px';
-    }
-  };
-
-  const getEventHeight = (duration = 1) => {
-    // Mặc định là 60 phút (1 giờ)
-    return `${Math.max(30, duration * 80)}px`; // Tối thiểu 30px, 80px cho mỗi giờ
   };
 
   const renderMiniCalendar = () => {
@@ -569,107 +553,229 @@ const CalendarAll = () => {
     );
   };
 
-  // Quyết định kiểu hiển thị dựa trên viewMode
+  const handleDayChange = (date) => {
+    setSelectedDayDate(date);
+    // Có thể thêm logic lọc sự kiện theo ngày ở đây
+  };
+
   const renderCalendarView = () => {
-    // Lấy sự kiện đã lọc
     const filtered = getFilteredEvents();
-    console.log('Các sự kiện đã lọc:', filtered);
     
-    // Nếu chỉ muốn hiển thị dạng lưới tháng
-    if (viewMode === "month") {
+    if (viewMode === 'month') {
       return (
         <div className="month-view">
           <div className="month-header">
-            {["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"].map((day) => (
+            {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day) => (
               <div key={day} className="month-weekday">
-                {day.charAt(0).toUpperCase() + day.slice(1)}
+                {day}
               </div>
             ))}
           </div>
 
           <div className="month-grid">
-            {getDaysInMonth(currentDate).map((day, index) => (
-              <div
-                key={index}
-                className={`month-day ${day === null ? "empty" : ""} ${
-                  day?.toDateString() === new Date().toDateString() ? "today" : ""
-                }`}
-                onClick={() => day && handleDayClick(day)}
-              >
-                {day && (
-                  <>
-                    <div className="day-number">{day.getDate()}</div>
-                    <div className="day-events">
-                      {getEventsForDay(filtered, day).slice(0, 3).map((event) => {
-                        const category = categories.find(c => c.id === event.reminderType) || categories[0];
-                        return (
-                          <div
-                            key={event.id}
-                            className="month-event"
-                            style={{ backgroundColor: category.color }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEventClick(event);
-                            }}
-                          >
-                            {event.time || (event.startTime ? moment(event.startTime).format('HH:mm') : '')} {event.title}
+            {getDaysInMonth(currentDate).map((day, index) => {
+              const isToday = day && day.toDateString() === new Date().toDateString();
+              const isSelected = day && day.toDateString() === selectedDay.toDateString();
+              const dayEvents = day ? getEventsForDay(filtered, day) : [];
+              
+              console.log('DEBUG renderCalendarView (day) -', day ? moment(day).format('DD/MM/YYYY') : 'null', 'Số sự kiện hiển thị:', dayEvents.length);
+              
+              return (
+                <div
+                  key={index}
+                  className={`month-day ${day === null ? "empty" : ""} ${
+                    isToday ? "today" : ""
+                  } ${isSelected ? "selected" : ""} ${
+                    day && dayEvents.length > 0 ? "has-events" : ""
+                  }`}
+                  onClick={() => day && handleDayClick(day)}
+                >
+                  {day && (
+                    <>
+                      <div className="day-number">{day.getDate()}</div>
+                      <div className="day-events">
+                        {dayEvents.length > 0 && (
+                          <div className="events-container">
+                            {dayEvents.map((event) => {
+                              const category = categories.find(c => c.id === event.reminderType) || categories[0];
+                              return (
+                                <div
+                                  key={event.id || event.remindId}
+                                  className="month-event"
+                                  style={{ backgroundColor: category.color }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEventClick(event);
+                                  }}
+                                >
+                                  <span className="event-time">{event.time}</span>
+                                  <span className="event-title">{event.title}</span>
+                                </div>
+                              );
+                            })}
                           </div>
-                        )
-                      })}
-                      {getEventsForDay(filtered, day).length > 3 && (
-                        <div className="more-events">
-                          +{getEventsForDay(filtered, day).length - 3} sự kiện
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       );
-    } else if (viewMode === "week") {
-      // Sử dụng component CalendarWeekly
+    } else if (viewMode === 'week') {
       return (
-        <>
-          {console.log('DEBUG CalendarAll - Rendering Week View')}
-          {console.log('DEBUG CalendarAll - selectedDate:', selectedDate)}
-          {console.log('DEBUG CalendarAll - events được truyền vào:', events)}
-          <CalendarWeekly 
-            selectedDay={selectedDay}
-            events={filtered}
-            onDayClick={handleDayClick}
-            onEventClick={handleEventClick}
-          />
-        </>
+        <div className="week-view-container">
+          <div className="week-header">
+            <div className="week-info">
+              <h3>Tuần: {moment(weekDates[0]).format('DD/MM')} - {moment(weekDates[6]).format('DD/MM/YYYY')}</h3>
+              <div className="week-navigation">
+                <button className="today-btn" onClick={() => {
+                  const today = moment().startOf('week');
+                  setWeekDates(Array.from({length: 7}, (_, i) => moment(today).add(i, 'days').toDate()));
+                }}>Hôm nay</button>
+                <button className="nav-btn" onClick={() => {
+                  const prevWeek = moment(weekDates[0]).subtract(7, 'days');
+                  setWeekDates(Array.from({length: 7}, (_, i) => moment(prevWeek).add(i, 'days').toDate()));
+                }}><ChevronLeft size={18} /></button>
+                <button className="nav-btn" onClick={() => {
+                  const nextWeek = moment(weekDates[0]).add(7, 'days');
+                  setWeekDates(Array.from({length: 7}, (_, i) => moment(nextWeek).add(i, 'days').toDate()));
+                }}><ChevronRight size={18} /></button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="week-days-header">
+            {["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day, index) => (
+              <div key={day} className="week-day-header">
+                <div className="weekday-name">{day}</div>
+                <div className={`weekday-date ${
+                  weekDates[index] && weekDates[index].toDateString() === new Date().toDateString() ? "today" : ""
+                }`}>{weekDates[index] ? weekDates[index].getDate() : ""}</div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="week-events">
+            {weekDates.map((date, index) => {
+              const dayEvents = getEventsForDay(filtered, date);
+              const isToday = date.toDateString() === new Date().toDateString();
+              
+              return (
+                <div 
+                  key={index} 
+                  className={`day-column ${isToday ? "today" : ""}`}
+                >
+                  <div className="events-container">
+                    {dayEvents.length > 0 && dayEvents.map(event => (
+                      <div 
+                        key={event.id || event.remindId} 
+                        className="week-event"
+                        style={{ backgroundColor: getColorByType(event.reminderType) }}
+                        onClick={() => handleEventClick(event)}
+                      >
+                        <div className="event-time">{event.time}</div>
+                        <div className="event-title">{event.title}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       );
-    } else if (viewMode === "day") {
-      // Sử dụng component CalendarDay
+    } else if (viewMode === 'day') {
+      // Sử dụng CalendarDayFilter để hiển thị và điều hướng ngày
       return (
-        <CalendarDay 
-          date={selectedDay}
-          events={filtered}
-          onEventClick={handleEventClick}
-        />
+        <div className="day-view-container">
+          <CalendarDayFilter 
+            onDayChange={handleDayChange} 
+            currentTimePosition={currentTimePosition}
+          />
+          
+          <div className="day-events">
+            {(() => {
+              console.log('DEBUG renderCalendarView (day) - selectedDayDate:', moment(selectedDayDate).format('DD/MM/YYYY'));
+              console.log('DEBUG renderCalendarView (day) - Tổng số sự kiện trước khi lọc:', filtered.length);
+              const dayEvents = getEventsForDay(filtered, selectedDayDate);
+              console.log('DEBUG renderCalendarView (day) - Số sự kiện hiển thị:', dayEvents.length);
+              console.log('DEBUG renderCalendarView (day) - Chi tiết sự kiện hiển thị:', dayEvents);
+              
+              return (
+                <>
+                  {/* Hiển thị vạch chỉ thời gian hiện tại nếu ngày xem là ngày hôm nay */}
+                  {moment(selectedDayDate).isSame(moment(), 'day') && (
+                    <div className="current-time-indicator" style={{ top: currentTimePosition }}></div>
+                  )}
+                  
+                  {dayEvents.length > 0 ? (
+                    dayEvents.map(event => (
+                      <div 
+                        key={event.id || event.remindId} 
+                        className="day-event"
+                        style={{ backgroundColor: getColorByType(event.reminderType) }}
+                        onClick={() => handleEventClick(event)}
+                      >
+                        <div className="event-time">{event.time}</div>
+                        <div className="event-title">{event.title}</div>
+                        {event.notification && (
+                          <div className="event-description">{event.notification}</div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-events">
+                      <p>Không có sự kiện nào trong ngày này</p>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
       );
     }
   };
   
-  // Hàm để lấy màu dựa trên loại sự kiện
-  const getColorByType = (type) => {
-    if (!type) return '#FF6B6B'; // Màu mặc định
-    
-    const typeMap = {
-      'Khám thai': '#4f46e5', // Appointment - Màu tím indigo
-      'Uống thuốc': '#10b981', // Medicine - Màu xanh lá
-      'Khám định kỳ': '#0ea5e9', // Checkup - Màu xanh dương
-      'Nhắc nhở': '#f59e0b', // Reminder - Màu cam
-      'default': '#8b5cf6' // Other - Màu tím
-    };
-    
-    return typeMap[type] || typeMap.default;
+  const renderViewModeSelector = () => {
+    return (
+      <div className="view-mode-selector">
+        <button 
+          className={viewMode === 'month' ? 'active' : ''} 
+          onClick={() => setViewMode('month')}
+        >
+          Tháng
+        </button>
+        <button 
+          className={viewMode === 'week' ? 'active' : ''} 
+          onClick={() => setViewMode('week')}
+        >
+          Tuần
+        </button>
+        <button 
+          className={viewMode === 'day' ? 'active' : ''} 
+          onClick={() => setViewMode('day')}
+        >
+          Ngày
+        </button>
+      </div>
+    );
   };
+
+  // Render loading state if data is being fetched
+  if (loading) {
+    return (
+      <div className="calendar-container-wrapper">
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="calendar-container-wrapper">
@@ -702,6 +808,7 @@ const CalendarAll = () => {
             </button>
           </div>
 
+          <CalendarStats />
           {renderMiniCalendar()}
           {renderCategories()}
           {renderUpcomingEvent()}
@@ -710,92 +817,75 @@ const CalendarAll = () => {
         {/* Main Calendar */}
         <div className="calendar-main">
           <div className="calendar-header">
+            <div className="header-top">
+              <div className="view-filters">
+                {renderViewModeSelector()}
+              </div>
+              
+              <div className="search-filter-section">
+                <div className="search-box">
+                  <input 
+                    type="text" 
+                    placeholder="Tìm kiếm sự kiện..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="category-filter">
+                  <select 
+                    value={selectedCategory} 
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                  >
+                    <option value="all">Tất cả sự kiện</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              <div className="calendar-actions">
+                <button 
+                  className="today-btn"
+                  onClick={() => {
+                    const today = new Date();
+                    setSelectedDay(today);
+                    setCurrentDate(today);
+                    setSelectedDate(today);
+                  }}
+                >
+                  Today
+                </button>
+                <button 
+                  className="nav-btn prev"
+                  onClick={() => navigateMonth(-1)}
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button 
+                  className="nav-btn next"
+                  onClick={() => navigateMonth(1)}
+                >
+                  <ChevronRight size={18} />
+                </button>
+                <button 
+                  className="history-btn"
+                  onClick={() => navigate("/member/calendar/history")}
+                >
+                  <History size={18} />
+                  <span>Lịch sử</span>
+                </button>
+              </div>
+            </div>
+            
             <div className="current-date-display">
               <h2>
-                {viewMode === "day"
-                  ? `${formatDayMonth(selectedDay)}`
-                  : viewMode === "week"
-                  ? `${formatMonthYear(selectedDay)}`
-                  : formatMonthYear(currentDate)}
+                {viewMode === 'month' ? formatMonthYear(currentDate) : 'Tháng ' + moment(viewMode === 'week' ? weekDates[0] : selectedDayDate).format('M năm YYYY')}
               </h2>
-              <div className="view-mode-selector">
-                <button 
-                  className={viewMode === "month" ? "active" : ""}
-                  onClick={() => setViewMode("month")}
-                >
-                  Month
-                </button>
-                <button 
-                  className={viewMode === "week" ? "active" : ""}
-                  onClick={() => setViewMode("week")}
-                >
-                  Week
-                </button>
-                <button 
-                  className={viewMode === "day" ? "active" : ""}
-                  onClick={() => setViewMode("day")}
-                >
-                  Day
-                </button>
-              </div>
-            </div>
-            
-            <div className="search-filter-section">
-              <div className="search-box">
-                <input 
-                  type="text" 
-                  placeholder="Tìm kiếm sự kiện..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="category-filter">
-                <select 
-                  value={selectedCategory} 
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                  <option value="all">Tất cả sự kiện</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>{cat.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="calendar-actions">
-              <button 
-                className="today-btn"
-                onClick={() => {
-                  const today = new Date();
-                  setSelectedDay(today);
-                  setCurrentDate(today);
-                  setSelectedDate(today);
-                }}
-              >
-                Today
-              </button>
-              <button 
-                className="nav-btn"
-                onClick={() => viewMode === "week" ? navigateWeek(-1) : navigateMonth(-1)}
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                className="nav-btn"
-                onClick={() => viewMode === "week" ? navigateWeek(1) : navigateMonth(1)}
-              >
-                <ChevronRight size={18} />
-              </button>
-              <button 
-                className="history-btn"
-                onClick={() => navigate("/member/calendar/history")}
-              >
-                <History size={18} />
-                <span>Lịch sử</span>
-              </button>
             </div>
           </div>
 
+          {/* Chỉ hiển thị view dựa trên renderCalendarView(), không gọi các filter component nữa */}
           {renderCalendarView()}
 
           <button className="floating-add-btn" onClick={() => setShowAddModal(true)}>
@@ -883,8 +973,8 @@ const CalendarAll = () => {
 
                 <div className="form-group">
                   <textarea
-                    placeholder="Thông báo"
-                    value={newEvent.notification}
+                    placeholder="Thông báo (không bắt buộc)"
+                    value={newEvent.notification || ''}
                     onChange={(e) =>
                       setNewEvent({ ...newEvent, notification: e.target.value })
                     }
@@ -905,86 +995,78 @@ const CalendarAll = () => {
           </motion.div>
         )}
 
-        {showEventModal && selectedEvent && (
+        {selectedEvent && (
           <motion.div
             className="modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setShowEventModal(false)}
+            onClick={() => setSelectedEvent(null)}
           >
             <motion.div
-              className="modal-content event-detail-modal"
+              className="modal-content event-details-modal"
               initial={{ scale: 0.8, y: -50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.8, y: 50 }}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="modal-header">
-                <h2>Chi tiết nhắc nhở</h2>
-                <button className="close-btn" onClick={() => setShowEventModal(false)}>&times;</button>
+                <h2>Chi tiết sự kiện</h2>
+                <div className="close-icon" onClick={() => setSelectedEvent(null)}>
+                  <X size={18} />
+                </div>
               </div>
               
               <div className="event-details">
-                <div className="detail-item">
-                  <Calendar size={18} />
-                  <span>{moment(selectedEvent.date).format("dddd, D MMMM, YYYY")}</span>
+                <div 
+                  className="event-type-tag" 
+                  style={{ backgroundColor: getColorByType(selectedEvent.reminderType) }}
+                >
+                  {selectedEvent.reminderType || 'Sự kiện'}
                 </div>
                 
-                <div className="detail-item">
-                  <Clock size={18} />
+                <h2 className="event-title">{selectedEvent.title}</h2>
+                
+                <div className="detail-row">
+                  <Calendar size={18} />
                   <span>
-                    {selectedEvent.startTime && selectedEvent.endTime 
-                      ? `${selectedEvent.startTime} - ${selectedEvent.endTime}` 
-                      : selectedEvent.time}
+                    {selectedEvent.date ? moment(selectedEvent.date).format('DD/MM/YYYY') : ''}
                   </span>
                 </div>
                 
+                <div className="detail-row">
+                  <Clock size={18} />
+                  <span>{selectedEvent.time || ''}</span>
+                </div>
+                
                 {selectedEvent.location && (
-                  <div className="detail-item">
+                  <div className="detail-row">
                     <MapPin size={18} />
                     <span>{selectedEvent.location}</span>
                   </div>
                 )}
                 
-                <div className="detail-item">
-                  <div className="category-badge" style={{ 
-                    backgroundColor: (categories.find(c => c.id === selectedEvent.reminderType) || categories[0]).color 
-                  }}>
-                    {(categories.find(c => c.id === selectedEvent.reminderType) || categories[0]).label}
+                {selectedEvent.notification && (
+                  <div className="detail-description">
+                    <h4>Ghi chú</h4>
+                    <p>{selectedEvent.notification}</p>
                   </div>
-                </div>
+                )}
               </div>
               
               <div className="modal-actions">
-                <Link 
-                  to={`/member/calendar/change/${selectedEvent.id}`} 
-                  className="edit-btn"
-                >
-                  Chỉnh sửa
-                </Link>
-                <button
-                  className="delete-btn"
+                <button 
+                  className="edit-button"
                   onClick={() => {
-                    // Xác nhận xóa sự kiện
-                    if(window.confirm('Bạn có chắc muốn xóa sự kiện này?')) {
-                      reminderService.deleteReminder(selectedEvent.id)
-                        .then(() => {
-                          setShowEventModal(false);
-                          fetchEvents();
-                          toast.success('Xóa sự kiện thành công!');
-                        })
-                        .catch(error => {
-                          toast.error(`Lỗi khi xóa sự kiện: ${error.message}`);
-                        });
-                    }
+                    console.log('DEBUG Edit button - ID sự kiện:', selectedEvent.id || selectedEvent.remindId);
+                    navigate(`/member/calendar/change/${selectedEvent.id || selectedEvent.remindId}`);
                   }}
                 >
-                  Xóa
+                  Chỉnh sửa
                 </button>
                 <button 
-                  className="close-event-btn" 
-                  onClick={() => setShowEventModal(false)}
+                  className="close-button"
+                  onClick={() => setSelectedEvent(null)}
                 >
                   Đóng
                 </button>

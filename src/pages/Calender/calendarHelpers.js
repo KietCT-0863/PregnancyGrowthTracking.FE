@@ -214,4 +214,67 @@ export const getColorByType = (type) => {
   };
   
   return typeMap[type] || typeMap.default;
+};
+
+/**
+ * Formats date as Month Year (e.g., "March 2023")
+ */
+export const formatMonthYear = (date) => {
+  const formatted = date.toLocaleDateString("vi-VN", { month: "long", year: "numeric" });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+/**
+ * Formats date as Day Month (e.g., "15 Mar")
+ */
+export const formatDayMonth = (date) => {
+  const formatted = date.toLocaleDateString("vi-VN", { day: "numeric", month: "short" });
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+};
+
+/**
+ * Check if a date has events
+ */
+export const hasEventOnDay = (events, date) => {
+  if (!date || !events || !events.length) return false;
+  
+  return events.some(event => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getDate() === date.getDate() &&
+      eventDate.getMonth() === date.getMonth() &&
+      eventDate.getFullYear() === date.getFullYear()
+    );
+  });
+};
+
+/**
+ * Get events for a specific day
+ */
+export const getEventsForDay = (events, date) => {
+  if (!events || !Array.isArray(events) || !date) return [];
+  
+  return events.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getDate() === date.getDate() &&
+      eventDate.getMonth() === date.getMonth() &&
+      eventDate.getFullYear() === date.getFullYear()
+    );
+  });
+};
+
+/**
+ * Get events for a specific month
+ */
+export const getEventsForMonth = (events, date) => {
+  if (!events || !Array.isArray(events) || !date) return [];
+  
+  return events.filter((event) => {
+    const eventDate = new Date(event.date);
+    return (
+      eventDate.getMonth() === date.getMonth() &&
+      eventDate.getFullYear() === date.getFullYear()
+    );
+  });
 }; 

@@ -76,7 +76,9 @@ const reminderService = {
             time: item.time || "",
             title: item.title || "",
             notification: item.notification || "",
-            reminderType: item.reminderType || ""
+            reminderType: item.reminderType || "",
+            location: item.location || "",
+            isCompleted: item.isCompleted || false
           })) 
         : [];
       
