@@ -1,0 +1,114 @@
+
+
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 300px;
+  max-width: 450px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+  }
+  
+  &.success {
+    &::before {
+      background-color: #4ade80;
+    }
+    
+    .icon.success {
+      color: #4ade80;
+    }
+  }
+  
+  &.error {
+    &::before {
+      background-color: #f87171;
+    }
+    
+    .icon.error {
+      color: #f87171;
+    }
+  }
+  
+  &.warning {
+    &::before {
+      background-color: #facc15;
+    }
+    
+    .icon.warning {
+      color: #facc15;
+    }
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    
+    .icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 15px;
+      color: #333;
+      line-height: 1.4;
+    }
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+  }
+}
+
+// Animation for the progress bar
+@keyframes countdown {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.notification-popup::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  animation: countdown linear forwards;
+  animation-duration: inherit;
+} 

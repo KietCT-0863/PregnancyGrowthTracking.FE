@@ -1,0 +1,133 @@
+
+.calendar-notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 300px;
+  max-width: 400px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  background-color: white;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+  
+  &.success {
+    &::before {
+      background-color: #4CAF50;
+    }
+    
+    .notification-icon.success {
+      color: #4CAF50;
+    }
+  }
+  
+  &.error {
+    &::before {
+      background-color: #F44336;
+    }
+    
+    .notification-icon.error {
+      color: #F44336;
+    }
+  }
+  
+  &.warning {
+    &::before {
+      background-color: #FFC107;
+    }
+    
+    .notification-icon.warning {
+      color: #FFC107;
+    }
+  }
+  
+  &.info {
+    &::before {
+      background-color: #2196F3;
+    }
+    
+    .notification-icon.info {
+      color: #2196F3;
+    }
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    
+    .notification-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      line-height: 1.4;
+    }
+  }
+  
+  .close-button {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+  }
+  
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    animation: progress-countdown linear forwards;
+    
+    @keyframes progress-countdown {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+  }
+}
+
+// Media query for mobile responsiveness
+@media (max-width: 576px) {
+  .calendar-notification-popup {
+    min-width: calc(100% - 40px);
+    max-width: calc(100% - 40px);
+    
+    .notification-content p {
+      font-size: 13px;
+    }
+  }
+} 

@@ -20,6 +20,7 @@ import { getColorByType } from './calendarHelpers';
 // Import components
 import CalendarStats from './CalendarStats';
 import CalendarDayFilter from "./CalendarDayFilter";
+import NotificationPopup from './components/NotificationPopup';
 
 // Import styles
 import "./CalendarAll.scss";
@@ -91,6 +92,13 @@ const CalendarAll = () => {
     return Array.from({length: 7}, (_, i) => moment(today).add(i, 'days').toDate());
   });
   const [selectedDayDate, setSelectedDayDate] = useState(new Date());
+
+  // Add notification state
+  const [notification, setNotification] = useState({
+    type: 'success',
+    message: '',
+    isVisible: false
+  });
 
   // Helpers
   const getCurrentDate = () => {
@@ -298,6 +306,26 @@ const CalendarAll = () => {
     setSelectedDayDate(date);
   };
 
+  // Function to show notification
+  const showNotification = (type, message) => {
+    setNotification({
+      type,
+      message,
+      isVisible: true
+    });
+  };
+
+  // Function to hide notification
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
+  // Update event handling functions to include notifications
+  
+  // For creating events
   const handleAddEvent = async (e) => {
     e.preventDefault();
     try {
@@ -320,11 +348,12 @@ const CalendarAll = () => {
       if (response) {
         updateEventsAfterAdd(response);
         resetForm();
-        toast.success("Tạo lịch nhắc nhở thành công!");
+        showNotification('success', 'Sự kiện đã được thêm thành công');
         fetchEvents();
       }
     } catch (error) {
-      toast.error(error.message || "Không thể tạo lịch nhắc nhở");
+      console.error('Error adding event:', error);
+      showNotification('error', 'Đã xảy ra lỗi khi thêm sự kiện');
     }
   };
 
@@ -914,6 +943,15 @@ const CalendarAll = () => {
         draggable
         pauseOnHover
         theme="light"
+      />
+
+      {/* Add notification popup component */}
+      <NotificationPopup
+        type={notification.type}
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={3000}
       />
     </div>
   );

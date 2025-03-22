@@ -15,6 +15,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import reminderService from "../../api/services/reminderService";
 import "./CalendarChange.scss";
+import NotificationPopup from './components/NotificationPopup';
 
 const CalendarChange = () => {
   const navigate = useNavigate();
@@ -37,6 +38,13 @@ const CalendarChange = () => {
     { id: "Tập thể dục", label: "Tập thể dục", color: "#9C27B0" },
     { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#2196F3" }
   ];
+
+  // Add notification state
+  const [notification, setNotification] = useState({
+    type: 'success',
+    message: '',
+    isVisible: false
+  });
 
   useEffect(() => {
     fetchReminderDetails();
@@ -113,6 +121,21 @@ const CalendarChange = () => {
     return true;
   };
 
+  const showNotification = (type, message) => {
+    setNotification({
+      type,
+      message,
+      isVisible: true
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -122,10 +145,15 @@ const CalendarChange = () => {
       }
 
       await reminderService.updateReminder(remindId, reminder);
-      toast.success("Cập nhật lịch nhắc nhở thành công!");
-      navigate("/member/calendar/history");
+      showNotification('success', 'Sự kiện đã được cập nhật thành công');
+      
+      // Navigate after a delay to allow the user to see the notification
+      setTimeout(() => {
+        navigate('/member/calendar/history');
+      }, 1500);
     } catch (error) {
-      toast.error(error.message || "Không thể cập nhật lịch nhắc nhở");
+      console.error("Error updating event:", error);
+      showNotification('error', 'Đã xảy ra lỗi khi cập nhật sự kiện');
     }
   };
 
@@ -223,8 +251,6 @@ const CalendarChange = () => {
           </div>
         </div>
 
-
-
         <div className="form-group">
           <label htmlFor="notification">Ghi chú</label>
           <div className="input-with-icon textarea-container">
@@ -264,6 +290,14 @@ const CalendarChange = () => {
       </form>
       
       <ToastContainer position="bottom-right" />
+      
+      <NotificationPopup
+        type={notification.type}
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={3000}
+      />
     </motion.div>
   );
 };

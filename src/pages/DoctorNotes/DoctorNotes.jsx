@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast"
 import NotesFilter from "./components/NotesFilter"
 import NoteFormModal from "./components/NoteFormModal"
 import NotesList from "./components/NotesList"
+import NotificationPopup from './components/NotificationPopup'
 import "./DoctorNotes.scss"
 
 const DoctorNotes = () => {
@@ -25,6 +26,11 @@ const DoctorNotes = () => {
   const [filterType, setFilterType] = useState("all")
   const [dateFilterType, setDateFilterType] = useState("all") // "all", "day", "week", "month"
   const [selectedDate, setSelectedDate] = useState("")
+  const [notification, setNotification] = useState({
+    type: '',
+    message: '',
+    isVisible: false
+  });
 
   // Fetch notes on component mount
   useEffect(() => {
@@ -79,9 +85,11 @@ const DoctorNotes = () => {
       toast.success("Tạo ghi chú mới thành công!")
       await fetchNotes()
       resetForm()
+      showNotification('success', 'Ghi chú đã được thêm thành công!')
     } catch (error) {
       console.error("Submit error:", error)
       toast.error(error.response?.data?.message || "Có lỗi xảy ra khi lưu ghi chú")
+      showNotification('error', 'Có lỗi xảy ra khi thêm ghi chú.')
     }
   }
 
@@ -102,9 +110,11 @@ const DoctorNotes = () => {
       await userNoteService.deleteNote(noteId);
       setNotes((prevNotes) => prevNotes.filter((note) => note.noteId !== noteId && note.id !== noteId));
       toast.success("Xóa ghi chú thành công!");
+      showNotification('success', 'Ghi chú đã được xóa thành công!')
     } catch (error) {
       console.error("Delete error:", error);
-      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa ghi chú");
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa ghi chú")
+      showNotification('error', 'Có lỗi xảy ra khi xóa ghi chú.')
     }
   };
 
@@ -177,6 +187,23 @@ const DoctorNotes = () => {
     setShowForm(true);
   }
 
+  // Function to show notifications
+  const showNotification = (type, message) => {
+    setNotification({
+      type,
+      message,
+      isVisible: true
+    });
+  };
+
+  // Function to hide notification
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   return (
     <div className="doctor-notes-container">
       <NotesFilter
@@ -212,6 +239,15 @@ const DoctorNotes = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Add the notification popup */}
+      <NotificationPopup
+        type={notification.type}
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={3000}
+      />
     </div>
   )
 }

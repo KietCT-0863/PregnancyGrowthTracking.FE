@@ -6,6 +6,7 @@ import userNoteService from "../../api/services/userNoteService";
 import { isValidPastOrPresentDate, isFutureDate, getFutureDateErrorMessage, getCurrentDateString } from "./components/DateValidation";
 import "./DoctorNotes.scss";
 import "./NoteChange.scss";
+import NotificationPopup from './components/NotificationPopup';
 
 const NoteChange = () => {
   const { noteId } = useParams();
@@ -23,6 +24,11 @@ const NoteChange = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [dateError, setDateError] = useState(false);
+  const [notification, setNotification] = useState({
+    type: '',
+    message: '',
+    isVisible: false
+  });
 
   useEffect(() => {
     if (noteData) {
@@ -102,6 +108,21 @@ const NoteChange = () => {
     }
   };
 
+  const showNotification = (type, message) => {
+    setNotification({
+      type,
+      message,
+      isVisible: true
+    });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({
+      ...prev,
+      isVisible: false
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -113,13 +134,13 @@ const NoteChange = () => {
 
     try {
       await userNoteService.updateNote(noteId, note);
-      toast.success("Cập nhật ghi chú thành công!");
-      navigate("/member/doctor-notes");
+      showNotification('success', 'Ghi chú đã được cập nhật thành công!');
+      setTimeout(() => {
+        navigate("/member/doctor-notes");
+      }, 1500);
     } catch (error) {
-      console.error("Submit error:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi lưu ghi chú"
-      );
+      console.error("Error updating note:", error);
+      showNotification('error', 'Có lỗi xảy ra khi cập nhật ghi chú.');
     }
   };
 
@@ -260,6 +281,14 @@ const NoteChange = () => {
           </div>
         </form>
       </div>
+
+      <NotificationPopup
+        type={notification.type}
+        message={notification.message}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+        duration={3000}
+      />
     </div>
   );
 };
