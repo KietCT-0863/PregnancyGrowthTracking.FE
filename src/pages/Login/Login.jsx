@@ -8,7 +8,10 @@ import { toast } from "react-toastify"
 import { jwtDecode } from "jwt-decode"
 import authService from "../../api/services/authService"
 import { Eye, EyeOff, ChevronLeft, ChevronRight, ArrowRight, Home } from "lucide-react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import LoginErrorBox from './LoginErrorBox'
+import { validateLoginCredentials, formatLoginErrors } from './LoginValidation'
+
 
 const Login = () => {
   const navigate = useNavigate()
@@ -18,6 +21,8 @@ const Login = () => {
     password: "",
   })
   const [error, setError] = useState("")
+  const [formErrors, setFormErrors] = useState({})
+  const [validated, setValidated] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
@@ -51,60 +56,79 @@ const Login = () => {
   }, [backgrounds.length])
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setIsLoading(true)
+    // Stop form from submitting normally
+    if (e) e.preventDefault();
+    
+    // Clear any previous errors
+    setError("");
+    setFormErrors({});
+    
+    // Validate form inputs
+    const validation = validateLoginCredentials(formData);
+    setValidated(true);
+    
+    // If validation fails, show field errors and stop
+    if (!validation.isValid) {
+      console.log("Form validation failed:", validation.errors);
+      setFormErrors(validation.errors);
+      return;
+    }
+    
+    // Start loading state
+    setIsLoading(true);
 
     try {
-      if (!formData.usernameOrEmail || !formData.password) {
-        throw new Error("Vui lòng điền đầy đủ thông tin")
-      }
+      // Log the login attempt (without showing password)
+      console.log("Attempting login with:", { 
+        usernameOrEmail: formData.usernameOrEmail, 
+        password: "********" 
+      });
+      
+      // Call the login API
+      const response = await authService.login(formData);
 
-      const response = await authService.login(formData)
-
+      // If we got a token, login was successful
       if (response && response.token) {
-        const decoded = jwtDecode(response.token)
-        const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
-
-        // Gọi hàm login từ AuthContext
-        login(response.token, response.userData, rememberMe)
-
-        toast.success("Đăng nhập thành công!")
-
+        // Decode the JWT to get the user's role
+        const decoded = jwtDecode(response.token);
+        const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        
+        // Call the AuthContext login function
+        login(response.token, response.userData, rememberMe);
+        
+        // Show success toast
+        toast.success("Đăng nhập thành công!");
+        
+        // Navigate based on user role
         if (userRole === "guest") {
-          navigate("/basic-user")
+          navigate("/basic-user");
         } else if (userRole === "admin") {
-          navigate("/admin")
+          navigate("/admin");
         } else {
-          navigate("/member")
+          navigate("/member");
         }
       } else {
-        throw new Error("Đăng nhập thất bại: Không nhận được token")
+        // If we don't have a token, throw an error
+        throw new Error("Đăng nhập thất bại: Không nhận được token");
       }
     } catch (err) {
-      if (err.response) {
-        switch (err.response.status) {
-          case 400:
-            setError("Thông tin đăng nhập không hợp lệ")
-            break
-          case 401:
-            setError("Email hoặc mật khẩu không đúng")
-            break
-          case 404:
-            setError("Tài khoản không tồn tại")
-            break
-          default:
-            setError("Có lỗi xảy ra, vui lòng thử lại sau")
-        }
-      } else if (err.message) {
-        setError(err.message)
-      } else {
-        setError("Có lỗi xảy ra, vui lòng thử lại sau")
-      }
+      // Log the error for debugging
+      console.error("Login error:", err);
+      
+      // Format the error for display
+      const formattedErrors = formatLoginErrors(err);
+      
+      // Set field errors and general error message
+      setFormErrors(formattedErrors.fields || {});
+      setError(formattedErrors.general || "Có lỗi xảy ra, vui lòng thử lại sau");
+      
+      // Log what error message we're showing
+      console.log("Showing error message:", formattedErrors.general);
     } finally {
-      setIsLoading(false)
+      // Always turn off loading state
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -112,6 +136,14 @@ const Login = () => {
       ...prev,
       [name]: value,
     }))
+    
+    // Clear field error when user starts typing again
+    if (validated && formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }))
+    }
   }
 
   const toggleShowPassword = () => {
@@ -142,6 +174,13 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      {error && (
+        <LoginErrorBox 
+          message={error} 
+          onDismiss={() => setError("")}
+          isVisible={!!error}
+        />
+      )}
       <motion.div 
         className="login-box"
         initial={{ opacity: 0, y: 50 }}
@@ -283,49 +322,51 @@ const Login = () => {
             <span>hoặc</span>
           </motion.div>
 
-          {error && (
-            <motion.div 
-              className="error-message"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {error}
-            </motion.div>
-          )}
-
           <motion.form 
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.5 }}
+            noValidate
           >
           <div className="form-group">
               <label htmlFor="usernameOrEmail">Tên đăng nhập</label>
               <motion.input
-              id="usernameOrEmail"
-              type="text"
-              name="usernameOrEmail"
-              value={formData.usernameOrEmail}
-              onChange={handleChange}
+                id="usernameOrEmail"
+                type="text"
+                name="usernameOrEmail"
+                value={formData.usernameOrEmail}
+                onChange={handleChange}
                 placeholder="Nhập tên đăng nhập hoặc email"
-              disabled={isLoading}
+                disabled={isLoading}
                 whileFocus={{ scale: 1.01 }}
-            />
-          </div>
+                className={formErrors.usernameOrEmail ? 'input-error' : ''}
+              />
+              <AnimatePresence>
+                {formErrors.usernameOrEmail && (
+                  <div className="error-message">
+                    {formErrors.usernameOrEmail}
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
 
           <div className="form-group">
             <label htmlFor="password">Mật khẩu</label>
               <div className="password-field">
                 <motion.input
-              id="password"
+                  id="password"
                   type={showPassword ? "text" : "password"}
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Nhập mật khẩu"
-              disabled={isLoading}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Nhập mật khẩu"
+                  disabled={isLoading}
                   whileFocus={{ scale: 1.01 }}
+                  className={formErrors.password ? 'input-error' : ''}
                 />
                 <motion.button 
                   type="button" 
@@ -337,7 +378,14 @@ const Login = () => {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </motion.button>
               </div>
-          </div>
+              <AnimatePresence>
+                {formErrors.password && (
+                  <div className="error-message">
+                    {formErrors.password}
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <div className="form-options">
               <div className="checkbox-container">

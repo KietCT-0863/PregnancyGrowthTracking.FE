@@ -1,15 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Define variables
-$primary-color: #ffc2d1;
+// Variables
+$primary-color: #ff92a5;
 $secondary-color: #ffebf2;
-$background: #fff9f9;
-$text-color: #6a0572;
-$font-primary: "Roboto", sans-serif;
-$font-secondary: "Amatic SC", cursive;
-$font-heading: "Playfair Display", serif;
-$shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
+$dark-bg: #1c2432;
+$text-color: #fff;
+$muted-text: #a0a7b7;
+$border-color: #2e3543;
+$hover-color: #ff92a5;
 
 @keyframes float {
   0%,
@@ -31,200 +30,245 @@ $shadow-sm: 2px 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
 
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
 .footer {
-  background: linear-gradient(135deg, $secondary-color, $background);
+  background-color: $dark-bg;
+  font-family: 'Nunito', sans-serif;
   color: $text-color;
-  padding: 4rem 2rem 2rem;
-  font-family: $font-primary;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
-
-  &::before,
-  &::after {
-    content: "♥";
-    position: absolute;
-    font-size: 4rem;
-    opacity: 0.1;
-    color: $primary-color;
-  }
-
-  &::before {
-    top: 2rem;
-    left: 2rem;
-    animation: float 6s ease-in-out infinite;
-  }
-
-  &::after {
-    bottom: 2rem;
-    right: 2rem;
-    animation: float 8s ease-in-out infinite reverse;
-  }
-
-  .footer-content {
+  padding: 3rem 0 1rem;
+  
+  // Main footer content
+  .footer-top {
     max-width: 1200px;
     margin: 0 auto;
-  }
-
-  .footer-main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    align-items: start;
-  }
-
-  .footer-brand,
-  .footer-section {
-    min-height: 300px;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    padding: 0 2rem;
+    
+    @media (min-width: 992px) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
-
-  .footer-brand {
-    .brand-name {
-      font-family: $font-heading;
-      color: $primary-color;
-      text-shadow: $shadow-sm;
-      font-size: 4.5rem;
+  
+  // Logo and slogan section
+  .logo-section {
+    flex: 1;
+    margin-bottom: 2rem;
+    min-width: 200px;
+    
+    .logo-wrapper {
       margin-bottom: 1rem;
-      transition: all 0.3s ease;
-
-      &:hover {
-        transform: scale(1.05);
+      
+      .logo {
+        height: 60px;
+        filter: brightness(1.1);
       }
     }
-
-    .brand-description {
+    
+    .slogan {
+      color: $muted-text;
       font-size: 0.9rem;
-      line-height: 1.6;
+      line-height: 1.5;
       margin-bottom: 1.5rem;
-      color: $text-color;
+      max-width: 300px;
     }
-
+    
     .social-links {
       display: flex;
       gap: 1rem;
-
-      .social-link {
-        color: $text-color;
-        font-size: 1.5rem;
-        transition: all 0.3s ease;
-        width: 40px;
-        height: 40px;
+      
+      a {
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
+        color: $text-color;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        
         &:hover {
-          color: $background;
-          background-color: $primary-color;
+          color: $hover-color;
+          transform: translateY(-2px);
         }
       }
     }
   }
-
-  .footer-section {
-    .section-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      position: relative;
-      color: $text-color;
-      font-family: $font-secondary;
-
-      &::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -5px;
-        width: 30px;
-        height: 2px;
-        background-color: $primary-color;
-        transition: width 0.3s ease;
-      }
-
-      &:hover::after {
-        width: 50px;
-      }
-    }
-
-    .section-links,
-    .contact-info {
-      list-style-type: none;
-      padding: 0;
-      flex-grow: 1;
-
-      li {
-        margin-bottom: 0.5rem;
-      }
-    }
-  }
-
-  .footer-link,
-  .contact-link {
-    color: $text-color;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+  
+  // Links grid section
+  .footer-links-grid {
     display: flex;
-    align-items: center;
-
-    .link-icon {
-      margin-right: 0.5rem;
-      color: $primary-color;
+    flex: 2;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+    
+    @media (min-width: 992px) {
+      padding-left: 2rem;
     }
-
-    &:hover {
-      color: $primary-color;
+    
+    .links-column {
+      min-width: 160px;
+      margin-bottom: 1.5rem;
+      
+      h3 {
+        color: $text-color;
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        
+        li {
+          margin-bottom: 0.8rem;
+          
+          a {
+            color: $muted-text;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.9rem;
+            
+            &:hover {
+              color: $hover-color;
+            }
+          }
+        }
+      }
     }
   }
-
+  
+  // Contact section - horizontal layout instead of vertical
+  .contact-section {
+    max-width: 1200px;
+    margin: 1rem auto 0;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid $border-color;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    
+    h3 {
+      color: $text-color;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      flex: 1 1 100%;
+      display: none; // Hide heading for horizontal layout
+    }
+    
+    .contact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      width: 100%;
+      gap: 1rem;
+      
+      .contact-item {
+        display: flex;
+        align-items: center;
+        margin-right: 2rem;
+        
+        .contact-label {
+          font-weight: 600;
+          color: $text-color;
+          margin-right: 0.5rem;
+          font-size: 0.85rem;
+        }
+        
+        .contact-value {
+          color: $muted-text;
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+  
+  // Footer bottom
   .footer-bottom {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid rgba($text-color, 0.1);
-    text-align: center;
-    font-size: 0.9rem;
-    color: $text-color;
-
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem 0;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    
     p {
+      color: $muted-text;
+      font-size: 0.8rem;
       margin: 0.5rem 0;
     }
-
-    .heart-icon {
-      color: $primary-color;
-      animation: pulse 1s infinite;
-      font-size: 1.2rem;
-      display: inline-block;
-      vertical-align: middle;
+    
+    .made-with {
+      .heart {
+        color: $hover-color;
+        display: inline-block;
+        animation: heartbeat 1.5s infinite;
+      }
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      
+      a {
+        color: $muted-text;
+        font-size: 0.8rem;
+        text-decoration: none;
+        
+        &:hover {
+          color: $hover-color;
+        }
+      }
     }
   }
-
-  .footer-heading {
-    font-family: $font-heading;
-  }
-
-  .copyright {
-    font-family: $font-primary;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer {
-    .footer-main {
-      grid-template-columns: 1fr;
+  
+  // Mobile responsive adjustments
+  @media (max-width: 768px) {
+    .footer-top {
+      flex-direction: column;
     }
-
-    .footer-section,
-    .footer-brand {
-      min-height: auto;
-      margin-bottom: 2rem;
+    
+    .logo-section {
+      width: 100%;
     }
-
-    .footer-brand {
-      .brand-name {
-        font-size: 3.5rem;
+    
+    .footer-links-grid {
+      width: 100%;
+    }
+    
+    .contact-section {
+      .contact-grid {
+        flex-direction: column;
+        align-items: flex-start;
+        
+        .contact-item {
+          margin-bottom: 0.8rem;
+        }
+      }
+    }
+    
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+      
+      .footer-links {
+        margin-top: 1rem;
+        justify-content: center;
       }
     }
   }
