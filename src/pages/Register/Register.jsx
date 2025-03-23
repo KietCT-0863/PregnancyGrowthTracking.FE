@@ -80,10 +80,10 @@ const Register = () => {
 
     switch (name) {
       case 'email':
-        if (!validateEmail(value)) {
+        const trimmedEmail = value.trim();
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(trimmedEmail)) {
           fieldErrors.Email = "Email không hợp lệ.";
-        } else if (!value.toLowerCase().endsWith('@gmail.com')) {
-          fieldErrors.Email = "Email phải có định dạng @gmail.com.";
         }
         break;
       case 'phone':
@@ -158,10 +158,10 @@ const Register = () => {
   const validateForm = () => {
     const validationErrors = {}
 
-    if (!formData.email || !validateEmail(formData.email)) {
+    const trimmedEmail = formData.email?.trim();
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       validationErrors.Email = ["Email không hợp lệ."]
-    } else if (!formData.email.toLowerCase().endsWith('@gmail.com')) {
-      validationErrors.Email = ["Email phải có định dạng @gmail.com."]
     }
 
     if (!formData.phone?.match(/^\d{10}$/)) {
