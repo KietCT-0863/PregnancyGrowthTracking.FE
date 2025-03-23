@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import moment from 'moment';
+import 'moment/locale/vi'; // Import Vietnamese locale
 import PropTypes from 'prop-types';
 import './CalendarFilters.scss';
 
 const CalendarDayFilter = ({ onDayChange }) => {
+  // Set Vietnamese locale at component level
+  moment.locale('vi');
+  
   const [selectedDate, setSelectedDate] = useState(moment());
   
   console.log('CalendarDayFilter đang render với ngày:', selectedDate.format('DD/MM/YYYY'));
@@ -31,9 +35,9 @@ const CalendarDayFilter = ({ onDayChange }) => {
 
   const formatDayInfo = () => {
     return {
-      weekday: selectedDate.format('dddd'),
+      weekday: selectedDate.format('dddd'), // Will be in Vietnamese due to locale
       date: selectedDate.format('DD'),
-      month: selectedDate.format('MMMM'),
+      month: selectedDate.format('MMMM'), // Will be in Vietnamese
       year: selectedDate.format('YYYY'),
       isToday: selectedDate.isSame(moment(), 'day')
     };
@@ -46,7 +50,7 @@ const CalendarDayFilter = ({ onDayChange }) => {
     <div className="calendar-filter day-filter">
       <div className="filter-header">
         <div className="day-info">
-          <h3>{dayInfo.weekday}</h3>
+          <h3>{dayInfo.weekday.charAt(0).toUpperCase() + dayInfo.weekday.slice(1)}</h3>
           <div className={`day-date ${dayInfo.isToday ? 'today' : ''}`}>
             <span className="date">{dayInfo.date}</span>
             <span className="month-year">{dayInfo.month}, {dayInfo.year}</span>

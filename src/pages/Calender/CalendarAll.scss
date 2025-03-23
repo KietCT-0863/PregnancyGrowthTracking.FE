@@ -106,6 +106,7 @@ $duration: 0.3s;
   font-family: $font-family;
   color: $text-color;
   background-color: $bg-light;
+  overflow-x: hidden;
   
   .loading-state {
     @include flex-center;
@@ -140,6 +141,7 @@ $duration: 0.3s;
     padding: 15px;
     max-width: 1800px;
     margin: 0 auto;
+    overflow: hidden;
     
 .calendar-sidebar {
       width: 280px;
@@ -396,7 +398,10 @@ $duration: 0.3s;
       overflow: hidden;
       box-shadow: 0 2px 8px $shadow-color;
   position: relative;
-      height: 1300px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      height: auto;
 
   
   .calendar-header {
@@ -527,53 +532,60 @@ $duration: 0.3s;
       }
       
       .month-view {
-        padding: 5px;
-        height: calc(100% - 120px);
+        flex: 1;
         overflow: auto;
+        max-width: 100%;
         
         .month-header {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
-          text-align: center;
+          background-color: $bg-light;
           border-bottom: 1px solid $border-color;
+          position: sticky;
+          top: 0;
+          z-index: 2;
           
           .month-weekday {
-            padding: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            color: $text-color;
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            color: $text-light;
           }
         }
         
         .month-grid {
           display: grid;
           grid-template-columns: repeat(7, 1fr);
-          grid-auto-rows: minmax(60px, auto);
-          gap: 5px;
-          background-color: $bg-light;
-          border: none;
-          padding: 10px;
+          gap: 1px;
+          background-color: $border-color;
+          min-height: calc(100% - 40px);
+          max-width: 100%;
           
           .month-day {
+            position: relative;
             background-color: $bg-color;
-            padding: 3px;
+            padding: 5px;
             display: flex;
             flex-direction: column;
-            position: relative;
             transition: all $duration ease;
             border-radius: 6px;
-            height: 200px;
-            width: 200px;
+            height: auto;
+            min-height: 120px;
+            max-height: 200px;
+            width: auto;
             box-shadow: 0 2px 8px $shadow-color;
-            gap: 10px;
-        &:hover {
+            gap: 5px;
+            overflow: hidden;
+            
+            &:hover {
               background-color: $bg-light;
             }
-            
+
             &.empty {
               background-color: rgba($bg-light, 0.5);
+              cursor: default;
             }
-            
+
             &.today {
               background-color: rgba($primary-color, 0.05);
               border: 1px solid $primary-color;
@@ -581,14 +593,20 @@ $duration: 0.3s;
               .day-number {
                 background-color: $primary-color;
                 color: white;
+                border-radius: 50%;
+                width: 25px;
+                height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
               }
             }
-            
+
             &.selected {
               background-color: rgba($primary-color, 0.1);
               border: 1px solid $primary-color;
             }
-            
+
             &.has-events {
               .day-number:after {
                 content: '';
@@ -601,78 +619,99 @@ $duration: 0.3s;
                 background-color: $primary-color;
               }
             }
+          }
+
+          .day-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: $border-radius-circle;
+            font-size: 11px;
+            font-weight: 500;
+            color: $text-color;
+            margin-bottom: 3px;
+            position: relative;
+            flex-shrink: 0;
+          }
+
+          .day-events {
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            background-color: $bg-light;
+            border-radius: 6px;
+            max-height: calc(100% - 30px);
+            display: flex;
+            flex-direction: column;
             
-            .day-number {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 22px;
-              height: 22px;
-              border-radius: $border-radius-circle;
-              font-size: 11px;
-              font-weight: 500;
-              color: $text-color;
-              margin-bottom: 3px;
-              position: relative;
+            &::-webkit-scrollbar {
+              width: 3px;
             }
             
-            .day-events {
-              flex: 1;
-              overflow-y: auto;
-              width: 100%;
-              background-color: $bg-light;
-              border-radius: 6px;
-              
-              
-              .events-container {
-              display: flex;
-        flex-direction: column;
-                gap: 2px;
-              
-              .month-event {
-                  padding: 1px 3px;
-                  border-radius: 3px;
-                font-size: 12px;
-                  color: white;
-                cursor: pointer;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-                
-                &:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 3px $shadow-hover;
-                }
-                
-                .event-time {
-                    font-size: 10px;
-                    font-weight: 600;
-                    opacity: 0.9;
-                }
-                
-                .event-title {
-                  white-space: nowrap;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                }
-              }
+            &::-webkit-scrollbar-thumb {
+              background-color: rgba(0, 0, 0, 0.2);
+              border-radius: 3px;
             }
           }
-    }
-  }
+
+          .events-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 2px;
+          }
+
+          .month-event {
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-size: 10px;
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2px;
+            
+            &:hover {
+              transform: translateY(-1px);
+              box-shadow: 0 2px 3px $shadow-hover;
+            }
+            
+            .event-time {
+              font-size: 9px;
+              font-weight: 600;
+              opacity: 0.9;
+              display: inline-block;
+              margin-right: 3px;
+            }
+            
+            .event-title {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: inline-block;
+            }
+          }
+        }
       }
       
       .week-view-container {
+        flex: 1;
+        overflow: auto;
+        max-width: 100%;
         padding: 15px;
         height: calc(100% - 130px);
-        overflow: auto;
       }
       
       .day-view-container {
+        flex: 1;
+        overflow: auto;
+        max-width: 100%;
         padding: 15px;
         height: calc(100% - 130px);
-        overflow: auto;
       }
       
       .floating-add-btn {
@@ -988,10 +1027,13 @@ $duration: 0.3s;
 /* Week Events Container */
 .week-events {
   display: flex;
-  min-height: 500px;
+  height: calc(100vh - 300px);
+  overflow-y: auto;
+  max-width: 100%;
       
       .day-column {
         flex: 1;
+    min-width: 0;
     border-right: 1px solid $border-color;
     padding: 10px;
     
@@ -1009,6 +1051,7 @@ $duration: 0.3s;
       border-radius: $border-radius-sm;
         cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      word-break: break-word;
         
         &:hover {
           transform: translateY(-2px);

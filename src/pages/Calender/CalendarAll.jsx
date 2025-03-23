@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment";
+import "moment/locale/vi";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -66,10 +67,13 @@ const VIEW_MODES = {
   DAY: 'day'
 };
 
-const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-const MINI_WEEKDAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+const WEEKDAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const MINI_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const CalendarAll = () => {
+  // Set Vietnamese locale 
+  moment.locale('vi');
+  
   const navigate = useNavigate();
   
   // State definitions
@@ -270,6 +274,8 @@ const CalendarAll = () => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // Get first day of month (0=Sunday, 1=Monday, etc.) - don't need to adjust
     const firstDayOfMonth = new Date(year, month, 1).getDay();
 
     const days = [];
@@ -405,6 +411,13 @@ const CalendarAll = () => {
     });
   };
 
+  // Add the handleMonthChange function to the component
+  const handleMonthChange = (delta) => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(newDate.getMonth() + delta);
+    setCurrentDate(newDate);
+  };
+
   // Effects
   useEffect(() => {
     fetchUserData();
@@ -430,6 +443,22 @@ const CalendarAll = () => {
     const interval = setInterval(updateCurrentTimePosition, 60000);
     
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Initialize week dates based on current date
+    const today = new Date();
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - today.getDay()); // Go to the previous Sunday
+    
+    const weekDays = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(sunday);
+      day.setDate(sunday.getDate() + i);
+      weekDays.push(day);
+    }
+    
+    setWeekDates(weekDays);
   }, []);
 
   // Render helpers
@@ -574,7 +603,35 @@ const CalendarAll = () => {
     return (
       <div className="month-view">
         <div className="month-header">
-          {WEEKDAYS.map((day) => (
+          <h2>{formatMonthYear(currentDate)}</h2>
+          <div className="month-navigation">
+            <button 
+              className="today-btn" 
+              onClick={() => {
+                setCurrentDate(new Date());
+                setSelectedDay(new Date());
+              }}
+            >
+              <CalendarIcon size={16} />
+              Hôm nay
+            </button>
+            <button 
+              className="nav-btn prev" 
+              onClick={() => handleMonthChange(-1)}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button 
+              className="nav-btn next" 
+              onClick={() => handleMonthChange(1)}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+        
+        <div className="month-weekdays">
+          {WEEKDAYS.map(day => (
             <div key={day} className="month-weekday">{day}</div>
           ))}
         </div>
@@ -584,6 +641,11 @@ const CalendarAll = () => {
             const isToday = day && day.toDateString() === new Date().toDateString();
             const isSelected = day && day.toDateString() === selectedDay.toDateString();
             const dayEvents = day ? getEventsForDay(filteredEvents, day) : [];
+            const MAX_VISIBLE_EVENTS = 3;
+            const hasOverflow = dayEvents.length > MAX_VISIBLE_EVENTS;
+            const visibleEvents = hasOverflow 
+              ? dayEvents.slice(0, MAX_VISIBLE_EVENTS) 
+              : dayEvents;
             
             return (
               <div
@@ -598,10 +660,10 @@ const CalendarAll = () => {
                 {day && (
                   <>
                     <div className="day-number">{day.getDate()}</div>
-                    <div className="day-events">
-                      {dayEvents.length > 0 && (
+                    <div className={`day-events ${hasOverflow ? 'overflow' : ''}`}>
+                      {visibleEvents.length > 0 && (
                         <div className="events-container">
-                          {dayEvents.map((event) => {
+                          {visibleEvents.map((event) => {
                             const category = CATEGORIES.find(c => c.id === event.reminderType) || CATEGORIES[0];
                             return (
                               <div
@@ -614,11 +676,19 @@ const CalendarAll = () => {
                                 }}
                               >
                                 <span className="event-time">{event.time}</span>
-                                --
                                 <span className="event-title">{event.title}</span>
                               </div>
                             );
                           })}
+                          {hasOverflow && (
+                            <div className="more-events" onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedDay(day);
+                              setViewMode(VIEW_MODES.DAY);
+                            }}>
+                              +{dayEvents.length - MAX_VISIBLE_EVENTS} sự kiện khác
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
@@ -644,7 +714,7 @@ const CalendarAll = () => {
               <button 
                 className="today-btn" 
                 onClick={() => {
-                  const today = moment().startOf('week');
+                  const today = moment().startOf('week').toDate(); // Use moment for consistency
                   setWeekDates(Array.from({length: 7}, (_, i) => moment(today).add(i, 'days').toDate()));
                 }}
               >
@@ -674,15 +744,15 @@ const CalendarAll = () => {
         </div>
         
         <div className="week-days-header">
-          {WEEKDAYS.map((day, index) => (
-            <div key={day} className="week-day-header">
-              <div className="weekday-name">{day}</div>
+          {weekDates.map((date, index) => (
+            <div key={index} className="week-day-header">
+              <div className="weekday-name">{WEEKDAYS[date.getDay()]}</div>
               <div 
                 className={`weekday-date ${
-                  weekDates[index] && weekDates[index].toDateString() === new Date().toDateString() ? "today" : ""
+                  date.toDateString() === new Date().toDateString() ? "today" : ""
                 }`}
               >
-                {weekDates[index] ? weekDates[index].getDate() : ""}
+                {date.getDate()}
               </div>
             </div>
           ))}

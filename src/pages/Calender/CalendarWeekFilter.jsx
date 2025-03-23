@@ -5,7 +5,12 @@ import PropTypes from 'prop-types';
 import './CalendarFilters.scss';
 
 const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
-  const [currentWeekStart, setCurrentWeekStart] = useState(moment().startOf('week'));
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    const today = new Date();
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - today.getDay()); // Go to previous Sunday
+    return moment(sunday);
+  });
   
   console.log('CalendarWeekFilter đang render với tuần bắt đầu từ:', currentWeekStart.format('DD/MM/YYYY'));
   console.log('CalendarWeekFilter - currentTimePosition:', currentTimePosition);
@@ -46,7 +51,10 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
 
   const goToCurrentWeek = () => {
     console.log('CalendarWeekFilter - Đang chuyển về tuần hiện tại');
-    setCurrentWeekStart(moment().startOf('week'));
+    const today = new Date();
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - today.getDay()); // Go to previous Sunday
+    setCurrentWeekStart(moment(sunday));
   };
 
   const formatWeekRange = () => {
@@ -60,7 +68,7 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
     if (!currentWeekStart) return null;
     
     const days = [];
-    const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    const weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
     
     console.log('CalendarWeekFilter - Đang render các ngày trong tuần');
     
@@ -73,7 +81,7 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
           key={i} 
           className={`week-day ${isToday ? 'today' : ''}`}
         >
-          <div className="weekday-name">{weekdays[i]}</div>
+          <div className="weekday-name">{weekdays[day.day()]}</div>
           <div className="weekday-date">{day.format('DD')}</div>
         </div>
       );
