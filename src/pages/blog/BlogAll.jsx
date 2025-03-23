@@ -282,8 +282,8 @@ const BlogAll = () => {
         
         <div className="sidebar-header">
           <h3>Blog Navigation</h3>
-        </div>
-        
+      </div>
+
         <div className="sidebar-content">
           <ul className="sidebar-menu">
             <li className="active">
@@ -327,7 +327,7 @@ const BlogAll = () => {
               ))}
             </ul>
           </div>
-          
+
           <div className="sidebar-section">
             <h4 className="sidebar-title">Chủ đề nổi bật</h4>
             <div className="topic-tags">
@@ -339,7 +339,7 @@ const BlogAll = () => {
             </div>
           </div>
         </div>
-        
+
         
       </aside>
       
@@ -403,16 +403,16 @@ const BlogAll = () => {
             </div>
 
             <div className="blog-categories">
-              {availableCategories.map((category, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleCategoryClick(category)}
+          {availableCategories.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => handleCategoryClick(category)}
                   className={`category-btn ${selectedCategories.includes(category) ? "active" : ""}`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+            >
+              {category}
+            </button>
+          ))}
+        </div>
 
             <div className="sort-box">
               <select
@@ -425,10 +425,10 @@ const BlogAll = () => {
                 <option value="z-a">Z to A</option>
               </select>
             </div>
-          </div>
+      </div>
 
           {/* Blog Grid */}
-          <div className="blog-grid">
+      <div className="blog-grid">
             {currentBlogs.map((blog, index) => {
               const category = getCategory(blog, index);
               const categoryClass = getCategoryClass(category.name);
@@ -439,8 +439,8 @@ const BlogAll = () => {
                     <img
                       src={blog.blogImageUrl}
                       alt={blog.title}
-                      onError={(e) => {
-                        e.target.onerror = null;
+                onError={(e) => {
+                  e.target.onerror = null;
                         e.target.src = `https://picsum.photos/seed/${blog.id}/600/400`;
                       }}
                     />
@@ -569,7 +569,7 @@ const BlogAll = () => {
           <div className="sidebar-section author-profile">
             <div className="author-avatar">
               <img src="https://picsum.photos/seed/author/100" alt="Author avatar" />
-            </div>
+              </div>
             <h3 className="author-name">ThS. Nguyễn Thị A</h3>
             <p className="author-bio">Chuyên gia dinh dưỡng thai kỳ với hơn 10 năm kinh nghiệm tư vấn sức khỏe mẹ và bé.</p>
             <div className="author-links">
@@ -610,8 +610,8 @@ const BlogAll = () => {
               <input type="email" placeholder="Email của bạn" />
               <button type="submit">Đăng ký</button>
             </form>
-          </div>
-          
+      </div>
+
           <div className="sidebar-section">
             <h4 className="sidebar-title">
               <Info size={16} />
@@ -623,7 +623,7 @@ const BlogAll = () => {
               <p><strong>Cập nhật:</strong> {formatDate(new Date())}</p>
             </div>
           </div>
-        </div>
+      </div>
       </aside>
       
       {/* Overlay for mobile when sidebar is open */}

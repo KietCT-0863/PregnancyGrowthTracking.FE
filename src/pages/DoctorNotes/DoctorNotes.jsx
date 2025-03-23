@@ -22,7 +22,7 @@ const DoctorNotes = () => {
     images: [],
     currentImage: null,
   })
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("") 
   const [filterType, setFilterType] = useState("all")
   const [dateFilterType, setDateFilterType] = useState("all") // "all", "day", "week", "month"
   const [selectedDate, setSelectedDate] = useState("")
@@ -81,8 +81,8 @@ const DoctorNotes = () => {
     }
 
     try {
-      await userNoteService.createNote(currentNote)
-      toast.success("Tạo ghi chú mới thành công!")
+        await userNoteService.createNote(currentNote)
+        toast.success("Tạo ghi chú mới thành công!")
       await fetchNotes()
       resetForm()
       showNotification('success', 'Ghi chú đã được thêm thành công!')

@@ -141,8 +141,8 @@ $duration: 0.3s;
     padding: 15px;
     max-width: 1800px;
     margin: 0 auto;
-    overflow: hidden;
-    
+  overflow: hidden;
+
 .calendar-sidebar {
       width: 280px;
       flex-shrink: 0;
@@ -576,8 +576,8 @@ $duration: 0.3s;
             box-shadow: 0 2px 8px $shadow-color;
             gap: 5px;
             overflow: hidden;
-            
-            &:hover {
+        
+        &:hover {
               background-color: $bg-light;
             }
 
@@ -585,7 +585,7 @@ $duration: 0.3s;
               background-color: rgba($bg-light, 0.5);
               cursor: default;
             }
-
+            
             &.today {
               background-color: rgba($primary-color, 0.05);
               border: 1px solid $primary-color;
@@ -601,16 +601,16 @@ $duration: 0.3s;
                 justify-content: center;
               }
             }
-
+            
             &.selected {
-              background-color: rgba($primary-color, 0.1);
+                background-color: rgba($primary-color, 0.1);
               border: 1px solid $primary-color;
             }
 
             &.has-events {
               .day-number:after {
-                content: '';
-                position: absolute;
+                  content: '';
+                  position: absolute;
                 bottom: 2px;
                 right: 2px;
                 width: 5px;
@@ -622,9 +622,9 @@ $duration: 0.3s;
           }
 
           .day-number {
-            display: flex;
+        display: flex;
             align-items: center;
-            justify-content: center;
+        justify-content: center;
             width: 22px;
             height: 22px;
             border-radius: $border-radius-circle;
@@ -637,14 +637,14 @@ $duration: 0.3s;
           }
 
           .day-events {
-            flex: 1;
-            overflow-y: auto;
+      flex: 1;
+          overflow-y: auto;
             width: 100%;
             background-color: $bg-light;
             border-radius: 6px;
             max-height: calc(100% - 30px);
-            display: flex;
-            flex-direction: column;
+          display: flex;
+          flex-direction: column;
             
             &::-webkit-scrollbar {
               width: 3px;
@@ -652,10 +652,10 @@ $duration: 0.3s;
             
             &::-webkit-scrollbar-thumb {
               background-color: rgba(0, 0, 0, 0.2);
-              border-radius: 3px;
-            }
-          }
-
+                  border-radius: 3px;
+                }
+              }
+              
           .events-container {
             display: flex;
             flex-direction: column;
@@ -690,7 +690,7 @@ $duration: 0.3s;
             
             .event-title {
               white-space: nowrap;
-              overflow: hidden;
+          overflow: hidden;
               text-overflow: ellipsis;
               display: inline-block;
             }
@@ -699,7 +699,7 @@ $duration: 0.3s;
       }
       
       .week-view-container {
-        flex: 1;
+      flex: 1;
         overflow: auto;
         max-width: 100%;
         padding: 15px;
@@ -713,7 +713,7 @@ $duration: 0.3s;
         padding: 15px;
         height: calc(100% - 130px);
       }
-      
+
       .floating-add-btn {
                   position: absolute;
         bottom: 20px;
@@ -1028,7 +1028,7 @@ $duration: 0.3s;
 .week-events {
   display: flex;
   height: calc(100vh - 300px);
-  overflow-y: auto;
+    overflow-y: auto;
   max-width: 100%;
       
       .day-column {

@@ -4,7 +4,7 @@ import moment from "moment";
 import "moment/locale/vi";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { 
+import {
   Plus, Clock, ChevronLeft, ChevronRight, Pill, Stethoscope, 
   Baby, Dumbbell, Apple, CalendarIcon, MapPin, History, X
 } from "lucide-react";
@@ -35,30 +35,30 @@ const INITIAL_USER_DATA = {
 };
 
 const INITIAL_EVENT_DATA = {
-  title: "",
-  date: moment().format("YYYY-MM-DD"),
-  time: moment().format("HH:mm"),
-  reminderType: "",
-  notification: "",
-  location: "",
+    title: "",
+    date: moment().format("YYYY-MM-DD"),
+    time: moment().format("HH:mm"),
+    reminderType: "",
+    notification: "",
+    location: "",
 };
 
 const CATEGORIES = [
-  {
-    id: "Cuộc hẹn bác sĩ",
-    label: "Cuộc hẹn bác sĩ",
-    color: "#FF6B6B",
-    icon: Stethoscope,
-  },
-  { id: "Uống thuốc", label: "Uống thuốc", color: "#4ECDC4", icon: Pill },
-  { id: "Khám thai", label: "Khám thai", color: "#45B7D1", icon: Baby },
-  {
-    id: "Tập thể dục",
-    label: "Tập thể dục",
-    color: "#FFA07A",
-    icon: Dumbbell,
-  },
-  { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8", icon: Apple },
+    {
+      id: "Cuộc hẹn bác sĩ",
+      label: "Cuộc hẹn bác sĩ",
+      color: "#FF6B6B",
+      icon: Stethoscope,
+    },
+    { id: "Uống thuốc", label: "Uống thuốc", color: "#4ECDC4", icon: Pill },
+    { id: "Khám thai", label: "Khám thai", color: "#45B7D1", icon: Baby },
+    {
+      id: "Tập thể dục",
+      label: "Tập thể dục",
+      color: "#FFA07A",
+      icon: Dumbbell,
+    },
+    { id: "Dinh dưỡng", label: "Dinh dưỡng", color: "#98D8C8", icon: Apple },
 ];
 
 const VIEW_MODES = {
@@ -131,8 +131,8 @@ const CalendarAll = () => {
           profileImageUrl = profileImageData.profileImageUrl;
         } else if (userInfo?.profileImageUrl) {
           profileImageUrl = userInfo.profileImageUrl;
-        }
-      } catch (error) {
+      }
+    } catch (error) {
         console.error("Lỗi khi lấy ảnh đại diện:", error);
       }
 
@@ -171,15 +171,15 @@ const CalendarAll = () => {
       
       if (response && Array.isArray(response)) {
         const formattedEvents = response.map(event => ({
-          id: event.remindId,
+            id: event.remindId,
           remindId: event.remindId,
-          title: event.title || '',
-          date: event.date,
-          time: event.time || '09:00',
-          reminderType: event.reminderType || 'default',
-          notification: event.notification || '',
-          location: event.location || '',
-          color: getColorByType(event.reminderType)
+            title: event.title || '',
+            date: event.date,
+            time: event.time || '09:00',
+            reminderType: event.reminderType || 'default',
+            notification: event.notification || '',
+            location: event.location || '',
+            color: getColorByType(event.reminderType)
         }));
         
         setEvents(formattedEvents);
@@ -530,8 +530,8 @@ const CalendarAll = () => {
                   <div 
                     className="progress-bar" 
                     style={{ 
-                      width: `${percentage}%`, 
-                      backgroundColor: cat.color 
+                    width: `${percentage}%`, 
+                    backgroundColor: cat.color 
                     }}
                   />
                 </div>
@@ -600,9 +600,9 @@ const CalendarAll = () => {
   };
 
   const renderMonthView = (filteredEvents) => {
-    return (
-      <div className="month-view">
-        <div className="month-header">
+      return (
+        <div className="month-view">
+          <div className="month-header">
           <h2>{formatMonthYear(currentDate)}</h2>
           <div className="month-navigation">
             <button 
@@ -627,16 +627,16 @@ const CalendarAll = () => {
             >
               <ChevronRight size={18} />
             </button>
-          </div>
+              </div>
         </div>
         
         <div className="month-weekdays">
           {WEEKDAYS.map(day => (
             <div key={day} className="month-weekday">{day}</div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="month-grid">
+          <div className="month-grid">
           {getDaysInMonth(currentDate).map((day, index) => {
             const isToday = day && day.toDateString() === new Date().toDateString();
             const isSelected = day && day.toDateString() === selectedDay.toDateString();
@@ -665,19 +665,19 @@ const CalendarAll = () => {
                         <div className="events-container">
                           {visibleEvents.map((event) => {
                             const category = CATEGORIES.find(c => c.id === event.reminderType) || CATEGORIES[0];
-                            return (
-                              <div
+                        return (
+                          <div
                                 key={event.id || event.remindId}
-                                className="month-event"
-                                style={{ backgroundColor: category.color }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEventClick(event);
-                                }}
-                              >
+                            className="month-event"
+                            style={{ backgroundColor: category.color }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEventClick(event);
+                            }}
+                          >
                                 <span className="event-time">{event.time}</span>
                                 <span className="event-title">{event.title}</span>
-                              </div>
+                          </div>
                             );
                           })}
                           {hasOverflow && (
@@ -697,13 +697,13 @@ const CalendarAll = () => {
               </div>
             );
           })}
+          </div>
         </div>
-      </div>
-    );
+      );
   };
 
   const renderWeekView = (filteredEvents) => {
-    return (
+      return (
       <div className="week-view-container">
         <div className="week-header">
           <div className="week-info">
@@ -793,7 +793,7 @@ const CalendarAll = () => {
     const dayEvents = getEventsForDay(filteredEvents, selectedDayDate);
     const isTodaySelected = moment(selectedDayDate).isSame(moment(), 'day');
     
-    return (
+      return (
       <div className="day-view-container">
         <CalendarDayFilter 
           onDayChange={handleDayChange} 
@@ -902,62 +902,62 @@ const CalendarAll = () => {
             <div className="header-top">
               <div className="view-filters">
                 {renderViewModeSelector()}
+            </div>
+            
+            <div className="search-filter-section">
+              <div className="search-box">
+                <input 
+                  type="text" 
+                  placeholder="Tìm kiếm sự kiện..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
-              
-              <div className="search-filter-section">
-                <div className="search-box">
-                  <input 
-                    type="text" 
-                    placeholder="Tìm kiếm sự kiện..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="category-filter">
-                  <select 
-                    value={selectedCategory} 
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <option value="all">Tất cả sự kiện</option>
-                    {CATEGORIES.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              
-              <div className="calendar-actions">
-                <button 
-                  className="today-btn"
-                  onClick={() => {
-                    const today = new Date();
-                    setSelectedDay(today);
-                    setCurrentDate(today);
-                    setSelectedDate(today);
-                  }}
+              <div className="category-filter">
+                <select 
+                  value={selectedCategory} 
+                  onChange={(e) => setSelectedCategory(e.target.value)}
                 >
+                  <option value="all">Tất cả sự kiện</option>
+                    {CATEGORIES.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="calendar-actions">
+              <button 
+                className="today-btn"
+                onClick={() => {
+                  const today = new Date();
+                  setSelectedDay(today);
+                  setCurrentDate(today);
+                  setSelectedDate(today);
+                }}
+              >
                   <CalendarIcon size={16} />
                   <span>Today</span>
-                </button>
-                <button 
+              </button>
+              <button 
                   className="nav-btn prev"
                   onClick={() => navigateMonth(-1)}
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button 
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
                   className="nav-btn next"
                   onClick={() => navigateMonth(1)}
-                >
-                  <ChevronRight size={18} />
-                </button>
-                <button 
-                  className="history-btn"
-                  onClick={() => navigate("/member/calendar/history")}
-                >
-                  <History size={18} />
-                  <span>Lịch sử</span>
-                </button>
+              >
+                <ChevronRight size={18} />
+              </button>
+              <button 
+                className="history-btn"
+                onClick={() => navigate("/member/calendar/history")}
+              >
+                <History size={18} />
+                <span>Lịch sử</span>
+              </button>
               </div>
             </div>
             
@@ -1029,97 +1029,97 @@ const CalendarAll = () => {
 
 // Modal Components
 const EventFormModal = ({ onClose, onSubmit, event, setEvent, categories, getCurrentDate }) => (
-  <motion.div
-    className="modal-overlay"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
     onClick={onClose}
-  >
-    <motion.div
-      className="modal-content simple-modal"
-      initial={{ scale: 0.8, y: -50 }}
-      animate={{ scale: 1, y: 0 }}
-      exit={{ scale: 0.8, y: 50 }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="modal-header">
-        <h2>Thêm sự kiện mới</h2>
-      </div>
+          >
+            <motion.div
+              className="modal-content simple-modal"
+              initial={{ scale: 0.8, y: -50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h2>Thêm sự kiện mới</h2>
+              </div>
 
       <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Tiêu đề"
+                <div className="form-group">
+                  <input
+                    type="text"
+                    placeholder="Tiêu đề"
             value={event.title}
             onChange={(e) => setEvent({ ...event, title: e.target.value })}
-            required
-          />
-        </div>
+                    required
+                  />
+                </div>
 
-        <div className="form-group">
-          <input
-            type="date"
+                <div className="form-group">
+                  <input
+                    type="date"
             value={event.date}
-            min={getCurrentDate()}
+                    min={getCurrentDate()}
             onChange={(e) => setEvent({ ...event, date: e.target.value })}
-            required
-          />
-        </div>
+                    required
+                  />
+                </div>
 
-        <div className="form-group time-selection">
-          <label>Thời gian</label>
-          <div className="time-input-wrapper">
-            <input
-              type="time"
+                <div className="form-group time-selection">
+                  <label>Thời gian</label>
+                  <div className="time-input-wrapper">
+                    <input
+                      type="time"
               value={event.time}
               onChange={(e) => setEvent({ 
                 ...event, 
                 time: e.target.value, 
                 startTime: e.target.value 
               })}
-              required
-            />
-            <Clock size={16} className="time-icon" />
-          </div>
-        </div>
+                      required
+                    />
+                    <Clock size={16} className="time-icon" />
+                  </div>
+                </div>
 
-        <div className="form-group">
-          <select
+                <div className="form-group">
+                  <select
             value={event.reminderType}
             onChange={(e) => setEvent({ ...event, reminderType: e.target.value })}
-            required
-          >
-            <option value="">-- Chọn loại sự kiện --</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </div>
+                    required
+                  >
+                    <option value="">-- Chọn loại sự kiện --</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-        <div className="form-group">
-          <textarea
+                <div className="form-group">
+                  <textarea
             placeholder="Thông báo (không bắt buộc)"
             value={event.notification || ''}
             onChange={(e) => setEvent({ ...event, notification: e.target.value })}
-            rows={4}
-          />
-        </div>
+                    rows={4}
+                  />
+                </div>
 
-        <div className="modal-actions">
+                <div className="modal-actions">
           <button type="button" className="cancel-btn" onClick={onClose}>
-            Hủy
-          </button>
-          <button type="submit" className="save-btn">
-            Lưu
-          </button>
-        </div>
-      </form>
-    </motion.div>
-  </motion.div>
+                    Hủy
+                  </button>
+                  <button type="submit" className="save-btn">
+                    Lưu
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
 );
 
 EventFormModal.propTypes = {
@@ -1139,44 +1139,44 @@ EventFormModal.propTypes = {
 };
 
 const EventDetailsModal = ({ event, onClose, onEdit, getColorByType }) => (
-  <motion.div
-    className="modal-overlay"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
     onClick={onClose}
-  >
-    <motion.div
+          >
+            <motion.div
       className="modal-content event-details-modal"
-      initial={{ scale: 0.8, y: -50 }}
-      animate={{ scale: 1, y: 0 }}
-      exit={{ scale: 0.8, y: 50 }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="modal-header">
+              initial={{ scale: 0.8, y: -50 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 50 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
         <h2>Chi tiết sự kiện</h2>
         <div className="close-icon" onClick={onClose}>
           <X size={18} />
         </div>
-      </div>
-      
-      <div className="event-details">
+              </div>
+              
+              <div className="event-details">
         <div 
           className="event-type-tag" 
           style={{ backgroundColor: getColorByType(event.reminderType) }}
         >
           {event.reminderType || 'Sự kiện'}
-        </div>
-        
+                </div>
+                
         <h2 className="event-title">{event.title}</h2>
         
         <div className="detail-row">
           <CalendarIcon size={18} />
-          <span>
+                  <span>
             {event.date ? moment(event.date).format('DD/MM/YYYY') : ''}
-          </span>
-        </div>
-        
+                  </span>
+                </div>
+                
         <div className="detail-row">
           <Clock size={18} />
           <span>{event.time || ''}</span>
@@ -1184,29 +1184,29 @@ const EventDetailsModal = ({ event, onClose, onEdit, getColorByType }) => (
         
         {event.location && (
           <div className="detail-row">
-            <MapPin size={18} />
+                    <MapPin size={18} />
             <span>{event.location}</span>
-          </div>
-        )}
-        
+                  </div>
+                )}
+                
         {event.notification && (
           <div className="detail-description">
             <h4>Ghi chú</h4>
             <p>{event.notification}</p>
-          </div>
+                  </div>
         )}
-      </div>
-      
-      <div className="modal-actions">
+              </div>
+              
+              <div className="modal-actions">
         <button className="edit-button" onClick={onEdit}>
-          Chỉnh sửa
-        </button>
+                  Chỉnh sửa
+                </button>
         <button className="close-button" onClick={onClose}>
-          Đóng
-        </button>
-      </div>
-    </motion.div>
-  </motion.div>
+                  Đóng
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
 );
 
 EventDetailsModal.propTypes = {
