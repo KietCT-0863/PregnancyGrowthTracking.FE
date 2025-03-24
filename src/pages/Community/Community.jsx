@@ -18,7 +18,7 @@ import {
   ArrowRight,
   Bookmark,
   Share2,
-  Trending
+  TrendingUp
 } from "react-feather";
 import PropTypes from "prop-types";
 import communityService from "../../api/services/communityService";
@@ -600,7 +600,7 @@ const Community = () => {
           className={`topic-btn ${mainTopic === 'trending' ? 'active' : ''}`}
           onClick={() => setMainTopic('trending')}
         >
-          <Trending size={16} /> Xu hướng
+          <TrendingUp size={16} /> Xu hướng
         </button>
         <button
           className={`topic-btn ${mainTopic === 'latest' ? 'active' : ''}`}
