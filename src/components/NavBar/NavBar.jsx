@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import {
@@ -15,9 +15,40 @@ import {
   FaTimes,
   FaUserEdit,
   FaBell,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import "./Navbar.scss";
 
+// Navigation items defined as a constant
+const NAVIGATION_ITEMS = [
+  {
+    path: "/member/basic-tracking",
+    name: "Theo Dõi Thai Kỳ",
+    icon: <FaBabyCarriage className="nav-icon" />,
+  },
+  {
+    path: "/member/calendar",
+    name: "Lịch Trình Thăm Khám",
+    icon: <FaCalendarAlt className="nav-icon" />,
+  },
+  {
+    path: "/member/doctor-notes",
+    name: "Ghi Chú Bác Sĩ",
+    icon: <FaNotesMedical className="nav-icon" />,
+  },
+  {
+    path: "/blog",
+    name: "Blog",
+    icon: <FaBlog className="nav-icon" />,
+  },
+  {
+    path: "/community",
+    name: "Cộng Đồng",
+    icon: <FaUsers className="nav-icon" />,
+  },
+];
+
+// NavLink component
 const NavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
   const isActive = location.pathname === to;
@@ -34,184 +65,251 @@ const NavLink = ({ to, children, icon, onClick }) => {
   );
 };
 
+// Notification item component
+const NotificationItem = ({ notification, formatDateTime }) => (
+  <div className="notification-item">
+    <div className="notification-type">
+      {notification.reminderType || "Khám thai"}
+    </div>
+    <div className="notification-content">
+      <h4>{notification.title}</h4>
+      <p className="notification-time">
+        {formatDateTime(notification.date, notification.time)}
+      </p>
+    </div>
+  </div>
+);
+
+// NavBar component
 const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showSidebarNotifications, setShowSidebarNotifications] =
-    useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
+  
+  // Consolidated state
+  const [state, setState] = useState({
+    isLoggedIn: false,
+    userInfo: null,
+    isAdmin: false,
+    profileImage: null,
+    notifications: [],
+    isMobile: window.innerWidth <= 768,
+  });
+  
+  // UI state
+  const [uiState, setUiState] = useState({
+    scrolled: false,
+    isDropdownOpen: false,
+    isMobileMenuOpen: false,
+    showNotifications: false,
+    isSidebarOpen: false,
+    showSidebarNotifications: false,
+    showHorizontalMenu: false,
+  });
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = JSON.parse(localStorage.getItem("userData"));
+  // Helper function to update state partially
+  const updateState = (newState) => {
+    setState(prevState => ({ ...prevState, ...newState }));
+  };
 
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.group("NavBar - User Information");
-        console.log("UserData from localStorage:", userData);
+  // Helper function to update UI state partially
+  const updateUiState = (newState) => {
+    setUiState(prevState => ({ ...prevState, ...newState }));
+  };
 
-        // Lấy trực tiếp từ userData vì đã được lưu từ authService
-        setUserInfo({
-          ...decoded,
-          fullName: userData?.fullName,
-          email: userData?.email,
-          userName: userData?.userName,
-          role: userData?.role,
-        });
-
-        setIsLoggedIn(true);
-        setIsAdmin(userData?.role === "admin");
-
-        if (userData?.profileImageUrl) {
-          setProfileImage(userData.profileImageUrl);
-        }
-      } catch (error) {
-        console.error("Token decode error:", error);
-        localStorage.removeItem("token");
-        localStorage.removeItem("userData");
-        setIsLoggedIn(false);
-        setUserInfo(null);
-        setIsAdmin(false);
-        setProfileImage(null);
-      }
-    }
-
-    // Listen for localStorage changes
-    const handleStorageChange = (e) => {
-      if (e.key === "userData") {
-        const newUserData = JSON.parse(e.newValue);
-        if (newUserData?.profileImageUrl) {
-          setProfileImage(newUserData.profileImageUrl);
-        }
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    // Add scroll event listener
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  // Giả lập thông báo cho phiên bản public
-  useEffect(() => {
-    // Tạo một số thông báo mẫu
-    const sampleNotifications = [
-      {
-        reminderType: "Thông báo",
-        title: "Chào mừng đến với Mẹ Bầu",
-        date: new Date().toISOString(),
-        time: "10:00",
-      },
-      {
-        reminderType: "Tin tức",
-        title: "Bài viết mới về dinh dưỡng thai kỳ",
-        date: new Date(Date.now() + 86400000).toISOString(), // Ngày mai
-        time: "14:30",
-      },
-    ];
-
-    setNotifications(sampleNotifications);
-  }, []);
-
-  const formatDateTime = (date, time) => {
+  // Format date and time
+  const formatDateTime = useCallback((date, time) => {
     try {
       const dateStr = date.includes("T") ? date.split("T")[0] : date;
       const dateObj = new Date(`${dateStr}T${time}`);
-
       return `${time} ${dateObj.toLocaleDateString("vi-VN")}`;
     } catch (error) {
       console.error("Error formatting date:", error);
       return "Invalid date";
     }
-  };
+  }, []);
 
-  const handleLogout = () => {
-    console.log("Logging out...");
+  // Handle logout
+  const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
-    setIsLoggedIn(false);
-    setUserInfo(null);
-    setIsAdmin(false);
-    setIsMobileMenuOpen(false);
-    setIsDropdownOpen(false);
+    updateState({
+      isLoggedIn: false,
+      userInfo: null,
+      isAdmin: false,
+      profileImage: null
+    });
+    updateUiState({
+      isDropdownOpen: false,
+      isMobileMenuOpen: false,
+    });
     navigate("/");
-  };
+  }, [navigate]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  // Toggle functions
+  const toggleDropdown = () => updateUiState({ isDropdownOpen: !uiState.isDropdownOpen });
+  const toggleMobileMenu = () => updateUiState({ isMobileMenuOpen: !uiState.isMobileMenuOpen });
+  
+  // Toggle horizontal navigation menu
+  const toggleHorizontalMenu = () => {
+    updateUiState({ 
+      showHorizontalMenu: !uiState.showHorizontalMenu,
+      // Close other menus when toggling horizontal menu
+      isDropdownOpen: false,
+      showNotifications: false,
+      isMobileMenuOpen: false
+    });
   };
 
   const toggleSidebar = () => {
-    if (isMobile) {
-      setIsSidebarOpen(!isSidebarOpen);
-    }
+    // Keep this for legacy support, but we'll primarily use toggleHorizontalMenu
+    updateUiState({ 
+      isSidebarOpen: !uiState.isSidebarOpen
+    });
   };
 
-  // Thêm useEffect để handle click outside
+  const toggleNotifications = () => updateUiState({ showNotifications: !uiState.showNotifications });
+  const toggleSidebarNotifications = (e) => {
+    e?.stopPropagation?.();
+    updateUiState({ showSidebarNotifications: !uiState.showSidebarNotifications });
+  };
+
+  // Handle initial auth and notifications
   useEffect(() => {
-    function handleClickOutside(event) {
-      // Đóng dropdown thông báo trong sidebar khi click bên ngoài
+    const token = localStorage.getItem("token");
+    const userData = JSON.parse(localStorage.getItem("userData") || "null");
+
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        
+        updateState({
+          isLoggedIn: true,
+          userInfo: {
+            ...decoded,
+            fullName: userData?.fullName,
+            email: userData?.email,
+            userName: userData?.userName,
+            role: userData?.role,
+          },
+          isAdmin: userData?.role === "admin",
+          profileImage: userData?.profileImageUrl || null,
+        });
+      } catch (error) {
+        console.error("Token decode error:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("userData");
+      }
+    }
+
+    // Set sample notifications
+    updateState({
+      notifications: [
+        {
+          reminderType: "Thông báo",
+          title: "Chào mừng đến với Mẹ Bầu",
+          date: new Date().toISOString(),
+          time: "10:00",
+        },
+        {
+          reminderType: "Tin tức",
+          title: "Bài viết mới về dinh dưỡng thai kỳ",
+          date: new Date(Date.now() + 86400000).toISOString(),
+          time: "14:30",
+        },
+      ]
+    });
+
+    // Event listeners
+    const handleStorageChange = (e) => {
+      if (e.key === "userData") {
+        const newUserData = JSON.parse(e.newValue || "null");
+        if (newUserData?.profileImageUrl) {
+          updateState({ profileImage: newUserData.profileImageUrl });
+        }
+      }
+    };
+
+    const handleScroll = () => {
+      updateUiState({ scrolled: window.scrollY > 50 });
+    };
+
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      updateState({ isMobile: mobile });
+      
+      if (!mobile && uiState.isSidebarOpen) {
+        updateUiState({ isSidebarOpen: false });
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Handle outside clicks
+  useEffect(() => {
+    const handleClickOutside = (event) => {
       if (
-        showSidebarNotifications &&
+        uiState.showSidebarNotifications &&
         !event.target.closest(".sidebar-notification-dropdown") &&
         !event.target.closest(".sidebar-notification-button")
       ) {
-        setShowSidebarNotifications(false);
+        updateUiState({ showSidebarNotifications: false });
       }
-    }
+      
+      // Close horizontal menu when clicking outside
+      if (
+        uiState.showHorizontalMenu &&
+        !event.target.closest(".horizontal-nav") &&
+        !event.target.closest(".navbar-toggle-button") // Update the class name
+      ) {
+        updateUiState({ showHorizontalMenu: false });
+      }
+    };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showSidebarNotifications]);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [uiState.showSidebarNotifications, uiState.showHorizontalMenu]);
 
-  // Thêm useEffect để theo dõi thay đổi kích thước màn hình
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
+  // Render navigation items
+  const renderNavItems = useCallback((isSidebar = false) => {
+    return NAVIGATION_ITEMS.map((item, index) => (
+      <div key={index} className={isSidebar ? "" : "nav-item"}>
+        {isSidebar ? (
+          <Link to={item.path} className="sidebar-menu-item">
+            <div className="sidebar-icon">{item.icon}</div>
+            <span className="sidebar-text">{item.name}</span>
+          </Link>
+        ) : (
+          <NavLink
+            to={item.path}
+            icon={item.icon}
+            onClick={() => updateUiState({ isMobileMenuOpen: false })}
+          >
+            {item.name}
+          </NavLink>
+        )}
+      </div>
+    ));
+  }, []);
 
-      // Tự động đóng sidebar khi chuyển từ mobile sang desktop
-      if (!mobile && isSidebarOpen) {
-        setIsSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isSidebarOpen]);
+  // Destructure state for easier access
+  const { isLoggedIn, userInfo, isAdmin, profileImage, notifications, isMobile } = state;
+  const { 
+    scrolled, 
+    isDropdownOpen, 
+    isMobileMenuOpen, 
+    showNotifications, 
+    isSidebarOpen, 
+    showSidebarNotifications,
+    showHorizontalMenu
+  } = uiState;
 
   return (
     <>
@@ -229,96 +327,45 @@ const NavBar = () => {
               />
               <span className="navbar-logo-text">Mẹ Bầu</span>
             </Link>
-            {/* Chỉ hiển thị nút toggle sidebar trên mobile */}
-            {isMobile && (
-              <button
-                className="sidebar-toggle"
-                onClick={toggleSidebar}
-                aria-label="Toggle sidebar"
-              >
-                {isSidebarOpen ? (
-                  <FaTimes className="toggle-icon" />
-                ) : (
-                  <FaBars className="toggle-icon" />
-                )}
-              </button>
-            )}
+            {/* Toggle navigation button for all screen sizes */}
+            <button
+              className={`navbar-toggle-button ${showHorizontalMenu ? "active" : ""}`}
+              onClick={toggleHorizontalMenu}
+              aria-label="Toggle navigation"
+            >
+              {showHorizontalMenu ? (
+                <FaTimes className="toggle-icon" />
+              ) : (
+                <FaBars className="toggle-icon" />
+              )}
+            </button>
           </div>
 
-          <div
-            className={`navbar-content ${
-              isMobileMenuOpen ? "mobile-open" : ""
-            }`}
-          >
-            <div className="menu-section">
-              {isAdmin && (
-                <div className="nav-item">
-                  <NavLink
-                    to="/admin"
-                    icon={<FaUserCircle className="nav-icon" />}
-                    onClick={closeMobileMenu}
-                  >
-                    Quản trị
-                  </NavLink>
-                </div>
-              )}
-              <div className="nav-item">
-                <NavLink
-                  to="/member/basic-tracking"
-                  icon={<FaBabyCarriage className="nav-icon" />}
-                  onClick={closeMobileMenu}
-                >
-                  Theo Dõi Thai Kỳ
-                </NavLink>
+          <div className={`navbar-content ${isMobileMenuOpen ? "mobile-open" : ""}`}>
+            {/* Hide menu section on desktop as we'll use horizontal nav */}
+            {isMobile && (
+              <div className="menu-section">
+                {isAdmin && (
+                  <div className="nav-item">
+                    <NavLink
+                      to="/admin"
+                      icon={<FaUserCircle className="nav-icon" />}
+                      onClick={() => updateUiState({ isMobileMenuOpen: false })}
+                    >
+                      Quản trị
+                    </NavLink>
+                  </div>
+                )}
+                {renderNavItems()}
               </div>
-              <div className="nav-item">
-                <NavLink
-                  to="/member/calendar"
-                  icon={<FaCalendarAlt className="nav-icon" />}
-                  onClick={closeMobileMenu}
-                >
-                  Lịch Trình Thăm Khám
-                </NavLink>
-              </div>
-              <div className="nav-item">
-                <NavLink
-                  to="/member/doctor-notes"
-                  icon={<FaNotesMedical className="nav-icon" />}
-                  onClick={closeMobileMenu}
-                >
-                  Ghi Chú Bác Sĩ
-                </NavLink>
-              </div>
-              <div className="nav-item">
-                <NavLink
-                  to="/blog"
-                  icon={<FaBlog className="nav-icon" />}
-                  onClick={closeMobileMenu}
-                >
-                  Blog
-                </NavLink>
-              </div>
-              <div className="nav-item">
-                <NavLink
-                  to="/community"
-                  icon={<FaUsers className="nav-icon" />}
-                  onClick={closeMobileMenu}
-                >
-                  Cộng Đồng
-                </NavLink>
-              </div>
-            </div>
+            )}
 
+            {/* Notifications */}
             <div className="notification-container">
-              <button
-                className="notification-button"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
+              <button className="notification-button" onClick={toggleNotifications}>
                 <FaBell />
                 {notifications.length > 0 && (
-                  <span className="notification-badge">
-                    {notifications.length}
-                  </span>
+                  <span className="notification-badge">{notifications.length}</span>
                 )}
               </button>
 
@@ -326,12 +373,7 @@ const NavBar = () => {
                 <div className="notification-dropdown">
                   <h3>
                     Lịch nhắc sắp tới
-                    <button
-                      className="close-button"
-                      onClick={() => setShowNotifications(false)}
-                    >
-                      ×
-                    </button>
+                    <button className="close-button" onClick={toggleNotifications}>×</button>
                   </h3>
 
                   <div className="notification-list">
@@ -342,17 +384,11 @@ const NavBar = () => {
                       </div>
                     ) : (
                       notifications.map((reminder, index) => (
-                        <div key={index} className="notification-item">
-                          <div className="notification-type">
-                            {reminder.reminderType || "Khám thai"}
-                          </div>
-                          <div className="notification-content">
-                            <h4>{reminder.title}</h4>
-                            <p className="notification-time">
-                              {formatDateTime(reminder.date, reminder.time)}
-                            </p>
-                          </div>
-                        </div>
+                        <NotificationItem 
+                          key={index} 
+                          notification={reminder} 
+                          formatDateTime={formatDateTime} 
+                        />
                       ))
                     )}
                   </div>
@@ -360,7 +396,7 @@ const NavBar = () => {
                   <Link
                     to="/calendar"
                     className="view-all-link"
-                    onClick={() => setShowNotifications(false)}
+                    onClick={toggleNotifications}
                   >
                     Xem tất cả lịch
                   </Link>
@@ -368,20 +404,21 @@ const NavBar = () => {
               )}
             </div>
 
+            {/* Auth Section */}
             <div className="auth-section">
               {!isLoggedIn ? (
                 <div className="auth-buttons">
                   <Link
                     to="/login"
                     className="btn btn-login"
-                    onClick={closeMobileMenu}
+                    onClick={() => updateUiState({ isMobileMenuOpen: false })}
                   >
                     Đăng Nhập
                   </Link>
                   <Link
                     to="/register"
                     className="btn btn-register"
-                    onClick={closeMobileMenu}
+                    onClick={() => updateUiState({ isMobileMenuOpen: false })}
                   >
                     Đăng Ký
                   </Link>
@@ -402,7 +439,7 @@ const NavBar = () => {
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = "/placeholder.svg";
-                          setProfileImage(null);
+                          updateState({ profileImage: null });
                         }}
                       />
                     ) : (
@@ -423,7 +460,7 @@ const NavBar = () => {
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "/placeholder.svg";
-                              setProfileImage(null);
+                              updateState({ profileImage: null });
                             }}
                           />
                         ) : (
@@ -445,7 +482,7 @@ const NavBar = () => {
                       <Link
                         to="/profile/edit"
                         className="edit-profile-button"
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={() => updateUiState({ isDropdownOpen: false })}
                       >
                         <FaUserEdit className="edit-icon" />
                         Chỉnh sửa thông tin
@@ -464,10 +501,50 @@ const NavBar = () => {
       </nav>
       <div className="navbar-spacer" style={{ margin: 0, padding: 0 }}></div>
 
-      {/* Chỉ render sidebar khi ở chế độ mobile */}
-      {isMobile && (
+      {/* Horizontal Navigation - show when toggle button is clicked */}
+      {showHorizontalMenu && (
+        <div className="horizontal-nav">
+          <div className="horizontal-nav-container">
+            <div className="horizontal-nav-items">
+              {isAdmin && (
+                <div className="nav-item">
+                  <NavLink
+                    to="/admin"
+                    icon={<FaUserCircle className="nav-icon" />}
+                    onClick={() => updateUiState({ showHorizontalMenu: false })}
+                  >
+                    Quản trị
+                  </NavLink>
+                </div>
+              )}
+              {NAVIGATION_ITEMS.map((item, index) => (
+                <div key={index} className="nav-item">
+                  <NavLink
+                    to={item.path}
+                    icon={item.icon}
+                    onClick={() => updateUiState({ showHorizontalMenu: false })}
+                  >
+                    {item.name}
+                  </NavLink>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dynamic content spacer that adjusts when horizontal menu is shown */}
+      <div 
+        className="content-spacer" 
+        style={{ 
+          height: showHorizontalMenu ? (isMobile ? "300px" : "120px") : "25px",
+          transition: "height 0.3s ease"
+        }}
+      ></div>
+
+      {/* Mobile Sidebar - keep for legacy support but hide by default */}
+      {isMobile && isSidebarOpen && (
         <>
-          {/* Sidebar Menu */}
           <div className={`sidebar-menu ${isSidebarOpen ? "open" : ""}`}>
             <div className="sidebar-header">
               <div className="sidebar-logo">
@@ -483,7 +560,7 @@ const NavBar = () => {
               </button>
             </div>
 
-            {/* Thêm thông tin người dùng vào sidebar */}
+            {/* User profile in sidebar */}
             {isLoggedIn && (
               <div className="sidebar-user-profile">
                 {profileImage ? (
@@ -494,7 +571,7 @@ const NavBar = () => {
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "/placeholder.svg";
-                      setProfileImage(null);
+                      updateState({ profileImage: null });
                     }}
                   />
                 ) : (
@@ -509,45 +586,14 @@ const NavBar = () => {
               </div>
             )}
 
+            {/* Sidebar navigation items */}
             <div className="sidebar-items">
-              <Link to="/member/basic-tracking" className="sidebar-menu-item">
-                <div className="sidebar-icon">
-                  <FaBabyCarriage />
-                </div>
-                <span className="sidebar-text">Theo Dõi Thai Kỳ</span>
-              </Link>
-              <Link to="/member/calendar" className="sidebar-menu-item">
-                <div className="sidebar-icon">
-                  <FaCalendarAlt />
-                </div>
-                <span className="sidebar-text">Lịch Trình Thăm Khám</span>
-              </Link>
-              <Link to="/member/doctor-notes" className="sidebar-menu-item">
-                <div className="sidebar-icon">
-                  <FaNotesMedical />
-                </div>
-                <span className="sidebar-text">Ghi Chú Bác Sĩ</span>
-              </Link>
-              <Link to="/member/blog" className="sidebar-menu-item">
-                <div className="sidebar-icon">
-                  <FaBlog />
-                </div>
-                <span className="sidebar-text">Blog</span>
-              </Link>
-              <Link to="/member/community" className="sidebar-menu-item">
-                <div className="sidebar-icon">
-                  <FaUsers />
-                </div>
-                <span className="sidebar-text">Cộng Đồng</span>
-              </Link>
+              {renderNavItems(true)}
 
-              {/* Thêm nút thông báo vào sidebar */}
+              {/* Notification button in sidebar */}
               <button
                 className="sidebar-menu-item sidebar-notification-button"
-                onClick={(e) => {
-                  e.stopPropagation(); // Ngăn sự kiện lan ra ngoài
-                  setShowSidebarNotifications(!showSidebarNotifications);
-                }}
+                onClick={toggleSidebarNotifications}
               >
                 <div className="sidebar-icon">
                   <FaBell />
@@ -561,13 +607,10 @@ const NavBar = () => {
               </button>
             </div>
 
-            {/* Thêm nút đăng xuất hoặc đăng nhập dưới cùng */}
+            {/* Sidebar footer */}
             <div className="sidebar-footer">
               {isLoggedIn ? (
-                <button
-                  onClick={handleLogout}
-                  className="sidebar-logout-button"
-                >
+                <button onClick={handleLogout} className="sidebar-logout-button">
                   <FaSignOutAlt className="sidebar-icon" />
                   <span>Đăng xuất</span>
                 </button>
@@ -590,14 +633,14 @@ const NavBar = () => {
             onClick={toggleSidebar}
           ></div>
 
-          {/* Dropdown thông báo cho sidebar */}
+          {/* Sidebar notifications dropdown */}
           {showSidebarNotifications && (
             <div className="sidebar-notification-dropdown">
               <div className="sidebar-notification-header">
                 <h3>Lịch nhắc sắp tới</h3>
                 <button
                   className="close-button"
-                  onClick={() => setShowSidebarNotifications(false)}
+                  onClick={toggleSidebarNotifications}
                 >
                   ×
                 </button>
@@ -629,7 +672,7 @@ const NavBar = () => {
               <Link
                 to="/calendar"
                 className="view-all-link"
-                onClick={() => setShowSidebarNotifications(false)}
+                onClick={toggleSidebarNotifications}
               >
                 Xem tất cả lịch
               </Link>

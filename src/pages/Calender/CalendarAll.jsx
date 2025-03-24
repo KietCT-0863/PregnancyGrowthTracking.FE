@@ -270,27 +270,27 @@ const CalendarAll = () => {
     setMiniCalendarDate(new Date(miniCalendarDate.getFullYear(), miniCalendarDate.getMonth() + direction, 1));
   };
 
-  const getDaysInMonth = useCallback((date) => {
+  const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
     
-    // Get first day of month (0=Sunday, 1=Monday, etc.) - don't need to adjust
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-
-    const days = [];
-    // Fill with nulls for previous month days
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null);
+    const daysArray = [];
+    
+    // Add empty cells for days before the first day of the month
+    const firstDayOfWeek = firstDay.getDay(); // 0 for Sunday, 1 for Monday, etc.
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      daysArray.push(null);
     }
-
-    // Add days of current month
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
+    
+    // Add all days of the month
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      daysArray.push(new Date(year, month, i));
     }
-
-    return days;
-  }, []);
+    
+    return daysArray;
+  };
 
   // Event handlers
   const handleDayClick = (day) => {
@@ -418,6 +418,19 @@ const CalendarAll = () => {
     setCurrentDate(newDate);
   };
 
+  const navigateToToday = () => {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDay(today);
+    setSelectedDayDate(today);
+    
+    // Update week view if needed
+    if (viewMode === VIEW_MODES.WEEK) {
+      const todayWeekStart = moment().startOf('week');
+      setWeekDates(Array.from({length: 7}, (_, i) => moment(todayWeekStart).add(i, 'days').toDate()));
+    }
+  };
+
   // Effects
   useEffect(() => {
     fetchUserData();
@@ -428,20 +441,25 @@ const CalendarAll = () => {
   }, [selectedDate]);
 
   useEffect(() => {
+    // Update current time position every minute
     const updateCurrentTimePosition = () => {
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
       
-      if (hours >= 6 && hours <= 20) {
-        const position = (hours - 6) + (minutes / 60);
-        setCurrentTimePosition(`${position * 80}px`);
-      }
+      // Calculate position (each hour is 60px height)
+      // Start from 0px at top (00:00) and calculate based on current time
+      const position = (hours * 60) + minutes;
+      setCurrentTimePosition(`${position}px`);
     };
-
+    
+    // Initial update
     updateCurrentTimePosition();
+    
+    // Set interval
     const interval = setInterval(updateCurrentTimePosition, 60000);
     
+    // Cleanup
     return () => clearInterval(interval);
   }, []);
 
@@ -576,41 +594,38 @@ const CalendarAll = () => {
 
   const renderViewModeSelector = () => {
     return (
-      <div className="view-mode-selector">
-        <button 
-          className={viewMode === VIEW_MODES.MONTH ? 'active' : ''} 
+      <div className="view-modes">
+        <div 
+          className={`view-mode-btn ${viewMode === VIEW_MODES.MONTH ? 'active' : ''}`} 
           onClick={() => setViewMode(VIEW_MODES.MONTH)}
         >
           Tháng
-        </button>
-        <button 
-          className={viewMode === VIEW_MODES.WEEK ? 'active' : ''} 
+        </div>
+        <div 
+          className={`view-mode-btn ${viewMode === VIEW_MODES.WEEK ? 'active' : ''}`} 
           onClick={() => setViewMode(VIEW_MODES.WEEK)}
         >
           Tuần
-        </button>
-        <button 
-          className={viewMode === VIEW_MODES.DAY ? 'active' : ''} 
+        </div>
+        <div 
+          className={`view-mode-btn ${viewMode === VIEW_MODES.DAY ? 'active' : ''}`} 
           onClick={() => setViewMode(VIEW_MODES.DAY)}
         >
           Ngày
-        </button>
+        </div>
       </div>
     );
   };
 
   const renderMonthView = (filteredEvents) => {
-      return (
-        <div className="month-view">
-          <div className="month-header">
+    return (
+      <div className="month-view">
+        <div className="month-header">
           <h2>{formatMonthYear(currentDate)}</h2>
           <div className="month-navigation">
             <button 
               className="today-btn" 
-              onClick={() => {
-                setCurrentDate(new Date());
-                setSelectedDay(new Date());
-              }}
+              onClick={navigateToToday}
             >
               <CalendarIcon size={16} />
               Hôm nay
@@ -627,16 +642,16 @@ const CalendarAll = () => {
             >
               <ChevronRight size={18} />
             </button>
-              </div>
+          </div>
         </div>
         
         <div className="month-weekdays">
           {WEEKDAYS.map(day => (
             <div key={day} className="month-weekday">{day}</div>
-            ))}
-          </div>
+          ))}
+        </div>
 
-          <div className="month-grid">
+        <div className="month-grid">
           {getDaysInMonth(currentDate).map((day, index) => {
             const isToday = day && day.toDateString() === new Date().toDateString();
             const isSelected = day && day.toDateString() === selectedDay.toDateString();
@@ -665,19 +680,19 @@ const CalendarAll = () => {
                         <div className="events-container">
                           {visibleEvents.map((event) => {
                             const category = CATEGORIES.find(c => c.id === event.reminderType) || CATEGORIES[0];
-                        return (
-                          <div
+                            return (
+                              <div
                                 key={event.id || event.remindId}
-                            className="month-event"
-                            style={{ backgroundColor: category.color }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEventClick(event);
-                            }}
-                          >
+                                className="month-event"
+                                style={{ backgroundColor: category.color }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEventClick(event);
+                                }}
+                              >
                                 <span className="event-time">{event.time}</span>
                                 <span className="event-title">{event.title}</span>
-                          </div>
+                              </div>
                             );
                           })}
                           {hasOverflow && (
@@ -697,13 +712,13 @@ const CalendarAll = () => {
               </div>
             );
           })}
-          </div>
         </div>
-      );
+      </div>
+    );
   };
 
   const renderWeekView = (filteredEvents) => {
-      return (
+    return (
       <div className="week-view-container">
         <div className="week-header">
           <div className="week-info">
@@ -713,10 +728,7 @@ const CalendarAll = () => {
             <div className="week-navigation">
               <button 
                 className="today-btn" 
-                onClick={() => {
-                  const today = moment().startOf('week').toDate(); // Use moment for consistency
-                  setWeekDates(Array.from({length: 7}, (_, i) => moment(today).add(i, 'days').toDate()));
-                }}
+                onClick={navigateToToday}
               >
                 <CalendarIcon size={16} />
                 Hôm nay
@@ -744,18 +756,22 @@ const CalendarAll = () => {
         </div>
         
         <div className="week-days-header">
-          {weekDates.map((date, index) => (
-            <div key={index} className="week-day-header">
-              <div className="weekday-name">{WEEKDAYS[date.getDay()]}</div>
+          {weekDates.map((date, index) => {
+            const isToday = date.toDateString() === new Date().toDateString();
+            return (
               <div 
-                className={`weekday-date ${
-                  date.toDateString() === new Date().toDateString() ? "today" : ""
-                }`}
+                key={index} 
+                className={`week-day-header ${isToday ? 'today' : ''}`}
+                onClick={() => {
+                  setSelectedDayDate(date);
+                  setViewMode(VIEW_MODES.DAY);
+                }}
               >
-                {date.getDate()}
+                <div className="weekday-name">{WEEKDAYS[date.getDay()]}</div>
+                <div className="weekday-date">{date.getDate()}</div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         
         <div className="week-events">
@@ -769,17 +785,21 @@ const CalendarAll = () => {
                 className={`day-column ${isToday ? "today" : ""}`}
               >
                 <div className="events-container">
-                  {dayEvents.length > 0 && dayEvents.map(event => (
-                    <div 
-                      key={event.id || event.remindId} 
-                      className="week-event"
-                      style={{ backgroundColor: getColorByType(event.reminderType) }}
-                      onClick={() => handleEventClick(event)}
-                    >
-                      <div className="event-time">{event.time}</div>
-                      <div className="event-title">{event.title}</div>
-                    </div>
-                  ))}
+                  {dayEvents.length > 0 ? (
+                    dayEvents.map(event => (
+                      <div 
+                        key={event.id || event.remindId} 
+                        className="week-event"
+                        style={{ backgroundColor: getColorByType(event.reminderType) }}
+                        onClick={() => handleEventClick(event)}
+                      >
+                        <div className="event-time">{event.time}</div>
+                        <div className="event-title">{event.title}</div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-events-indicator"></div>
+                  )}
                 </div>
               </div>
             );
@@ -793,11 +813,10 @@ const CalendarAll = () => {
     const dayEvents = getEventsForDay(filteredEvents, selectedDayDate);
     const isTodaySelected = moment(selectedDayDate).isSame(moment(), 'day');
     
-      return (
+    return (
       <div className="day-view-container">
         <CalendarDayFilter 
           onDayChange={handleDayChange} 
-          currentTimePosition={currentTimePosition}
         />
         
         <div className="day-events">
@@ -818,6 +837,12 @@ const CalendarAll = () => {
               >
                 <div className="event-time">{event.time}</div>
                 <div className="event-title">{event.title}</div>
+                {event.location && (
+                  <div className="event-location">
+                    <MapPin size={14} />
+                    <span>{event.location}</span>
+                  </div>
+                )}
                 {event.notification && (
                   <div className="event-description">{event.notification}</div>
                 )}

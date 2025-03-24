@@ -42,6 +42,7 @@ import GuestBlogDetail from "./pages/guest/blog/GuestBlogDetail";
 import Blog from "./pages/blog";
 import BlogAll from "./pages/blog/BlogAll";
 import BlogDetail from "./pages/blog/BlogDetail";
+import ViewProfile from "./pages/Profile/ViewProfile";
 import EditProfile from "./pages/Profile/EditProfile";
 import CalendarChange from "./pages/Calender/CalendarChange";
 import CalendarDetail from "./pages/Calender/CalendarDetail";
@@ -63,7 +64,6 @@ const AppRoutes = () => {
         element={
           <>
             <NavBar />
-            <div style={{ margin: "10px 0" }} />
             <Outlet />
             <div style={{ margin: "10px 0" }} />
             <ChatAI />
@@ -105,6 +105,7 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="choose-vip" element={<ChooseVip />} />
         <Route path="payment-result" element={<PaymentResult />} />
+        <Route path="profile" element={<ViewProfile />} />
         <Route path="profile/edit" element={<EditProfile />} />
         <Route path="blog" element={<BlogGuest />}>
           <Route index element={<GuestBlogAll />} />
@@ -141,6 +142,7 @@ const AppRoutes = () => {
           <Route index element={<BlogAll />} />
           <Route path=":id" element={<BlogDetail />} />
         </Route>
+        <Route path="profile" element={<ViewProfile />} />
         <Route path="profile/edit" element={<EditProfile />} />
       </Route>
 

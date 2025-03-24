@@ -11,25 +11,19 @@ const CalendarDayFilter = ({ onDayChange }) => {
   
   const [selectedDate, setSelectedDate] = useState(moment());
   
-  console.log('CalendarDayFilter đang render với ngày:', selectedDate.format('DD/MM/YYYY'));
-  
   useEffect(() => {
-    console.log('CalendarDayFilter useEffect - Gọi onDayChange với ngày:', selectedDate.format('DD/MM/YYYY'));
     onDayChange(selectedDate.toDate());
   }, [selectedDate, onDayChange]);
 
   const goToPrevDay = () => {
-    console.log('CalendarDayFilter - Đang chuyển sang ngày trước');
     setSelectedDate(moment(selectedDate).subtract(1, 'day'));
   };
 
   const goToNextDay = () => {
-    console.log('CalendarDayFilter - Đang chuyển sang ngày sau');
     setSelectedDate(moment(selectedDate).add(1, 'day'));
   };
 
   const goToToday = () => {
-    console.log('CalendarDayFilter - Đang chuyển về ngày hôm nay');
     setSelectedDate(moment());
   };
 
@@ -44,7 +38,6 @@ const CalendarDayFilter = ({ onDayChange }) => {
   };
 
   const dayInfo = formatDayInfo();
-  console.log('CalendarDayFilter - Thông tin ngày đã format:', dayInfo);
 
   return (
     <div className="calendar-filter day-filter">

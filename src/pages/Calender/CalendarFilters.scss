@@ -154,18 +154,15 @@ $duration: 0.3s;
   /* Week Filter Styles */
   &.week-filter {
     .week-days-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-top: 1px solid $border-color;
       
       .week-day {
-        flex: 1;
-        text-align: center;
-        padding: 10px 0;
-        border-right: 1px solid $border-color;
-        transition: background-color $duration ease;
-        
-        &:last-child {
-          border-right: none;
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
         
         &.today {
           background-color: rgba($primary-color, 0.05);
@@ -173,34 +170,25 @@ $duration: 0.3s;
           .weekday-date {
             background-color: $primary-color;
             color: white;
-            box-shadow: 0 2px 5px $primary-shadow;
           }
         }
         
         .weekday-name {
-          font-size: 14px;
+          font-size: 13px;
+          font-weight: 600;
           color: $text-light;
           margin-bottom: 5px;
-          font-weight: 500;
         }
         
         .weekday-date {
-          width: 32px;
-          height: 32px;
-          @include flex-center;
-          margin: 0 auto;
-          font-size: 16px;
-          font-weight: 600;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           border-radius: $border-radius-circle;
-          transition: all $duration ease;
-        }
-        
-        &:hover:not(.today) {
-          background-color: $bg-light;
-          .weekday-date {
-            background-color: $bg-hover;
-            transform: scale(1.1);
-          }
+          font-weight: 600;
+          font-size: 14px;
         }
       }
     }
@@ -208,47 +196,58 @@ $duration: 0.3s;
 
   /* Day Filter Styles */
   &.day-filter {
-    .day-info {
+    .filter-header {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 15px;
       
-      h3 {
-        text-transform: capitalize;
-        margin-bottom: 5px;
-        font-size: 18px;
-        color: $text-color;
-        font-weight: 600;
-      }
-      
-      .day-date {
+      .day-info {
         display: flex;
-        align-items: baseline;
-        gap: 8px;
+        flex-direction: column;
         
-        &.today {
+        h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: $text-color;
+          margin: 0 0 5px 0;
+        }
+        
+        .day-date {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          
+          &.today {
+            .date {
+              background-color: $primary-color;
+              color: white;
+            }
+          }
+          
           .date {
-            background-color: $primary-color;
-            color: white;
-            box-shadow: 0 2px 5px $primary-shadow;
-            animation: pulse 2s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: $border-radius-circle;
+            font-weight: 600;
+            font-size: 16px;
+            background-color: $bg-light;
+          }
+          
+          .month-year {
+            font-size: 14px;
+            color: $text-light;
           }
         }
-        
-        .date {
-          font-size: 22px;
-          font-weight: 700;
-          width: 42px;
-          height: 42px;
-          @include flex-center;
-          border-radius: $border-radius-circle;
-          transition: all $duration ease;
-        }
-        
-        .month-year {
-          font-size: 15px;
-          color: $text-light;
-          font-weight: 500;
-        }
+      }
+      
+      .filter-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
       }
     }
   }

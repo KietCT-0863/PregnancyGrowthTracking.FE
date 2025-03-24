@@ -18,6 +18,15 @@ h1, h2, h3, h4, h5, h6, p, div {
 /* Điều chỉnh cho navbar cố định */
 .navbar {
   height: 70px;
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Điều chỉnh cho các phần tử con của navbar */
+.navbar-container, .navbar div, .navbar a, .navbar button {
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 /* Điều chỉnh cho nội dung chính */

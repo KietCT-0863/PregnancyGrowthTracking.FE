@@ -1,0 +1,287 @@
+@import "src/styles/variables.scss";
+
+$primary: #ff8fb1;
+.view-profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    margin: 1rem;
+  }
+}
+
+.view-profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+  
+  h1 {
+    flex: 1;
+    text-align: center;
+    font-size: 1.8rem;
+    color: $primary;
+    margin: 0;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .back-button, .edit-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: $primary;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba($primary, 0.1);
+    }
+    
+    span {
+      margin-left: 0.5rem;
+      
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0.5rem;
+    }
+  }
+}
+
+.view-profile-content {
+  .profile-card {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($primary, 0.05) 100%);
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+    
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      background-color: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .placeholder-icon {
+        color: #ccc;
+      }
+      
+      @media (max-width: 768px) {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+      }
+    }
+    
+    .profile-name {
+      margin-left: 2rem;
+      
+      @media (max-width: 768px) {
+        margin-left: 0;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+        margin: 0 0 0.3rem;
+        color: black;
+        
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+        }
+      }
+      
+      .username {
+        font-size: 1rem;
+        color: $text-light;
+        margin: 0 0 1rem;
+      }
+      
+      .membership-badge {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        
+        @media (max-width: 768px) {
+          justify-content: center;
+        }
+        
+        .badge {
+          display: inline-block;
+          padding: 0.3rem 0.8rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+          border-radius: 30px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          
+          &.vip {
+            background-color: rgba(#FFD700, 0.2);
+            color: darken(#FFD700, 25%);
+            border: 1px solid rgba(#FFD700, 0.5);
+          }
+          
+          &.basic {
+            background-color: rgba($primary, 0.1);
+            color: $primary;
+            border: 1px solid rgba($primary, 0.3);
+          }
+        }
+        
+        .expiry-date {
+          font-size: 0.8rem;
+          color: $text-light;
+          margin-left: 1rem;
+          
+          @media (max-width: 768px) {
+            margin-left: 0;
+            margin-top: 0.5rem;
+            width: 100%;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+  
+  .profile-details {
+    padding: 2rem;
+    border-top: 1px solid #f0f0f0;
+    
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+    
+    .detail-item {
+      display: flex;
+      margin-bottom: 1.5rem;
+      align-items: flex-start;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+      
+      svg {
+        margin-top: 0.2rem;
+        color: $primary;
+        flex-shrink: 0;
+      }
+      
+      .detail-content {
+        margin-left: 1rem;
+        flex: 1;
+        
+        label {
+          display: block;
+          font-size: 0.9rem;
+          color: $text-light;
+          margin-bottom: 0.3rem;
+          font-weight: 500;
+        }
+        
+        p {
+          margin: 0;
+          font-size: 1.05rem;
+          color: black;
+          word-break: break-word;
+        }
+      }
+    }
+  }
+  
+  .profile-actions {
+    padding: 0 2rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    
+    @media (max-width: 768px) {
+      padding: 0 1.5rem 1.5rem;
+      flex-direction: column;
+    }
+    
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      
+      svg {
+        margin-right: 0.5rem;
+      }
+      
+      &.primary {
+        background-color: $primary;
+        color: white;
+        
+        &:hover {
+          background-color: darken($primary, 5%);
+          transform: translateY(-2px);
+        }
+      }
+      
+      &.secondary {
+        background-color: rgba($primary, 0.1);
+        color: $primary;
+        
+        &:hover {
+          background-color: rgba($primary, 0.2);
+          transform: translateY(-2px);
+        }
+      }
+      
+      &.upgrade {
+        background: linear-gradient(135deg, #f5c24a 0%, #d4af37 100%);
+        color: #5d4c05;
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px rgba(#FFD700, 0.3);
+        }
+      }
+    }
+  }
+} 
