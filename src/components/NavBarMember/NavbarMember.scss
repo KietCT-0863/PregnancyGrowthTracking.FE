@@ -1519,6 +1519,7 @@ body.sidebar-open {
 /* Animation for different tooltip positions */
 .header-action-button:hover .edit-tooltip,
 .header-action-button:hover .notification-tooltip,
+.header-action-button:hover .logout-tooltip,
 .login-button:hover .login-tooltip,
 .navbar-toggle-button:hover .menu-tooltip {
   bottom: -38px;
@@ -1541,6 +1542,7 @@ body.sidebar-open {
   
   .header-action-button:hover .edit-tooltip,
   .header-action-button:hover .notification-tooltip,
+  .header-action-button:hover .logout-tooltip,
   .login-button:hover .login-tooltip,
   .navbar-toggle-button:hover .menu-tooltip {
     bottom: -35px;
@@ -1630,6 +1632,25 @@ main, .main-content, .page-container {
 @media (max-width: 768px) {
   main, .main-content, .page-container {
     margin-top: 70px; /* Điều chỉnh cho mobile */
+  }
+}
+
+/* Styling for logout button */
+.header-action-button.logout-button {
+  color: #ff5a5f;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(255, 90, 95, 0.1);
+    transform: scale(1.1);
+  }
+  
+  .feature-tooltip.logout-tooltip {
+    background-color: rgba(255, 90, 95, 0.9);
+    
+    &:before {
+      border-color: transparent transparent rgba(255, 90, 95, 0.9) transparent;
+    }
   }
 }
 

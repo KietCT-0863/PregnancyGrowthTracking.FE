@@ -495,8 +495,8 @@ $duration: 0.3s;
               @include primary-button;
             font-size: 14px;
               padding: 8px 15px;
-              display: flex;
-              align-items: center;
+      display: flex;
+          align-items: center;
               gap: 6px;
           }
           
@@ -514,7 +514,7 @@ $duration: 0.3s;
           display: flex;
           align-items: center;
               gap: 6px;
-              font-size: 14px;
+            font-size: 14px;
               padding: 8px 15px;
               border-radius: $border-radius-sm;
             }
@@ -535,7 +535,7 @@ $duration: 0.3s;
       
       .view-modes {
         margin-bottom: 20px;
-        display: flex;
+          display: flex;
         background-color: $bg-color;
         border-radius: $border-radius;
         overflow: hidden;
@@ -547,7 +547,7 @@ $duration: 0.3s;
           padding: 12px;
           font-weight: 500;
           background-color: $bg-color;
-          cursor: pointer;
+            cursor: pointer;
           transition: all $duration ease;
           
           &.active {
@@ -640,8 +640,8 @@ $duration: 0.3s;
             &:nth-child(7n) {
               border-right: none;
             }
-            
-            &:hover {
+        
+        &:hover {
               background-color: $bg-hover;
             }
             
@@ -677,10 +677,10 @@ $duration: 0.3s;
             
             .day-events {
               display: flex;
-              flex-direction: column;
+        flex-direction: column;
               gap: 2px;
               max-height: calc(100% - 32px);
-              overflow: hidden;
+                overflow: hidden;
               
               &.overflow {
                 padding-bottom: 18px;
@@ -697,7 +697,7 @@ $duration: 0.3s;
                 flex-direction: column;
                 padding: 2px 4px;
                 border-radius: 4px;
-                font-size: 11px;
+                  font-size: 11px;
                 color: white;
                 cursor: pointer;
                 white-space: nowrap;
@@ -717,7 +717,7 @@ $duration: 0.3s;
               }
               
               .more-events {
-                position: absolute;
+          position: absolute;
                 bottom: 4px;
                 left: 8px;
                 right: 8px;
@@ -727,10 +727,10 @@ $duration: 0.3s;
                 border-radius: 4px;
                 padding: 2px 4px;
                 text-align: center;
-                cursor: pointer;
+          cursor: pointer;
                 transition: all $duration ease;
-                
-                &:hover {
+          
+          &:hover {
                   background-color: rgba($primary-color, 0.1);
                   color: $primary-color;
                 }
@@ -744,7 +744,7 @@ $duration: 0.3s;
         background-color: $bg-color;
         border-radius: $border-radius;
         box-shadow: 0 2px 10px $shadow-color;
-        overflow: hidden;
+          overflow: hidden;
         animation: fadeIn $duration ease;
         
         .week-header {
@@ -758,22 +758,22 @@ $duration: 0.3s;
             
             h3 {
               font-size: 18px;
-              font-weight: 600;
+                font-weight: 600;
               margin: 0;
               color: $text-color;
             }
             
             .week-navigation {
-              display: flex;
-              align-items: center;
+        display: flex;
+        align-items: center;
               gap: 8px;
               
               .today-btn {
                 @include primary-button;
                 padding: 8px 16px;
                 font-size: 14px;
-                display: flex;
-                align-items: center;
+  display: flex;
+  align-items: center;
                 gap: 6px;
               }
               
@@ -798,10 +798,10 @@ $duration: 0.3s;
             @include flex-center;
             flex-direction: column;
             padding: 10px;
-            cursor: pointer;
+      cursor: pointer;
             transition: background-color $duration ease;
-            
-            &:hover {
+        
+        &:hover {
               background-color: $bg-hover;
             }
             
@@ -815,7 +815,7 @@ $duration: 0.3s;
             }
             
             .weekday-name {
-              font-size: 14px;
+    font-size: 14px;
               font-weight: 600;
               color: $text-light;
               margin-bottom: 4px;
@@ -824,12 +824,12 @@ $duration: 0.3s;
             .weekday-date {
               width: 28px;
               height: 28px;
-              display: flex;
-              align-items: center;
+      display: flex;
+      align-items: center;
               justify-content: center;
               border-radius: $border-radius-circle;
               font-weight: 600;
-              font-size: 14px;
+      font-size: 14px;
             }
           }
         }
@@ -856,7 +856,7 @@ $duration: 0.3s;
             
             .events-container {
               display: flex;
-              flex-direction: column;
+      flex-direction: column;
               gap: 8px;
               
               .week-event {
@@ -879,8 +879,8 @@ $duration: 0.3s;
                 }
                 
                 .event-title {
-                  font-size: 14px;
-                  font-weight: 500;
+      font-size: 14px;
+        font-weight: 500;
                   word-break: break-word;
                 }
               }
@@ -905,33 +905,33 @@ $duration: 0.3s;
         overflow: hidden;
         animation: fadeIn $duration ease;
         display: flex;
-        flex-direction: column;
+    flex-direction: column;
         
         .day-events {
           padding: 20px;
           min-height: 400px;
-          position: relative;
+  position: relative;
           display: flex;
           flex-direction: column;
           gap: 10px;
           
-          .current-time-indicator {
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: $primary-color;
+.current-time-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: $primary-color;
             z-index: 2;
-            
+  
             &:before {
-              content: '';
-              position: absolute;
+    content: '';
+    position: absolute;
               left: 10px;
-              top: -4px;
-              width: 10px;
-              height: 10px;
-              border-radius: 50%;
-              background-color: $primary-color;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+          border-radius: 50%;
+    background-color: $primary-color;
             }
           }
           
@@ -940,22 +940,22 @@ $duration: 0.3s;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
             color: white;
-            cursor: pointer;
+  cursor: pointer;
             transition: transform $duration ease, box-shadow $duration ease;
             
             &:hover {
               transform: translateY(-2px);
               box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            }
-            
-            .event-time {
+  }
+  
+  .event-time {
               font-size: 14px;
-              font-weight: 600;
+    font-weight: 600;
               margin-bottom: 5px;
               opacity: 0.9;
-            }
-            
-            .event-title {
+  }
+  
+  .event-title {
               font-size: 16px;
               font-weight: 500;
               margin-bottom: 5px;
@@ -969,7 +969,7 @@ $duration: 0.3s;
           
           .no-events {
             @include flex-center;
-            flex-direction: column;
+  flex-direction: column;
             height: 200px;
             
             p {
@@ -981,7 +981,7 @@ $duration: 0.3s;
       }
 
       .floating-add-btn {
-                  position: absolute;
+            position: absolute;
         bottom: 20px;
         right: 20px;
         width: 56px;
@@ -991,11 +991,11 @@ $duration: 0.3s;
           color: white;
         @include flex-center;
         border: none;
-          cursor: pointer;
+    cursor: pointer;
         box-shadow: 0 3px 10px rgba($primary-color, 0.5);
         transition: all $duration ease;
-          
-          &:hover {
+    
+    &:hover {
           transform: translateY(-3px) scale(1.05);
           box-shadow: 0 5px 15px rgba($primary-color, 0.6);
         }
@@ -1006,7 +1006,7 @@ $duration: 0.3s;
 .modal-overlay {
   position: fixed;
   top: 0;
-  left: 0;
+      left: 0;
   right: 0;
   bottom: 0;
     background-color: rgba(#000, 0.5);
@@ -1017,9 +1017,9 @@ $duration: 0.3s;
       background-color: $bg-color;
       border-radius: $border-radius;
       box-shadow: 0 8px 30px rgba(#000, 0.2);
-      width: 90%;
+        width: 90%;
       max-width: 500px;
-  overflow: hidden;
+        overflow: hidden;
 
       &.simple-modal {
   .modal-header {
@@ -1029,7 +1029,7 @@ $duration: 0.3s;
     h2 {
       font-size: 20px;
       margin: 0;
-            color: $text-color;
+          color: $text-color;
     }
   }
   
@@ -1115,9 +1115,9 @@ $duration: 0.3s;
             width: 32px;
             height: 32px;
             border-radius: $border-radius-circle;
-      cursor: pointer;
-      
-      &:hover {
+        cursor: pointer;
+        
+        &:hover {
               background-color: $bg-light;
     }
   }
@@ -1131,19 +1131,19 @@ $duration: 0.3s;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            color: white;
+          color: white;
             margin-bottom: 12px;
           }
           
           .event-title {
             font-size: 22px;
-            font-weight: 600;
+          font-weight: 600;
             margin: 0 0 20px 0;
             color: $text-color;
           }
           
           .detail-row {
-        display: flex;
+            display: flex;
         align-items: center;
             gap: 12px;
             margin-bottom: 12px;
@@ -1221,14 +1221,14 @@ $duration: 0.3s;
       }
       
       .calendar-main {
-  .calendar-header {
+    .calendar-header {
           .header-top {
-    flex-direction: column;
+      flex-direction: column;
             gap: 15px;
-            align-items: flex-start;
-    
+      align-items: flex-start;
+      
     .search-filter-section {
-      width: 100%;
+        width: 100%;
     
               .search-box input {
       width: 100%;
@@ -1240,7 +1240,7 @@ $duration: 0.3s;
         .month-view {
           .month-grid {
             .month-day {
-              min-height: 80px;
+        min-height: 80px;
             }
           }
         }
@@ -1251,18 +1251,18 @@ $duration: 0.3s;
 
 /* Week Days Header - Hiển thị ngang các ngày trong tuần */
 .week-days-header {
-          display: flex;
+        display: flex;
   margin-bottom: 15px;
   border-bottom: 1px solid $border-color;
   
   .week-day-header {
-      flex: 1;
+    flex: 1;
     text-align: center;
     padding: 10px 5px;
-  cursor: pointer;
+    cursor: pointer;
     transition: background-color 0.2s ease;
-            
-            &:hover {
+    
+    &:hover {
       background-color: $bg-hover;
     }
     
@@ -1275,7 +1275,7 @@ $duration: 0.3s;
     
     .weekday-date {
       font-size: 18px;
-    font-weight: 600;
+      font-weight: 600;
       width: 36px;
       height: 36px;
       line-height: 36px;
@@ -1292,7 +1292,7 @@ $duration: 0.3s;
 
 /* Week Events Container */
 .week-events {
-  display: flex;
+    display: flex;
   height: calc(100vh - 300px);
     overflow-y: auto;
   max-width: 100%;
@@ -1312,12 +1312,12 @@ $duration: 0.3s;
     }
     
     .events-container {
-      display: flex;
-      flex-direction: column;
+  display: flex;
+  flex-direction: column;
       gap: 8px;
       
       .week-event {
-        padding: 8px;
+      padding: 8px;
         border-radius: 6px;
         cursor: pointer;
         transition: transform $duration ease, box-shadow $duration ease;
@@ -1330,14 +1330,14 @@ $duration: 0.3s;
         
         .event-time {
           font-size: 12px;
-          font-weight: 600;
+        font-weight: 600;
           margin-bottom: 2px;
           opacity: 0.9;
-        }
-        
+      }
+      
         .event-title {
           font-size: 14px;
-          font-weight: 500;
+        font-weight: 500;
           word-break: break-word;
         }
       }
@@ -1364,14 +1364,14 @@ $duration: 0.3s;
 
     h3 {
       font-size: 16px;
-      font-weight: 600;
+    font-weight: 600;
       color: $text-color;
               margin: 0;
-    }
-
+  }
+  
     .week-navigation {
-        display: flex;
-        align-items: center;
+    display: flex;
+    align-items: center;
         gap: 8px;
 
       button {

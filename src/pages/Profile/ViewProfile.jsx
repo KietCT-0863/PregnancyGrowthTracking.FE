@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { User, ArrowLeft, Edit, Calendar, Mail, Phone } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import userService from "../../api/services/userService";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 import "./ViewProfile.scss";
 
 const ViewProfile = () => {
@@ -20,7 +21,8 @@ const ViewProfile = () => {
     dob: null,
     phone: "",
     membershipType: "",
-    membershipExpiryDate: null
+    membershipExpiryDate: null,
+    role: ""
   });
 
   useEffect(() => {
@@ -29,6 +31,19 @@ const ViewProfile = () => {
 
   const fetchUserData = async () => {
     try {
+      // Lấy token và decode để đọc role từ JWT
+      const token = localStorage.getItem("token");
+      let userRole = "member"; // Mặc định là member
+
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        } catch (tokenError) {
+          console.error("Lỗi khi decode token:", tokenError);
+        }
+      }
+
       const response = await userService.getUserInfo();
       setUserInfo({
         userName: response.userName || "",
@@ -37,7 +52,8 @@ const ViewProfile = () => {
         dob: response.dob ? new Date(response.dob) : null,
         phone: response.phone || "",
         membershipType: response.membershipType || "Cơ bản",
-        membershipExpiryDate: response.membershipExpiryDate ? new Date(response.membershipExpiryDate) : null
+        membershipExpiryDate: response.membershipExpiryDate ? new Date(response.membershipExpiryDate) : null,
+        role: userRole // Sử dụng role từ token JWT
       });
       setProfileImage(response.profileImageUrl || "/placeholder.svg");
       setLoading(false);
@@ -109,10 +125,10 @@ const ViewProfile = () => {
               <h2>{userInfo.fullName || "Người dùng"}</h2>
               <p className="username">@{userInfo.userName}</p>
               <div className="membership-badge">
-                <span className={`badge ${userInfo.membershipType.toLowerCase() === "vip" ? "vip" : "basic"}`}>
-                  {userInfo.membershipType === "VIP" ? "Thành viên VIP" : "Thành viên Cơ bản"}
+                <span className={`badge ${userInfo.role === "vip" ? "vip" : "member"}`}>
+                  {userInfo.role === "vip" ? "Thành viên VIP" : "Thành viên Cơ bản"}
                 </span>
-                {userInfo.membershipExpiryDate && userInfo.membershipType === "VIP" && (
+                {userInfo.membershipExpiryDate && userInfo.role === "vip" && (
                   <span className="expiry-date">
                     Hết hạn: {formatDate(userInfo.membershipExpiryDate)}
                   </span>
@@ -155,7 +171,7 @@ const ViewProfile = () => {
             <Link to="/member/basic-tracking" className="action-button secondary">
               Theo dõi thai kỳ
             </Link>
-            {userInfo.membershipType.toLowerCase() !== "vip" && (
+            {userInfo.role !== "vip" && (
               <Link to="/basic-user/choose-vip" className="action-button upgrade">
                 Nâng cấp lên VIP
               </Link>

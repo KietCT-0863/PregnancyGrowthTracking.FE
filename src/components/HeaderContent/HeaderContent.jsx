@@ -80,23 +80,7 @@ const HeaderContent = ({ isDarkMode }) => {
 
   ]
 
-  const quickActions = [
-    {
-      icon: <Bell />,
-      label: "Thông báo",
-      action: () => setActiveSection("notifications"),
-    },
-    {
-      icon: <Search />,
-      label: "Tìm kiếm",
-      action: () => setIsSearchOpen(true),
-    },
-    {
-      icon: <MessageCircle />,
-      label: "Trò chuyện",
-      action: () => navigate("/chat"),
-    },
-  ]
+  
 
   return (
     <section className={`hero ${isDarkMode ? "dark-mode" : ""}`}>
@@ -106,20 +90,6 @@ const HeaderContent = ({ isDarkMode }) => {
         <div className="wave wave3"></div>
       </div>
 
-      <div className="quick-actions">
-        {quickActions.map((action, index) => (
-          <motion.button
-            key={index}
-            className="quick-action-btn"
-            onClick={action.action}
-            whileHover={{ y: -5 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {action.icon}
-            <span className="quick-action-label">{action.label}</span>
-          </motion.button>
-        ))}
-      </div>
 
       <AnimatePresence mode="wait">
         {isSearchOpen && (

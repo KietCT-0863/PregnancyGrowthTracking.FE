@@ -618,9 +618,9 @@ const CalendarAll = () => {
   };
 
   const renderMonthView = (filteredEvents) => {
-    return (
-      <div className="month-view">
-        <div className="month-header">
+      return (
+        <div className="month-view">
+          <div className="month-header">
           <h2>{formatMonthYear(currentDate)}</h2>
           <div className="month-navigation">
             <button 
@@ -642,16 +642,16 @@ const CalendarAll = () => {
             >
               <ChevronRight size={18} />
             </button>
-          </div>
+              </div>
         </div>
         
         <div className="month-weekdays">
           {WEEKDAYS.map(day => (
             <div key={day} className="month-weekday">{day}</div>
-          ))}
-        </div>
+            ))}
+          </div>
 
-        <div className="month-grid">
+          <div className="month-grid">
           {getDaysInMonth(currentDate).map((day, index) => {
             const isToday = day && day.toDateString() === new Date().toDateString();
             const isSelected = day && day.toDateString() === selectedDay.toDateString();
@@ -680,19 +680,19 @@ const CalendarAll = () => {
                         <div className="events-container">
                           {visibleEvents.map((event) => {
                             const category = CATEGORIES.find(c => c.id === event.reminderType) || CATEGORIES[0];
-                            return (
-                              <div
+                        return (
+                          <div
                                 key={event.id || event.remindId}
-                                className="month-event"
-                                style={{ backgroundColor: category.color }}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEventClick(event);
-                                }}
-                              >
+                            className="month-event"
+                            style={{ backgroundColor: category.color }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEventClick(event);
+                            }}
+                          >
                                 <span className="event-time">{event.time}</span>
                                 <span className="event-title">{event.title}</span>
-                              </div>
+                          </div>
                             );
                           })}
                           {hasOverflow && (
@@ -712,13 +712,13 @@ const CalendarAll = () => {
               </div>
             );
           })}
+          </div>
         </div>
-      </div>
-    );
+      );
   };
 
   const renderWeekView = (filteredEvents) => {
-    return (
+      return (
       <div className="week-view-container">
         <div className="week-header">
           <div className="week-info">
@@ -779,7 +779,7 @@ const CalendarAll = () => {
             const dayEvents = getEventsForDay(filteredEvents, date);
             const isToday = date.toDateString() === new Date().toDateString();
             
-            return (
+      return (
               <div 
                 key={index} 
                 className={`day-column ${isToday ? "today" : ""}`}

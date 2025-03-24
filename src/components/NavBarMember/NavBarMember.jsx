@@ -433,6 +433,23 @@ const NavBarMember = () => {
             
             <div className="action-separator"></div>
             
+            {/* Thêm nút đăng xuất */}
+            {isLoggedIn && (
+              <>
+                <button
+                  className="header-action-button logout-button"
+                  onClick={handleLogout}
+                  aria-label="Đăng xuất"
+                  title="Đăng xuất khỏi tài khoản"
+                >
+                  <FaSignOutAlt />
+                  <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
+                </button>
+                
+                <div className="action-separator"></div>
+              </>
+            )}
+            
             {/* User Profile */}
             {isLoggedIn ? (
               <div className="user-profile-container" ref={dropdownRef}>
@@ -567,17 +584,21 @@ const NavBarMember = () => {
                 <FaHome /> Trang chủ
                 <div className="nav-tooltip">Quay về trang chính</div>
               </Link>
-              <Link to="/member/basic-tracking" className={`nav-item ${location.pathname.includes('/member/pregnancy-tracking') ? 'active' : ''}`}>
+              <Link to="/member/basic-tracking" className={`nav-item ${location.pathname.includes('/member/basic-tracking') ? 'active' : ''}`}>
                 <FaBaby /> Theo dõi thai kỳ
                 <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
               </Link>
-              <Link to="/member/calendar" className={`nav-item ${location.pathname.includes('/member/appointment') ? 'active' : ''}`}>
+              <Link to="/member/calendar" className={`nav-item ${location.pathname.includes('/member/calendar') ? 'active' : ''}`}>
                 <FaCalendarAlt /> Lịch khám
                 <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
               </Link>
-              <Link to="/member/doctor-notes" className={`nav-item ${location.pathname.includes('/member/nutrition') ? 'active' : ''}`}>
-                <FaAppleAlt /> Dinh dưỡng
-                <div className="nav-tooltip">Thông tin về chế độ dinh dưỡng cho bà bầu</div>
+              <Link to="/member/doctor-notes" className={`nav-item ${location.pathname.includes('/member/doctor-notes') ? 'active' : ''}`}>
+                <FaAppleAlt /> Ghi chú bác sĩ
+                <div className="nav-tooltip">Thông tin về ghi chú bác sĩ cho bà bầu</div>
+              </Link>
+              <Link to="/member/blog" className={`nav-item ${location.pathname.includes('/member/blog') ? 'active' : ''}`}>
+                <FaBlog /> Blog
+                <div className="nav-tooltip">Những bài viết hữu ích về thai kỳ</div>
               </Link>
               <Link to="/member/community" className={`nav-item ${location.pathname.includes('/member/community') ? 'active' : ''}`}>
                 <FaUsers /> Cộng đồng
