@@ -83,8 +83,10 @@ $font-accent: "Amatic SC", cursive;
 
 /* Main Navbar Component */
 .navbar {
-  background-color: transparent !important;
-  background: transparent !important;
+  background-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
   height: 80px;
   width: 100%;
   position: fixed;
@@ -95,17 +97,17 @@ $font-accent: "Amatic SC", cursive;
   
   &.scrolled {
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05) !important;
-    background-color: transparent !important; 
-    background: transparent !important;
+    background-color: rgba(255, 255, 255, 0.6) !important; 
+    background: rgba(255, 255, 255, 0.6) !important;
   }
 }
 
 .navbar-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between !important;
   height: 100%;
-  padding: 0 20px;
+  padding: 0 30px !important;
   max-width: 1200px;
   margin: 0 auto;
   background-color: transparent !important;
@@ -115,10 +117,12 @@ $font-accent: "Amatic SC", cursive;
 .logo-section {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 100%;
+  justify-content: flex-start !important;
+  margin-right: auto !important;
+  width: auto !important;
   background-color: transparent !important;
   background: transparent !important;
+  padding-right: 70px !important; /* Tăng khoảng cách */
   
   .navbar-logo {
     display: flex;
@@ -129,13 +133,14 @@ $font-accent: "Amatic SC", cursive;
     
     .navbar-logo-image {
       height: 55px;
-      margin-right: 12px;
+      margin-right: 18px;
     }
     
     .navbar-logo-text {
       font-size: 2.2rem;
       font-weight: 600;
       color: #FF6B81;
+      text-shadow: 0px 2px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ để tên logo nổi bật hơn */
     }
   }
 }
@@ -143,181 +148,318 @@ $font-accent: "Amatic SC", cursive;
 /* === HORIZONTAL NAVIGATION === */
 .horizontal-nav {
   position: fixed;
+  width: 100%;
   top: 80px; /* Giữ đúng với chiều cao navbar */
   left: 0;
   right: 0;
-  background-color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  padding: 15px;
-  z-index: 980;
+  background-color: rgba(255, 255, 255, 0.92) !important; /* Tăng độ đục của background */
+  backdrop-filter: blur(15px) !important; /* Tăng độ blur để nổi bật hơn */
+  -webkit-backdrop-filter: blur(15px) !important; /* Hỗ trợ Safari */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important; /* Tăng đổ bóng to hơn */
+  border: 1px solid rgba(255, 255, 255, 1) !important;
+  border-radius: 0 0 16px 16px !important; /* Bo tròn góc dưới */
+  padding: 15px 20px !important; /* Tăng padding */
+  z-index: 990 !important; /* z-index hợp lý */
   display: none; /* Ẩn mặc định */
+  margin: 0 auto !important; /* Đảm bảo căn giữa */
+  max-width: 1400px !important; /* Giới hạn chiều rộng tối đa */
+  overflow: visible !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  
+  // Hiệu ứng viền gradient
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0 0 16px 16px; 
+    padding: 1px; 
+    background: linear-gradient(45deg, 
+      rgba(255, 107, 129, 0.2), 
+      rgba(255, 255, 255, 0.6), 
+      rgba(112, 161, 255, 0.2),
+      rgba(255, 107, 129, 0.2)
+    );
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
   
   &.visible {
-    display: block; /* Hiển thị khi có class visible */
-    animation: fadeInDown 0.3s ease-out;
+    display: block !important; /* Hiển thị khi có class visible */
+    animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   
   @keyframes fadeInDown {
     from {
       opacity: 0;
-      transform: translateY(-15px);
+      transform: translate(-50%, -15px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate(-50%, 0);
     }
   }
   
   .horizontal-nav-items {
     display: flex;
-    gap: 20px;
+    gap: 18px !important; /* Tăng gap để tạo khoảng cách giữa các items */
     justify-content: center;
     flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1100px; /* Chiều rộng tối đa */
+    margin: 0 auto !important;
+    padding: 0 20px !important; /* Tăng padding để cách lề*/
+    position: relative;
     
     .nav-item {
       display: flex;
       align-items: center;
-      padding: 10px 18px;
-      border-radius: 8px;
+      padding: 10px 16px; /* Tăng padding để các item rộng hơn */
+      border-radius: 12px !important; /* Tăng bo góc */
       color: $text-dark;
       text-decoration: none;
       font-weight: 500;
-      transition: all 0.3s ease;
-      background-color: #f8f9fa;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      font-size: 0.95rem; /* Tăng font-size */
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+      background-color: rgba(255, 255, 255, 0.9); /* Tăng độ đục */
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04); /* Tăng shadow */
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      margin: 2px 0; /* Thêm margin trên dưới */
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba($primary, 0), rgba($primary, 0.15));
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: -1;
+        border-radius: 12px;
+      }
+      
+      .nav-icon {
+        margin-right: 10px; /* Tăng khoảng cách giữa icon và text */
+        font-size: 1.15rem; /* Tăng kích thước icon */
+        transition: all 0.3s ease;
+        color: inherit;
+      }
+      
+      .nav-text {
+        position: relative;
+        transition: transform 0.3s ease;
+        font-weight: 600; /* Tăng font-weight để text nổi bật hơn */
+        
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -2px;
+          height: 2px;
+          background-color: $primary;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.3s ease;
+          opacity: 0.7;
+        }
+      }
       
       &:hover {
-        background-color: rgba($primary, 0.1);
+        background-color: rgba(255, 255, 255, 0.97);
         color: $primary;
-        transform: translateY(-3px);
-        box-shadow: 0 4px 10px rgba($primary, 0.15);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 5px 15px rgba($primary, 0.2);
+        
+        &::before {
+          transform: translateX(0);
+        }
+        
+        .nav-icon {
+          transform: translateY(-1px) scale(1.1);
+        }
+        
+        .nav-text::after {
+          transform: scaleX(1);
+        }
       }
       
       &.active {
-        color: white;
-        background-color: $primary;
-        box-shadow: 0 4px 12px rgba($primary, 0.2);
-      }
-      
-      svg {
-        margin-right: 8px;
-        font-size: 1.1rem;
+        color: white !important;
+        background-color: $primary !important;
+        box-shadow: 0 4px 12px rgba($primary, 0.3);
+        font-weight: 600;
+        
+        &::before {
+          background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+          transform: translateX(0);
+        }
+        
+        .nav-icon {
+          filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+        }
+        
+        .nav-text::after {
+          background-color: white;
+          opacity: 0.5;
+          transform: scaleX(1);
+        }
       }
     }
   }
+  
+  // Thêm một đường viền trang trí
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    border-radius: 0 0 10px 10px;
+    background: linear-gradient(90deg, 
+      rgba(255, 107, 129, 0.0) 0%,
+      rgba(255, 107, 129, 0.3) 25%, 
+      rgba(255, 107, 129, 0.5) 50%,
+      rgba(255, 107, 129, 0.3) 75%,
+      rgba(255, 107, 129, 0.0) 100%
+    );
+  }
 }
 
-/* Tooltips for horizontal nav items */
+/* Tooltips for navigation items */
 .nav-item {
   position: relative;
   
   .nav-tooltip {
     position: absolute;
-    top: -45px;
+    bottom: auto !important;
+    top: calc(100% + 10px) !important;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(0, 0, 0, 0.85);
     color: white;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 13px;
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     z-index: 1200;
     pointer-events: none;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     max-width: 250px;
     text-align: center;
     
     &:before {
       content: '';
       position: absolute;
-      bottom: -10px;
+      top: -8px !important;
+      bottom: auto !important;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 5px;
+      border-width: 4px;
       border-style: solid;
-      border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent !important;
     }
   }
   
   &:hover .nav-tooltip {
     opacity: 1;
     visibility: visible;
-    top: -40px;
+    top: calc(100% + 8px) !important;
+    bottom: auto !important;
   }
 }
 
-/* Mobile adjustments for nav tooltips */
+/* Ghi đè mọi quy tắc CSS khác có thể ảnh hưởng đến vị trí tooltip */
 @media (max-width: 768px) {
   .nav-item {
     .nav-tooltip {
-      top: auto;
-      bottom: -45px;
-      left: 50%;
+      top: calc(100% + 12px) !important;
       font-size: 12px;
       padding: 6px 10px;
-      max-width: 90%;
+      max-width: 200px;
       
       &:before {
-        bottom: auto;
-        top: -10px;
-        border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent;
+        top: -8px !important;
       }
     }
     
     &:hover .nav-tooltip {
-      top: auto;
-      bottom: -38px;
+      top: calc(100% + 8px) !important;
     }
   }
 }
 
-// Mobile styles for horizontal navigation
+/* Mobile styles for horizontal navigation */
 @media (max-width: 768px) {
   .horizontal-nav {
     top: 70px; // Phù hợp với chiều cao navbar trên mobile
-    padding: 10px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 15px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.9);
+    width: 92% !important; // Giảm chiều rộng để có khoảng cách từ mép
+    max-width: 100% !important;
     
     .horizontal-nav-items {
       flex-direction: column;
       align-items: stretch;
-      gap: 10px;
+      gap: 16px !important; // Tăng khoảng cách giữa các mục menu trên mobile
       width: 100%;
+      padding: 5px !important;
       
       .nav-item {
         width: 100%;
         justify-content: flex-start;
-        padding: 12px 16px;
+        padding: 12px 18px; // Tăng kích thước nút chạm
         margin-bottom: 0;
         font-size: 0.95rem;
+        position: relative;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.98);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
         
-        svg {
-          font-size: 1.2rem;
-          margin-right: 10px;
-          min-width: 20px;
+        .nav-icon {
+          font-size: 1.25rem; // Tăng kích thước icon trên mobile
+          margin-right: 12px; // Tăng khoảng cách giữa icon và text
         }
         
-        &:active {
-          transform: translateY(1px);
+        .nav-text {
+          font-weight: 600; // Làm đậm text
+        }
+        
+        &:hover {
+          transform: translateY(-1px) scale(1.01); // Hiệu ứng nhỏ hơn trên mobile
         }
       }
     }
   }
   
-  .content-spacer.visible {
-    height: 320px; // Tăng chiều cao để có đủ không gian cho menu items
-  }
-  
-  // For very small screens, add even more space
-  @media (max-width: 320px) {
-    .content-spacer.visible {
-      height: 350px;
+  /* Điều chỉnh tooltip trên mobile */
+  .nav-item {
+    .nav-tooltip {
+      top: calc(100% + 12px) !important;
+      font-size: 12px;
+      padding: 6px 10px;
+      max-width: 200px;
+      
+      &:before {
+        top: -8px !important;
+      }
+    }
+    
+    &:hover .nav-tooltip {
+      top: calc(100% + 8px) !important;
     }
   }
 }
@@ -688,8 +830,10 @@ $font-accent: "Amatic SC", cursive;
   }
   
   .logo-section {
-    width: 100%;
-    justify-content: space-between !important;
+    padding-right: 20px;
+    margin-right: 0 !important; /* Override auto margin on mobile */
+    width: auto !important;
+    justify-content: center !important;
   }
 }
 
@@ -898,12 +1042,11 @@ body.sidebar-open {
 
 /* === NAVBAR TOGGLE BUTTON === */
 .navbar-toggle-button {
-  position: absolute;
-  right: 20px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.3);
   border: none;
   cursor: pointer;
   width: 46px;
@@ -915,7 +1058,7 @@ body.sidebar-open {
   font-size: 1.3rem;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
   }
   
@@ -930,12 +1073,13 @@ body.sidebar-open {
   align-items: center;
   gap: 20px; /* Tăng từ 12px lên 20px */
   margin-left: auto;
+  padding-left: 30px; /* Add padding to push away from logo section */
 }
 
 /* Notification Button */
 .header-action-button.notification-button {
   position: relative;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.3);
   border: none;
   width: 42px;
   height: 42px;
@@ -949,7 +1093,7 @@ body.sidebar-open {
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
   }
   
@@ -967,18 +1111,11 @@ body.sidebar-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
   }
 }
 
-/* User Profile Container and components */
-.user-profile-container {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Tăng từ 10px lên 15px */
-  position: relative;
-}
-
+/* User Avatar Container */
 .user-avatar-container {
   width: 42px;
   height: 42px;
@@ -988,14 +1125,14 @@ body.sidebar-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.3);
   border: 2px solid rgba($primary, 0.2);
   transition: all 0.2s ease;
   
   &:hover {
     transform: scale(1.05);
     border-color: $primary;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
   }
   
   .user-avatar {
@@ -1019,11 +1156,11 @@ body.sidebar-open {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.3);
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
   }
   
   .dropdown-indicator {
@@ -1054,10 +1191,18 @@ body.sidebar-open {
   }
 }
 
+/* User Profile Container and components */
+.user-profile-container {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Tăng từ 10px lên 15px */
+  position: relative;
+}
+
 /* Login button for non-logged in users */
 .login-button {
   padding: 6px 12px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.3);
   border-radius: 20px;
   text-decoration: none;
   color: $primary;
@@ -1066,8 +1211,57 @@ body.sidebar-open {
   transition: all 0.2s ease;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
     transform: translateY(-2px);
+  }
+}
+
+/* Thêm hiệu ứng đổ bóng và depth cho dropdown menu */
+.notification-dropdown, .user-dropdown {
+  box-shadow: 
+    0 5px 15px rgba(0, 0, 0, 0.08),
+    0 15px 35px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Style cho các menu item bên trong dropdown */
+.dropdown-menu .dropdown-item {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  margin-bottom: 5px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    transform: translateX(3px);
+  }
+  
+  &.logout {
+    background-color: rgba(255, 90, 95, 0.05);
+    
+    &:hover {
+      background-color: rgba(255, 90, 95, 0.15);
+    }
+  }
+}
+
+/* Style cho các notification items */
+.notification-list .notification-item {
+  background-color: rgba(255, 255, 255, 0.5);
+  
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    transform: translateX(3px);
+  }
+  
+  &.unread {
+    background-color: rgba($primary, 0.08);
+    
+    &:hover {
+      background-color: rgba($primary, 0.15);
+    }
   }
 }
 
@@ -1078,16 +1272,18 @@ body.sidebar-open {
   right: 20px;
   width: 320px;
   max-height: 400px;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 1010;
   overflow: hidden;
   animation: slideDown 0.3s ease forwards;
   
   .notification-header {
     padding: 15px;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.6);
     border-bottom: 1px solid rgba(238, 238, 238, 0.5);
     display: flex;
     justify-content: space-between;
@@ -1201,10 +1397,12 @@ body.sidebar-open {
   top: 85px;
   right: 20px;
   width: 280px;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 1010;
   overflow: hidden;
   animation: slideDown 0.3s ease forwards;
   
@@ -1304,27 +1502,28 @@ body.sidebar-open {
 
 /* Mobile Styles for Header Actions */
 @media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 15px !important;
+  }
+  
+  .logo-section {
+    padding-right: 20px;
+    margin-right: 0 !important; /* Override auto margin on mobile */
+    width: auto !important;
+    justify-content: center !important;
+  }
+  
   .header-actions {
     gap: 8px;
+    padding-left: 15px;
   }
   
-  .header-action-button.notification-button,
-  .user-profile-button,
-  .navbar-toggle-button {
-    width: 38px;
-    height: 38px;
+  .navbar-logo-text {
+    font-size: 1.8rem !important; /* Smaller font on mobile */
   }
   
-  .login-button {
-    padding: 4px 10px;
-    font-size: 0.8rem;
-  }
-  
-  .notification-dropdown,
-  .user-dropdown {
-    top: 75px;
-    right: 10px;
-    width: 290px;
+  .navbar-logo-image {
+    height: 45px !important; /* Smaller logo on mobile */
   }
 }
 
@@ -1388,7 +1587,8 @@ body.sidebar-open {
 /* Tooltip styling */
 .profile-tooltip {
   position: absolute;
-  bottom: -30px;
+  bottom: auto !important;
+  top: calc(100% + 10px) !important;
   left: 50%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.8);
@@ -1405,19 +1605,22 @@ body.sidebar-open {
   &:before {
     content: '';
     position: absolute;
-    top: -5px;
+    top: -5px !important;
+    bottom: auto !important;
     left: 50%;
     transform: translateX(-50%);
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid rgba(0, 0, 0, 0.8);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.8) !important;
+    border-top: none !important;
   }
 }
 
 .user-profile-button:hover .profile-tooltip {
   opacity: 1;
   visibility: visible;
-  bottom: -35px;
+  bottom: auto !important;
+  top: calc(100% + 5px) !important;
 }
 
 /* Separators between header elements */
@@ -1452,7 +1655,7 @@ body.sidebar-open {
   }
 }
 
-/* Feature Tooltips */
+/* Feature Tooltips - đảm bảo hiển thị bên dưới */
 .feature-tooltip {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.8);
@@ -1475,152 +1678,77 @@ body.sidebar-open {
     border-style: solid;
   }
   
-  /* Tooltips pointing upward */
+  /* Tất cả tooltips đều hiển thị phía dưới */
   &.login-tooltip, 
   &.notification-tooltip, 
   &.edit-tooltip, 
-  &.menu-tooltip {
-    bottom: -45px;
-    left: 50%;
-    transform: translateX(-50%);
-    
-    &:before {
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
-    }
-  }
-  
-  /* Tooltips pointing downward */
+  &.menu-tooltip,
+  &.logout-tooltip,
   &.avatar-tooltip {
-    top: -45px;
+    bottom: auto !important;
+    top: calc(100% + 10px) !important;
     left: 50%;
     transform: translateX(-50%);
     
     &:before {
-      bottom: -12px;
+      bottom: auto !important;
+      top: -12px !important;
       left: 50%;
       transform: translateX(-50%);
-      border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent !important;
     }
   }
 }
 
-/* Tooltip visibility on hover */
-.header-action-button:hover .feature-tooltip,
-.user-avatar-container:hover .feature-tooltip,
-.login-button:hover .feature-tooltip,
-.navbar-toggle-button:hover .feature-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Animation for different tooltip positions */
+/* Animation cho tất cả tooltips */
 .header-action-button:hover .edit-tooltip,
 .header-action-button:hover .notification-tooltip,
 .header-action-button:hover .logout-tooltip,
 .login-button:hover .login-tooltip,
-.navbar-toggle-button:hover .menu-tooltip {
-  bottom: -38px;
-}
-
+.navbar-toggle-button:hover .menu-tooltip,
 .user-avatar-container:hover .avatar-tooltip {
-  top: -38px;
+  opacity: 1;
+  visibility: visible;
+  top: calc(100% + 5px) !important;
+  bottom: auto !important;
 }
 
-/* Mobile adjustment for tooltips */
-@media (max-width: 768px) {
-  .feature-tooltip {
-    font-size: 11px;
-    padding: 6px 10px;
-    
-    &:before {
-      border-width: 5px;
-    }
-  }
-  
-  .header-action-button:hover .edit-tooltip,
-  .header-action-button:hover .notification-tooltip,
-  .header-action-button:hover .logout-tooltip,
-  .login-button:hover .login-tooltip,
-  .navbar-toggle-button:hover .menu-tooltip {
-    bottom: -35px;
-  }
-  
-  .user-avatar-container:hover .avatar-tooltip {
-    top: -35px;
-  }
-}
-
-/* User dropdown menu tooltips */
+/* Tooltip cho dropdown-item cũng ở bên dưới */
 .dropdown-item {
   position: relative;
   
   .dropdown-tooltip {
     position: absolute;
-    right: -160px;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 1200;
-    pointer-events: none;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    text-align: left;
+    bottom: auto !important;
+    top: calc(100% + 10px) !important;
+    left: 50%;
+    transform: translateX(-50%);
     
     &:before {
-      content: '';
-      position: absolute;
-      left: -10px;
-      top: 50%;
-      transform: translateY(-50%);
-      border-width: 5px;
-      border-style: solid;
-      border-color: transparent rgba(0, 0, 0, 0.85) transparent;
+      left: 50%;
+      bottom: auto !important;
+      top: -10px !important;
+      transform: translateX(-50%);
+      border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent !important;
     }
   }
   
   &:hover .dropdown-tooltip {
     opacity: 1;
     visibility: visible;
-    right: -150px;
+    top: calc(100% + 5px) !important;
+    bottom: auto !important;
   }
 }
 
-/* Mobile adjustments for dropdown tooltips */
+/* Mobile adjustments */
 @media (max-width: 768px) {
-  .dropdown-item {
-    .dropdown-tooltip {
-      position: absolute;
-      top: -35px;
-      right: auto;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 11px;
-      padding: 6px 10px;
-      max-width: 90%;
-      
-      &:before {
-        left: 50%;
-        top: auto;
-        bottom: -10px;
-        transform: translateX(-50%);
-        border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
-      }
-    }
-    
-    &:hover .dropdown-tooltip {
-      right: auto;
-      top: -30px;
-    }
+  .nav-item .nav-tooltip,
+  .feature-tooltip,
+  .dropdown-tooltip {
+    font-size: 12px;
+    padding: 6px 10px;
+    max-width: 90%;
   }
 }
 
@@ -1638,10 +1766,11 @@ main, .main-content, .page-container {
 /* Styling for logout button */
 .header-action-button.logout-button {
   color: #ff5a5f;
+  background: rgba(255, 90, 95, 0.1);
   transition: all 0.3s ease;
   
   &:hover {
-    background-color: rgba(255, 90, 95, 0.1);
+    background-color: rgba(255, 90, 95, 0.2);
     transform: scale(1.1);
   }
   
@@ -1654,3 +1783,143 @@ main, .main-content, .page-container {
   }
 }
 
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 15px !important;
+  }
+  
+  .logo-section {
+    padding-right: 20px;
+    margin-right: 0 !important; /* Override auto margin on mobile */
+    width: auto !important;
+    justify-content: center !important;
+  }
+  
+  .header-actions {
+    padding-left: 15px;
+    gap: 8px;
+  }
+  
+  .navbar-logo-text {
+    font-size: 1.8rem !important; /* Smaller font on mobile */
+  }
+  
+  .navbar-logo-image {
+    height: 45px !important; /* Smaller logo on mobile */
+  }
+}
+
+/* Glass morphism effects */
+.navbar, 
+.horizontal-nav, 
+.notification-dropdown, 
+.user-dropdown,
+.header-action-button,
+.user-avatar-container,
+.user-profile-button,
+.login-button,
+.navbar-toggle-button {
+  /* Hiệu ứng glass morphism */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Z-index hierarchy */
+.navbar {
+  z-index: 1000;
+}
+
+.horizontal-nav {
+  z-index: 990;
+}
+
+.notification-dropdown, 
+.user-dropdown {
+  z-index: 1010;
+}
+
+.notification-header, 
+.dropdown-menu,
+.notification-item,
+.dropdown-item {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Add background để xuyên thấu cho cả content-wrapper */
+main, .main-content, .page-container {
+  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* GLOBAL TOOLTIP POSITIONING - ghi đè tất cả các tooltip */
+.nav-tooltip,
+.feature-tooltip,
+.dropdown-tooltip,
+.profile-tooltip,
+.nav-item .nav-tooltip,
+.login-tooltip, 
+.notification-tooltip, 
+.edit-tooltip, 
+.menu-tooltip,
+.logout-tooltip,
+.avatar-tooltip {
+  position: absolute !important;
+  bottom: auto !important;
+  top: calc(100% + 10px) !important;
+  color: black !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  padding: 8px 12px !important;
+  
+  &:before {
+    content: '' !important;
+    position: absolute !important;
+    bottom: auto !important;
+    top: -10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent !important;
+  }
+}
+
+/* Ngoại lệ cho logout tooltip */
+.feature-tooltip.logout-tooltip {
+  background-color: rgba(255, 240, 240, 0.98) !important;
+  color: #e74c3c !important;
+  font-weight: 500 !important;
+  border-color: rgba(231, 76, 60, 0.2) !important;
+  
+  &:before {
+    border-color: transparent transparent rgba(255, 240, 240, 0.98) transparent !important;
+  }
+}
+
+/* Hover states for all tooltips */
+*:hover > .nav-tooltip,
+*:hover > .feature-tooltip,
+*:hover > .dropdown-tooltip,
+*:hover > .profile-tooltip,
+.nav-item:hover .nav-tooltip,
+.header-action-button:hover .edit-tooltip,
+.header-action-button:hover .notification-tooltip,
+.header-action-button:hover .logout-tooltip,
+.login-button:hover .login-tooltip,
+.navbar-toggle-button:hover .menu-tooltip,
+.user-avatar-container:hover .avatar-tooltip,
+.user-profile-button:hover .profile-tooltip,
+.dropdown-item:hover .dropdown-tooltip {
+  opacity: 1 !important;
+  visibility: visible !important;
+  top: calc(100% + 5px) !important;
+  bottom: auto !important;
+}

@@ -1,0 +1,169 @@
+.home-basic-user {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  box-sizing: border-box; /* Đảm bảo padding không làm rộng hơn 100% */
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    width: 100%;
+  }
+
+  /* Phân chia layout thành các section */
+  .top-section {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    gap: 1.5rem;
+    width: 100%;
+    
+    @media (max-width: 1200px) {
+      grid-template-columns: 60% 40%;
+    }
+    
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
+    
+    /* Timeline section */
+    .timeline-wrapper {
+      width: 100%;
+      > div {
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+    
+    /* Foetus list section */
+    .foetus-wrapper {
+      width: 100%;
+      > div {
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+
+  /* Blog section */
+  .mid-section {
+    width: 100%;
+    > div {
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  /* VIP Benefits section */
+  .bottom-section {
+    width: 100%;
+    > div {
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  /* Typographic styles */
+  h1, h2, h3 {
+    font-family: "Playfair Display", serif;
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+    color: #DB7093;
+    position: relative;
+    margin-bottom: 15px;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(to right, #DB7093, #87CEFA);
+      border-radius: 2px;
+    }
+  }
+
+  p, span {
+    font-family: "Roboto", sans-serif;
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+    color: #555;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;
+
+    .top-section, .mid-section, .bottom-section {
+      div {
+        padding: 1.2rem !important;
+      }
+    }
+    
+    h1, h2, h3 {
+      font-size: 1.3rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    padding: 0.8rem;
+    width: 100%;
+    
+    .top-section, .mid-section, .bottom-section {
+      div {
+        padding: 1rem !important;
+      }
+    }
+  }
+}

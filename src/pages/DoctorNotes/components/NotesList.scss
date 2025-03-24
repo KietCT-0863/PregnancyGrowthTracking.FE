@@ -5,17 +5,19 @@
   gap: 1.5rem;
   padding: 1.75rem;
   overflow-y: auto;
-  background-color: #fafafa;
+  background-color: transparent !important;
   border-radius: 0 24px 24px 0;
   height: 550px;
 
   .note-card {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 8px 20px rgba(255, 182, 193, 0.1);
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border: 1px solid rgba(255, 192, 203, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
     position: relative;
     overflow: hidden;
 
@@ -291,44 +293,43 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1.5rem;
+    text-align: center;
     padding: 3rem;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(255, 107, 155, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
 
     svg {
-      color: #ffc0cb;
-      opacity: 0.7;
+      color: #ff9eb5;
+      margin-bottom: 1rem;
     }
 
     p {
       font-size: 1.1rem;
       color: #666;
-      text-align: center;
-      margin: 0;
+      margin-bottom: 1.5rem;
     }
 
     button {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.85rem 1.5rem;
-      border: none;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #ff9eb5, #ff7d9c);
+      padding: 0.75rem 1.5rem;
+      background-color: rgba(255, 107, 139, 0.9) !important;
       color: white;
-      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 8px 16px rgba(255, 158, 181, 0.3);
-
+      transition: all 0.3s ease;
+      
       &:hover {
-        transform: translateY(-4px) scale(1.05);
-        box-shadow: 0 12px 20px rgba(255, 158, 181, 0.4);
-      }
-
-      svg {
-        color: white;
-        opacity: 1;
+        background-color: rgba(255, 90, 122, 1) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(255, 107, 139, 0.25);
       }
     }
   }
