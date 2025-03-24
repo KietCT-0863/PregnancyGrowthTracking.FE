@@ -22,7 +22,7 @@ import {
   FaUser,
   FaKey,
 } from "react-icons/fa";
-import "./NavbarGuest.scss";
+import "./NavBarGuest.scss";
 import reminderService from "../../api/services/reminderService";
 
 const CustomNavLink = ({ to, children, icon, onClick }) => {

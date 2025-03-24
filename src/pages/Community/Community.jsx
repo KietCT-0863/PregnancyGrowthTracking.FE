@@ -18,7 +18,8 @@ import {
   ArrowRight,
   Bookmark,
   Share2,
-  TrendingUp
+  TrendingUp,
+  Eye
 } from "react-feather";
 import PropTypes from "prop-types";
 import communityService from "../../api/services/communityService";
@@ -130,7 +131,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy HH:mm");
+      return format(new Date(dateString), "MMMM dd, yyyy");
     } catch (error) {
       return dateString;
     }
@@ -263,6 +264,7 @@ const Community = () => {
   const userId = 4; // Tạm thời hardcode userId, sau này lấy từ context hoặc localStorage
   const [viewMode, setViewMode] = useState("grid");
   const [mainTopic, setMainTopic] = useState("all"); // "all", "trending", "featured", "latest"
+  const [activeCategory, setActiveCategory] = useState("world"); // world, business, lifestyle
   
   const navigate = useNavigate();
 
@@ -338,7 +340,8 @@ const Community = () => {
         const readTime = Math.max(1, Math.ceil(wordCount / 200));
         return {
           ...post,
-          readTime
+          readTime,
+          views: Math.floor(Math.random() * 100) + 10, // Tạm thời tạo số lượt xem ngẫu nhiên
         };
       });
 
@@ -526,7 +529,7 @@ const Community = () => {
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy");
+      return format(new Date(dateString), "MMMM dd, yyyy");
     } catch (error) {
       return dateString;
     }
@@ -537,28 +540,53 @@ const Community = () => {
     navigate(`/community/post/${postId}`);
   };
 
-  // Lấy bài viết nổi bật để hiển thị ở phần hero
-  const featuredPost = posts.length > 0 ? posts[0] : null;
+  // Lấy bài viết nổi bật để hiển thị ở phần hero (2 bài đầu tiên)
+  const featuredPosts = posts.length > 0 ? posts.slice(0, 2) : [];
   
-  // Lọc bài viết theo chủ đề được chọn
+  // Lấy bài viết chính (bài thứ 3)
+  const mainPost = posts.length > 2 ? posts[2] : null;
+  
+  // Lọc bài viết còn lại (từ bài thứ 4 trở đi) theo chủ đề được chọn
   const getFilteredPosts = () => {
-    if (mainTopic === "all") return filteredPosts;
+    if (mainTopic === "all") return filteredPosts.slice(3);
     if (mainTopic === "trending") {
-      return [...filteredPosts].sort((a, b) => (likesCount[b.id] || 0) - (likesCount[a.id] || 0));
+      return [...filteredPosts].slice(3).sort((a, b) => (likesCount[b.id] || 0) - (likesCount[a.id] || 0));
     }
     if (mainTopic === "latest") {
-      return [...filteredPosts].sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+      return [...filteredPosts].slice(3).sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
     }
-    return filteredPosts;
+    return filteredPosts.slice(3);
   };
 
   const displayPosts = getFilteredPosts();
 
+  // Tạo dữ liệu thống kê giả định cho biểu đồ
+  const statsData = [
+    { label: "GRST/USD", value: "5.2%", trend: "0.9715" },
+    { label: "UMA/USD", value: "3.8%", trend: "1.0937" },
+    { label: "BRCK/USD", value: "7.1%", trend: "0.0772" },
+    { label: "LCX/USD", value: "4.4%", trend: "0.1570" }
+  ];
+
   return (
     <div className="community-container">
+      {/* Header kiểu The View Island */}
       <div className="community-header">
-        <h1>Cộng đồng</h1>
+        <div className="header-left">
+          <h1>THEVIEW<span>ISLAND</span></h1>
+        </div>
         <div className="header-actions">
+          <div className="view-toggle">
+            <button onClick={() => setActiveCategory("world")} className={`category-btn ${activeCategory === 'world' ? 'active' : ''}`}>
+              World
+            </button>
+            <button onClick={() => setActiveCategory("business")} className={`category-btn ${activeCategory === 'business' ? 'active' : ''}`}>
+              Business
+            </button>
+            <button onClick={() => setActiveCategory("lifestyle")} className={`category-btn ${activeCategory === 'lifestyle' ? 'active' : ''}`}>
+              Lifestyle
+            </button>
+          </div>
           <div className="search-box">
             <Search size={18} className="search-icon" />
             <input
@@ -568,27 +596,108 @@ const Community = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="view-toggle">
-            <button 
-              className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
-              onClick={() => setViewMode('list')}
-            >
-              <List size={20} />
-            </button>
-            <button 
-              className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
-              onClick={() => setViewMode('grid')}
-            >
-              <Grid size={20} />
-            </button>
-          </div>
           <button className="create-post-button" onClick={openNewPostModal}>
             <Plus size={18} />
             Tạo bài viết
           </button>
         </div>
       </div>
-      
+
+      {isLoading && !modalOpen && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
+
+      {/* Featured posts section - 2 columns */}
+      <div className="featured-posts-row">
+        {featuredPosts.map((post, index) => (
+          <div key={post.id} className="featured-column" onClick={() => viewPost(post.id)}>
+            <div className="author-date">
+              <span className="author">{post.createdBy || "Người dùng"}</span>
+              <span className="date">{formatDate(post.createdDate)}</span>
+            </div>
+            
+            <div className="featured-image">
+              {post.postImageUrl ? (
+                <img
+                  src={post.postImageUrl}
+                  alt={post.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/800x400?text=No+Image";
+                  }}
+                />
+              ) : index === 0 ? (
+                <img src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?q=80&w=3087&auto=format&fit=crop" alt="London Eye" />
+              ) : (
+                <img src="https://images.unsplash.com/photo-1494256997604-768d1f608cac?q=80&w=3029&auto=format&fit=crop" alt="Tree in Winter" />
+              )}
+            </div>
+            
+            <h2 className="featured-title">
+              {post.title || (index === 0 ? "Turn Your Devices From Distractions Into Time Savers" : "Draw Inspiration From Vibrancy")}
+            </h2>
+            
+            <div className="post-meta">
+              <div className="read-info">
+                {post.views && <span className="views-count"><Eye size={14} /> {post.views}</span>}
+                <span className="read-time"><Clock size={14} /> {post.readTime} min read</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main article */}
+      {mainPost && (
+        <div className="main-article" onClick={() => viewPost(mainPost.id)}>
+          <div className="main-article-content">
+            <div className="author-info">
+              <div className="author-avatar">
+                <User size={20} />
+              </div>
+              <span className="author-name">{mainPost.createdBy || "Alexa Ruyk"}</span>
+              {mainPost.trending && <span className="trending-indicator"><TrendingUp size={16} /></span>}
+            </div>
+            
+            <h1 className="main-title">
+              {mainPost.title || "Congress Averts Shutdown as Conservatives Steam"}
+            </h1>
+            
+            <p className="main-excerpt">
+              {mainPost.body?.substring(0, 150) || "Hours after the Senate passed the measure, the House followed suit. The bill will now go to President Biden."}
+              {mainPost.body?.length > 150 ? '...' : ''}
+            </p>
+            
+            <div className="main-footer">
+              <div className="read-info">
+                {mainPost.views && <span className="views-count"><Eye size={14} /> {mainPost.views}</span>}
+                <span className="read-time"><Clock size={14} /> {mainPost.readTime} min read</span>
+              </div>
+              
+              <div className="social-icons">
+                <button className="social-icon"><MessageCircle size={16} /></button>
+                <button className="social-icon"><Heart size={16} /></button>
+                <button className="social-icon"><Share2 size={16} /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Section */}
+      <div className="stats-section">
+        {statsData.map((stat, index) => (
+          <div key={index} className="stat-card">
+            <div className="stat-value">{stat.value}</div>
+            <div className="stat-trend">{stat.trend}</div>
+            <div className="stat-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Topics navigation */}
       <div className="topics-navigation">
         <button
           className={`topic-btn ${mainTopic === 'all' ? 'active' : ''}`}
@@ -608,60 +717,23 @@ const Community = () => {
         >
           Mới nhất
         </button>
+        <div className="view-mode-toggle">
+          <button 
+            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => setViewMode('list')}
+          >
+            <List size={20} />
+          </button>
+          <button 
+            className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+            onClick={() => setViewMode('grid')}
+          >
+            <Grid size={20} />
+          </button>
+        </div>
       </div>
 
-      {isLoading && !modalOpen && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-        </div>
-      )}
-
-      {/* Featured post section */}
-      {featuredPost && (
-        <div className="featured-post" onClick={() => viewPost(featuredPost.id)}>
-          <div className="featured-image">
-            {featuredPost.postImageUrl ? (
-              <img
-                src={featuredPost.postImageUrl}
-                alt={featuredPost.title}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://via.placeholder.com/800x400?text=Không+tải+được+ảnh";
-                }}
-              />
-            ) : (
-              <div className="placeholder-image">
-                <span>THE VIEW ISLAND</span>
-              </div>
-            )}
-          </div>
-          <div className="featured-content">
-            <div className="featured-meta">
-              <span className="featured-author">{featuredPost.createdBy || "Người dùng"}</span>
-              <span className="featured-date">{formatDate(featuredPost.createdDate)}</span>
-            </div>
-            <h2 className="featured-title">{featuredPost.title}</h2>
-            <div className="featured-excerpt">
-              {featuredPost.body && featuredPost.body.substring(0, 200)}
-              {featuredPost.body && featuredPost.body.length > 200 ? '...' : ''}
-            </div>
-            <div className="featured-footer">
-              <div className="read-time">
-                <Clock size={16} /> {featuredPost.readTime} phút đọc
-              </div>
-              <div className="featured-tags">
-                {Array.isArray(featuredPost.postTags) &&
-                  featuredPost.postTags.slice(0, 2).map((tag, index) => (
-                    <span key={tag.id || index} className="featured-tag">
-                      #{tag.name || tag}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Articles Grid/List */}
       <div className={`posts-container ${viewMode === 'grid' ? 'grid-view' : 'list-view'}`}>
         {displayPosts.length === 0 && !isLoading ? (
           <div className="no-posts">
@@ -685,7 +757,7 @@ const Community = () => {
                       onClick={() => viewPost(post.id)}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://via.placeholder.com/400x250?text=Không+tải+được+ảnh";
+                        e.target.src = "https://via.placeholder.com/400x250?text=No+Image";
                       }}
                     />
                   </div>
@@ -699,7 +771,10 @@ const Community = () => {
                 
                 <div className="post-footer">
                   <div className="post-stats">
-                    <span className="read-time"><Clock size={14} /> {post.readTime} phút đọc</span>
+                    <div className="read-info">
+                      {post.views && <span className="views-count"><Eye size={14} /> {post.views}</span>}
+                      <span className="read-time"><Clock size={14} /> {post.readTime} min read</span>
+                    </div>
                     <div className="post-actions">
                       <button
                         className={`action-btn like-btn ${likedPosts[post.id] ? 'active' : ''}`}
@@ -765,6 +840,16 @@ const Community = () => {
         <button className="view-more-btn">
           Xem thêm bài viết <ArrowRight size={18} />
         </button>
+      </div>
+
+      {/* Subscribe section */}
+      <div className="subscribe-section">
+        <h3>Đăng ký nhận thông báo</h3>
+        <p>Nhận thông báo về các bài viết mới và nội dung độc quyền</p>
+        <div className="subscribe-form">
+          <input type="email" placeholder="Email của bạn" />
+          <button type="submit">Đăng ký</button>
+        </div>
       </div>
 
       {modalOpen && (
