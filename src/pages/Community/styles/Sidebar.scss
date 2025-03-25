@@ -1,0 +1,277 @@
+@import './variables.scss';
+
+/* Sidebar common styles */
+.left-sidebar {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: $box-shadow;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+  position: sticky;
+  top: 80px;
+  @include scrollbar;
+  
+  .sidebar-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid $border-color;
+    animation: fadeIn 0.4s ease;
+    
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    h2 {
+      font-size: 16px;
+      color: $text-color;
+      margin-bottom: 15px;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 2px solid $light-color;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background-color: $primary-color;
+      }
+    }
+  }
+  
+  .tunes-list, .contacts-list, .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tune-item, .contact-item, .setting-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    transition: $transition;
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background-color: transparent;
+      transition: $transition;
+    }
+    
+    &:hover {
+      background-color: $light-color;
+      transform: translateY(-2px);
+      
+      &::before {
+        background-color: $primary-color;
+      }
+    }
+    
+    .tune-avatar, .contact-avatar, .setting-icon {
+      @include avatar(32px);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    
+    .tune-info, .contact-info {
+      flex: 1;
+      min-width: 0;
+      
+      h3 {
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0 0 2px 0;
+        @include truncate;
+      }
+      
+      p {
+        font-size: 12px;
+        color: $muted-color;
+        margin: 0;
+        @include truncate;
+      }
+    }
+  }
+  
+  .contact-actions {
+    display: flex;
+    gap: 5px;
+    
+    .contact-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      @include flex-center;
+      color: $muted-color;
+      cursor: pointer;
+      transition: $transition;
+      
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+      }
+    }
+  }
+  
+  .setting-item {
+    cursor: pointer;
+    
+    span {
+      font-size: 14px;
+    }
+  }
+}
+
+/* Thêm style cho nút phát nhạc và tune item */
+.tune-item {
+  position: relative;
+  
+  &.playing {
+    background-color: rgba($primary-color, 0.1);
+    border-left: 3px solid $primary-color;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    
+    .play-button {
+      background-color: $primary-color;
+      color: white;
+      animation: pulse 1.5s infinite ease-in-out;
+    }
+  }
+  
+  .play-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: $light-color;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $primary-color;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: $primary-color;
+      color: white;
+    }
+    
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+  }
+}
+
+/* Style cho điều khiển âm lượng */
+.volume-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: $light-color;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease;
+  
+  .mute-button {
+    background: none;
+    border: none;
+    color: $text-color;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: $transition;
+    
+    &:hover {
+      color: $primary-color;
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+  
+  .volume-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    background-color: rgba($primary-color, 0.2);
+    border-radius: 4px;
+    outline: none;
+    
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: $primary-color;
+      cursor: pointer;
+      transition: $transition;
+      
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+    
+    &::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: $primary-color;
+      cursor: pointer;
+      border: none;
+      transition: $transition;
+      
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+/* Tin nhắn lỗi và hướng dẫn */
+.error-message {
+  background-color: rgba(255, 0, 0, 0.05);
+  border-left: 3px solid #ff5252;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #d32f2f;
+  animation: fadeIn 0.3s ease;
+}
+
+.help-text {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba($info-color, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid $info-color;
+  
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: $muted-color;
+    line-height: 1.5;
+  }
+} 

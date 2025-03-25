@@ -11,6 +11,10 @@ import {
   Trash,
   Send,
   MoreVertical,
+  Music,
+  Users,
+  PhoneCall,
+  Settings,
 } from "lucide-react";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
@@ -870,6 +874,92 @@ CommentSection.propTypes = {
   initialComments: PropTypes.array,
 };
 
+// New component for Sidebar Tune/Pack
+const SidebarTunes = () => {
+  const tunes = [
+    { id: 1, name: "Giọng hát thai nhi", creator: "Miroslav Philharmonik", type: "3 bài hát - 7 phút/bài" },
+    { id: 2, name: "Âm nhạc êm dịu", creator: "Jonathan Lim", type: "4 bài hát" },
+    { id: 3, name: "Nhạc mẹ hát ru", creator: "Minawati Sri Dewdotre", type: "8 bài hát mẹ ru" },
+    { id: 4, name: "Tiếng ồn trắng", creator: "Susila Putrimaswari", type: "5 tiếng - 20 phút/tệp" },
+    { id: 5, name: "Nhạc thai giáo", creator: "SpaceSounds", type: "7 phút/tệp" },
+  ];
+
+  return (
+    <div className="sidebar-section tunes-pack">
+      <h2>Tunes/Pack</h2>
+      <div className="tunes-list">
+        {tunes.map((tune) => (
+          <div key={tune.id} className="tune-item">
+            <div className="tune-avatar">
+              <Music size={18} />
+            </div>
+            <div className="tune-info">
+              <h3>{tune.name}</h3>
+              <p>{tune.type}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// New component for Contacts sidebar
+const SidebarContacts = () => {
+  const contacts = [
+    { id: 1, name: "Diễn đàn Thai kỳ", role: "Admin" },
+    { id: 2, name: "Bác sĩ Lê Thu", role: "Bác sĩ" },
+    { id: 3, name: "Nguyễn Thị Thanh Hoa", role: "Tư vấn dinh dưỡng" },
+    { id: 4, name: "Lê Minh Tuấn", role: "Hỗ trợ kỹ thuật" },
+  ];
+
+  return (
+    <div className="sidebar-section contacts">
+      <h2>Contacts</h2>
+      <div className="contacts-list">
+        {contacts.map((contact) => (
+          <div key={contact.id} className="contact-item">
+            <div className="contact-avatar">
+              <User size={18} />
+            </div>
+            <div className="contact-info">
+              <h3>{contact.name}</h3>
+              <p>{contact.role}</p>
+            </div>
+            <div className="contact-actions">
+              <button className="contact-btn message"><MessageCircle size={14} /></button>
+              <button className="contact-btn call"><PhoneCall size={14} /></button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// New component for Forums sidebar
+const SidebarSettings = () => {
+  return (
+    <div className="sidebar-section settings">
+      <h2>Settings</h2>
+      <div className="settings-list">
+        <div className="setting-item">
+          <div className="setting-icon">
+            <Settings size={18} />
+          </div>
+          <span>Tùy chỉnh thông báo</span>
+        </div>
+        <div className="setting-item">
+          <div className="setting-icon">
+            <Users size={18} />
+          </div>
+          <span>Riêng tư</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Community = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -1269,143 +1359,206 @@ const Community = () => {
   };
 
   return (
-    <div className="community-container">
-      <div className="community-header">
-        <h1>Cộng đồng</h1>
-        <div className="header-actions">
-          <div className="search-box">
-            <Search size={18} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm bài viết..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <button className="create-post-button" onClick={openNewPostModal}>
-            <Plus size={18} />
-            Tạo bài viết
-          </button>
-        </div>
+    <div className="community-page">
+      {/* Left Sidebar */}
+      <div className="left-sidebar">
+        <SidebarTunes />
+        <SidebarContacts />
+        <SidebarSettings />
       </div>
 
-      {isLoading && !modalOpen && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
+      {/* Main Content */}
+      <div className="main-content">
+        <div className="community-header">
+          <h1>Cộng đồng</h1>
+          <div className="header-actions">
+            <div className="search-box">
+              <Search size={18} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Tìm kiếm bài viết..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <button className="create-post-button" onClick={openNewPostModal}>
+              <Plus size={18} />
+              Tạo bài viết
+            </button>
+          </div>
         </div>
-      )}
 
-      <div className="posts-container">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <div key={post.id} className="post-card">
-              <div className="post-header">
-                <div className="user-info">
-                  <div className="avatar">
-                    <User size={20} />
-                  </div>
-                  <div className="post-meta">
-                    <h3>
-                      {post.createdBy ||
-                        post.userName ||
-                        post.author ||
-                        post.user?.name ||
-                        "Người dùng"}
-                    </h3>
-                    <div className="post-time">
-                      {formatDate(post.createdDate)}
+        {isLoading && !modalOpen && (
+          <div className="loading-overlay">
+            <div className="loading-spinner"></div>
+          </div>
+        )}
+
+        <div className="posts-container">
+          {filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => (
+              <div key={post.id} className="post-card">
+                <div className="post-header">
+                  <div className="user-info">
+                    <div className="avatar">
+                      <User size={20} />
+                    </div>
+                    <div className="post-meta">
+                      <h3>
+                        {post.createdBy ||
+                          post.userName ||
+                          post.author ||
+                          post.user?.name ||
+                          "Người dùng"}
+                      </h3>
+                      <div className="post-time">
+                        {formatDate(post.createdDate)}
+                      </div>
                     </div>
                   </div>
+                  <div className="post-actions">
+                    <button
+                      className="menu-button"
+                      onClick={() =>
+                        setShowDropdown(showDropdown === post.id ? null : post.id)
+                      }
+                    >
+                      <MoreVertical size={18} />
+                    </button>
+                    {showDropdown === post.id && (
+                      <div className="dropdown-content">
+                        <button
+                          onClick={() => openEditModal(post)}
+                          className="edit-button"
+                        >
+                          <Edit size={16} />
+                          Chỉnh sửa
+                        </button>
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="delete-button"
+                        >
+                          <Trash size={16} />
+                          Xóa bài viết
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="post-actions">
-                  <button
-                    className="menu-button"
-                    onClick={() =>
-                      setShowDropdown(showDropdown === post.id ? null : post.id)
-                    }
-                  >
-                    ...
-                  </button>
-                  {showDropdown === post.id && (
-                    <div className="dropdown-content">
-                      <button
-                        onClick={() => openEditModal(post)}
-                        className="edit-button"
-                      >
-                        <Edit size={16} />
-                        Chỉnh sửa
-                      </button>
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="delete-button"
-                      >
-                        <Trash size={16} />
-                        Xóa bài viết
-                      </button>
+                <h2 className="post-title">{post.title}</h2>
+                <div className="post-content">
+                  <p>{post.body}</p>
+                  {post.postImageUrl && (
+                    <div className="post-images">
+                      <img src={post.postImageUrl} alt={post.title} />
+                    </div>
+                  )}
+                  {post.postTags && post.postTags.length > 0 && (
+                    <div className="post-tags">
+                      {post.postTags.map((tag, index) => (
+                        <span key={tag.id || `tag_${index}`} className="tag">
+                          #{typeof tag === "string" ? tag : tag.name || "tag"}
+                        </span>
+                      ))}
                     </div>
                   )}
                 </div>
-              </div>
-              <div className="post-content">
-                <h2>{post.title}</h2>
-                <p>{post.body}</p>
-                {post.postImageUrl && (
-                  <div className="post-images">
-                    <img src={post.postImageUrl} alt={post.title} />
+                <div className="post-footer">
+                  <div className="reaction-section">
+                    <button
+                      className={`reaction-button ${
+                        likedPosts[post.id] ? "liked" : ""
+                      }`}
+                      onClick={() => handleLikeToggle(post.id)}
+                    >
+                      <Heart
+                        size={18}
+                        className={likedPosts[post.id] ? "heart-filled" : ""}
+                      />
+                      Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
+                    </button>
+                    <button
+                      className="reaction-button"
+                      onClick={() => toggleComments(post.id)}
+                    >
+                      <MessageCircle size={18} />
+                      Bình luận
+                    </button>
                   </div>
-                )}
-                {post.postTags && post.postTags.length > 0 && (
-                  <div className="post-tags">
-                    {post.postTags.map((tag, index) => (
-                      <span key={tag.id || `tag_${index}`} className="tag">
-                        #{typeof tag === "string" ? tag : tag.name || "tag"}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="post-footer">
-                <button
-                  className={`reaction-button ${
-                    likedPosts[post.id] ? "liked" : ""
-                  }`}
-                  onClick={() => handleLikeToggle(post.id)}
-                >
-                  <Heart
-                    size={18}
-                    className={likedPosts[post.id] ? "heart-filled" : ""}
-                  />
-                  Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
-                </button>
-                <button
-                  className="reaction-button"
-                  onClick={() => toggleComments(post.id)}
-                >
-                  <MessageCircle size={18} />
-                  Bình luận
-                </button>
-              </div>
 
-              {/* Hiển thị phần bình luận nếu đã mở rộng */}
-              {expandedComments[post.id] && <CommentSection postId={post.id} />}
+                  {/* Hiển thị phần bình luận nếu đã mở rộng */}
+                  {expandedComments[post.id] && <CommentSection postId={post.id} />}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="no-posts">
+              {searchQuery
+                ? "Không tìm thấy bài viết nào phù hợp"
+                : "Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!"}
             </div>
-          ))
-        ) : (
-          <div className="no-posts">
-            {searchQuery
-              ? "Không tìm thấy bài viết nào phù hợp"
-              : "Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!"}
-          </div>
-        )}
+          )}
+        </div>
+
+        <PostModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          post={currentPost}
+          onSubmit={handleCreatePost}
+          isLoading={isLoading}
+        />
       </div>
 
-      <PostModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        post={currentPost}
-        onSubmit={handleCreatePost}
-        isLoading={isLoading}
-      />
+      {/* Right Sidebar for highlighted comments */}
+      <div className="right-sidebar">
+        <div className="sidebar-header">
+          <h2>Bình luận nổi bật</h2>
+        </div>
+        <div className="featured-comments">
+          <div className="featured-comment">
+            <div className="comment-user">
+              <div className="avatar">
+                <User size={18} />
+              </div>
+              <div className="user-info">
+                <h4>Lan Anh</h4>
+                <span className="comment-time">Hôm nay, 10:45</span>
+              </div>
+            </div>
+            <p className="comment-content">Bé nhà mình khi 6 tháng tuổi cũng ngủ tư thế này, thật đáng yêu!</p>
+          </div>
+          <div className="featured-comment">
+            <div className="comment-user">
+              <div className="avatar">
+                <User size={18} />
+              </div>
+              <div className="user-info">
+                <h4>Thu Hương</h4>
+                <span className="comment-time">Hôm qua, 15:20</span>
+              </div>
+            </div>
+            <p className="comment-content">Mình đã thử nhiều tư thế ngủ nhưng con vẫn thích nằm nghiêng như thế này nhất.</p>
+          </div>
+          <div className="featured-comment">
+            <div className="comment-user">
+              <div className="avatar">
+                <User size={18} />
+              </div>
+              <div className="user-info">
+                <h4>Bác sĩ Minh</h4>
+                <span className="comment-time">23/05, 09:15</span>
+              </div>
+            </div>
+            <p className="comment-content">Đây là tư thế ngủ an toàn cho bé sơ sinh, giúp tránh nguy cơ ngạt thở và giúp bé ngủ ngon.</p>
+          </div>
+        </div>
+        <div className="comment-form">
+          <input type="text" placeholder="Nhập bình luận..." />
+          <button className="send-button">
+            <Send size={18} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
