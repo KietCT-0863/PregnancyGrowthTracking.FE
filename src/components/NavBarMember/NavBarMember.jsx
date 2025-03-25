@@ -424,23 +424,17 @@ const NavBarMember = () => {
             </button>
             
             <div className="action-separator"></div>
-            
+            <button
+              className="navbar-toggle-button"
+              onClick={toggleHorizontalMenu}
+              ref={navbarToggleButtonRef}
+              aria-label="Toggle Navigation Menu"
+            >
+              {showHorizontalMenu ? <FaTimes /> : <FaBars />}
+              <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
+            </button>
             {/* Thêm nút đăng xuất */}
-            {isLoggedIn && (
-              <>
-                <button
-                  className="header-action-button logout-button"
-                  onClick={handleLogout}
-                  aria-label="Đăng xuất"
-                  title="Đăng xuất khỏi tài khoản"
-                >
-                  <FaSignOutAlt />
-                  <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-                </button>
-                
-                <div className="action-separator"></div>
-              </>
-            )}
+           
             
             {/* User Profile */}
             {isLoggedIn ? (
@@ -479,15 +473,7 @@ const NavBarMember = () => {
             <div className="action-separator"></div>
             
             {/* Hamburger menu button */}
-            <button
-              className="navbar-toggle-button"
-              onClick={toggleHorizontalMenu}
-              ref={navbarToggleButtonRef}
-              aria-label="Toggle Navigation Menu"
-            >
-              {showHorizontalMenu ? <FaTimes /> : <FaBars />}
-              <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
-            </button>
+            
           </div>
         </div>
       </nav>
@@ -557,6 +543,7 @@ const NavBarMember = () => {
       {showHorizontalMenu && (
         <div className="horizontal-nav visible" ref={horizontalNavRef} id="horizontal-nav-container" style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)' }}>
           <div className="horizontal-nav-items">
+         
             <Link to="/member" className={`nav-item ${location.pathname === '/member' ? 'active' : ''}`} onClick={handleNavLinkClick}>
               <FaHome className="nav-icon" /> <span className="nav-text">Trang chủ</span>
               <div className="nav-tooltip">Quay về trang chính</div>
@@ -585,6 +572,21 @@ const NavBarMember = () => {
               <FaUser className="nav-icon" /> <span className="nav-text">Hồ sơ</span>
               <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
             </Link>
+            {isLoggedIn && (
+              <>
+                <button
+                  className="nav-item"
+                  onClick={handleLogout}
+                  aria-label="Đăng xuất"
+                  title="Đăng xuất khỏi tài khoản"
+                >
+                  <FaSignOutAlt />
+                  <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
+                </button>
+                
+                <div className="action-separator"></div>
+              </>
+            )}
           </div>
         </div>
       )}
