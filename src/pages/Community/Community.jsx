@@ -287,10 +287,22 @@ const CommentSection = ({ postId, initialComments = [] }) => {
   const [imagePreview, setImagePreview] = useState("");
   const commentImageRef = useRef(null);
   const [expandedReplies, setExpandedReplies] = useState({});
+  const [likedComments, setLikedComments] = useState({});
+  const [commentLikesCount, setCommentLikesCount] = useState({});
+  const userId = 4; // Giống như trong Community component
 
   useEffect(() => {
     fetchComments();
   }, [postId]);
+
+  useEffect(() => {
+    if (comments.length > 0) {
+      comments.forEach((comment) => {
+        checkCommentLikeStatus(comment.commentId);
+        fetchCommentLikesCount(comment.commentId);
+      });
+    }
+  }, [comments]);
 
   const fetchComments = async () => {
     try {
@@ -500,6 +512,108 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     }));
   };
 
+  // Thêm hàm để kiểm tra và lấy số lượt thích cho bình luận
+  const checkCommentLikeStatus = async (commentId) => {
+    try {
+      const isLiked = await commentService.checkCommentLikeStatus(
+        commentId,
+        userId
+      );
+      setLikedComments((prev) => ({
+        ...prev,
+        [commentId]: isLiked,
+      }));
+    } catch (error) {
+      console.error(
+        `Lỗi khi kiểm tra trạng thái thích cho bình luận ${commentId}:`,
+        error
+      );
+    }
+  };
+
+  const fetchCommentLikesCount = async (commentId) => {
+    try {
+      const count = await commentService.getCommentLikesCount(commentId);
+      setCommentLikesCount((prev) => ({
+        ...prev,
+        [commentId]: count,
+      }));
+    } catch (error) {
+      console.error(
+        `Lỗi khi lấy số lượt thích cho bình luận ${commentId}:`,
+        error
+      );
+    }
+  };
+
+  // Thêm hàm xử lý việc thích/bỏ thích bình luận
+  const handleCommentLikeToggle = async (commentId) => {
+    try {
+      // Cập nhật UI trước để tạo cảm giác phản hồi nhanh
+      const currentLikeStatus = likedComments[commentId] || false;
+
+      setLikedComments((prev) => ({
+        ...prev,
+        [commentId]: !currentLikeStatus,
+      }));
+
+      setCommentLikesCount((prev) => ({
+        ...prev,
+        [commentId]: (prev[commentId] || 0) + (currentLikeStatus ? -1 : 1),
+      }));
+
+      // Gọi API để thay đổi trạng thái thích
+      const result = await commentService.toggleCommentLike(commentId, userId);
+      console.log(
+        `${currentLikeStatus ? "Bỏ thích" : "Thích"} bình luận ${commentId} ${
+          result.success ? "thành công" : "thất bại"
+        }`,
+        result
+      );
+
+      // Thêm thông báo trực quan
+      if (result.success) {
+        const action = currentLikeStatus ? "Đã bỏ thích" : "Đã thích";
+        // Nếu có toast, sử dụng; nếu không, dùng console.log
+        if (typeof toast !== "undefined") {
+          toast.success(`${action} bình luận!`, {
+            position: "bottom-right",
+            autoClose: 2000,
+          });
+        }
+      }
+
+      // Cập nhật lại dữ liệu từ server sau 1 giây
+      setTimeout(() => {
+        checkCommentLikeStatus(commentId);
+        fetchCommentLikesCount(commentId);
+      }, 1000);
+    } catch (error) {
+      console.error(`Lỗi khi thích/bỏ thích bình luận ${commentId}:`, error);
+      // Khôi phục trạng thái trước đó nếu có lỗi
+      const currentStatus = likedComments[commentId] || false;
+      setLikedComments((prev) => ({
+        ...prev,
+        [commentId]: !currentStatus, // Đảo ngược lại trạng thái hiện tại
+      }));
+
+      setCommentLikesCount((prev) => ({
+        ...prev,
+        [commentId]: (prev[commentId] || 0) + (currentStatus ? 1 : -1), // Đảo ngược lại sự thay đổi
+      }));
+
+      if (typeof toast !== "undefined") {
+        toast.error(
+          "Không thể thay đổi trạng thái thích. Vui lòng thử lại sau!",
+          {
+            position: "bottom-right",
+            autoClose: 3000,
+          }
+        );
+      }
+    }
+  };
+
   // Hiển thị comment theo cấu trúc cha/con
   const renderCommentItem = (comment) => {
     // Lấy tất cả các reply cho comment này
@@ -535,6 +649,9 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     if (commentImage) {
       console.log(`Comment ID ${comment.commentId} has image:`, commentImage);
     }
+
+    const isLiked = likedComments[comment.commentId] || false;
+    const likeCount = commentLikesCount[comment.commentId] || 0;
 
     return (
       <div key={comment.commentId} className="comment-item">
@@ -580,13 +697,36 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
             {/* Nút like và reply theo kiểu Facebook */}
             <div className="facebook-style-actions">
-              <button className="action-button">Thích</button>
+              <button
+                className={`action-button ${isLiked ? "liked" : ""}`}
+                onClick={() => handleCommentLikeToggle(comment.commentId)}
+              >
+                Thích {likeCount > 0 && `(${likeCount})`}
+              </button>
               <button
                 className="action-button"
                 onClick={() => handleReplyComment(comment)}
               >
                 Phản hồi
               </button>
+
+              {/* Thêm nút sửa và xóa nếu comment của người dùng hiện tại */}
+              {comment.userId === userId && (
+                <>
+                  <button
+                    className="action-button"
+                    onClick={() => handleEditComment(comment)}
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    className="action-button"
+                    onClick={() => handleDeleteComment(comment.commentId)}
+                  >
+                    Xóa
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -654,6 +794,11 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                         );
                       }
 
+                      const isReplyLiked =
+                        likedComments[reply.commentId] || false;
+                      const replyLikeCount =
+                        commentLikesCount[reply.commentId] || 0;
+
                       return (
                         <div key={reply.commentId} className="reply-item">
                           <div className="comment-avatar">
@@ -707,7 +852,17 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
                             {/* Nút like và reply cho replies */}
                             <div className="facebook-style-actions">
-                              <button className="action-button">Thích</button>
+                              <button
+                                className={`action-button ${
+                                  isReplyLiked ? "liked" : ""
+                                }`}
+                                onClick={() =>
+                                  handleCommentLikeToggle(reply.commentId)
+                                }
+                              >
+                                Thích{" "}
+                                {replyLikeCount > 0 && `(${replyLikeCount})`}
+                              </button>
                               <button
                                 className="action-button"
                                 onClick={() => handleReplyComment(comment)} // Trả lời comment cha
