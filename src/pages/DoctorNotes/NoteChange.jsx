@@ -7,6 +7,7 @@ import { isValidPastOrPresentDate, isFutureDate, getFutureDateErrorMessage, getC
 import "./DoctorNotes.scss";
 import "./NoteChange.scss";
 import NotificationPopup from './components/NotificationPopup';
+import { playNotificationSound } from "../../utils/soundUtils";
 
 const NoteChange = () => {
   const { noteId } = useParams();
@@ -134,6 +135,7 @@ const NoteChange = () => {
 
     try {
       await userNoteService.updateNote(noteId, note);
+      playNotificationSound();
       showNotification('success', 'Ghi chú đã được cập nhật thành công!');
       setTimeout(() => {
         navigate("/member/doctor-notes");

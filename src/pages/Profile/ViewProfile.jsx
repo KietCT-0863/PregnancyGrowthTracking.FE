@@ -6,6 +6,7 @@ import userService from "../../api/services/userService";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import "./ViewProfile.scss";
+import { playNotificationSound } from "../../utils/soundUtils";
 
 const ViewProfile = () => {
   const navigate = useNavigate();

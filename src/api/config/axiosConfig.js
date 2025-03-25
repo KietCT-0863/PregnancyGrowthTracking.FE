@@ -16,10 +16,20 @@ axiosInstance.interceptors.request.use(
 
     // Xử lý FormData
     if (config.data instanceof FormData) {
-      // Để trình duyệt tự động thêm boundary
-      config.headers["Content-Type"] = "multipart/form-data";
+      // KHÔNG thiết lập Content-Type cho FormData, để Axios và browser tự xử lý
+      delete config.headers["Content-Type"];
+      
       // Không transform data khi là FormData
       config.transformRequest = [(data) => data];
+      
+      // Thêm log để debug
+      console.log('Sending FormData request:', {
+        url: config.url,
+        method: config.method,
+        hasFile: Array.from(config.data.entries()).some(entry => 
+          entry[1] instanceof File || entry[1] instanceof Blob
+        )
+      });
     }
 
     return config;

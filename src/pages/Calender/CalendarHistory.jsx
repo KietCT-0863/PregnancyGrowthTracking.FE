@@ -25,6 +25,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import "./CalendarHistory.scss";
 import reminderService from "../../api/services/reminderService";
+import { playNotificationSound, playDeleteSound } from '../../utils/soundUtils';
 
 const CalendarHistory = () => {
   const navigate = useNavigate();
@@ -149,6 +150,7 @@ const CalendarHistory = () => {
       // Cập nhật danh sách hiển thị sau khi xóa
       setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete.id));
       toast.success("Xóa lịch thành công!");
+      playDeleteSound(); // Play delete sound
       setShowDeleteConfirm(false);
       setEventToDelete(null);
     } catch (error) {
@@ -272,6 +274,7 @@ const CalendarHistory = () => {
       if (response) {
         setShowAddModal(false);
         toast.success("Tạo lịch nhắc nhở thành công!");
+        playNotificationSound();
         fetchEvents(); // Reload the events list
       }
     } catch (error) {

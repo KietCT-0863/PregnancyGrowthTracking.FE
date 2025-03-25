@@ -200,17 +200,17 @@ export const sortEventsByTime = (events) => {
  * @returns {string} - Mã màu hex
  */
 export const getColorByType = (type) => {
-  if (!type) return '#FF6B6B'; // Màu mặc định
+  if (!type) return '#2563eb'; // Bright blue as default
   
   const typeMap = {
-    'Cuộc hẹn bác sĩ': '#4f46e5', // Màu tím indigo
-    'Uống thuốc': '#10b981', // Màu xanh lá
-    'Khám thai': '#0ea5e9', // Màu xanh dương
-    'Tập thể dục': '#FFA07A', // Màu cam đào
-    'Dinh dưỡng': '#98D8C8', // Màu xanh mint
-    'Khám định kỳ': '#0ea5e9', // Màu xanh dương
-    'Nhắc nhở': '#f59e0b', // Màu cam
-    'default': '#8b5cf6' // Màu tím
+    'Cuộc hẹn bác sĩ': '#2563eb', // Bright blue
+    'Uống thuốc': '#16a34a', // Bright green
+    'Khám thai': '#0284c7', // Sky blue
+    'Tập thể dục': '#dc2626', // Bright red
+    'Dinh dưỡng': '#059669', // Emerald green
+    'Khám định kỳ': '#7c3aed', // Violet
+    'Nhắc nhở': '#ea580c', // Bright orange
+    'default': '#8b5cf6' // Purple
   };
   
   return typeMap[type] || typeMap.default;

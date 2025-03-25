@@ -3,6 +3,7 @@ import { Baby, Trash2, Calendar, User, Clock } from "lucide-react";
 import foetusService from "../../api/services/foetusService";
 import growthStatsService from "../../api/services/growthStatsService";
 import "./FoetusList.scss";
+import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils";
 
 const INITIAL_FOETUS_STATE = {
   name: "",
@@ -110,7 +111,8 @@ const FoetusList = () => {
 
       const result = await foetusService.createFoetus(foetusData);
       console.log("API Response:", result);
-
+      
+      playNotificationSound();
       setNewFoetus(INITIAL_FOETUS_STATE);
       setShowAddForm(false);
       await fetchData();
@@ -134,6 +136,7 @@ const FoetusList = () => {
     
     try {
       await foetusService.deleteFoetus(id);
+      playDeleteSound();
       fetchData();
     } catch (err) {
       setError(err.message);

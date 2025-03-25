@@ -9,6 +9,7 @@ import NoteFormModal from "./components/NoteFormModal"
 import NotesList from "./components/NotesList"
 import NotificationPopup from './components/NotificationPopup'
 import "./DoctorNotes.scss"
+import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
 
 const DoctorNotes = () => {
   // Thêm class 'doctor-notes-page' vào body khi component được mount
@@ -90,8 +91,9 @@ const DoctorNotes = () => {
     }
 
     try {
-        await userNoteService.createNote(currentNote)
-        toast.success("Tạo ghi chú mới thành công!")
+      await userNoteService.createNote(currentNote)
+      toast.success("Tạo ghi chú mới thành công!")
+      playNotificationSound();
       await fetchNotes()
       resetForm()
       showNotification('success', 'Ghi chú đã được thêm thành công!')
@@ -119,6 +121,7 @@ const DoctorNotes = () => {
       await userNoteService.deleteNote(noteId);
       setNotes((prevNotes) => prevNotes.filter((note) => note.noteId !== noteId && note.id !== noteId));
       toast.success("Xóa ghi chú thành công!");
+      playDeleteSound();
       showNotification('success', 'Ghi chú đã được xóa thành công!')
     } catch (error) {
       console.error("Delete error:", error);
