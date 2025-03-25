@@ -46,6 +46,7 @@ export const ENDPOINTS = {
   },
   PROFILE_IMAGE: {
     UPDATE: (userId) => `/ProfileImg/${userId}/profile-image`,
+    UPDATE_POST: (userId) => `/ProfileImg/${userId}/profile-image/upload`,
     GET: (userId) => `/ProfileImg/${userId}/profile-image`,
   },
   USER_MANAGEMENT: {

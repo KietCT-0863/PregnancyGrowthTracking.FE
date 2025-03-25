@@ -41,6 +41,7 @@ import {
 } from './utils/apiHandler'
 import WeeklyStatsChart from './components/WeeklyStatsChart/WeeklyStatsChart'
 import { FaCalendarAlt, FaHistory, FaSave } from 'react-icons/fa'
+import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
@@ -80,6 +81,7 @@ const BasicTracking = () => {
 
     try {
       await handleStatsUpdate(selectedChild.foetusId);
+      playNotificationSound('trackingSuccess');
       toast.success("Cập nhật thành công!");
     } catch (err) {
       toast.error(err.message || "Có lỗi xảy ra khi cập nhật");
@@ -126,6 +128,7 @@ const BasicTracking = () => {
         handleUpdateSuccess(result, selectedChild, tempStats)
         await fetchData()
         setTempStats({})
+        playNotificationSound('trackingSuccess');
       }
     } catch (err) {
       handleUpdateError(err)

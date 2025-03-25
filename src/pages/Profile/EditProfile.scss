@@ -133,84 +133,62 @@ $transition-time: 0.3s;
       .image-preview {
         .image-container {
           position: relative;
-          width: 180px;
-          height: 180px;
-          border-radius: 50%;
-          margin: 0 auto 1.5rem;
+          width: 120px;
+          height: 120px;
           overflow: hidden;
-          background: $white;
-          box-shadow: 0 4px 8px rgba($primary-color, 0.1),
-            0 8px 16px rgba($primary-color, 0.1);
-          border: 4px solid $white;
-          transition: all $transition-time ease;
-
-          &:hover {
-            transform: scale(1.02);
-            box-shadow: 0 6px 12px rgba($primary-color, 0.15),
-              0 12px 24px rgba($primary-color, 0.15);
-          }
-
+          border-radius: 50%;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          margin-bottom: 1rem;
+          
           .profile-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform $transition-time ease;
-
-            &:hover {
-              transform: scale(1.05);
-            }
+            transition: transform 0.3s ease;
           }
-
+          
           .placeholder-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: $primary-light;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
           }
-
+          
           .upload-overlay {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba($primary-dark, 0.7);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             opacity: 0;
-            transition: opacity $transition-time ease;
-
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+            
             &:hover {
               opacity: 1;
             }
-
+            
             &.uploading {
               opacity: 1;
-              background: rgba($primary-dark, 0.9);
+              background-color: rgba(0, 0, 0, 0.7);
+              animation: pulse 1.5s infinite;
             }
-
+            
             .upload-button {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 0.75rem;
-              color: $white;
-              cursor: pointer;
-              padding: 1rem;
-              border-radius: 12px;
-              transition: all $transition-time ease;
-              background: rgba($primary-color, 0.2);
-
-              &:hover {
-                background: rgba($primary-color, 0.3);
-                transform: scale(1.05);
-              }
-
-              span {
-                font-size: 0.9rem;
-                font-weight: 500;
+              color: #fff;
+              font-size: 0.9rem;
+              
+              svg {
+                margin-bottom: 0.5rem;
               }
             }
           }
@@ -413,5 +391,17 @@ $transition-time: 0.3s;
         }
       }
     }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.5);
   }
 }

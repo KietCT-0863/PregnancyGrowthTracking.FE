@@ -24,16 +24,25 @@ import {
 } from "react-icons/fa";
 import "./NavbarMember.scss";
 import reminderService from "../../api/services/reminderService";
+import { playUISound } from "../../utils/soundUtils";
+import { useSoundEffects } from "../SoundEffectsProvider";
 
 const CustomNavLink = ({ to, children, icon, onClick }) => {
   const location = useLocation();
   const isActive = location.pathname === to;
 
+  const handleClick = (e) => {
+    // Sound will be handled by global buttonSounds.js
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <Link
       to={to}
       className={`nav-link ${isActive ? "active" : ""}`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {icon}
       <span>{children}</span>
@@ -67,6 +76,9 @@ const NavBarMember = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showHorizontalMenu, setShowHorizontalMenu] = useState(false);
   const navigate = useNavigate();
+  
+  // Sound effect context
+  const { enabled: soundEnabled } = useSoundEffects();
   
   // Thêm state cho việc quản lý đã đọc
   const [readNotifications, setReadNotifications] = useState(() => {
@@ -387,6 +399,40 @@ const NavBarMember = () => {
     }, 50);
   };
 
+  // Function to handle clicks with sound
+  const handleClickWithSound = (callback) => {
+    return (e) => {
+      playUISound();
+      if (callback) {
+        callback(e);
+      }
+    };
+  };
+
+  // Helpers for common actions with sound
+  const toggleDropdownWithSound = () => {
+    playUISound();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleNotificationsWithSound = () => {
+    playUISound();
+    setShowNotifications(!showNotifications);
+  };
+
+  const toggleSidebarWithSound = () => {
+    playUISound();
+    setIsSidebarOpen(!isSidebarOpen);
+    document.body.classList.toggle('sidebar-open');
+  };
+
+  const navigationWithSound = (path) => {
+    return () => {
+      playUISound();
+      navigate(path);
+    };
+  };
+
   return (
     <>
       <nav
@@ -414,7 +460,7 @@ const NavBarMember = () => {
             {/* Notification Bell */}
             <button
               className="header-action-button notification-button"
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={toggleNotificationsWithSound}
               ref={notificationButtonRef}
               aria-label="Thông báo"
             >
@@ -442,7 +488,7 @@ const NavBarMember = () => {
                 <div 
                   className="user-avatar-container" 
                   title={`${userInfo?.fullName || "Người dùng"}`}
-                  onClick={toggleDropdown}
+                  onClick={toggleDropdownWithSound}
                 >
                   {profileImage ? (
                     <img 
@@ -458,7 +504,7 @@ const NavBarMember = () => {
                 
                 <div className="profile-menu-separator"></div>
                 
-                <div className="user-profile-button" onClick={toggleDropdown} title="Bấm để xem tùy chọn tài khoản">
+                <div className="user-profile-button" onClick={toggleDropdownWithSound} title="Bấm để xem tùy chọn tài khoản">
                
                   <div className="profile-tooltip">Tùy chọn tài khoản</div>
                 </div>
@@ -483,7 +529,7 @@ const NavBarMember = () => {
         <div className="notification-dropdown" ref={notificationsRef}>
           <div className="notification-header">
             <h3>Thông báo</h3>
-            <button className="close-button" onClick={() => setShowNotifications(false)}>
+            <button className="close-button no-sound" onClick={() => setShowNotifications(false)}>
               <FaTimes />
             </button>
           </div>

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
-// Variables
+// Variables - keeping original pink color scheme
 $primary-color: #5a5a5a;
 $secondary-color: #888888;
 $background-color: #ffffff;
@@ -12,6 +12,19 @@ $border-color: #f0f0f0;
 $card-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 $hover-shadow: 0 15px 30px rgba(255, 174, 192, 0.3);
 $transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+// Mixins for layout
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 // Reset and base styles
 * {
@@ -27,19 +40,35 @@ body {
   line-height: 1.6;
   padding: 0;
   margin: 0;
-  
 }
 
+// Main container with improved layout
+.blog-main-container {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 40;
+  perspective: 1500px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 30px;
+  animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+// Main content area with softer corners
 .blog-spot-container {
   flex: 1;
   margin: 0;
-  padding: 0 40px;
+  padding: 40px;
   position: relative;
   z-index: 40;
   overflow-x: hidden;
   min-width: 0;
   background-color: #fff;
-  border-radius: 15px;
+  border-radius: 24px; // Increased border radius for softer corners
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: $transition;
   transform: translateZ(0);
@@ -49,10 +78,10 @@ body {
   }
 }
 
-// Header styles cập nhật mới
+// Header styles with improved spacing
 .blog-header {
   display: block;
-  padding: 25px 0;
+  padding: 0 0 30px;
   margin-bottom: 50px;
   border-bottom: 1px solid $pink-medium;
   position: relative;
@@ -67,13 +96,13 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     animation: slideDown 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     padding: 15px 0;
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
   }
 
   .blog-header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    @include flex-between;
+    margin-bottom: 25px;
   }
 
   .blog-logo {
@@ -170,9 +199,7 @@ body {
       border-radius: 50%;
       background-color: $pink-medium;
       color: #fff;
-      display: flex;
-      align-items: center;
-    justify-content: center;
+      @include flex-center;
       box-shadow: 0 4px 12px rgba(255, 174, 192, 0.3);
       
       &:hover {
@@ -198,16 +225,14 @@ body {
   }
 }
 
-// Main content
+// Main content with improved spacing
 .blog-main {
   padding: 0 0 60px;
 }
 
 .blog-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 50px;
+  @include flex-between;
+  margin-bottom: 60px;
 
   .blog-title {
     font-family: 'Playfair Display', serif;
@@ -226,6 +251,7 @@ body {
       width: 100px;
       height: 3px;
       background-color: $pink-medium;
+      border-radius: 2px; // Softer line
     }
   }
 
@@ -263,19 +289,17 @@ body {
   }
 }
 
-// Filter controls
+// Filter controls with softer corners
 .blog-filter-controls {
   z-index: 45;
   position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   margin-bottom: 60px;
   flex-wrap: wrap;
   gap: 25px;
   background-color: $pink-light;
   padding: 30px;
-  border-radius: 15px;
+  border-radius: 20px; // Increased border radius
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: $transition;
   
@@ -305,7 +329,7 @@ body {
       width: 100%;
       padding: 14px 40px 14px 20px;
       border: 2px solid $pink-medium;
-      border-radius: 30px;
+      border-radius: 30px; // Very rounded for inputs
       font-size: 14px;
       outline: none;
       transition: $transition;
@@ -335,11 +359,12 @@ body {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    justify-content: center; // Better centered layout
 
     .category-btn {
       background: none;
       border: 2px solid $pink-medium;
-      border-radius: 30px;
+      border-radius: 30px; // Very rounded for buttons
       padding: 12px 20px;
       font-size: 14px;
       cursor: pointer;
@@ -363,7 +388,7 @@ body {
     select {
       padding: 12px 25px;
       border: 2px solid $pink-medium;
-      border-radius: 30px;
+      border-radius: 30px; // Very rounded for select
       font-size: 14px;
       outline: none;
       cursor: pointer;
@@ -388,16 +413,16 @@ body {
   }
 }
 
-// Blog grid
-  .blog-grid {
-    display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+// Blog grid with improved layout
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 30px;
   margin-bottom: 60px;
   
   .blog-card {
     position: relative;
-    border-radius: 16px;
+    border-radius: 20px; // Increased border radius for softer cards
     overflow: hidden;
     background-color: $background-color;
     transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -442,7 +467,7 @@ body {
     .blog-card-image {
       position: relative;
       height: 220px;
-    overflow: hidden;
+      overflow: hidden;
       
       &:before {
         content: '';
@@ -457,10 +482,10 @@ body {
         transition: opacity 0.3s ease;
       }
   
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         transition: transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
 
@@ -472,9 +497,7 @@ body {
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
         color: $pink-dark;
         text-decoration: none;
         transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -483,7 +506,7 @@ body {
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
         z-index: 2;
   
-      &:hover {
+        &:hover {
           transform: scale(1.15);
           background-color: $pink-dark;
           color: white;
@@ -558,7 +581,7 @@ body {
         font-family: 'Playfair Display', serif;
         transition: $transition;
   
-      &:hover {
+        &:hover {
           color: $pink-dark;
         }
       }
@@ -591,9 +614,7 @@ body {
         border-radius: 50%;
         background-color: white;
         border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
         cursor: pointer;
         color: $secondary-color;
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -621,7 +642,7 @@ body {
           right: 45px;
           top: 0;
           background-color: white;
-          border-radius: 10px;
+          border-radius: 16px; // Softer corners
           padding: 10px;
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
           display: flex;
@@ -637,7 +658,7 @@ body {
             border: none;
             text-align: left;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 12px; // Softer corners
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: 'Roboto', sans-serif;
@@ -669,27 +690,23 @@ body {
   }
 }
 
-// Blog pagination
+// Blog pagination with softer corners
 .blog-pagination {
-    display: flex;
-    justify-content: space-between;
-  align-items: center;
+  @include flex-between;
   padding-top: 40px;
   margin-top: 30px;
   border-top: 1px solid $pink-light;
 
   .pagination-numbers {
-      display: flex;
-      align-items: center;
+    display: flex;
+    align-items: center;
     gap: 8px;
 
     .page-number {
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       border: none;
       background: none;
       cursor: pointer;
@@ -741,6 +758,11 @@ body {
       transform: translateY(-4px);
       box-shadow: 0 8px 20px rgba(255, 174, 192, 0.25);
     }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 
@@ -771,254 +793,10 @@ body {
   }
 }
 
-// Media queries
-@media (max-width: 992px) {
-  .blog-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .blog-grid .blog-card:first-child {
-    grid-column: span 1;
-  }
-  
-  .blog-section-header .blog-title {
-    font-size: 42px;
-  }
-}
-
-@media (max-width: 768px) {
-  .blog-main-container {
-    flex-direction: column;
-    gap: 15px;
-    padding: 10px;
-  }
-  
-  .blog-spot-container {
-    padding: 15px;
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-  
-  .blog-grid {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-
-  .blog-card {
-    .blog-card-content {
-      padding: 25px;
-    }
-  }
-  
-  .blog-header {
-    padding: 15px 0;
-    margin-bottom: 30px;
-
-    .blog-header-container {
-      margin-bottom: 0;
-    }
-
-    .blog-nav {
-      display: none;
-      
-      &.show {
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: white;
-        z-index: 65;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        border-radius: 0 0 15px 15px;
-        
-        ul {
-          flex-direction: column;
-          gap: 20px;
-        }
-      }
-    }
-  }
-
-  .mobile-overlay {
-    display: block;
-  }
-
-  .blog-sidebar.open ~ .mobile-overlay,
-  .blog-sidebar-right.open ~ .mobile-overlay {
-    display: block;
-  }
-
-  .blog-filter-controls {
-    flex-direction: column;
-    align-items: stretch;
-  
-  .search-box {
-      width: 100%;
-    }
-    
-    .blog-categories {
-      width: 100%;
-    justify-content: center;
-    }
-  
-    .sort-box {
-      width: 100%;
-      select {
-        width: 100%;
-      }
-    }
-  }
-
-  .blog-sidebar, .blog-sidebar-right {
-    position: fixed;
-    width: 80%;
-    height: 100vh;
-    top: 0;
-    z-index: 200;
-    border-radius: 0;
-  }
-
-  .blog-sidebar {
-    left: 0;
-    transform: translateX(-100%);
-    
-    &.open {
-      transform: translateX(0);
-    }
-  }
-
-  .blog-sidebar-right {
-    right: 0;
-    transform: translateX(100%);
-    
-    &.open {
-      transform: translateX(0);
-    }
-  }
-
-  .blog-sidebar.open::after,
-  .blog-sidebar-right.open::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .blog-main-container {
-    gap: 15px;
-    padding: 0 15px;
-  }
-
-  .blog-sidebar, .blog-sidebar-right {
-    width: 230px;
-  }
-  
-  .blog-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-  }
-  
-  .blog-card {
-    .blog-card-content {
-      padding: 25px;
-    }
-  }
-}
-
-// Search focus effect
-.search-box {
-  transition: all 0.3s ease;
-
-  &.focused {
-    transform: scale(1.03);
-    
-    input {
-      box-shadow: 0 0 0 3px rgba(255, 174, 192, 0.3);
-    }
-  }
-}
-
-// Pulse animation for like button
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    transform: scale(1.15);
-    box-shadow: 0 8px 20px rgba(255, 174, 192, 0.3);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.pulse-animation {
-  animation: pulse 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-// Read more link
-.read-more-link {
-    display: inline-block;
-  margin-top: 15px;
-  color: $pink-dark;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  position: relative;
-  padding-bottom: 2px;
-  font-family: 'Roboto', sans-serif;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: $pink-dark;
-    transition: width 0.3s ease;
-  }
-
-  &:hover {
-    color: darken($pink-dark, 10%);
-
-    &::after {
-      width: 100%;
-    }
-  }
-}
-
-// Main container for the blog with sidebars
-.blog-main-container {
-  display: flex;
-  gap: 30px;
-  width: 100%;
-  max-width: 1800px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 40;
-  perspective: 1500px;
-  min-height: 100vh;
-  overflow-x: hidden;
-  padding: 20px 15px;
-  animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-// Sidebar common styles
+// Sidebar common styles with softer corners
 .blog-sidebar,
 .blog-sidebar-right {
-  width: 240px;
+  width: 280px;
   height: calc(100vh - 40px);
   background-color: #fff;
   position: sticky;
@@ -1027,10 +805,10 @@ body {
   overflow-x: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  padding: 20px 0;
+  padding: 30px 0;
   z-index: 50;
   flex-shrink: 0;
-  border-radius: 15px;
+  border-radius: 24px; // Increased border radius for softer corners
   transform: translateZ(0);
   
   &:hover {
@@ -1038,15 +816,14 @@ body {
   }
 
   .sidebar-toggle {
+    position: absolute;
     top: 20px;
     width: 36px;
     height: 36px;
     z-index: 55;
     border-radius: 50%;
     background-color: $pink-medium;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     cursor: pointer;
     color: white;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1076,20 +853,31 @@ body {
       transform: rotate(180deg);
     }
   }
+
+  // Scrollbar styling
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 174, 192, 0.3);
+    border-radius: 3px;
+  }
 }
 
 // Left sidebar
 .blog-sidebar {
-  border-right: 1px solid $border-color;
-  margin-right: 0;
-
   .sidebar-toggle {
     right: -15px;
     z-index: 200;
   }
 
   .sidebar-header {
-    padding: 0 20px 20px;
+    padding: 0 25px 20px;
     margin-bottom: 20px;
     border-bottom: 1px solid $border-color;
     text-align: center;
@@ -1104,7 +892,7 @@ body {
   }
 
   .sidebar-content {
-    padding: 0 20px;
+    padding: 0 25px;
     transition: opacity 0.3s ease;
   }
 
@@ -1118,7 +906,7 @@ body {
       align-items: center;
       padding: 12px 15px;
       margin-bottom: 8px;
-      border-radius: 10px;
+      border-radius: 16px; // Softer corners
       cursor: pointer;
       transition: all 0.3s ease;
       color: $primary-color;
@@ -1201,7 +989,7 @@ body {
         margin-bottom: 15px;
 
         a {
-    text-decoration: none;
+          text-decoration: none;
           display: flex;
           flex-direction: column;
           gap: 5px;
@@ -1235,51 +1023,17 @@ body {
       .topic-tag {
         background-color: $pink-light;
         color: $pink-dark;
-        padding: 5px 10px;
-        border-radius: 20px;
+        padding: 5px 12px;
+        border-radius: 20px; // Softer corners
         font-size: 12px;
         cursor: pointer;
-    transition: all 0.3s ease;
+        transition: all 0.3s ease;
   
-    &:hover {
+        &:hover {
           background-color: $pink-medium;
           color: white;
-      transform: translateY(-2px);
-        }
-      }
-    }
-  }
-
-  .sidebar-footer {
-    padding: 20px;
-    border-top: 1px solid $border-color;
-    transition: opacity 0.3s ease;
-
-    .sidebar-settings {
-    display: flex;
-      justify-content: space-around;
-
-      button {
-        background: none;
-        border: none;
-        display: flex;
-    align-items: center;
-        gap: 8px;
-        color: $primary-color;
-        cursor: pointer;
-        padding: 8px 12px;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        font-family: 'Roboto', sans-serif;
-        font-size: 14px;
-
-        &:hover {
-          background-color: $pink-light;
-          color: $pink-dark;
-        }
-
-        svg {
-          color: $pink-dark;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(255, 174, 192, 0.2);
         }
       }
     }
@@ -1288,16 +1042,13 @@ body {
 
 // Right sidebar
 .blog-sidebar-right {
-  border-left: 1px solid $border-color;
-  margin-left: 0;
-
   .sidebar-toggle {
     left: -15px;
     z-index: 200;
   }
 
   .sidebar-content {
-    padding: 60px 20px 20px;
+    padding: 60px 25px 20px;
     transition: opacity 0.3s ease;
   }
 
@@ -1312,6 +1063,7 @@ body {
       overflow: hidden;
       margin: 0 auto 15px;
       border: 4px solid $pink-light;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 
       img {
         width: 100%;
@@ -1331,18 +1083,18 @@ body {
     .author-bio {
       font-size: 14px;
       color: $secondary-color;
-    line-height: 1.5;
+      line-height: 1.5;
       margin-bottom: 20px;
     }
 
     .author-links {
-    display: flex;
-    justify-content: center;
+      display: flex;
+      justify-content: center;
       gap: 10px;
 
       button {
         padding: 8px 15px;
-        border-radius: 20px;
+        border-radius: 20px; // Softer corners
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
@@ -1354,10 +1106,12 @@ body {
         background-color: $pink-medium;
         color: white;
         border: none;
+        box-shadow: 0 4px 12px rgba(255, 174, 192, 0.2);
 
         &:hover {
           background-color: $pink-dark;
           transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(255, 174, 192, 0.3);
         }
       }
 
@@ -1384,7 +1138,7 @@ body {
       color: $primary-color;
       margin-bottom: 15px;
       display: flex;
-    align-items: center;
+      align-items: center;
       gap: 8px;
 
       svg {
@@ -1407,7 +1161,7 @@ body {
           text-decoration: none;
           color: $primary-color;
           padding: 12px;
-          border-radius: 10px;
+          border-radius: 16px; // Softer corners
           transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
           
           &:hover {
@@ -1415,7 +1169,7 @@ body {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             
-            .post-title {
+            h5 {
               color: $pink-dark;
             }
             
@@ -1430,10 +1184,8 @@ body {
             height: 36px;
             background-color: $pink-medium;
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 12px; // Softer corners
+            @include flex-center;
             font-weight: 600;
             font-size: 14px;
             flex-shrink: 0;
@@ -1441,11 +1193,11 @@ body {
             transition: all 0.3s ease;
           }
           
-          .post-info {
+          div {
             flex: 1;
             min-width: 0;
             
-            .post-title {
+            h5 {
               font-size: 14px;
               font-weight: 500;
               margin: 0 0 5px;
@@ -1453,9 +1205,10 @@ body {
               overflow: hidden;
               text-overflow: ellipsis;
               transition: color 0.2s ease;
+              font-family: 'Roboto', sans-serif;
             }
             
-            .post-date {
+            .post-views {
               font-size: 12px;
               color: $secondary-color;
             }
@@ -1467,7 +1220,7 @@ body {
     &.newsletter {
       background-color: $pink-light;
       padding: 20px;
-      border-radius: 15px;
+      border-radius: 20px; // Softer corners
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       transform: translateZ(0);
       transition: $transition;
@@ -1485,13 +1238,13 @@ body {
       }
 
       .newsletter-form {
-    display: flex;
+        display: flex;
         flex-direction: column;
         gap: 10px;
 
         input {
-          padding: 10px 15px;
-          border-radius: 20px;
+          padding: 12px 15px;
+          border-radius: 20px; // Softer corners
           border: 2px solid $pink-medium;
           font-size: 14px;
           font-family: 'Roboto', sans-serif;
@@ -1505,16 +1258,16 @@ body {
           }
         }
   
-    button {
-          padding: 10px 15px;
-          border-radius: 20px;
+        button {
+          padding: 12px 15px;
+          border-radius: 20px; // Softer corners
           background-color: $pink-medium;
-      color: white;
-      border: none;
+          color: white;
+          border: none;
           font-size: 14px;
           font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
+          cursor: pointer;
+          transition: all 0.3s ease;
           font-family: 'Roboto', sans-serif;
           box-shadow: 0 4px 12px rgba(255, 174, 192, 0.2);
 
@@ -1543,11 +1296,68 @@ body {
   }
 }
 
-// Smooth animations
+// Read more link
+.read-more-link {
+  display: inline-block;
+  margin-top: 15px;
+  color: $pink-dark;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-bottom: 2px;
+  font-family: 'Roboto', sans-serif;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: $pink-dark;
+    transition: width 0.3s ease;
+  }
+
+  &:hover {
+    color: darken($pink-dark, 10%);
+
+    &::after {
+      width: 100%;
+    }
+  }
+}
+
+// Mobile overlay
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 190; // Below sidebars
+  backdrop-filter: blur(2px);
+}
+
+// Animations
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -1566,24 +1376,6 @@ body {
   }
 }
 
-// Fix scrolling issues
-html, body {
-  overflow-x: hidden;
-}
-
-// Mobile overlay
-.mobile-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 190; // Below sidebars
-  }
-
-// Thêm animation mới
 @keyframes slideDown {
   from {
     transform: translateY(-20px);
@@ -1595,38 +1387,163 @@ html, body {
   }
 }
 
-// Cải thiện hiệu ứng animation cho blog-main-container khi load
-.blog-main-container {
-  animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 8px 20px rgba(255, 174, 192, 0.3);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 }
 
-// Làm cho các blog card xuất hiện theo thứ tự
-.blog-grid {
-  .blog-card {
-    opacity: 0;
-    animation: fadeInUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-    
-    @for $i from 1 through 12 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{0.1 + ($i - 1) * 0.05}s;
+// Media queries
+@media (max-width: 1200px) {
+  .blog-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .blog-section-header .blog-title {
+    font-size: 42px;
+  }
+}
+
+@media (max-width: 992px) {
+  .blog-sidebar, .blog-sidebar-right {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .blog-main-container {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .blog-spot-container {
+    padding: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .blog-grid .blog-card:first-child {
+    grid-column: span 1;
+  }
+  
+  .blog-header {
+    padding: 15px 0;
+    margin-bottom: 30px;
+
+    .blog-header-container {
+      margin-bottom: 0;
+    }
+
+    .blog-nav {
+      display: none;
+      
+      &.show {
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: white;
+        z-index: 65;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        border-radius: 0 0 20px 20px; // Softer corners
+        
+        ul {
+          flex-direction: column;
+          gap: 20px;
+        }
       }
+    }
+  }
+
+  .mobile-overlay {
+    display: block;
+  }
+
+  .blog-sidebar.open ~ .mobile-overlay,
+  .blog-sidebar-right.open ~ .mobile-overlay {
+    display: block;
+  }
+
+  .blog-filter-controls {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  
+    .search-box {
+      width: 100%;
+    }
+    
+    .blog-categories {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .sort-box {
+      width: 100%;
+      select {
+        width: 100%;
+      }
+    }
+  }
+
+  .blog-sidebar, .blog-sidebar-right {
+    position: fixed;
+    width: 80%;
+    height: 100vh;
+    top: 0;
+    z-index: 200;
+    border-radius: 0 20px 20px 0; // Softer corners on one side
+  }
+
+  .blog-sidebar {
+    left: 0;
+    transform: translateX(-100%);
+    
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .blog-sidebar-right {
+    right: 0;
+    transform: translateX(100%);
+    border-radius: 20px 0 0 20px; // Softer corners on one side
+    
+    &.open {
+      transform: translateX(0);
     }
   }
 }
 
-// Thêm animation fadeInUp
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
+@media (min-width: 1600px) {
+  .blog-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .blog-grid .blog-card:first-child {
+    grid-column: span 2;
+    grid-row: span 1;
   }
 }
 
-// Hiệu ứng cho nút scroll to top
+// Scroll to top button
 .scroll-top-btn {
   position: fixed;
   bottom: 30px;
@@ -1636,13 +1553,11 @@ html, body {
   border-radius: 50%;
   background-color: $pink-medium;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   cursor: pointer;
   z-index: 150;
   transform: translateY(100px);
-    opacity: 0;
+  opacity: 0;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   
@@ -1656,115 +1571,5 @@ html, body {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(255, 174, 192, 0.3);
   }
-  
-  svg {
-    font-size: 20px;
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover svg {
-    transform: translateY(-3px);
-  }
 }
 
-// Hiệu ứng hover 3D cho blog card 
-.blog-card {
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  
-  &:hover {
-    .blog-card-content {
-      transform: translateZ(10px);
-    }
-  }
-  
-  .blog-card-content {
-    padding: 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-}
-
-// Cải thiện hiệu ứng cho tags
-.tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  
-  .tag {
-    background-color: $pink-light;
-    color: $primary-color;
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    text-transform: capitalize;
-    font-weight: 500;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
-    
-    &:hover {
-      background-color: $pink-dark;
-      color: white;
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 15px rgba(255, 174, 192, 0.25);
-    }
-    
-    &.active {
-      background-color: $pink-dark;
-      color: white;
-      box-shadow: 0 4px 12px rgba(255, 174, 192, 0.2);
-    }
-  }
-}
-
-// Media queries điều chỉnh responsive cho màn hình lớn
-@media (min-width: 1600px) {
-  .blog-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .blog-grid .blog-card:first-child {
-    grid-column: span 2;
-    grid-row: span 1;
-  }
-}
-
-// Media queries điều chỉnh cho màn hình vừa - cập nhật
-@media (min-width: 1025px) and (max-width: 1599px) {
-  .blog-sidebar, .blog-sidebar-right {
-    width: 230px;
-  }
-  
-  .blog-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-  .blog-main-container {
-    gap: 20px;
-    padding: 15px;
-  }
-
-  .blog-sidebar, .blog-sidebar-right {
-    width: 200px;
-  }
-  
-  .blog-spot-container {
-    padding: 0 25px;
-  }
-  
-  .blog-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 25px;
-  }
-  
-  .blog-card {
-    .blog-card-content {
-      padding: 25px;
-    }
-  }
-  }

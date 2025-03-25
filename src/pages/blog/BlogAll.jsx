@@ -349,7 +349,7 @@ const BlogAll = () => {
         <header className="blog-header">
           <div className="blog-header-container">
             <div className="blog-logo">
-              <Link to="/member/blog">Blog Spot.</Link>
+              <Link to="/member/blog">Blog Mẹ Bầu</Link>
             </div>
             
             <div className="blog-header-actions">
