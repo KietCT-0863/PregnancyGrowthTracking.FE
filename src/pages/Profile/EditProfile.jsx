@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Upload, User, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./EditProfile.scss";
+import { playNotificationSound, playErrorSound } from "../../utils/soundUtils";
 
 const EditProfile = () => {
   const navigate = useNavigate();
@@ -97,6 +98,7 @@ const EditProfile = () => {
 
       await userService.updateUserInfo(updateData);
       toast.success("Cập nhật thông tin thành công");
+      playNotificationSound('profileSuccess');
 
       // Cập nhật thông tin trong localStorage
       const currentUserData = JSON.parse(localStorage.getItem("userData"));
@@ -134,7 +136,12 @@ const EditProfile = () => {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      console.log("Không tìm thấy file");
+      return;
+    }
+
+    console.log("File được chọn:", file.name, "Kích thước:", file.size, "Loại:", file.type);
 
     // Kiểm tra kích thước file
     const maxSize = 5 * 1024 * 1024; // 5MB
@@ -160,18 +167,32 @@ const EditProfile = () => {
 
     try {
       setUploading(true);
+      console.log("Bắt đầu tải ảnh lên...");
 
       // Hiển thị preview ảnh ngay lập tức
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log("Đã tạo preview ảnh");
         setProfileImage(reader.result);
       };
       reader.readAsDataURL(file);
 
-      // Upload ảnh lên server
-      const response = await profileImageService.updateProfileImage(file);
+      // In ra thông tin user trước khi gửi request
+      const storedUserData = JSON.parse(localStorage.getItem("userData"));
+      console.log("UserId hiện tại:", storedUserData?.userId);
 
-      if (response.profileImageUrl) {
+      // Thông báo đang xử lý để cải thiện trải nghiệm người dùng
+      toast.info("Đang cập nhật ảnh đại diện...", { 
+        autoClose: 2000,
+        position: "top-right"
+      });
+
+      // Upload ảnh lên server
+      console.log("Gửi request API cập nhật ảnh đại diện...");
+      const response = await profileImageService.updateProfileImage(file);
+      console.log("Kết quả API:", response);
+
+      if (response && response.profileImageUrl) {
         // Cập nhật URL ảnh mới trong localStorage
         const currentUserData = JSON.parse(localStorage.getItem("userData"));
         localStorage.setItem(
@@ -182,15 +203,53 @@ const EditProfile = () => {
           })
         );
 
+        // Cập nhật state với URL mới kèm timestamp để buộc browser tải lại ảnh
+        setProfileImage(response.profileImageUrl);
+
+        // Tải lại ảnh đại diện trên header của ứng dụng (nếu có)
+        if (window.updateHeaderAvatar) {
+          window.updateHeaderAvatar();
+        }
+
         toast.success("Cập nhật ảnh đại diện thành công");
+        playNotificationSound('profileSuccess');
+      } else {
+        console.error("Không có URL ảnh trong response:", response);
+        throw new Error("Không có URL ảnh trong kết quả trả về");
       }
     } catch (error) {
       console.error("Error uploading image:", error);
-      toast.error("Không thể cập nhật ảnh đại diện. Vui lòng thử lại sau.");
+      console.log("Error details:", error.response?.data);
+      
+      // Hiển thị thông báo lỗi cụ thể và dễ hiểu hơn
+      let errorMessage = "Không thể cập nhật ảnh đại diện. Vui lòng thử lại sau.";
+      
+      if (error.response?.status === 415) {
+        errorMessage = "Định dạng file không được hỗ trợ. Vui lòng dùng JPG hoặc PNG.";
+      } else if (error.response?.status === 413) {
+        errorMessage = "Ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn 5MB.";
+      } else if (error.response?.status === 401) {
+        errorMessage = "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage);
+      
+      // Phát âm thanh lỗi
+      playErrorSound();
+      
       // Khôi phục ảnh cũ nếu upload thất bại
       setProfileImage(userData?.profileImageUrl || "/placeholder.svg");
     } finally {
       setUploading(false);
+      console.log("Kết thúc quá trình xử lý upload ảnh");
+      
+      // Reset input file để có thể chọn lại cùng 1 file
+      const fileInput = document.getElementById('profile-image-upload');
+      if (fileInput) {
+        fileInput.value = '';
+      }
     }
   };
 
@@ -237,6 +296,10 @@ const EditProfile = () => {
               <motion.div
                 className={`upload-overlay ${uploading ? "uploading" : ""}`}
                 whileHover={{ opacity: 1 }}
+                onClick={() => {
+                  // Kích hoạt click vào input file khi overlay được click
+                  document.getElementById('profile-image-upload').click();
+                }}
               >
                 <label htmlFor="profile-image-upload" className="upload-button">
                   <Upload size={20} />

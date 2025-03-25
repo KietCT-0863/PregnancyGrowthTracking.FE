@@ -3,9 +3,10 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Mail, Lock, User, Calendar, Phone, Eye, EyeOff, Twitter } from "lucide-react"
 import { register } from "../../services/authService"
-import { validateEmail, validatePassword } from "../../utils/validation"
+import { validatePassword } from "../../utils/validation"
 import "./Register.scss"
 import ValidationErrors from "./ValidationErrors"
+import { playNotificationSound, playErrorSound } from "../../utils/soundUtils"
 
 const formFields = [
   {
@@ -76,45 +77,51 @@ const Register = () => {
   const [error, setError] = useState("")
 
   const validateField = (name, value) => {
-    let fieldErrors = {};
+    const fieldErrors = {};
 
     switch (name) {
-      case 'email':
+      case 'email': {
         const trimmedEmail = value.trim();
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(trimmedEmail)) {
           fieldErrors.Email = "Email không hợp lệ.";
         }
         break;
-      case 'phone':
+      }
+      case 'phone': {
         if (value && !value.match(/^\d{10}$/)) {
           fieldErrors.Phone = "Số điện thoại phải có 10 chữ số và bắt đầu bằng 0.";
         }
         break;
-      case 'fullName':
+      }
+      case 'fullName': {
         if (value.trim().length < 4) {
           fieldErrors.FullName = "Họ và tên phải có ít nhất 4 ký tự.";
         } else if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(value)) {
           fieldErrors.FullName = "Họ và tên chỉ được chứa chữ cái và khoảng trắng.";
         }
         break;
-      case 'username':
+      }
+      case 'username': {
         if (value.trim().length < 4) {
           fieldErrors.Username = "Tên đăng nhập phải có ít nhất 4 ký tự.";
         }
         break;
-      case 'password':
+      }
+      case 'password': {
         if (value.length < 6) {
           fieldErrors.Password = "Mật khẩu phải có ít nhất 6 ký tự.";
         } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
           fieldErrors.Password = "Mật khẩu phải chứa ít nhất một chữ cái thường, một chữ cái viết hoa và một chữ số.";
         }
         break;
-      case 'confirmPassword':
+      }
+      case 'confirmPassword': {
         if (value !== formData.password) {
           fieldErrors.ConfirmPassword = "Mật khẩu xác nhận không khớp.";
         }
         break;
+      }
       default:
         break;
     }
@@ -198,33 +205,61 @@ const Register = () => {
     e.preventDefault()
     setError("")
     setStructuredErrors({})
-    setLoading(true)
 
-    const validationErrors = validateForm()
-    if (validationErrors) {
-      setStructuredErrors(validationErrors)
-      setLoading(false)
+    // Validate form
+    const errors = validateForm()
+    if (errors) {
+      setStructuredErrors(errors)
+      // Add a small delay to ensure UI updates before playing sound
+      setTimeout(() => {
+        console.log("Playing register validation failure sound");
+        playErrorSound()
+      }, 100);
       return
     }
 
     try {
-      const userData = {
+      setLoading(true)
+      const response = await register({
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        fullName: formData.fullName,
-        dob: formData.dob,
         phone: formData.phone,
-      }
+        fullname: formData.fullName,
+        dob: formData.dob,
+      })
 
-      await register(userData)
-      navigate("/login")
-    } catch (err) {
-      if (err.response?.data?.errors) {
-        setStructuredErrors(err.response.data.errors)
+      if (response && response.success) {
+        playNotificationSound('loginSuccess')
+        navigate("/login", { state: { message: "Đăng ký thành công, vui lòng đăng nhập" } })
       } else {
-        setError(err.response?.data?.message || "Có lỗi xảy ra khi đăng ký")
+        setError(response?.message || "Đăng ký thất bại")
+        setTimeout(() => {
+          console.log("Playing register API failure sound");
+          playErrorSound()
+        }, 100);
       }
+    } catch (error) {
+      console.error("Registration error:", error)
+      let errorMessage = "Đăng ký thất bại"
+      
+      if (error.response && error.response.data) {
+        const serverErrors = error.response.data
+        
+        if (typeof serverErrors === 'string') {
+          errorMessage = serverErrors
+        } else if (serverErrors.errors) {
+          setStructuredErrors(serverErrors.errors)
+        } else if (serverErrors.message) {
+          errorMessage = serverErrors.message
+        }
+      }
+      
+      setError(errorMessage)
+      setTimeout(() => {
+        console.log("Playing register error failure sound");
+        playErrorSound()
+      }, 100);
     } finally {
       setLoading(false)
     }

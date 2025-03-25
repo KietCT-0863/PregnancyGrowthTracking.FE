@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
-import { BarChart2 } from "lucide-react";
+import { BarChart2, Calendar, Check, X } from "lucide-react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import WeeksFilter from "../../WeeksFilter/WeeksFilter";
+import growthStatsService from "../../../../api/services/growthStatsService";
 import "./GrowthChart.scss";
 
 const chartOptions = {
@@ -103,6 +105,61 @@ const chartOptions = {
 };
 
 const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) => {
+  const [weeksWithData, setWeeksWithData] = useState([]);
+  const [loadingWeeks, setLoadingWeeks] = useState(false);
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [weekHistory, setWeekHistory] = useState([]);
+  const [showWeekHistory, setShowWeekHistory] = useState(false);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (selectedChild?.foetusId) {
+      fetchWeeksWithData(selectedChild.foetusId);
+    }
+  }, [selectedChild]);
+
+  const fetchWeeksWithData = async (foetusId) => {
+    try {
+      setLoadingWeeks(true);
+      const alertHistory = await growthStatsService.getAlertHistory(foetusId);
+      
+      // Lọc ra các tuần đã có dữ liệu
+      const weeks = [];
+      if (Array.isArray(alertHistory)) {
+        // Sử dụng Set để tránh trùng lặp
+        const uniqueWeeks = new Set();
+        alertHistory.forEach(item => {
+          if (item.age) {
+            uniqueWeeks.add(item.age);
+          }
+          if (item.alerts && Array.isArray(item.alerts)) {
+            item.alerts.forEach(alert => {
+              if (alert.age) {
+                uniqueWeeks.add(alert.age);
+              }
+            });
+          }
+        });
+        weeks.push(...Array.from(uniqueWeeks));
+      }
+      
+      // Thêm các tuần từ growthData
+      if (growthData[foetusId] && Array.isArray(growthData[foetusId])) {
+        growthData[foetusId].forEach(data => {
+          if (data.age && !weeks.includes(data.age)) {
+            weeks.push(data.age);
+          }
+        });
+      }
+      
+      setWeeksWithData(weeks);
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu tuần:", error);
+    } finally {
+      setLoadingWeeks(false);
+    }
+  };
+
   const getChartData = () => {
     if (!selectedChild || !growthData[selectedChild?.foetusId]) {
       return {
@@ -220,6 +277,144 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     };
   };
 
+  const renderWeekCalendar = () => {
+    const weeks = Array.from({ length: 29 }, (_, i) => i + 12); // Tuần 12-40
+    
+    return (
+      <div className="week-calendar">
+        <div className="week-calendar-header">
+          <h3>Lịch tuần thai</h3>
+          <p>Nhấn vào tuần để xem/nhập dữ liệu</p>
+        </div>
+        <div className="week-grid">
+          {weeks.map(week => {
+            const hasData = weeksWithData.includes(week);
+            return (
+              <div 
+                key={week} 
+                className={`week-item ${hasData ? 'has-data' : ''}`}
+                onClick={() => handleWeekSelect(week)}
+              >
+                <span className="week-number">T{week}</span>
+                {hasData && <Check className="check-icon" size={16} />}
+              </div>
+            );
+          })}
+        </div>
+        <div className="week-calendar-legend">
+          <div className="legend-item">
+            <div className="legend-color has-data"></div>
+            <span>Đã có dữ liệu</span>
+          </div>
+          <div className="legend-item">
+            <div className="legend-color"></div>
+            <span>Chưa có dữ liệu</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const handleWeekSelect = async (week) => {
+    try {
+      if (!selectedChild?.foetusId) return;
+      
+      setSelectedWeek(week);
+      setLoadingHistory(true);
+      setShowWeekHistory(true);
+      
+      // Lấy dữ liệu tuần đã chọn từ growthData
+      const weekData = [];
+      if (growthData[selectedChild.foetusId] && Array.isArray(growthData[selectedChild.foetusId])) {
+        growthData[selectedChild.foetusId].forEach(data => {
+          if (data.age === week) {
+            weekData.push({
+              date: new Date(data.date || data.measurementDate).toLocaleDateString('vi-VN'),
+              hc: data.hc?.value || 0,
+              ac: data.ac?.value || 0,
+              fl: data.fl?.value || 0,
+              efw: data.efw?.value || 0,
+              id: data.measurementId || `${data.date}-${data.age}`
+            });
+          }
+        });
+      }
+      
+      setWeekHistory(weekData);
+    } catch (error) {
+      console.error("Lỗi khi lấy lịch sử tuần:", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  const closeWeekHistory = () => {
+    setShowWeekHistory(false);
+    setSelectedWeek(null);
+    setWeekHistory([]);
+  };
+
+  const renderWeekHistoryModal = () => {
+    if (!showWeekHistory) return null;
+    
+    return (
+      <div className="week-history-modal">
+        <div className="week-history-content">
+          <div className="week-history-header">
+            <h3>Chi tiết lịch sử tuần {selectedWeek}</h3>
+            <button className="close-button" onClick={closeWeekHistory}>
+              <X size={18} />
+            </button>
+          </div>
+          
+          <div className="week-history-body">
+            {loadingHistory ? (
+              <div className="loading-spinner">Đang tải dữ liệu...</div>
+            ) : weekHistory.length === 0 ? (
+              <div className="no-data-message">
+                Không có dữ liệu chi tiết cho tuần này
+              </div>
+            ) : (
+              <>
+                <div className="history-table">
+                  <div className="table-header">
+                    <div className="table-cell">Ngày đo</div>
+                    <div className="table-cell">HC (mm)</div>
+                    <div className="table-cell">AC (mm)</div>
+                    <div className="table-cell">FL (mm)</div>
+                    <div className="table-cell">EFW (g)</div>
+                  </div>
+                  {weekHistory.map((record) => (
+                    <div className="table-row" key={record.id}>
+                      <div className="table-cell">{record.date}</div>
+                      <div className="table-cell">{record.hc}</div>
+                      <div className="table-cell">{record.ac}</div>
+                      <div className="table-cell">{record.fl}</div>
+                      <div className="table-cell">{record.efw}</div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="history-note">
+                  <p>* Dữ liệu được sắp xếp theo thời gian gần nhất</p>
+                </div>
+              </>
+            )}
+          </div>
+          
+          <div className="week-history-footer">
+            <button 
+              className="action-button" 
+              onClick={closeWeekHistory}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="chart-section">
       {selectedChild && (
@@ -268,6 +463,9 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
             : "* Chọn một thai nhi để xem biểu đồ tăng trưởng"}
         </motion.p>
       </div>
+      
+      {selectedChild && renderWeekCalendar()}
+      {renderWeekHistoryModal()}
     </div>
   );
 };

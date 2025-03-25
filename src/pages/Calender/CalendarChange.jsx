@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import reminderService from "../../api/services/reminderService";
 import "./CalendarChange.scss";
 import NotificationPopup from './components/NotificationPopup';
+import { playNotificationSound } from '../../utils/soundUtils';
 
 const CalendarChange = () => {
   const navigate = useNavigate();
@@ -146,6 +147,7 @@ const CalendarChange = () => {
 
       await reminderService.updateReminder(remindId, reminder);
       showNotification('success', 'Sự kiện đã được cập nhật thành công');
+      playNotificationSound();
       
       // Navigate after a delay to allow the user to see the notification
       setTimeout(() => {

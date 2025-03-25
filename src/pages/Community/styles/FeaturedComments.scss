@@ -1,0 +1,159 @@
+@import './variables.scss';
+
+.right-sidebar {
+  background-color: white;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: $box-shadow;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
+  position: sticky;
+  top: 80px;
+  @include scrollbar;
+  
+  .sidebar-header {
+    margin-bottom: 15px;
+    
+    h2 {
+      font-size: 16px;
+      color: $text-color;
+      margin: 0 0 10px 0;
+      font-weight: 600;
+      padding-bottom: 8px;
+      border-bottom: 2px solid $light-color;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background-color: $primary-color;
+      }
+    }
+  }
+  
+  .featured-comments {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    
+    .featured-comment {
+      padding: 12px;
+      background-color: $light-color;
+      border-radius: 12px;
+      transition: $transition;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+      animation: fadeIn 0.4s ease;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+      
+      .comment-user {
+        @include flex-between;
+        margin-bottom: 8px;
+        
+        .avatar {
+          @include avatar(30px);
+          margin-right: 10px;
+        }
+        
+        .user-info {
+          flex: 1;
+          
+          h4 {
+            margin: 0 0 2px 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: $primary-color;
+          }
+          
+          .comment-time {
+            font-size: 12px;
+            color: $muted-color;
+          }
+        }
+      }
+      
+      .comment-content {
+        font-size: 13px;
+        line-height: 1.5;
+        color: $text-color;
+        margin: 0;
+        position: relative;
+        padding-left: 40px; // Space for quotation mark
+        
+        &::before {
+          content: '"';
+          position: absolute;
+          left: 0;
+          top: -10px;
+          font-size: 40px;
+          color: rgba($primary-color, 0.1);
+          font-family: Georgia, serif;
+        }
+      }
+    }
+  }
+  
+  .comment-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    
+    form {
+      display: flex;
+      width: 100%;
+      gap: 10px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid $border-color;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: $transition;
+      background-color: $light-color;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        background-color: white;
+      }
+      
+      &::placeholder {
+        color: $muted-color;
+      }
+    }
+    
+    .send-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      @include flex-center;
+      cursor: pointer;
+      transition: $transition;
+      flex-shrink: 0;
+      
+      &:hover {
+        background-color: darken($primary-color, 5%);
+        transform: translateY(-2px);
+        box-shadow: $hover-shadow;
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+} 

@@ -11,6 +11,7 @@ import { Eye, EyeOff, ChevronLeft, ChevronRight, ArrowRight, Home } from "lucide
 import { motion, AnimatePresence } from "framer-motion"
 import LoginErrorBox from './LoginErrorBox'
 import { validateLoginCredentials, formatLoginErrors } from './LoginValidation'
+import { playNotificationSound, playErrorSound } from "../../utils/soundUtils"
 
 
 const Login = () => {
@@ -71,6 +72,12 @@ const Login = () => {
     if (!validation.isValid) {
       console.log("Form validation failed:", validation.errors);
       setFormErrors(validation.errors);
+      
+      // Play failure sound with direct user interaction connection
+      setTimeout(() => {
+        console.log("Playing validation failure sound");
+        playErrorSound();
+      }, 100);
       return;
     }
     
@@ -96,7 +103,8 @@ const Login = () => {
         // Call the AuthContext login function
         login(response.token, response.userData, rememberMe);
         
-        // Show success toast
+        // Play success sound and show success toast
+        playNotificationSound('loginSuccess');
         toast.success("Đăng nhập thành công!");
         
         // Navigate based on user role
@@ -121,6 +129,12 @@ const Login = () => {
       // Set field errors and general error message
       setFormErrors(formattedErrors.fields || {});
       setError(formattedErrors.general || "Có lỗi xảy ra, vui lòng thử lại sau");
+      
+      // Play failure sound after error message is shown
+      setTimeout(() => {
+        console.log("Playing login failure sound after API error");
+        playErrorSound();
+      }, 100);
       
       // Log what error message we're showing
       console.log("Showing error message:", formattedErrors.general);

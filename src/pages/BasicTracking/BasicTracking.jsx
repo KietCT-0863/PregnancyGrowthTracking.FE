@@ -40,6 +40,8 @@ import {
   updateGrowthStats 
 } from './utils/apiHandler'
 import WeeklyStatsChart from './components/WeeklyStatsChart/WeeklyStatsChart'
+import { FaCalendarAlt, FaHistory, FaSave } from 'react-icons/fa'
+import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
@@ -67,6 +69,24 @@ const BasicTracking = () => {
   const [standardRanges, setStandardRanges] = useState({})
   const [loadingRanges, setLoadingRanges] = useState(false)
   const [weeksToShow, setWeeksToShow] = useState(4)
+  const [lastUpdateDate, setLastUpdateDate] = useState(null)
+  const [showHistory, setShowHistory] = useState(false)
+
+  // Thêm hàm handleUpdate
+  const handleUpdate = async () => {
+    if (!selectedChild) {
+      toast.warning("Vui lòng chọn một thai nhi để cập nhật");
+      return;
+    }
+
+    try {
+      await handleStatsUpdate(selectedChild.foetusId);
+      playNotificationSound('trackingSuccess');
+      toast.success("Cập nhật thành công!");
+    } catch (err) {
+      toast.error(err.message || "Có lỗi xảy ra khi cập nhật");
+    }
+  };
 
   // Data fetching
   const fetchData = async () => {
@@ -87,6 +107,7 @@ const BasicTracking = () => {
     setChildrenHistory(foetusData)
     setGrowthData(growthResults)
     setError(null)
+    setLastUpdateDate(new Date().toLocaleString())
   }
 
   useEffect(() => {
@@ -107,6 +128,7 @@ const BasicTracking = () => {
         handleUpdateSuccess(result, selectedChild, tempStats)
         await fetchData()
         setTempStats({})
+        playNotificationSound('trackingSuccess');
       }
     } catch (err) {
       handleUpdateError(err)
@@ -238,143 +260,180 @@ const BasicTracking = () => {
     )
 
   return (
-    <div className="pregnancy-monitor">
+    <div className="basic-tracking-container">
       <div className="background-waves">
         <div className="wave wave1"></div>
         <div className="wave wave2"></div>
         <div className="wave wave3"></div>
+        <div className="wave wave4"></div>
       </div>
+      
+      {/* Nội dung hiện tại */}
+      <div className="pregnancy-monitor">
+        {error && (
+          <motion.div
+            className="error-message"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {error}
+          </motion.div>
+        )}
 
-      {error && (
         <motion.div
-          className="error-message"
-          initial={{ opacity: 0, y: -20 }}
+          className="monitor-header"
+          initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.5 }}
         >
-          {error}
+          <h1>Theo dõi bé yêu</h1>
+          <p>Theo dõi sự phát triển của bé yêu qua từng giai đoạn</p>
         </motion.div>
-      )}
 
-      <motion.div
-        className="monitor-header"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h1>Theo dõi bé yêu</h1>
-        <p>Theo dõi sự phát triển của bé yêu qua từng giai đoạn</p>
-      </motion.div>
+        <div className="monitor-content">
+          <ChildrenList 
+            children={childrenHistory} 
+            selectedChild={selectedChild} 
+            onChildSelect={handleChildSelect} 
+          />
 
-      <div className="monitor-content">
-        <ChildrenList 
-          children={childrenHistory} 
-          selectedChild={selectedChild} 
-          onChildSelect={handleChildSelect} 
-        />
+          <div className="dashboard-layout">
+            {/* Cột trái chứa biểu đồ tăng trưởng chính và form nhập liệu (đã đổi vị trí) */}
+            <div className="main-charts-column">
+              {/* Biểu đồ tăng trưởng chính */}
+              <div className="growth-chart-container">
+                <GrowthChart 
+                  selectedChild={selectedChild}
+                  growthData={growthData}
+                  weeksToShow={weeksToShow}
+                  onWeeksChange={setWeeksToShow}
+                />
+              </div>
 
-        <div className="dashboard-layout">
-          {/* Cột trái chứa biểu đồ tăng trưởng chính và form nhập liệu (đã đổi vị trí) */}
-          <div className="main-charts-column">
-            {/* Biểu đồ tăng trưởng chính */}
-            <div className="growth-chart-container">
-              <GrowthChart 
-                selectedChild={selectedChild}
-                growthData={growthData}
-                weeksToShow={weeksToShow}
-                onWeeksChange={setWeeksToShow}
-              />
+              {/* Form nhập thông tin (đã chuyển từ cột phải sang) */}
+              <div className="input-section">
+                {selectedChild ? (
+                  <motion.div
+                    className="child-input-form"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.4, delay: 0.4 }}
+                    layout
+                  >
+                    <ChildInfoCard
+                      selectedChild={selectedChild}
+                      growthData={growthData}
+                      tempStats={tempStats}
+                      handleInputChange={handleInputChange}
+                      handleStatsUpdate={handleStatsUpdate}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    className="select-child-prompt"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <motion.div
+                      animate={{
+                        y: [0, -10, 0],
+                        opacity: [0.7, 1, 0.7],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      <Baby size={60} />
+                      <p>Vui lòng chọn một thai nhi để bắt đầu theo dõi</p>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </div>
             </div>
 
-            {/* Form nhập thông tin (đã chuyển từ cột phải sang) */}
-        <div className="input-section">
-          {selectedChild ? (
-            <motion.div
-              className="child-input-form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              layout
-            >
-                  <ChildInfoCard
-                    selectedChild={selectedChild}
-                    growthData={growthData}
-                    tempStats={tempStats}
-                    handleInputChange={handleInputChange}
-                    handleStatsUpdate={handleStatsUpdate}
+            {/* Cột phải chứa biểu đồ chỉ số và cảnh báo */}
+            <div className="form-alerts-column">
+              {/* Biểu đồ chỉ số (đã chuyển từ cột trái sang) */}
+              {selectedChild && (
+                <div className="weekly-stats-container">
+                  <WeeklyStatsChart 
+                    age={tempStats[selectedChild.foetusId]?.age || 
+                      (growthData[selectedChild.foetusId]?.length > 0 ? 
+                      growthData[selectedChild.foetusId][0].age : selectedChild.age)}
+                    childStats={{
+                      hc: tempStats[selectedChild.foetusId]?.hc || 
+                        (growthData[selectedChild.foetusId]?.length > 0 ? 
+                        growthData[selectedChild.foetusId][0].hc?.value : null),
+                      ac: tempStats[selectedChild.foetusId]?.ac || 
+                        (growthData[selectedChild.foetusId]?.length > 0 ? 
+                        growthData[selectedChild.foetusId][0].ac?.value : null),
+                      fl: tempStats[selectedChild.foetusId]?.fl || 
+                        (growthData[selectedChild.foetusId]?.length > 0 ? 
+                        growthData[selectedChild.foetusId][0].fl?.value : null),
+                      efw: tempStats[selectedChild.foetusId]?.efw || 
+                        (growthData[selectedChild.foetusId]?.length > 0 ? 
+                        growthData[selectedChild.foetusId][0].efw?.value : null),
+                    }}
+                    onError={(msg) => toast.error(msg)}
                   />
-              </motion.div>
-          ) : (
-            <motion.div
-              className="select-child-prompt"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <motion.div
-                animate={{
-                  y: [0, -10, 0],
-                  opacity: [0.7, 1, 0.7],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                }}
-              >
-                <Baby size={60} />
-                <p>Vui lòng chọn một thai nhi để bắt đầu theo dõi</p>
-        </motion.div>
-            </motion.div>
-            )}
-          </div>
-        </div>
-
-          {/* Cột phải chứa biểu đồ chỉ số và cảnh báo */}
-          <div className="form-alerts-column">
-            {/* Biểu đồ chỉ số (đã chuyển từ cột trái sang) */}
-            {selectedChild && (
-              <div className="weekly-stats-container">
-                <WeeklyStatsChart 
-                  age={tempStats[selectedChild.foetusId]?.age || 
-                    (growthData[selectedChild.foetusId]?.length > 0 ? 
-                    growthData[selectedChild.foetusId][0].age : selectedChild.age)}
-                  childStats={{
-                    hc: tempStats[selectedChild.foetusId]?.hc || 
-                      (growthData[selectedChild.foetusId]?.length > 0 ? 
-                      growthData[selectedChild.foetusId][0].hc?.value : null),
-                    ac: tempStats[selectedChild.foetusId]?.ac || 
-                      (growthData[selectedChild.foetusId]?.length > 0 ? 
-                      growthData[selectedChild.foetusId][0].ac?.value : null),
-                    fl: tempStats[selectedChild.foetusId]?.fl || 
-                      (growthData[selectedChild.foetusId]?.length > 0 ? 
-                      growthData[selectedChild.foetusId][0].fl?.value : null),
-                    efw: tempStats[selectedChild.foetusId]?.efw || 
-                      (growthData[selectedChild.foetusId]?.length > 0 ? 
-                      growthData[selectedChild.foetusId][0].efw?.value : null),
-                  }}
-                  onError={(msg) => toast.error(msg)}
+                </div>
+              )}
+              
+              {/* Phần cảnh báo */}
+              <div className="alert-section-container">
+                <AlertSection
+                  alertHistory={[]}
+                  alertsOpen={alertsOpen}
+                  setAlertsOpen={setAlertsOpen}
+                  alerts={alerts}
+                  selectedChild={selectedChild}
                 />
-                </div>
-            )}
-            
-            {/* Phần cảnh báo */}
-            <div className="alert-section-container">
-              <AlertSection
-                alertHistory={[]}
-                alertsOpen={alertsOpen}
-                setAlertsOpen={setAlertsOpen}
-                alerts={alerts}
-                selectedChild={selectedChild}
-              />
-                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-      <GrowthAlert isOpen={showGrowthAlert} onClose={() => setShowGrowthAlert(false)} alertData={alertData} />
+        <div className="update-info">
+          <div className="update-date">
+            <span className="icon">
+              <FaCalendarAlt />
+            </span>
+            <span>Cập nhật lần cuối: {lastUpdateDate}</span>
+          </div>
+          
+          <div className="action-buttons">
+            <button className="view-history" onClick={() => setShowHistory(true)}>
+              <span className="icon">
+                <FaHistory />
+              </span>
+              <span>Xem lịch sử</span>
+            </button>
+
+            <button className="update-button-main" onClick={handleUpdate}>
+              <span className="icon">
+                <FaSave />
+              </span>
+              <span>Cập nhật</span>
+            </button>
+          </div>
+        </div>
+
+        <GrowthAlert isOpen={showGrowthAlert} onClose={() => setShowGrowthAlert(false)} alertData={alertData} />
       </div>
-                      </div>
+
+      <button 
+        className="floating-update-button"
+        onClick={handleUpdate}
+        title="Cập nhật số đo"
+      >
+        <FaSave />
+      </button>
+    </div>
   )
 }
 

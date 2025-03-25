@@ -11,6 +11,10 @@ import {
   Trash,
   Send,
   MoreVertical,
+  Music,
+  Users,
+  PhoneCall,
+  Settings,
 } from "lucide-react";
 import { format } from "date-fns";
 import PropTypes from "prop-types";
@@ -18,6 +22,9 @@ import "./Community.scss";
 import communityService from "../../api/services/communityService";
 import commentService from "../../api/services/commentService";
 import { toast } from "react-toastify";
+import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils";
+import SidebarTunes from "./components/SidebarTunes";
+import SidebarContacts from "./components/SidebarContacts";
 
 // Modal component for creating/editing post
 const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
@@ -428,6 +435,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
           ? "Đã đăng phản hồi thành công"
           : "Đã đăng bình luận thành công"
       );
+      playNotificationSound();
     } catch (error) {
       console.error("Error posting comment:", error);
       toast.error(
@@ -467,6 +475,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
       setEditText("");
       fetchComments(); // Làm mới danh sách bình luận
       toast.success("Bình luận đã được cập nhật");
+      playNotificationSound();
     } catch (error) {
       console.error("Error updating comment:", error);
       toast.error(
@@ -485,6 +494,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
         await commentService.deleteComment(commentId);
         setComments(comments.filter((c) => c.commentId !== commentId));
         toast.success("Bình luận đã được xóa");
+        playDeleteSound();
       } catch (error) {
         console.error("Error deleting comment:", error);
         toast.error(
@@ -1025,6 +1035,29 @@ CommentSection.propTypes = {
   initialComments: PropTypes.array,
 };
 
+// New component for Forums sidebar
+const SidebarSettings = () => {
+  return (
+    <div className="sidebar-section settings">
+      <h2>Settings</h2>
+      <div className="settings-list">
+        <div className="setting-item">
+          <div className="setting-icon">
+            <Settings size={18} />
+          </div>
+          <span>Tùy chỉnh thông báo</span>
+        </div>
+        <div className="setting-item">
+          <div className="setting-icon">
+            <Users size={18} />
+          </div>
+          <span>Riêng tư</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Community = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -1293,101 +1326,83 @@ const Community = () => {
   };
 
   const handleCreatePost = async (formData, postId) => {
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
-      console.log("FormData được gửi từ modal:", formData);
-
-      // Kiểm tra xem formData có các trường cần thiết không
-      if (formData instanceof FormData) {
-        const title = formData.get("title");
-        const body = formData.get("body");
-
-        if (!title || !body) {
-          throw new Error("Tiêu đề và nội dung không được để trống");
-        }
-
-        // Kiểm tra số lượng tag
-        const postTagsStr = formData.get("postTags");
-        if (postTagsStr) {
-          try {
-            const tagsArray = JSON.parse(postTagsStr);
-            if (tagsArray.length > 2) {
-              throw new Error("Chỉ được phép thêm tối đa 2 thẻ");
-            }
-            console.log("Tags từ form:", tagsArray);
-          } catch (err) {
-            console.error("Lỗi parse tags JSON:", err);
-          }
-        }
-      }
-
       if (postId) {
-        // Xử lý cập nhật bài viết
-        try {
-          const post = posts.find((p) => p.id === postId);
-          if (!post) {
-            throw new Error("Không tìm thấy bài viết cần cập nhật");
+        // Update existing post
+        await communityService.updatePost(postId, formData);
+        const updatedPosts = posts.map((p) => {
+          if (p.id === postId) {
+            const updatedPost = { ...p };
+
+            // Update properties from formData
+            for (let [key, value] of formData.entries()) {
+              if (key === "postTags") {
+                // Parse JSON string back to array
+                try {
+                  const tagsArray = JSON.parse(value);
+                  updatedPost.postTags = tagsArray.map((tag) => ({
+                    name: tag,
+                    postId: postId,
+                  }));
+                } catch (e) {
+                  console.error("Error parsing tags:", e);
+                }
+              } else if (key === "title") {
+                updatedPost.title = value;
+              } else if (key === "body") {
+                updatedPost.body = value;
+              }
+              // Note: Image handling is more complex and will be done on reload
+            }
+
+            return updatedPost;
           }
+          return p;
+        });
 
-          // Tạo FormData mới cho cập nhật bài viết
-          const updateFormData = new FormData();
-          updateFormData.append("id", postId);
-          updateFormData.append("title", formData.get("title"));
-          updateFormData.append("body", formData.get("body"));
-
-          // Xử lý tags - sử dụng cùng định dạng với create post
-          const postTagsStr = formData.get("postTags");
-          if (postTagsStr) {
-            updateFormData.append("postTags", postTagsStr);
-          }
-
-          // Thêm hình ảnh nếu có
-          if (formData.get("postImage")) {
-            updateFormData.append("postImage", formData.get("postImage"));
-          }
-
-          console.log("Dữ liệu cập nhật bài viết:");
-          for (let pair of updateFormData.entries()) {
-            console.log(pair[0] + ": " + pair[1]);
-          }
-
-          await communityService.updatePost(updateFormData);
-          toast.success("Bài viết đã được cập nhật thành công");
-        } catch (updateError) {
-          console.error("Lỗi khi cập nhật bài viết:", updateError);
-          toast.error("Không thể cập nhật bài viết: " + updateError.message);
-          throw updateError;
-        }
+        setPosts(updatedPosts);
+        setCurrentPost({});
+        toast.success("Đã cập nhật bài viết thành công!");
+        playNotificationSound();
       } else {
-        // Tạo bài viết mới với FormData đã có đầy đủ thông tin
-        await communityService.createPost(formData);
-        toast.success("Bài viết đã được tạo thành công");
+        // Create new post
+        const result = await communityService.createPost(formData);
+        console.log("New post created:", result);
+
+        // Gọi lại fetchPosts để có dữ liệu đầy đủ và cập nhật
+        await fetchPosts();
+        toast.success("Đã tạo bài viết mới thành công!");
+        playNotificationSound();
       }
 
-      fetchPosts();
       setModalOpen(false);
-      setCurrentPost({});
     } catch (error) {
       console.error("Error creating/updating post:", error);
-      toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      toast.error(
+        "Đã xảy ra lỗi khi " +
+          (postId ? "cập nhật" : "tạo") +
+          " bài viết. Vui lòng thử lại sau."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDeletePost = async (postId) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
-      try {
-        setIsLoading(true);
-        await communityService.deletePost(postId);
-        setPosts(posts.filter((post) => post.id !== postId));
-        toast.success("Bài viết đã được xóa thành công");
-      } catch (error) {
-        toast.error("Không thể xóa bài viết, vui lòng thử lại sau");
-        console.error("Error deleting post:", error);
-      } finally {
-        setIsLoading(false);
-      }
+    if (!window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
+      return;
+    }
+
+    try {
+      await communityService.deletePost(postId);
+      setPosts(posts.filter((p) => p.id !== postId));
+      toast.success("Đã xóa bài viết thành công!");
+      playDeleteSound();
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Đã xảy ra lỗi khi xóa bài viết. Vui lòng thử lại sau.");
     }
   };
 
@@ -1425,142 +1440,153 @@ const Community = () => {
 
   return (
     <div className="community-container">
-      <div className="community-header">
-        <h1>Cộng đồng</h1>
-        <div className="header-actions">
-          <div className="search-box">
-            <Search size={18} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm bài viết..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <button className="create-post-button" onClick={openNewPostModal}>
-            <Plus size={18} />
-            Tạo bài viết
-          </button>
+      <div className="community-layout">
+        <div className="community-sidebar">
+          <SidebarTunes />
+          <SidebarContacts />
+          <SidebarSettings />
         </div>
-      </div>
-
-      {isLoading && !modalOpen && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-        </div>
-      )}
-
-      <div className="posts-container">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <div key={post.id} className="post-card">
-              <div className="post-header">
-                <div className="user-info">
-                  <div className="avatar">
-                    <User size={20} />
-                  </div>
-                  <div className="post-meta">
-                    <h3>
-                      {post.createdBy ||
-                        post.userName ||
-                        post.author ||
-                        post.user?.name ||
-                        "Người dùng"}
-                    </h3>
-                    <div className="post-time">
-                      {formatDate(post.createdDate)}
-                    </div>
-                  </div>
-                </div>
-                <div className="post-actions">
-                  <button
-                    className="menu-button"
-                    onClick={() =>
-                      setShowDropdown(showDropdown === post.id ? null : post.id)
-                    }
-                  >
-                    ...
-                  </button>
-                  {showDropdown === post.id && (
-                    <div className="dropdown-content">
-                      <button
-                        onClick={() => openEditModal(post)}
-                        className="edit-button"
-                      >
-                        <Edit size={16} />
-                        Chỉnh sửa
-                      </button>
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="delete-button"
-                      >
-                        <Trash size={16} />
-                        Xóa bài viết
-                      </button>
-                    </div>
-                  )}
-                </div>
+        <div className="community-main">
+          <div className="community-header">
+            <h1>Cộng đồng</h1>
+            <div className="header-actions">
+              <div className="search-box">
+                <Search size={18} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm bài viết..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-              <div className="post-content">
-                <h2>{post.title}</h2>
-                <p>{post.body}</p>
-                {post.postImageUrl && (
-                  <div className="post-images">
-                    <img src={post.postImageUrl} alt={post.title} />
-                  </div>
-                )}
-                {post.postTags && post.postTags.length > 0 && (
-                  <div className="post-tags">
-                    {post.postTags.map((tag, index) => (
-                      <span key={tag.id || `tag_${index}`} className="tag">
-                        #{typeof tag === "string" ? tag : tag.name || "tag"}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="post-footer">
-                <button
-                  className={`reaction-button ${
-                    likedPosts[post.id] ? "liked" : ""
-                  }`}
-                  onClick={() => handleLikeToggle(post.id)}
-                >
-                  <Heart
-                    size={18}
-                    className={likedPosts[post.id] ? "heart-filled" : ""}
-                  />
-                  Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
-                </button>
-                <button
-                  className="reaction-button"
-                  onClick={() => toggleComments(post.id)}
-                >
-                  <MessageCircle size={18} />
-                  Bình luận
-                </button>
-              </div>
-
-              {/* Hiển thị phần bình luận nếu đã mở rộng */}
-              {expandedComments[post.id] && <CommentSection postId={post.id} />}
+              <button className="create-post-button" onClick={openNewPostModal}>
+                <Plus size={18} />
+                Tạo bài viết
+              </button>
             </div>
-          ))
-        ) : (
-          <div className="no-posts">
-            {searchQuery
-              ? "Không tìm thấy bài viết nào phù hợp"
-              : "Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!"}
           </div>
-        )}
-      </div>
 
-      <PostModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        post={currentPost}
-        onSubmit={handleCreatePost}
-        isLoading={isLoading}
-      />
+          {isLoading && !modalOpen && (
+            <div className="loading-overlay">
+              <div className="loading-spinner"></div>
+            </div>
+          )}
+
+          <div className="posts-container">
+            {filteredPosts.length > 0 ? (
+              filteredPosts.map((post) => (
+                <div key={post.id} className="post-card">
+                  <div className="post-header">
+                    <div className="user-info">
+                      <div className="avatar">
+                        <User size={20} />
+                      </div>
+                      <div className="post-meta">
+                        <h3>
+                          {post.createdBy ||
+                            post.userName ||
+                            post.author ||
+                            post.user?.name ||
+                            "Người dùng"}
+                        </h3>
+                        <div className="post-time">
+                          {formatDate(post.createdDate)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="post-actions">
+                      <button
+                        className="menu-button"
+                        onClick={() =>
+                          setShowDropdown(showDropdown === post.id ? null : post.id)
+                        }
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+                      {showDropdown === post.id && (
+                        <div className="dropdown-content">
+                          <button
+                            onClick={() => openEditModal(post)}
+                            className="edit-button"
+                          >
+                            <Edit size={16} />
+                            Chỉnh sửa
+                          </button>
+                          <button
+                            onClick={() => handleDeletePost(post.id)}
+                            className="delete-button"
+                          >
+                            <Trash size={16} />
+                            Xóa bài viết
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <h2 className="post-title">{post.title}</h2>
+                  <div className="post-content">
+                    <p>{post.body}</p>
+                    {post.postImageUrl && (
+                      <div className="post-images">
+                        <img src={post.postImageUrl} alt={post.title} />
+                      </div>
+                    )}
+                    {post.postTags && post.postTags.length > 0 && (
+                      <div className="post-tags">
+                        {post.postTags.map((tag, index) => (
+                          <span key={tag.id || `tag_${index}`} className="tag">
+                            #{typeof tag === "string" ? tag : tag.name || "tag"}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="post-footer">
+                    <div className="reaction-section">
+                      <button
+                        className={`reaction-button ${
+                          likedPosts[post.id] ? "liked" : ""
+                        }`}
+                        onClick={() => handleLikeToggle(post.id)}
+                      >
+                        <Heart
+                          size={18}
+                          className={likedPosts[post.id] ? "heart-filled" : ""}
+                        />
+                        Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
+                      </button>
+                      <button
+                        className="reaction-button"
+                        onClick={() => toggleComments(post.id)}
+                      >
+                        <MessageCircle size={18} />
+                        Bình luận
+                      </button>
+                    </div>
+
+                    {/* Hiển thị phần bình luận nếu đã mở rộng */}
+                    {expandedComments[post.id] && <CommentSection postId={post.id} />}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-posts">
+                {searchQuery
+                  ? "Không tìm thấy bài viết nào phù hợp"
+                  : "Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!"}
+              </div>
+            )}
+          </div>
+
+          <PostModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            post={currentPost}
+            onSubmit={handleCreatePost}
+            isLoading={isLoading}
+          />
+        </div>
+      </div>
     </div>
   );
 };
