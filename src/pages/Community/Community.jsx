@@ -66,6 +66,12 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
   };
 
   const addTag = () => {
+    // Kiểm tra số lượng tag, giới hạn tối đa 2 tags
+    if (tags.length >= 2) {
+      toast.warning("Chỉ được phép thêm tối đa 2 thẻ");
+      return;
+    }
+
     if (newTag.trim() && !tags.includes(newTag.trim())) {
       setTags([...tags, newTag.trim()]);
       setNewTag("");
@@ -104,16 +110,18 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
       formData.append("postImage", image);
     }
 
-    // Thêm các tags nếu có - chỉ sử dụng một phương thức nhất quán
+    // Thêm các tags nếu có - cách mới phù hợp với cấu trúc API
     if (tags.length > 0) {
-      // Gửi mảng các tag theo đúng định dạng backend yêu cầu: [{ "tagName": "string" }]
-      const tagsArray = tags.map((tag) => ({ tagName: tag.trim() }));
+      // Gửi mảng tags trực tiếp (không cần các object phức tạp)
+      formData.append(
+        "postTags",
+        JSON.stringify(tags.map((tag) => tag.trim()))
+      );
 
-      // Chuyển thành JSON string và thêm vào formData
-      formData.append("postTags", JSON.stringify(tagsArray));
-
-      // In ra console để kiểm tra
-      console.log("Tags JSON được gửi:", JSON.stringify(tagsArray));
+      console.log(
+        "Tags được gửi:",
+        JSON.stringify(tags.map((tag) => tag.trim()))
+      );
     }
 
     // Log FormData để kiểm tra
@@ -203,15 +211,27 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
               <div className="tag-form">
                 <input
                   type="text"
-                  placeholder="Thêm thẻ (gõ và nhấn Enter)"
+                  placeholder="Thêm thẻ (tối đa 2 thẻ)"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  disabled={tags.length >= 2}
                 />
-                <button type="button" className="tag-button" onClick={addTag}>
+                <button
+                  type="button"
+                  className="tag-button"
+                  onClick={addTag}
+                  disabled={tags.length >= 2}
+                >
                   Thêm
                 </button>
               </div>
+
+              {tags.length >= 2 && (
+                <div className="tag-limit-warning">
+                  Đã đạt giới hạn tối đa 2 thẻ
+                </div>
+              )}
 
               {tags.length > 0 && (
                 <div className="tags-list">
@@ -262,6 +282,15 @@ const CommentSection = ({ postId, initialComments = [] }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState("");
   const [showDropdown, setShowDropdown] = useState(null);
+  const [replyToComment, setReplyToComment] = useState(null);
+  const [commentImage, setCommentImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const commentImageRef = useRef(null);
+  const [expandedReplies, setExpandedReplies] = useState({});
+  const [displayCommentCount, setDisplayCommentCount] = useState(3);
+  const COMMENT_INCREMENT = 5;
+  // Thêm state để quản lý cách sắp xếp bình luận
+  const [sortOrder, setSortOrder] = useState("newest"); // "newest", "oldest", "relevant"
 
   useEffect(() => {
     fetchComments();
@@ -275,11 +304,54 @@ const CommentSection = ({ postId, initialComments = [] }) => {
         `Fetched ${fetchedComments.length} comments for post ${postId}:`,
         fetchedComments
       );
+
+      // Log chi tiết dữ liệu của comment đầu tiên để kiểm tra cấu trúc
+      if (fetchedComments && fetchedComments.length > 0) {
+        console.log(
+          "Cấu trúc chi tiết của comment đầu tiên:",
+          JSON.stringify(fetchedComments[0], null, 2)
+        );
+        console.log("Thuộc tính hình ảnh:", {
+          imageUrl: fetchedComments[0].imageUrl,
+          image: fetchedComments[0].image,
+          commentImageUrl: fetchedComments[0].commentImageUrl,
+          imagePath: fetchedComments[0].imagePath,
+        });
+      }
+
       setComments(fetchedComments || []);
+
+      // Nếu người dùng đã xem hết bình luận hoặc số bình luận đã thay đổi đáng kể, reset lại số lượng hiển thị
+      const rootCommentsCount = fetchedComments.filter(
+        (c) => !c.parentCommentId
+      ).length;
+      if (rootCommentsCount <= 3 || displayCommentCount > rootCommentsCount) {
+        setDisplayCommentCount(Math.min(3, rootCommentsCount));
+      }
     } catch (error) {
       console.error("Error fetching comments:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleCommentImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCommentImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeCommentImage = () => {
+    setCommentImage(null);
+    setImagePreview("");
+    if (commentImageRef.current) {
+      commentImageRef.current.value = "";
     }
   };
 
@@ -289,14 +361,49 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
     try {
       setIsLoading(true);
-      const commentData = {
-        postId: postId,
-        comment: newComment.trim(),
-      };
 
-      await commentService.createComment(commentData);
+      // Sử dụng FormData để gửi comment với hình ảnh hoặc reply
+      const formData = new FormData();
+      formData.append("postId", postId);
+      formData.append("comment", newComment.trim());
+
+      // ParentCommentId = 0 là comment mới, số khác là reply
+      const parentId = replyToComment ? replyToComment.commentId : 0;
+      formData.append("parentCommentId", parentId);
+
+      // Thêm hình ảnh nếu có
+      if (commentImage) {
+        formData.append("image", commentImage);
+      }
+
+      console.log("Gửi comment với thông tin:", {
+        postId,
+        comment: newComment.trim(),
+        parentId,
+        hasImage: !!commentImage,
+      });
+
+      await commentService.createCommentWithImage(formData);
+
+      // Reset form
       setNewComment("");
-      fetchComments(); // Làm mới danh sách bình luận
+      setCommentImage(null);
+      setImagePreview("");
+      setReplyToComment(null);
+      if (commentImageRef.current) {
+        commentImageRef.current.value = "";
+      }
+
+      // Nếu đang trả lời một comment, tự động mở rộng phần phản hồi
+      if (parentId) {
+        setExpandedReplies((prev) => ({
+          ...prev,
+          [parentId]: true,
+        }));
+      }
+
+      // Cập nhật danh sách bình luận
+      fetchComments();
       toast.success("Đã đăng bình luận thành công");
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -306,6 +413,19 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleReplyComment = (comment) => {
+    setReplyToComment(comment);
+    setShowDropdown(null);
+    // Tự động focus vào ô nhập comment
+    setTimeout(() => {
+      document.querySelector(".comment-input")?.focus();
+    }, 100);
+  };
+
+  const cancelReply = () => {
+    setReplyToComment(null);
   };
 
   const handleEditComment = (comment) => {
@@ -362,83 +482,393 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     }
   };
 
+  const toggleReplies = (commentId) => {
+    setExpandedReplies((prev) => ({
+      ...prev,
+      [commentId]: !prev[commentId],
+    }));
+  };
+
+  // Hiển thị comment theo cấu trúc cha/con
+  const renderCommentItem = (comment) => {
+    // Lấy tất cả các reply cho comment này
+    const childComments = comments.filter(
+      (c) => c.parentCommentId === comment.commentId
+    );
+
+    const hasReplies = childComments.length > 0;
+    const isExpanded = expandedReplies[comment.commentId];
+
+    // Lấy tên người dùng từ API hoặc dùng giá trị mặc định
+    const authorName = comment.userName || comment.user?.name || "Người dùng";
+
+    // Xử lý hình ảnh comment nếu có - thêm các trường có thể có
+    const commentImage =
+      comment.imageUrl ||
+      comment.image ||
+      comment.commentImageUrl ||
+      comment.imagePath ||
+      null;
+
+    // Log thông tin hình ảnh để debug
+    if (commentImage) {
+      console.log(
+        `Hình ảnh cho comment ID ${comment.commentId}:`,
+        commentImage
+      );
+    }
+
+    return (
+      <div key={comment.commentId} className="comment-item">
+        <div className="comment-avatar">
+          <User size={24} />
+        </div>
+        <div className="comment-content-wrapper">
+          <div className="comment-content">
+            <div className="comment-header">
+              <div className="comment-author">{authorName}</div>
+              <div className="comment-datetime">
+                {formatDate(comment.createdDate)}
+              </div>
+            </div>
+
+            {editingCommentId === comment.commentId ? (
+              <div className="edit-comment-form">
+                <textarea
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  placeholder="Chỉnh sửa bình luận..."
+                />
+                <div className="edit-actions">
+                  <button
+                    onClick={submitEditComment}
+                    disabled={isLoading || !editText.trim()}
+                  >
+                    Lưu
+                  </button>
+                  <button onClick={() => setEditingCommentId(null)}>Hủy</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="comment-text">{comment.comment}</div>
+                {commentImage && (
+                  <div className="comment-image">
+                    <img
+                      src={commentImage}
+                      alt="Comment attachment"
+                      onError={(e) => {
+                        console.error("Lỗi tải hình ảnh:", commentImage);
+                        e.target.style.display = "none"; // Ẩn hình ảnh nếu không tải được
+                      }}
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Nút like và reply theo kiểu Facebook */}
+            <div className="facebook-style-actions">
+              <button className="action-button">Thích</button>
+              <button
+                className="action-button"
+                onClick={() => handleReplyComment(comment)}
+              >
+                Phản hồi
+              </button>
+            </div>
+          </div>
+
+          <div className="comment-actions">
+            <button
+              className="comment-menu-button"
+              onClick={() =>
+                setShowDropdown(
+                  showDropdown === comment.commentId ? null : comment.commentId
+                )
+              }
+            >
+              <MoreVertical size={16} />
+            </button>
+
+            {showDropdown === comment.commentId && (
+              <div className="comment-dropdown">
+                <button onClick={() => handleReplyComment(comment)}>
+                  <MessageCircle size={14} /> Trả lời
+                </button>
+                <button onClick={() => handleEditComment(comment)}>
+                  <Edit size={14} /> Chỉnh sửa
+                </button>
+                <button onClick={() => handleDeleteComment(comment.commentId)}>
+                  <Trash size={14} /> Xóa
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Hiển thị phần replies kiểu Facebook */}
+          {hasReplies && (
+            <div className="facebook-style-replies">
+              {!isExpanded ? (
+                <button
+                  className="view-replies-button"
+                  onClick={() => toggleReplies(comment.commentId)}
+                >
+                  {childComments.length === 1
+                    ? "Xem 1 phản hồi"
+                    : `Xem ${childComments.length} phản hồi`}
+                </button>
+              ) : (
+                <>
+                  <div className="replies-container">
+                    {childComments.map((reply) => {
+                      // Lấy thông tin reply
+                      const replyAuthorName =
+                        reply.userName || reply.user?.name || "Người dùng";
+                      // Xử lý hình ảnh reply với nhiều trường có thể có
+                      const replyImage =
+                        reply.imageUrl ||
+                        reply.image ||
+                        reply.commentImageUrl ||
+                        reply.imagePath ||
+                        null;
+
+                      // Log để debug
+                      if (replyImage) {
+                        console.log(
+                          `Hình ảnh cho reply ID ${reply.commentId}:`,
+                          replyImage
+                        );
+                      }
+
+                      return (
+                        <div key={reply.commentId} className="reply-item">
+                          <div className="comment-avatar">
+                            <User size={20} />
+                          </div>
+                          <div className="reply-content">
+                            <div className="comment-header">
+                              <div className="comment-author">
+                                {replyAuthorName}
+                              </div>
+                              <div className="comment-datetime">
+                                {formatDate(reply.createdDate)}
+                              </div>
+                            </div>
+                            {editingCommentId === reply.commentId ? (
+                              <div className="edit-comment-form">
+                                <textarea
+                                  value={editText}
+                                  onChange={(e) => setEditText(e.target.value)}
+                                  placeholder="Chỉnh sửa bình luận..."
+                                />
+                                <div className="edit-actions">
+                                  <button
+                                    onClick={submitEditComment}
+                                    disabled={isLoading || !editText.trim()}
+                                  >
+                                    Lưu
+                                  </button>
+                                  <button
+                                    onClick={() => setEditingCommentId(null)}
+                                  >
+                                    Hủy
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="comment-text">
+                                  {reply.comment}
+                                </div>
+                                {replyImage && (
+                                  <div className="comment-image reply-image">
+                                    <img
+                                      src={replyImage}
+                                      alt="Reply attachment"
+                                      onError={(e) => {
+                                        console.error(
+                                          "Lỗi tải hình ảnh reply:",
+                                          replyImage
+                                        );
+                                        e.target.style.display = "none"; // Ẩn hình ảnh nếu không tải được
+                                      }}
+                                    />
+                                  </div>
+                                )}
+                              </>
+                            )}
+
+                            {/* Nút like và reply cho replies */}
+                            <div className="facebook-style-actions">
+                              <button className="action-button">Thích</button>
+                              <button
+                                className="action-button"
+                                onClick={() => handleReplyComment(comment)} // Trả lời comment cha
+                              >
+                                Phản hồi
+                              </button>
+                            </div>
+
+                            {/* Menu dropdown cho replies */}
+                            <div className="reply-actions">
+                              <button
+                                className="comment-menu-button"
+                                onClick={() =>
+                                  setShowDropdown(
+                                    showDropdown === reply.commentId
+                                      ? null
+                                      : reply.commentId
+                                  )
+                                }
+                              >
+                                <MoreVertical size={14} />
+                              </button>
+
+                              {showDropdown === reply.commentId && (
+                                <div className="comment-dropdown">
+                                  <button
+                                    onClick={() => handleReplyComment(comment)}
+                                  >
+                                    <MessageCircle size={14} /> Trả lời
+                                  </button>
+                                  <button
+                                    onClick={() => handleEditComment(reply)}
+                                  >
+                                    <Edit size={14} /> Chỉnh sửa
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteComment(reply.commentId)
+                                    }
+                                  >
+                                    <Trash size={14} /> Xóa
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <button
+                    className="hide-replies-button"
+                    onClick={() => toggleReplies(comment.commentId)}
+                  >
+                    Ẩn phản hồi
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const loadMoreComments = () => {
+    setDisplayCommentCount((prevCount) => prevCount + COMMENT_INCREMENT);
+  };
+
+  const collapseComments = () => {
+    setDisplayCommentCount(3);
+    // Cuộn lên đầu phần bình luận
+    document
+      .querySelector(".comments-section h4")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Thêm hàm để sắp xếp bình luận
+  const getSortedComments = () => {
+    // Lọc lấy các comment gốc
+    const rootComments = comments.filter((comment) => !comment.parentCommentId);
+
+    // Sắp xếp theo tiêu chí được chọn
+    switch (sortOrder) {
+      case "oldest":
+        return rootComments.sort(
+          (a, b) => new Date(a.createdDate) - new Date(b.createdDate)
+        );
+      case "relevant":
+        // Giả lập sắp xếp theo "relevant" (có thể dựa trên số lượng phản hồi hoặc like)
+        return rootComments.sort((a, b) => {
+          // Đếm số phản hồi cho mỗi comment
+          const aReplies = comments.filter(
+            (c) => c.parentCommentId === a.commentId
+          ).length;
+          const bReplies = comments.filter(
+            (c) => c.parentCommentId === b.commentId
+          ).length;
+          return bReplies - aReplies; // Comment có nhiều phản hồi hơn sẽ lên đầu
+        });
+      case "newest":
+      default:
+        return rootComments.sort(
+          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+        );
+    }
+  };
+
+  // Thêm hàm để thay đổi cách sắp xếp
+  const changeSortOrder = (order) => {
+    setSortOrder(order);
+    // Reset lại số lượng bình luận hiển thị
+    setDisplayCommentCount(3);
+  };
+
   return (
     <div className="comments-section">
-      <h4>Bình luận ({comments.length})</h4>
+      <div className="comments-header">
+        <h4>Bình luận ({comments.length})</h4>
+
+        {/* Thêm dropdown để chọn cách sắp xếp bình luận */}
+        {comments.filter((c) => !c.parentCommentId).length > 1 && (
+          <div className="comment-sort-dropdown">
+            <select
+              value={sortOrder}
+              onChange={(e) => changeSortOrder(e.target.value)}
+              className="sort-select"
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+              <option value="relevant">Phù hợp nhất</option>
+            </select>
+          </div>
+        )}
+      </div>
 
       {isLoading && (
         <div className="comments-loading">Đang tải bình luận...</div>
       )}
 
       <div className="comments-list">
-        {comments.map((comment) => (
-          <div key={comment.commentId} className="comment-item">
-            <div className="comment-avatar">
-              <User size={24} />
-            </div>
-            <div className="comment-content">
-              <div className="comment-header">
-                <div className="comment-author">
-                  {comment.userName || "Người dùng"}
-                </div>
-                <div className="comment-datetime">
-                  {formatDate(comment.createdDate)}
-                </div>
-              </div>
+        {/* Hiển thị các comment gốc đã được sắp xếp với số lượng giới hạn */}
+        {getSortedComments()
+          .slice(0, displayCommentCount)
+          .map((comment) => renderCommentItem(comment))}
 
-              {editingCommentId === comment.commentId ? (
-                <div className="edit-comment-form">
-                  <textarea
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    placeholder="Chỉnh sửa bình luận..."
-                  />
-                  <div className="edit-actions">
-                    <button
-                      onClick={submitEditComment}
-                      disabled={isLoading || !editText.trim()}
-                    >
-                      Lưu
-                    </button>
-                    <button onClick={() => setEditingCommentId(null)}>
-                      Hủy
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="comment-text">{comment.comment}</div>
-              )}
-            </div>
-
-            <div className="comment-actions">
-              <button
-                className="comment-menu-button"
-                onClick={() =>
-                  setShowDropdown(
-                    showDropdown === comment.commentId
-                      ? null
-                      : comment.commentId
-                  )
-                }
-              >
-                <MoreVertical size={16} />
-              </button>
-
-              {showDropdown === comment.commentId && (
-                <div className="comment-dropdown">
-                  <button onClick={() => handleEditComment(comment)}>
-                    <Edit size={14} /> Chỉnh sửa
-                  </button>
-                  <button
-                    onClick={() => handleDeleteComment(comment.commentId)}
-                  >
-                    <Trash size={14} /> Xóa
-                  </button>
-                </div>
-              )}
-            </div>
+        {/* Nút xem thêm bình luận nếu còn bình luận chưa hiển thị */}
+        {comments.filter((comment) => !comment.parentCommentId).length >
+          displayCommentCount && (
+          <div className="load-more-comments">
+            <button className="load-more-button" onClick={loadMoreComments}>
+              Xem thêm bình luận
+            </button>
           </div>
-        ))}
+        )}
+
+        {/* Nút thu gọn bình luận nếu đang hiển thị nhiều hơn số lượng mặc định */}
+        {displayCommentCount > 3 &&
+          comments.filter((comment) => !comment.parentCommentId).length <=
+            displayCommentCount &&
+          comments.filter((comment) => !comment.parentCommentId).length > 3 && (
+            <div className="collapse-comments">
+              <button className="collapse-button" onClick={collapseComments}>
+                Thu gọn bình luận
+              </button>
+            </div>
+          )}
 
         {comments.length === 0 && !isLoading && (
           <div className="no-comments">
@@ -448,26 +878,70 @@ const CommentSection = ({ postId, initialComments = [] }) => {
       </div>
 
       <div className="add-comment">
+        {replyToComment && (
+          <div className="reply-info">
+            <span>
+              Đang trả lời {replyToComment.userName || "Người dùng"}: &quot;
+              {replyToComment.comment.substring(0, 50)}
+              {replyToComment.comment.length > 50 ? "..." : ""}&quot;
+            </span>
+            <button className="cancel-reply" onClick={cancelReply}>
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmitComment}>
           <div className="comment-input-wrapper">
             <div className="comment-avatar">
               <User size={24} />
             </div>
-            <input
-              type="text"
-              placeholder="Viết bình luận..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              disabled={isLoading}
-            />
-            <button
-              type="submit"
-              className="send-comment-btn"
-              disabled={isLoading || !newComment.trim()}
-            >
-              <Send size={18} />
-            </button>
+            <div className="comment-text-container">
+              <input
+                type="text"
+                className="comment-input"
+                placeholder={
+                  replyToComment ? "Viết phản hồi..." : "Viết bình luận..."
+                }
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                disabled={isLoading}
+              />
+
+              <div className="comment-actions-row">
+                <div className="comment-image-upload">
+                  <input
+                    type="file"
+                    id="comment-image"
+                    ref={commentImageRef}
+                    onChange={handleCommentImageChange}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                  <label htmlFor="comment-image" className="add-image-btn">
+                    <Camera size={18} />
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  className="send-comment-btn"
+                  disabled={isLoading || !newComment.trim()}
+                >
+                  <Send size={18} />
+                </button>
+              </div>
+            </div>
           </div>
+
+          {imagePreview && (
+            <div className="comment-image-preview">
+              <img src={imagePreview} alt="Preview" />
+              <button className="remove-image-btn" onClick={removeCommentImage}>
+                <X size={16} />
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
@@ -755,13 +1229,24 @@ const Community = () => {
       if (formData instanceof FormData) {
         const title = formData.get("title");
         const body = formData.get("body");
-        const postTags = formData.get("postTags");
 
         if (!title || !body) {
           throw new Error("Tiêu đề và nội dung không được để trống");
         }
 
-        console.log("Tags từ form:", postTags);
+        // Kiểm tra số lượng tag
+        const postTagsStr = formData.get("postTags");
+        if (postTagsStr) {
+          try {
+            const tagsArray = JSON.parse(postTagsStr);
+            if (tagsArray.length > 2) {
+              throw new Error("Chỉ được phép thêm tối đa 2 thẻ");
+            }
+            console.log("Tags từ form:", tagsArray);
+          } catch (err) {
+            console.error("Lỗi parse tags JSON:", err);
+          }
+        }
       }
 
       if (postId) {
@@ -772,25 +1257,29 @@ const Community = () => {
             throw new Error("Không tìm thấy bài viết cần cập nhật");
           }
 
-          // Tạo đối tượng dữ liệu cập nhật có chứa ID
-          const updateData = {
-            id: postId, // Đảm bảo ID luôn có
-            title: formData.get("title"),
-            body: formData.get("body"),
-          };
+          // Tạo FormData mới cho cập nhật bài viết
+          const updateFormData = new FormData();
+          updateFormData.append("id", postId);
+          updateFormData.append("title", formData.get("title"));
+          updateFormData.append("body", formData.get("body"));
 
-          // Xử lý tags nếu có
-          const tagsStr = formData.get("postTags");
-          if (tagsStr) {
-            try {
-              updateData.postTags = JSON.parse(tagsStr);
-            } catch (err) {
-              console.error("Lỗi parse tags:", err);
-            }
+          // Xử lý tags - sử dụng cùng định dạng với create post
+          const postTagsStr = formData.get("postTags");
+          if (postTagsStr) {
+            updateFormData.append("postTags", postTagsStr);
           }
 
-          console.log("Dữ liệu cập nhật bài viết:", updateData);
-          await communityService.updatePost(updateData);
+          // Thêm hình ảnh nếu có
+          if (formData.get("postImage")) {
+            updateFormData.append("postImage", formData.get("postImage"));
+          }
+
+          console.log("Dữ liệu cập nhật bài viết:");
+          for (let pair of updateFormData.entries()) {
+            console.log(pair[0] + ": " + pair[1]);
+          }
+
+          await communityService.updatePost(updateFormData);
           toast.success("Bài viết đã được cập nhật thành công");
         } catch (updateError) {
           console.error("Lỗi khi cập nhật bài viết:", updateError);

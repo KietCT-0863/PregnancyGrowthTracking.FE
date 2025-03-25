@@ -29,6 +29,7 @@ export const ENDPOINTS = {
   COMMENTS: {
     LIST: "/Comments",
     CREATE: "/Comments",
+    CREATE_WITH_IMAGE: "/Comments/with-image",
     UPDATE: (commentId) => `/Comments/${commentId}`,
     DELETE: (commentId) => `/Comments/${commentId}`,
   },

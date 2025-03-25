@@ -25,21 +25,42 @@ const commentService = {
   // Lấy comments cho một bài viết cụ thể
   getCommentsByPostId: async (postId) => {
     try {
-      // Tự filter dữ liệu trên client vì API không có endpoint riêng để lấy theo postId
-      const response = await axiosInstance.get(ENDPOINTS.COMMENTS.LIST);
-      const allComments = response.data;
+      // Sử dụng API endpoint mới để lấy comments cho một bài viết
+      const response = await axiosInstance.get(
+        `${ENDPOINTS.COMMENTS.LIST}?postId=${postId}`
+      );
 
-      // Filter comments theo postId
-      return Array.isArray(allComments)
-        ? allComments.filter((comment) => comment.postId === postId)
-        : [];
+      // Kiểm tra và xử lý dữ liệu trả về
+      const commentsData = response.data;
+      console.log(
+        `Nhận được ${
+          commentsData.length || 0
+        } comments từ API cho post ${postId}:`,
+        commentsData
+      );
+
+      // Sắp xếp comments: comments gốc trước, sau đó là replies
+      if (Array.isArray(commentsData)) {
+        const sortedComments = [...commentsData].sort((a, b) => {
+          // Nếu a là comment gốc và b là reply, a sẽ lên trước
+          if (!a.parentCommentId && b.parentCommentId) return -1;
+          // Nếu a là reply và b là comment gốc, b sẽ lên trước
+          if (a.parentCommentId && !b.parentCommentId) return 1;
+          // Nếu cả hai đều là comment gốc hoặc cả hai đều là reply, sắp xếp theo thời gian
+          return new Date(b.createdDate) - new Date(a.createdDate);
+        });
+
+        return sortedComments;
+      }
+
+      return Array.isArray(commentsData) ? commentsData : [];
     } catch (error) {
       console.error(`Error fetching comments for post ${postId}:`, error);
       return [];
     }
   },
 
-  // Tạo comment mới
+  // Tạo comment mới không có ảnh (legacy)
   createComment: async (commentData) => {
     try {
       if (!commentData.postId || !commentData.comment?.trim()) {
@@ -58,6 +79,47 @@ const commentService = {
         ENDPOINTS.COMMENTS.CREATE,
         payload
       );
+      return response.data;
+    } catch (error) {
+      handleApiError(error, "Lỗi khi tạo bình luận");
+    }
+  },
+
+  // Tạo comment mới (có ảnh hoặc trả lời comment khác)
+  createCommentWithImage: async (formData) => {
+    try {
+      if (!formData.get("postId") || !formData.get("comment")?.trim()) {
+        throw new Error(
+          "ID bài viết và nội dung bình luận không được để trống"
+        );
+      }
+
+      console.log("Tạo comment mới với FormData:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
+      // Đảm bảo tên trường image đúng (nếu API yêu cầu tên khác)
+      if (formData.get("image")) {
+        // Nếu API yêu cầu tên trường là 'commentImage' thay vì 'image'
+        const imageFile = formData.get("image");
+        formData.append("commentImage", imageFile);
+        console.log("Đã thêm file hình ảnh dưới tên trường 'commentImage'");
+      }
+
+      const response = await axiosInstance.post(
+        ENDPOINTS.COMMENTS.CREATE_WITH_IMAGE,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      // Log chi tiết response để xem cấu trúc dữ liệu trả về
+      console.log("Response từ API khi tạo comment:", response.data);
+
       return response.data;
     } catch (error) {
       handleApiError(error, "Lỗi khi tạo bình luận");
