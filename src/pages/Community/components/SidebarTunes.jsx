@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Music, Play, Pause, Volume2, VolumeX } from "lucide-react";
-import { Howl } from "howler";
+import { Howl, Howler } from "howler";
 import "../styles/Sidebar.scss";
 
 const SidebarTunes = () => {
@@ -11,20 +11,75 @@ const SidebarTunes = () => {
   const [loadError, setLoadError] = useState(false);
   const audioContext = useRef(null);
 
+  // Kiểm tra xem Howler đã được cài đặt chính xác chưa
+  useEffect(() => {
+    console.log("Howler version:", Howler.version);
+    console.log("Howler codecs:", Howler.codecs());
+    console.log("Howler usingWebAudio:", Howler.usingWebAudio);
+    console.log("Howler html5AudioPool:", Howler.html5AudioPool);
+    
+    // Kiểm tra các định dạng âm thanh hỗ trợ
+    console.log("MP3 support:", Howler.codecs('mp3'));
+    console.log("WAV support:", Howler.codecs('wav'));
+    console.log("OGG support:", Howler.codecs('ogg'));
+    
+    // Log các file âm thanh
+    console.log("Audio files in tunes:", tunes.map(tune => ({
+      id: tune.id,
+      name: tune.name,
+      src: tune.src
+    })));
+
+    if (typeof window !== 'undefined' && window.AudioContext) {
+      try {
+        audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
+        console.log("AudioContext initialized:", audioContext.current);
+        console.log("AudioContext state:", audioContext.current.state);
+      } catch (error) {
+        console.error("AudioContext initialization failed:", error);
+      }
+    } else {
+      console.warn("Web Audio API not supported in this browser");
+    }
+
+    // Kiểm tra xem trình duyệt có cho phép autoplay không
+    document.addEventListener('DOMContentLoaded', () => {
+      const autoplayTest = document.createElement('audio');
+      autoplayTest.src = "data:audio/mpeg;base64,/+MYxAAAAANIAUAAAASEEB/jwOFM/0MM/90b/+RhST//w4NFwOjf///PZu////9lns5GFDv//l9GlUIEEIAAAgIg8Ir/JGq3/+MYxDsLIj4QMYcoAP0dv9HIjUcH//yYSg+CIbkGP//8w0bLVjUP///3Z0x5QCAv/yLjwtGKTEFNRTMuOTeqqqqqqqqqqqqq/+MYxEkNmdJkUYc4AKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+      autoplayTest.load();
+      autoplayTest.play().then(() => {
+        console.log("Autoplay is allowed");
+      }).catch(e => {
+        console.warn("Autoplay is not allowed:", e);
+      });
+    });
+
+    return () => {
+      if (sound) {
+        console.log("Cleaning up sound on unmount");
+        sound.stop();
+      }
+      if (audioContext.current && audioContext.current.state !== 'closed') {
+        console.log("Closing AudioContext on unmount");
+        audioContext.current.close();
+      }
+    };
+  }, []);
+
   const tunes = [
     { 
       id: 1, 
       name: "Giọng hát thai nhi", 
       creator: "Miroslav Philharmonik", 
       type: "3 bài hát - 7 phút/bài",
-      src: "https://soundbible.com/mp3/lullaby-music-box-22304.mp3" 
+      src: "/audio/Erika-VA-6036685.mp3" 
     },
     { 
       id: 2, 
       name: "Âm nhạc êm dịu", 
       creator: "Jonathan Lim", 
       type: "4 bài hát",
-      src: "https://soundbible.com/mp3/healing-18495.mp3"
+      src: "/audio/skibidi-toilet.mp3"
     },
     { 
       id: 3, 
@@ -49,103 +104,168 @@ const SidebarTunes = () => {
     },
   ];
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.AudioContext) {
-      try {
-        audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
-        console.log("AudioContext initialized:", audioContext.current);
-      } catch (error) {
-        console.error("AudioContext initialization failed:", error);
-      }
-    }
-
-    return () => {
-      if (sound) {
-        sound.stop();
-      }
-      if (audioContext.current && audioContext.current.state !== 'closed') {
-        audioContext.current.close();
-      }
-    };
-  }, []);
-
   const playSound = (tuneId) => {
+    console.log("=== PLAY SOUND START ===");
     console.log("Attempting to play sound for tune ID:", tuneId);
     
-    if (audioContext.current && audioContext.current.state === 'suspended') {
-      audioContext.current.resume();
-    }
-
-    if (sound) {
-      console.log("Stopping current sound");
-      sound.stop();
-    }
-
-    if (playingId === tuneId) {
-      console.log("Stopping playback - same tune clicked");
-      setPlayingId(null);
-      setSound(null);
-      return;
-    }
-
-    const selectedTune = tunes.find((tune) => tune.id === tuneId);
-    if (!selectedTune || !selectedTune.src) {
-      console.error("Invalid tune or missing src:", selectedTune);
-      return;
-    }
-
-    console.log("Creating new Howl instance for:", selectedTune.src);
-    setLoadError(false);
-
-    const newSound = new Howl({
-      src: [selectedTune.src],
-      volume: volume,
-      loop: true,
-      html5: true,
-      preload: true,
-      onload: () => {
-        console.log("Sound loaded successfully:", selectedTune.name);
-      },
-      onplay: () => {
-        console.log("Sound started playing:", selectedTune.name);
-      },
-      onstop: () => {
-        console.log("Sound stopped:", selectedTune.name);
-      },
-      onend: () => {
-        console.log("Sound playback ended:", selectedTune.name);
-      },
-      onloaderror: (id, err) => {
-        console.error("Error loading sound:", selectedTune.name, err);
-        setLoadError(true);
-      },
-      onplayerror: (id, err) => {
-        console.error("Error playing sound:", selectedTune.name, err);
-        if (newSound._html5) {
-          console.log("Already using HTML5, cannot retry");
-        } else {
-          console.log("Retrying with HTML5 Audio");
-          newSound._html5 = true;
-          newSound.play();
-        }
+    try {
+      // Kiểm tra trình duyệt có hỗ trợ Howler không
+      if (!Howler) {
+        console.error("Howler is not defined or not loaded properly");
+        return;
       }
-    });
+      
+      // Khởi động AudioContext nếu bị tạm dừng
+      if (audioContext.current && audioContext.current.state === 'suspended') {
+        console.log("Resuming suspended AudioContext");
+        audioContext.current.resume().then(() => {
+          console.log("AudioContext resumed successfully");
+        }).catch(error => {
+          console.error("Failed to resume AudioContext:", error);
+        });
+      }
 
-    console.log("Attempting to play sound...");
-    newSound.play();
-    setSound(newSound);
-    setPlayingId(tuneId);
+      // Dừng âm thanh hiện tại nếu có
+      if (sound) {
+        console.log("Stopping current sound");
+        sound.stop();
+      }
+
+      // Nếu click vào bài đang phát thì dừng
+      if (playingId === tuneId) {
+        console.log("Stopping playback - same tune clicked");
+        setPlayingId(null);
+        setSound(null);
+        return;
+      }
+
+      // Tìm bài hát từ tuneId
+      const selectedTune = tunes.find((tune) => tune.id === tuneId);
+      if (!selectedTune || !selectedTune.src) {
+        console.error("Invalid tune or missing src:", selectedTune);
+        return;
+      }
+
+      console.log("Creating new Howl instance for:", selectedTune.src);
+      console.log("Full tune object:", selectedTune);
+
+      // Kiểm tra file có tồn tại không bằng fetch
+      fetch(selectedTune.src)
+        .then(response => {
+          if (!response.ok) {
+            console.error(`File không tồn tại hoặc không thể truy cập: ${selectedTune.src}`);
+            console.error('Phản hồi:', response.status, response.statusText);
+            setLoadError(true);
+            throw new Error(`Error fetching audio file: ${response.status} ${response.statusText}`);
+          }
+          console.log(`File tồn tại và có thể truy cập: ${selectedTune.src}`);
+          return response.blob();
+        })
+        .then(blob => {
+          console.log("File audio blob:", blob);
+          console.log("File type:", blob.type);
+          console.log("File size:", blob.size, "bytes");
+          
+          // Reset trạng thái lỗi
+          setLoadError(false);
+
+          // Tạo đối tượng Howl mới
+          const newSound = new Howl({
+            src: [selectedTune.src],
+            volume: volume,
+            loop: true,
+            html5: true, // Sử dụng HTML5 Audio để tránh vấn đề CORS
+            format: ['mp3', 'wav'], // Thêm định dạng rõ ràng
+            xhr: {
+              method: 'GET',
+              headers: {
+                'Cache-Control': 'no-cache'
+              },
+            },
+            preload: true,
+            onload: () => {
+              console.log("Sound loaded successfully:", selectedTune.name);
+              console.log("Sound state:", newSound.state());
+              console.log("Sound duration:", newSound.duration(), "seconds");
+            },
+            onplay: () => {
+              console.log("Sound started playing:", selectedTune.name);
+              console.log("Sound playing state:", newSound.playing());
+            },
+            onstop: () => {
+              console.log("Sound stopped:", selectedTune.name);
+            },
+            onpause: () => {
+              console.log("Sound paused:", selectedTune.name);
+            },
+            onseek: () => {
+              console.log("Sound position changed:", newSound.seek());
+            },
+            onend: () => {
+              console.log("Sound playback ended:", selectedTune.name);
+            },
+            onloaderror: (id, err) => {
+              console.error("Error loading sound:", selectedTune.name, err);
+              console.error("Sound ID:", id);
+              console.error("Error details:", err);
+              setLoadError(true);
+            },
+            onplayerror: (id, err) => {
+              console.error("Error playing sound:", selectedTune.name, err);
+              console.error("Sound ID:", id);
+              console.error("Error details:", err);
+              
+              // Thử lại với HTML5 audio fallback
+              if (newSound._html5) {
+                console.log("Already using HTML5, cannot retry");
+              } else {
+                console.log("Retrying with HTML5 Audio");
+                newSound._html5 = true;
+                newSound.play();
+              }
+            }
+          });
+
+          // Phát nhạc
+          console.log("Attempting to play sound...");
+          newSound.play();
+          
+          // Kiểm tra trạng thái sau khi gọi play
+          setTimeout(() => {
+            console.log("Sound state after play call:", newSound.state());
+            console.log("Sound playing status:", newSound.playing());
+            if (!newSound.playing()) {
+              console.warn("Sound not playing after play() call. Trying again...");
+              newSound.play();
+            }
+          }, 500);
+          
+          setSound(newSound);
+          setPlayingId(tuneId);
+        })
+        .catch(error => {
+          console.error("Error loading audio file:", error);
+          setLoadError(true);
+        });
+    } catch (error) {
+      console.error("Unexpected error in playSound:", error);
+      setLoadError(true);
+    }
+    console.log("=== PLAY SOUND END ===");
   };
 
+  // Xử lý việc thay đổi âm lượng
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
     console.log("Volume changed to:", newVolume);
     setVolume(newVolume);
     if (sound) {
       sound.volume(newVolume);
+      console.log("New volume applied to sound:", sound.volume());
     }
   };
 
+  // Xử lý việc tắt/bật âm thanh
   const toggleMute = () => {
     if (sound) {
       if (isMuted) {
@@ -156,6 +276,7 @@ const SidebarTunes = () => {
         sound.volume(0);
       }
       setIsMuted(!isMuted);
+      console.log("Mute state toggled to:", !isMuted);
     }
   };
 
@@ -217,6 +338,7 @@ const SidebarTunes = () => {
       
       <div className="help-text">
         <p>Bấm vào nút phát để nghe nhạc. Kiểm tra âm lượng của thiết bị và loa nếu không nghe được.</p>
+        <p>Mở Developer Console (F12) để xem thông tin debug chi tiết.</p>
       </div>
     </div>
   );
