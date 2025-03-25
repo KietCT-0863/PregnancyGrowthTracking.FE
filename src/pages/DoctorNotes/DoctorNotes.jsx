@@ -11,6 +11,15 @@ import NotificationPopup from './components/NotificationPopup'
 import "./DoctorNotes.scss"
 
 const DoctorNotes = () => {
+  // Thêm class 'doctor-notes-page' vào body khi component được mount
+  useEffect(() => {
+    document.body.classList.add('doctor-notes-page');
+    
+    return () => {
+      document.body.classList.remove('doctor-notes-page');
+    };
+  }, []);
+
   // State management
   const [notes, setNotes] = useState([])
   const [showForm, setShowForm] = useState(false)

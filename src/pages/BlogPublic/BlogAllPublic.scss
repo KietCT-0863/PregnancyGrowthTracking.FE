@@ -57,7 +57,12 @@ body {
   border-bottom: 1px solid $pink-medium;
   position: relative;
   z-index: 60;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 15px rgba(255, 107, 155, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
   transition: $transition;
 
   &.sticky {
@@ -399,9 +404,11 @@ body {
     position: relative;
     border-radius: 16px;
     overflow: hidden;
-    background-color: $background-color;
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-    box-shadow: $card-shadow;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 155, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1013,6 +1020,7 @@ body {
   overflow-x: hidden;
   padding: 20px 15px;
   animation: fadeIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background-color: transparent !important;
 }
 
 // Sidebar common styles
@@ -1020,17 +1028,20 @@ body {
 .blog-sidebar-right {
   width: 240px;
   height: calc(100vh - 40px);
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   position: sticky;
   top: 20px;
   overflow-y: auto;
   overflow-x: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(255, 107, 155, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  padding: 20px 0;
+  padding: 1.5rem !important;
   z-index: 50;
   flex-shrink: 0;
-  border-radius: 15px;
+  border-radius: 16px !important;
   transform: translateZ(0);
   
   &:hover {
@@ -1768,3 +1779,14 @@ html, body {
     }
   }
   }
+
+/* Làm trong suốt màu nền của blog để sử dụng màu nền từ App.css */
+.blog-page {
+  background-color: transparent !important;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.blog-content {
+  background-color: transparent !important;
+}

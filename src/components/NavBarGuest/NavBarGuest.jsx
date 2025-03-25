@@ -22,7 +22,7 @@ import {
   FaUser,
   FaKey,
 } from "react-icons/fa";
-import "./NavBarGuest.scss";
+import "./NavbarGuest.scss";
 import reminderService from "../../api/services/reminderService";
 
 const CustomNavLink = ({ to, children, icon, onClick }) => {
@@ -408,14 +408,7 @@ const NavBarGuest = () => {
           {/* Header Action Buttons */}
           <div className="header-actions">
             {/* Edit Profile Button */}
-            <Link 
-              to="/basic-user/profile/edit" 
-              className="header-action-button edit-profile-button"
-              title="Chỉnh sửa thông tin cá nhân"
-            >
-              <FaUserEdit />
-              <div className="feature-tooltip edit-tooltip">Chỉnh sửa hồ sơ</div>
-            </Link>
+
             
             <div className="action-separator"></div>
             
@@ -471,11 +464,7 @@ const NavBarGuest = () => {
                 </div>
                 
                 <div className="profile-menu-separator"></div>
-                
-                <div className="user-profile-button" onClick={toggleDropdown} title="Bấm để xem tùy chọn tài khoản">
-                  <span className="dropdown-indicator"></span>
-                  <div className="profile-tooltip">Tùy chọn tài khoản</div>
-                </div>
+
               </div>
             ) : (
               <Link to="/login" className="login-button">

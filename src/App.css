@@ -3,20 +3,54 @@ body, html {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background-color: #FFF0F5; /* Màu hồng nhạt */
+  background-image: linear-gradient(120deg, #FFF0F5 0%, #FFEDFE 100%);
+  background-attachment: fixed; /* Giúp nền cố định khi cuộn trang */
+  min-height: 100vh; /* Đảm bảo nền phủ toàn bộ chiều cao của trình duyệt */
 }
 
 #root {
   margin: 0;
   padding: 0;
+  min-height: 100vh; /* Đảm bảo #root cũng có chiều cao tối thiểu là 100% viewport */
+  background-color: transparent; /* Giữ màu nền trong suốt để hiển thị màu nền của body */
 }
 
 .app-container, .member-container {
   margin: 0;
   padding: 0;
+  background-color: transparent; /* Giữ container trong suốt */
 }
 
 /* Đảm bảo không có khoảng trắng giữa navbar và nội dung */
 .navbar + * {
   margin-top: 0;
   padding-top: 0;
+}
+
+/* Đảm bảo rằng NavBarMember không bị ảnh hưởng bởi màu nền */
+.navbar, .navbar-container, .horizontal-nav {
+  background-color: transparent; /* Giữ các thành phần navbar trong suốt */
+}
+
+/* Thêm hiệu ứng mềm mại cho các phần tử chính */
+.content-wrapper, .main-content, .page-container {
+  background-color: rgba(255, 255, 255, 0.8); /* Màu trắng trong suốt */
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 80px; /* Đảm bảo có khoảng cách với navbar */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+/* Style cho trang calendar */
+.calendar-container {
+  background-color: transparent !important; /* Đảm bảo container calendar trong suốt */
+}
+
+/* Thêm hiệu ứng cho các thẻ chính trong calendar */
+.calendar-main, .calendar-sidebar, .calendar-grid {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(255, 107, 155, 0.08);
 }

@@ -1,24 +1,33 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { toast } from "react-toastify";
 import {
-  Heart,
-  MessageCircle,
   Search,
   Plus,
-  X,
-  Camera,
-  User,
+  MoreVertical,
   Edit,
   Trash,
+  MessageCircle,
+  Heart,
+  User,
+  Grid,
+  List,
   Send,
-  MoreVertical,
-} from "lucide-react";
-import { format } from "date-fns";
+  Clock,
+  ArrowRight,
+  Bookmark,
+  Share2,
+  TrendingUp,
+  Eye
+} from "react-feather";
 import PropTypes from "prop-types";
-import "./Community.scss";
 import communityService from "../../api/services/communityService";
 import commentService from "../../api/services/commentService";
-import { toast } from "react-toastify";
+import PostModal from "./PostModal";
+import "./Community.scss";
 
+<<<<<<< HEAD
 // Modal component for creating/editing post
 const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
   const [title, setTitle] = useState("");
@@ -275,8 +284,11 @@ PostModal.propTypes = {
 };
 
 // Comment component
+=======
+// Component hiển thị phần comment cho mỗi bài viết
+>>>>>>> df1e69c327104f7fa1b7846994c0f85242b6e93f
 const CommentSection = ({ postId, initialComments = [] }) => {
-  const [comments, setComments] = useState(initialComments);
+  const [comments, setComments] = useState(initialComments || []);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
@@ -293,7 +305,9 @@ const CommentSection = ({ postId, initialComments = [] }) => {
   const [sortOrder, setSortOrder] = useState("newest"); // "newest", "oldest", "relevant"
 
   useEffect(() => {
-    fetchComments();
+    if (postId) {
+      fetchComments();
+    }
   }, [postId]);
 
   const fetchComments = async () => {
@@ -476,7 +490,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy HH:mm");
+      return format(new Date(dateString), "MMMM dd, yyyy");
     } catch (error) {
       return dateString;
     }
@@ -893,6 +907,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
         <form onSubmit={handleSubmitComment}>
           <div className="comment-input-wrapper">
+<<<<<<< HEAD
             <div className="comment-avatar">
               <User size={24} />
             </div>
@@ -932,6 +947,22 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                 </button>
               </div>
             </div>
+=======
+            <input
+              type="text"
+              placeholder="Viết bình luận..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              className="send-comment-btn"
+              disabled={isLoading || !newComment.trim()}
+            >
+              <Send size={18} />
+            </button>
+>>>>>>> df1e69c327104f7fa1b7846994c0f85242b6e93f
           </div>
 
           {imagePreview && (
@@ -961,9 +992,14 @@ const Community = () => {
   const [currentPost, setCurrentPost] = useState({});
   const [showDropdown, setShowDropdown] = useState(null);
   const [expandedComments, setExpandedComments] = useState({});
-  const [likedPosts, setLikedPosts] = useState({}); // { postId: true/false }
-  const [likesCount, setLikesCount] = useState({}); // { postId: count }
+  const [likedPosts, setLikedPosts] = useState({});
+  const [likesCount, setLikesCount] = useState({});
   const userId = 4; // Tạm thời hardcode userId, sau này lấy từ context hoặc localStorage
+  const [viewMode, setViewMode] = useState("grid");
+  const [mainTopic, setMainTopic] = useState("all"); // "all", "trending", "featured", "latest"
+  const [activeCategory, setActiveCategory] = useState("world"); // world, business, lifestyle
+  
+  const navigate = useNavigate();
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
@@ -977,7 +1013,7 @@ const Community = () => {
     try {
       setIsLoading(true);
       const response = await communityService.getPosts();
-      console.log("API response:", response); // Ghi log để debug
+      console.log("API response:", response);
 
       // Kiểm tra response
       if (!response) {
@@ -990,88 +1026,66 @@ const Community = () => {
       // Xác định dữ liệu từ response
       let postsData = null;
 
+      // Nếu response là mảng, sử dụng ngay
       if (Array.isArray(response)) {
-        // Trường hợp API trả về trực tiếp mảng posts
         postsData = response;
-      } else if (response.data && Array.isArray(response.data)) {
-        // Trường hợp API trả về { data: [...] }
-        postsData = response.data;
-      } else if (
-        response.data &&
-        response.data.posts &&
-        Array.isArray(response.data.posts)
+      }
+      // Nếu response là object và có thuộc tính posts, sử dụng thuộc tính đó
+      else if (
+        response &&
+        typeof response === "object" &&
+        Array.isArray(response.posts)
       ) {
-        // Trường hợp API trả về { data: { posts: [...] } }
-        postsData = response.data.posts;
-      } else if (response.posts && Array.isArray(response.posts)) {
-        // Trường hợp API trả về { posts: [...] }
         postsData = response.posts;
       }
-
-      if (postsData) {
-        // Kiểm tra và log chi tiết về cấu trúc của mỗi bài viết và tags
-        postsData.forEach((post) => {
-          console.log(`Bài đăng ID ${post.id} chi tiết:`, post);
-          console.log(`- Tags của bài đăng ID ${post.id}:`, post.postTags);
-        });
-
-        // Xử lý tạo ID nếu không có
-        const processedPosts = postsData.map((post, index) => {
-          // Chuẩn hóa postTags để luôn là một mảng với cấu trúc đúng
-          let normalizedTags = [];
-
-          if (post.postTags) {
-            console.log(
-              `Phân tích postTags của bài đăng ID ${post.id}:`,
-              typeof post.postTags,
-              Array.isArray(post.postTags) ? "array" : "not array",
-              post.postTags
-            );
-
-            if (Array.isArray(post.postTags)) {
-              normalizedTags = post.postTags.map((tag, tagIndex) => {
-                if (typeof tag === "string") {
-                  // Nếu tag là string, chuyển về đúng format {id, name}
-                  return { id: `tag_${index}_${tagIndex}`, name: tag };
-                } else if (typeof tag === "object") {
-                  // Nếu tag đã là object, đảm bảo nó có id và name
-                  return {
-                    id: tag.id || tag.tagId || `tag_${index}_${tagIndex}`,
-                    name: tag.name || tag.tagName || "Unknown",
-                  };
-                }
-                return { id: `tag_${index}_${tagIndex}`, name: "Unknown" };
-              });
-            } else if (typeof post.postTags === "object") {
-              // Nếu postTags là một object, cố gắng chuyển đổi thành mảng
-              const tagEntries = Object.entries(post.postTags);
-              normalizedTags = tagEntries.map(([key, value], tagIndex) => {
-                return {
-                  id: `tag_${index}_${tagIndex}`,
-                  name: typeof value === "string" ? value : key,
-                };
-              });
-            }
-          }
-
-          console.log(
-            `Tags đã chuẩn hóa cho bài đăng ID ${post.id}:`,
-            normalizedTags
-          );
-
-          return {
-            ...post,
-            id: post.id || `post_${index}`,
-            postTags: normalizedTags,
-          };
-        });
-
-        setPosts(processedPosts);
-      } else {
-        console.error("Dữ liệu API không đúng định dạng:", response);
-        setPosts([]);
-        toast.error("Dữ liệu API không đúng định dạng");
+      // Nếu response là object và có thuộc tính data, truy cập vào thuộc tính đó
+      else if (
+        response &&
+        typeof response === "object" &&
+        response.data &&
+        Array.isArray(response.data)
+      ) {
+        postsData = response.data;
       }
+      // Nếu response là object và có thuộc tính data.posts, truy cập vào thuộc tính đó
+      else if (
+        response &&
+        typeof response === "object" &&
+        response.data &&
+        typeof response.data === "object" &&
+        Array.isArray(response.data.posts)
+      ) {
+        postsData = response.data.posts;
+      }
+
+      // Nếu postsData không phải mảng, đảm bảo trả về mảng rỗng
+      if (!Array.isArray(postsData)) {
+        console.error(
+          "Không thể xác định dữ liệu bài viết từ response API:",
+          response
+        );
+        postsData = [];
+      }
+
+      // Thêm trường readTime cho mỗi bài viết (số từ / 200 từ mỗi phút)
+      postsData = postsData.map(post => {
+        const wordCount = post.body ? post.body.split(/\s+/).length : 0;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200));
+        return {
+          ...post,
+          readTime,
+          views: Math.floor(Math.random() * 100) + 10, // Tạm thời tạo số lượt xem ngẫu nhiên
+        };
+      });
+
+      // Lưu trữ các bài viết nhận được
+      setPosts(postsData);
+
+      // Tải số lượt like và trạng thái like cho mỗi bài viết
+      postsData.forEach((post) => {
+        fetchLikesCount(post.id);
+        checkLikeStatus(post.id, userId);
+      });
     } catch (error) {
       console.error("Error fetching posts:", error);
       toast.error(
@@ -1083,7 +1097,7 @@ const Community = () => {
     }
   };
 
-  // Thêm hàm để fetch số lượt like
+  // Hàm để fetch số lượt like
   const fetchLikesCount = async (postId) => {
     try {
       let count = 0;
@@ -1112,7 +1126,7 @@ const Community = () => {
     }
   };
 
-  // Thêm hàm để kiểm tra trạng thái like
+  // Hàm để kiểm tra trạng thái like
   const checkLikeStatus = async (postId) => {
     try {
       let isLiked = false;
@@ -1136,95 +1150,54 @@ const Community = () => {
     }
   };
 
-  // Cập nhật useEffect để fetch thêm dữ liệu like
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  // Thêm useEffect để fetch dữ liệu like sau khi có posts
-  useEffect(() => {
-    if (posts.length > 0) {
-      posts.forEach((post) => {
-        fetchLikesCount(post.id);
-        checkLikeStatus(post.id);
-      });
-    }
-  }, [posts]);
-
-  // Thêm hàm xử lý like/unlike
-  const handleLikeToggle = async (postId) => {
+  // Hàm xử lý like bài viết
+  const handleLikePost = async (postId) => {
     try {
-      // Ngăn chặn việc like bài viết không tồn tại
-      if (!posts.some((post) => post.id === postId)) {
-        console.warn(
-          `Không thể like/unlike bài viết ID ${postId} vì không tồn tại trong danh sách hiện tại`
-        );
-        toast.warning("Bài viết không tồn tại hoặc đã bị xóa");
-        return;
-      }
+      setIsLoading(true);
+      const currentLiked = likedPosts[postId] || false;
+      const currentCount = likesCount[postId] || 0;
 
-      const currentLikeStatus = likedPosts[postId] || false;
-
-      // Cập nhật UI trước để tạo cảm giác phản hồi nhanh
+      // Cập nhật UI ngay lập tức cho UX tốt hơn
       setLikedPosts((prev) => ({
         ...prev,
-        [postId]: !currentLikeStatus,
+        [postId]: !currentLiked,
       }));
-
       setLikesCount((prev) => ({
         ...prev,
-        [postId]: (prev[postId] || 0) + (currentLikeStatus ? -1 : 1),
+        [postId]: currentLiked ? currentCount - 1 : currentCount + 1,
       }));
 
-      // Thêm timeout để tạo cảm giác mượt mà hơn
-      setTimeout(async () => {
-        try {
-          let result;
-          // Gọi API
-          if (currentLikeStatus) {
-            result = await communityService.unlikePost(postId, userId);
-          } else {
-            result = await communityService.likePost(postId, userId);
-          }
-
-          // Kiểm tra xem kết quả có phải là giả lập và có thông báo không
-          if (result && result.simulated && result.message) {
-            console.log(`Thông báo từ API: ${result.message}`);
-            // Nếu muốn hiển thị cho người dùng (tùy chọn)
-            // toast.info(result.message);
-          } else {
-            // Sau khi API thành công, cập nhật lại số lượng like chính xác
-            fetchLikesCount(postId);
-          }
-        } catch (error) {
-          console.error(
-            `Error calling like/unlike API for post ${postId}:`,
-            error
-          );
-          // Để trạng thái UI như đã cập nhật, không rollback vì API đang lỗi
-          console.log("API gặp lỗi nhưng vẫn giữ trạng thái UI đã cập nhật");
-        }
-      }, 300);
-    } catch (error) {
-      console.error(`Error toggling like for post ${postId}:`, error);
-
-      // Nếu có lỗi tổng thể, khôi phục trạng thái cũ
-      try {
-        checkLikeStatus(postId);
-        fetchLikesCount(postId);
-      } catch (err) {
-        console.error("Lỗi khi khôi phục trạng thái:", err);
+      // Sau đó cập nhật lên server
+      if (currentLiked) {
+        await communityService.unlikePost(postId, userId);
+      } else {
+        await communityService.likePost(postId, userId);
       }
 
-      toast.error("Có lỗi xảy ra khi thực hiện thao tác yêu thích bài viết");
+      // Cập nhật lại số lượt like từ server để đảm bảo đồng bộ
+      fetchLikesCount(postId);
+    } catch (error) {
+      console.error(`Error toggling like for post ${postId}:`, error);
+      toast.error("Không thể thực hiện thao tác like");
+
+      // Rollback nếu có lỗi
+      checkLikeStatus(postId);
+      fetchLikesCount(postId);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleCreatePost = async (formData, postId) => {
+  const handlePostSubmit = async (formData, isEditing = false) => {
     try {
       setIsLoading(true);
-      console.log("FormData được gửi từ modal:", formData);
+      console.log("Submitting form data:", formData);
 
+<<<<<<< HEAD
       // Kiểm tra xem formData có các trường cần thiết không
       if (formData instanceof FormData) {
         const title = formData.get("title");
@@ -1286,18 +1259,26 @@ const Community = () => {
           toast.error("Không thể cập nhật bài viết: " + updateError.message);
           throw updateError;
         }
+=======
+      let response;
+      if (isEditing) {
+        response = await communityService.updatePost(formData);
+        toast.success("Bài viết đã được cập nhật thành công");
+>>>>>>> df1e69c327104f7fa1b7846994c0f85242b6e93f
       } else {
-        // Tạo bài viết mới với FormData đã có đầy đủ thông tin
-        await communityService.createPost(formData);
-        toast.success("Bài viết đã được tạo thành công");
+        response = await communityService.createPost(formData);
+        toast.success("Bài viết đã được đăng thành công");
       }
 
-      fetchPosts();
+      console.log("API response:", response);
       setModalOpen(false);
-      setCurrentPost({});
+
+      // Lấy lại danh sách bài viết mới nhất
+      fetchPosts();
     } catch (error) {
-      console.error("Error creating/updating post:", error);
-      toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      console.error("Error submitting post:", error);
+      const errorMessage = error.message || "Lỗi không xác định";
+      toast.error(`Không thể ${isEditing ? "cập nhật" : "đăng"} bài viết: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -1345,17 +1326,64 @@ const Community = () => {
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy HH:mm");
+      return format(new Date(dateString), "MMMM dd, yyyy");
     } catch (error) {
       return dateString;
     }
   };
+  
+  const viewPost = (postId) => {
+    // Điều hướng đến trang chi tiết bài viết
+    navigate(`/community/post/${postId}`);
+  };
+
+  // Lấy bài viết nổi bật để hiển thị ở phần hero (2 bài đầu tiên)
+  const featuredPosts = posts.length > 0 ? posts.slice(0, 2) : [];
+  
+  // Lấy bài viết chính (bài thứ 3)
+  const mainPost = posts.length > 2 ? posts[2] : null;
+  
+  // Lọc bài viết còn lại (từ bài thứ 4 trở đi) theo chủ đề được chọn
+  const getFilteredPosts = () => {
+    if (mainTopic === "all") return filteredPosts.slice(3);
+    if (mainTopic === "trending") {
+      return [...filteredPosts].slice(3).sort((a, b) => (likesCount[b.id] || 0) - (likesCount[a.id] || 0));
+    }
+    if (mainTopic === "latest") {
+      return [...filteredPosts].slice(3).sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+    }
+    return filteredPosts.slice(3);
+  };
+
+  const displayPosts = getFilteredPosts();
+
+  // Tạo dữ liệu thống kê giả định cho biểu đồ
+  const statsData = [
+    { label: "GRST/USD", value: "5.2%", trend: "0.9715" },
+    { label: "UMA/USD", value: "3.8%", trend: "1.0937" },
+    { label: "BRCK/USD", value: "7.1%", trend: "0.0772" },
+    { label: "LCX/USD", value: "4.4%", trend: "0.1570" }
+  ];
 
   return (
     <div className="community-container">
+      {/* Header kiểu The View Island */}
       <div className="community-header">
-        <h1>Cộng đồng</h1>
+        <div className="header-left">
+          <h1>THEVIEW<span>ISLAND</span></h1>
+        </div>
         <div className="header-actions">
+          <div className="view-toggle">
+            <button onClick={() => setActiveCategory("world")} className={`category-btn ${activeCategory === 'world' ? 'active' : ''}`}>
+              World
+            </button>
+            <button onClick={() => setActiveCategory("business")} className={`category-btn ${activeCategory === 'business' ? 'active' : ''}`}>
+              Business
+            </button>
+            <button onClick={() => setActiveCategory("lifestyle")} className={`category-btn ${activeCategory === 'lifestyle' ? 'active' : ''}`}>
+              Lifestyle
+            </button>
+          </div>
           <div className="search-box">
             <Search size={18} className="search-icon" />
             <input
@@ -1378,117 +1406,257 @@ const Community = () => {
         </div>
       )}
 
-      <div className="posts-container">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <div key={post.id} className="post-card">
-              <div className="post-header">
-                <div className="user-info">
-                  <div className="avatar">
-                    <User size={20} />
-                  </div>
-                  <div className="post-meta">
-                    <h3>
-                      {post.createdBy ||
-                        post.userName ||
-                        post.author ||
-                        post.user?.name ||
-                        "Người dùng"}
-                    </h3>
-                    <div className="post-time">
-                      {formatDate(post.createdDate)}
-                    </div>
-                  </div>
-                </div>
-                <div className="post-actions">
-                  <button
-                    className="menu-button"
-                    onClick={() =>
-                      setShowDropdown(showDropdown === post.id ? null : post.id)
-                    }
-                  >
-                    ...
-                  </button>
-                  {showDropdown === post.id && (
-                    <div className="dropdown-content">
-                      <button
-                        onClick={() => openEditModal(post)}
-                        className="edit-button"
-                      >
-                        <Edit size={16} />
-                        Chỉnh sửa
-                      </button>
-                      <button
-                        onClick={() => handleDeletePost(post.id)}
-                        className="delete-button"
-                      >
-                        <Trash size={16} />
-                        Xóa bài viết
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="post-content">
-                <h2>{post.title}</h2>
-                <p>{post.body}</p>
-                {post.postImageUrl && (
-                  <div className="post-images">
-                    <img src={post.postImageUrl} alt={post.title} />
-                  </div>
-                )}
-                {post.postTags && post.postTags.length > 0 && (
-                  <div className="post-tags">
-                    {post.postTags.map((tag, index) => (
-                      <span key={tag.id || `tag_${index}`} className="tag">
-                        #{typeof tag === "string" ? tag : tag.name || "tag"}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="post-footer">
-                <button
-                  className={`reaction-button ${
-                    likedPosts[post.id] ? "liked" : ""
-                  }`}
-                  onClick={() => handleLikeToggle(post.id)}
-                >
-                  <Heart
-                    size={18}
-                    className={likedPosts[post.id] ? "heart-filled" : ""}
-                  />
-                  Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
-                </button>
-                <button
-                  className="reaction-button"
-                  onClick={() => toggleComments(post.id)}
-                >
-                  <MessageCircle size={18} />
-                  Bình luận
-                </button>
-              </div>
-
-              {/* Hiển thị phần bình luận nếu đã mở rộng */}
-              {expandedComments[post.id] && <CommentSection postId={post.id} />}
+      {/* Featured posts section - 2 columns */}
+      <div className="featured-posts-row">
+        {featuredPosts.map((post, index) => (
+          <div key={post.id} className="featured-column" onClick={() => viewPost(post.id)}>
+            <div className="author-date">
+              <span className="author">{post.createdBy || "Người dùng"}</span>
+              <span className="date">{formatDate(post.createdDate)}</span>
             </div>
-          ))
-        ) : (
-          <div className="no-posts">
-            {searchQuery
-              ? "Không tìm thấy bài viết nào phù hợp"
-              : "Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!"}
+            
+            <div className="featured-image">
+              {post.postImageUrl ? (
+                <img
+                  src={post.postImageUrl}
+                  alt={post.title}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/800x400?text=No+Image";
+                  }}
+                />
+              ) : index === 0 ? (
+                <img src="https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?q=80&w=3087&auto=format&fit=crop" alt="London Eye" />
+              ) : (
+                <img src="https://images.unsplash.com/photo-1494256997604-768d1f608cac?q=80&w=3029&auto=format&fit=crop" alt="Tree in Winter" />
+              )}
+            </div>
+            
+            <h2 className="featured-title">
+              {post.title || (index === 0 ? "Turn Your Devices From Distractions Into Time Savers" : "Draw Inspiration From Vibrancy")}
+            </h2>
+            
+            <div className="post-meta">
+              <div className="read-info">
+                {post.views && <span className="views-count"><Eye size={14} /> {post.views}</span>}
+                <span className="read-time"><Clock size={14} /> {post.readTime} min read</span>
+              </div>
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
-      <PostModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        post={currentPost}
-        onSubmit={handleCreatePost}
-        isLoading={isLoading}
-      />
+      {/* Main article */}
+      {mainPost && (
+        <div className="main-article" onClick={() => viewPost(mainPost.id)}>
+          <div className="main-article-content">
+            <div className="author-info">
+              <div className="author-avatar">
+                <User size={20} />
+              </div>
+              <span className="author-name">{mainPost.createdBy || "Alexa Ruyk"}</span>
+              {mainPost.trending && <span className="trending-indicator"><TrendingUp size={16} /></span>}
+            </div>
+            
+            <h1 className="main-title">
+              {mainPost.title || "Congress Averts Shutdown as Conservatives Steam"}
+            </h1>
+            
+            <p className="main-excerpt">
+              {mainPost.body?.substring(0, 150) || "Hours after the Senate passed the measure, the House followed suit. The bill will now go to President Biden."}
+              {mainPost.body?.length > 150 ? '...' : ''}
+            </p>
+            
+            <div className="main-footer">
+              <div className="read-info">
+                {mainPost.views && <span className="views-count"><Eye size={14} /> {mainPost.views}</span>}
+                <span className="read-time"><Clock size={14} /> {mainPost.readTime} min read</span>
+              </div>
+              
+              <div className="social-icons">
+                <button className="social-icon"><MessageCircle size={16} /></button>
+                <button className="social-icon"><Heart size={16} /></button>
+                <button className="social-icon"><Share2 size={16} /></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Section */}
+      <div className="stats-section">
+        {statsData.map((stat, index) => (
+          <div key={index} className="stat-card">
+            <div className="stat-value">{stat.value}</div>
+            <div className="stat-trend">{stat.trend}</div>
+            <div className="stat-label">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Topics navigation */}
+      <div className="topics-navigation">
+        <button
+          className={`topic-btn ${mainTopic === 'all' ? 'active' : ''}`}
+          onClick={() => setMainTopic('all')}
+        >
+          Tất cả
+        </button>
+        <button
+          className={`topic-btn ${mainTopic === 'trending' ? 'active' : ''}`}
+          onClick={() => setMainTopic('trending')}
+        >
+          <TrendingUp size={16} /> Xu hướng
+        </button>
+        <button
+          className={`topic-btn ${mainTopic === 'latest' ? 'active' : ''}`}
+          onClick={() => setMainTopic('latest')}
+        >
+          Mới nhất
+        </button>
+        <div className="view-mode-toggle">
+          <button 
+            className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+            onClick={() => setViewMode('list')}
+          >
+            <List size={20} />
+          </button>
+          <button 
+            className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+            onClick={() => setViewMode('grid')}
+          >
+            <Grid size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Articles Grid/List */}
+      <div className={`posts-container ${viewMode === 'grid' ? 'grid-view' : 'list-view'}`}>
+        {displayPosts.length === 0 && !isLoading ? (
+          <div className="no-posts">
+            <p>Không có bài viết nào. Hãy tạo bài viết đầu tiên!</p>
+          </div>
+        ) : (
+          displayPosts.map((post) => (
+            <div className="post-card" key={post.id}>
+              <div className="post-content">
+                <div className="post-meta">
+                  <span className="post-author">{post.createdBy || "Người dùng"}</span>
+                  <span className="post-date">{formatDate(post.createdDate)}</span>
+                </div>
+                <h3 className="post-title" onClick={() => viewPost(post.id)}>{post.title}</h3>
+                
+                {post.postImageUrl && (
+                  <div className="post-image">
+                    <img 
+                      src={post.postImageUrl} 
+                      alt={post.title} 
+                      onClick={() => viewPost(post.id)}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://via.placeholder.com/400x250?text=No+Image";
+                      }}
+                    />
+                  </div>
+                )}
+                
+                <p className="post-excerpt" onClick={() => viewPost(post.id)}>
+                  {post.body && post.body.length > 150
+                    ? `${post.body.substring(0, 150)}...`
+                    : post.body}
+                </p>
+                
+                <div className="post-footer">
+                  <div className="post-stats">
+                    <div className="read-info">
+                      {post.views && <span className="views-count"><Eye size={14} /> {post.views}</span>}
+                      <span className="read-time"><Clock size={14} /> {post.readTime} min read</span>
+                    </div>
+                    <div className="post-actions">
+                      <button
+                        className={`action-btn like-btn ${likedPosts[post.id] ? 'active' : ''}`}
+                        onClick={() => handleLikePost(post.id)}
+                      >
+                        <Heart size={16} fill={likedPosts[post.id] ? "currentColor" : "none"} /> 
+                        <span>{likesCount[post.id] || 0}</span>
+                      </button>
+                      <button
+                        className="action-btn comment-btn"
+                        onClick={() => toggleComments(post.id)}
+                      >
+                        <MessageCircle size={16} /> <span>{post.commentCount || 0}</span>
+                      </button>
+                      <button className="action-btn bookmark-btn">
+                        <Bookmark size={16} />
+                      </button>
+                      <button className="action-btn share-btn">
+                        <Share2 size={16} />
+                      </button>
+                      <button
+                        className="action-btn menu-btn"
+                        onClick={() => setShowDropdown(showDropdown === post.id ? null : post.id)}
+                      >
+                        <MoreVertical size={16} />
+                        {showDropdown === post.id && (
+                          <div className="dropdown-menu">
+                            <button onClick={() => openEditModal(post)}>
+                              <Edit size={14} /> Chỉnh sửa
+                            </button>
+                            <button onClick={() => handleDeletePost(post.id)}>
+                              <Trash size={14} /> Xóa
+                            </button>
+                          </div>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="post-tags">
+                    {Array.isArray(post.postTags) &&
+                      post.postTags.slice(0, 3).map((tag, index) => (
+                        <span key={tag.id || index} className="post-tag">
+                          #{tag.name || tag}
+                        </span>
+                      ))}
+                  </div>
+                </div>
+              </div>
+              
+              {expandedComments[post.id] && (
+                <CommentSection
+                  postId={post.id}
+                  initialComments={post.comments || []}
+                />
+              )}
+            </div>
+          ))
+        )}
+      </div>
+      
+      <div className="view-more-container">
+        <button className="view-more-btn">
+          Xem thêm bài viết <ArrowRight size={18} />
+        </button>
+      </div>
+
+      {/* Subscribe section */}
+      <div className="subscribe-section">
+        <h3>Đăng ký nhận thông báo</h3>
+        <p>Nhận thông báo về các bài viết mới và nội dung độc quyền</p>
+        <div className="subscribe-form">
+          <input type="email" placeholder="Email của bạn" />
+          <button type="submit">Đăng ký</button>
+        </div>
+      </div>
+
+      {modalOpen && (
+        <PostModal
+          post={currentPost}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handlePostSubmit}
+          isEditing={Object.keys(currentPost).length > 0}
+        />
+      )}
     </div>
   );
 };

@@ -391,11 +391,11 @@ const NavBarMember = () => {
     <>
       <nav
         className={`navbar ${scrolled ? "scrolled" : ""}`}
-        style={{ margin: 0, padding: 0, backgroundColor: 'transparent', background: 'transparent' }}
+        style={{ margin: 0, padding: 0 }}
       >
-        <div className="navbar-container" ref={navbarRef} style={{ backgroundColor: 'transparent', background: 'transparent' }}>
-          <div className="logo-section" style={{ backgroundColor: 'transparent', background: 'transparent' }}>
-            <Link to="/member" className="navbar-logo" style={{ backgroundColor: 'transparent', background: 'transparent' }}>
+        <div className="navbar-container" ref={navbarRef} style={{ justifyContent: 'space-between', padding: '0 30px' }}>
+          <div className="logo-section" style={{ justifyContent: 'flex-start', marginRight: 'auto' }}>
+            <Link to="/member" className="navbar-logo">
               <img
                 src="/Logo bau-02.png"
                 alt="Mẹ Bầu"
@@ -408,15 +408,7 @@ const NavBarMember = () => {
           {/* Header Action Buttons */}
           <div className="header-actions">
             {/* Edit Profile Button */}
-            <Link 
-              to="/member/profile/edit" 
-              className="header-action-button edit-profile-button"
-              title="Chỉnh sửa thông tin cá nhân"
-            >
-              <FaUserEdit />
-              <div className="feature-tooltip edit-tooltip">Chỉnh sửa hồ sơ</div>
-            </Link>
-            
+
             <div className="action-separator"></div>
             
             {/* Notification Bell */}
@@ -473,7 +465,7 @@ const NavBarMember = () => {
                 <div className="profile-menu-separator"></div>
                 
                 <div className="user-profile-button" onClick={toggleDropdown} title="Bấm để xem tùy chọn tài khoản">
-                  <span className="dropdown-indicator"></span>
+               
                   <div className="profile-tooltip">Tùy chọn tài khoản</div>
                 </div>
               </div>
@@ -556,61 +548,45 @@ const NavBarMember = () => {
               Thông tin cá nhân
               <div className="dropdown-tooltip">Xem thông tin cá nhân của bạn</div>
             </Link>
-            <Link to="/member/profile/edit" className="dropdown-item highlight">
-              <FaUserEdit />
-              Chỉnh sửa hồ sơ
-              <div className="dropdown-tooltip">Cập nhật thông tin cá nhân và hồ sơ</div>
-            </Link>
-            <Link to="/member/change-password" className="dropdown-item">
-              <FaKey />
-              Đổi mật khẩu
-              <div className="dropdown-tooltip">Thay đổi mật khẩu đăng nhập</div>
-            </Link>
-            <button className="dropdown-item logout" onClick={handleLogout}>
-              <FaSignOutAlt />
-              Đăng xuất
-              <div className="dropdown-tooltip">Đăng xuất khỏi tài khoản</div>
-            </button>
+            
           </div>
         </div>
       )}
 
       {/* Horizontal Navigation with conditional rendering instead of just CSS classes */}
       {showHorizontalMenu && (
-        <>
-          <div className={`horizontal-nav ${showHorizontalMenu ? 'visible' : ''}`}>
-            <div className="horizontal-nav-items">
-              <Link to="/member" className={`nav-item ${location.pathname === '/member/home' ? 'active' : ''}`}>
-                <FaHome /> Trang chủ
-                <div className="nav-tooltip">Quay về trang chính</div>
-              </Link>
-              <Link to="/member/basic-tracking" className={`nav-item ${location.pathname.includes('/member/basic-tracking') ? 'active' : ''}`}>
-                <FaBaby /> Theo dõi thai kỳ
-                <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
-              </Link>
-              <Link to="/member/calendar" className={`nav-item ${location.pathname.includes('/member/calendar') ? 'active' : ''}`}>
-                <FaCalendarAlt /> Lịch khám
-                <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
-              </Link>
-              <Link to="/member/doctor-notes" className={`nav-item ${location.pathname.includes('/member/doctor-notes') ? 'active' : ''}`}>
-                <FaAppleAlt /> Ghi chú bác sĩ
-                <div className="nav-tooltip">Thông tin về ghi chú bác sĩ cho bà bầu</div>
-              </Link>
-              <Link to="/member/blog" className={`nav-item ${location.pathname.includes('/member/blog') ? 'active' : ''}`}>
-                <FaBlog /> Blog
-                <div className="nav-tooltip">Những bài viết hữu ích về thai kỳ</div>
-              </Link>
-              <Link to="/member/community" className={`nav-item ${location.pathname.includes('/member/community') ? 'active' : ''}`}>
-                <FaUsers /> Cộng đồng
-                <div className="nav-tooltip">Kết nối với cộng đồng mẹ bầu</div>
-              </Link>
-              <Link to="/member/profile" className={`nav-item ${location.pathname.includes('/member/profile') ? 'active' : ''}`}>
-                <FaUser /> Hồ sơ
-                <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
-              </Link>
-            </div>
+        <div className="horizontal-nav visible" ref={horizontalNavRef} id="horizontal-nav-container" style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)' }}>
+          <div className="horizontal-nav-items">
+            <Link to="/member" className={`nav-item ${location.pathname === '/member' ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaHome className="nav-icon" /> <span className="nav-text">Trang chủ</span>
+              <div className="nav-tooltip">Quay về trang chính</div>
+            </Link>
+            <Link to="/member/basic-tracking" className={`nav-item ${location.pathname.includes('/member/basic-tracking') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaBaby className="nav-icon" /> <span className="nav-text">Theo dõi thai kỳ</span>
+              <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
+            </Link>
+            <Link to="/member/calendar" className={`nav-item ${location.pathname.includes('/member/calendar') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaCalendarAlt className="nav-icon" /> <span className="nav-text">Lịch khám</span>
+              <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
+            </Link>
+            <Link to="/member/doctor-notes" className={`nav-item ${location.pathname.includes('/member/doctor-notes') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaAppleAlt className="nav-icon" /> <span className="nav-text">Ghi chú bác sĩ</span>
+              <div className="nav-tooltip">Thông tin về ghi chú bác sĩ cho bà bầu</div>
+            </Link>
+            <Link to="/member/blog" className={`nav-item ${location.pathname.includes('/member/blog') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaBlog className="nav-icon" /> <span className="nav-text">Blog</span>
+              <div className="nav-tooltip">Những bài viết hữu ích về thai kỳ</div>
+            </Link>
+            <Link to="/member/community" className={`nav-item ${location.pathname.includes('/member/community') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaUsers className="nav-icon" /> <span className="nav-text">Cộng đồng</span>
+              <div className="nav-tooltip">Kết nối với cộng đồng mẹ bầu</div>
+            </Link>
+            <Link to="/member/profile" className={`nav-item ${location.pathname.includes('/member/profile') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+              <FaUser className="nav-icon" /> <span className="nav-text">Hồ sơ</span>
+              <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
+            </Link>
           </div>
-        </>
+        </div>
       )}
     </>
   );
