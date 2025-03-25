@@ -757,26 +757,47 @@
     }
   }
 
-  /* Nút Like và Reply kiểu Facebook */
+  /* Style cho comment actions kiểu Facebook */
   .facebook-style-actions {
     display: flex;
-    margin-top: 5px;
     gap: 8px;
+    margin-top: 6px;
 
     .action-button {
       background: none;
       border: none;
       color: #65676b;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.85rem;
       padding: 4px 8px;
-      cursor: pointer;
       border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
 
       &:hover {
         background-color: #f2f2f2;
-        text-decoration: underline;
       }
+
+      &.liked {
+        color: #1877f2;
+        font-weight: 500;
+      }
+    }
+  }
+
+  /* Style cho nút toggle replies */
+  .toggle-replies-button {
+    background: none;
+    border: none;
+    color: #65676b;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 

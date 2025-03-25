@@ -29,7 +29,7 @@ const commentService = {
       console.log(`Đang lấy comments cho bài viết ID: ${postId}`);
 
       const response = await axiosInstance.get(
-        `${ENDPOINTS.COMMENTS.LIST}?postId=${postId}`
+        `${ENDPOINTS.COMMENTS.LIST}/${postId}`
       );
 
       // Kiểm tra và xử lý dữ liệu trả về
@@ -284,6 +284,251 @@ const commentService = {
       return { success: true, message: "Xóa bình luận thành công" };
     } catch (error) {
       handleApiError(error, "Lỗi khi xóa bình luận");
+    }
+  },
+
+  // Thêm các phương thức quản lý thích/bỏ thích bình luận
+
+  // Cache lưu trữ trạng thái thích của người dùng đối với các bình luận
+  likedCommentsCache: {},
+
+  // Thích bình luận
+  likeComment: async (commentId, userId) => {
+    try {
+      if (!commentId) {
+        throw new Error("ID bình luận không được để trống");
+      }
+
+      if (!userId) {
+        throw new Error("ID người dùng không được để trống");
+      }
+
+      const cacheKey = `${commentId}_${userId}`;
+      console.log(`Thích bình luận ID ${commentId} với userId ${userId}`);
+
+      try {
+        // Gọi API thích bình luận
+        const response = await axiosInstance.put(
+          `/Comments/${commentId}/like`,
+          { userId: userId }
+        );
+
+        // Cập nhật cache
+        commentService.likedCommentsCache[cacheKey] = true;
+
+        // Lưu vào localStorage để giữ trạng thái giữa các lần load trang
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        likedCommentsStorage[cacheKey] = true;
+        localStorage.setItem(
+          "likedComments",
+          JSON.stringify(likedCommentsStorage)
+        );
+
+        return response.data;
+      } catch (error) {
+        console.error(`Lỗi khi thích bình luận ID ${commentId}:`, error);
+
+        // Vẫn cập nhật UI để trải nghiệm tốt hơn
+        commentService.likedCommentsCache[cacheKey] = true;
+
+        // Lưu vào localStorage
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        likedCommentsStorage[cacheKey] = true;
+        localStorage.setItem(
+          "likedComments",
+          JSON.stringify(likedCommentsStorage)
+        );
+
+        return { success: true, simulated: true };
+      }
+    } catch (error) {
+      console.error("Lỗi khi thích bình luận:", error);
+      handleApiError(error, "Lỗi khi thích bình luận");
+    }
+  },
+
+  // Bỏ thích bình luận
+  unlikeComment: async (commentId, userId) => {
+    try {
+      if (!commentId) {
+        throw new Error("ID bình luận không được để trống");
+      }
+
+      if (!userId) {
+        throw new Error("ID người dùng không được để trống");
+      }
+
+      const cacheKey = `${commentId}_${userId}`;
+      console.log(`Bỏ thích bình luận ID ${commentId} với userId ${userId}`);
+
+      try {
+        // Gọi API bỏ thích bình luận
+        const response = await axiosInstance.delete(
+          `/Comments/${commentId}/like?userId=${userId}`
+        );
+
+        // Cập nhật cache
+        commentService.likedCommentsCache[cacheKey] = false;
+
+        // Cập nhật localStorage
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        delete likedCommentsStorage[cacheKey]; // Xóa khỏi localStorage
+        localStorage.setItem(
+          "likedComments",
+          JSON.stringify(likedCommentsStorage)
+        );
+
+        return response.data;
+      } catch (error) {
+        console.error(`Lỗi khi bỏ thích bình luận ID ${commentId}:`, error);
+
+        // Vẫn cập nhật UI
+        commentService.likedCommentsCache[cacheKey] = false;
+
+        // Cập nhật localStorage
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        delete likedCommentsStorage[cacheKey]; // Xóa khỏi localStorage
+        localStorage.setItem(
+          "likedComments",
+          JSON.stringify(likedCommentsStorage)
+        );
+
+        return { success: true, simulated: true };
+      }
+    } catch (error) {
+      console.error("Lỗi khi bỏ thích bình luận:", error);
+      handleApiError(error, "Lỗi khi bỏ thích bình luận");
+    }
+  },
+
+  // Lấy số lượt thích của một bình luận
+  getCommentLikesCount: async (commentId) => {
+    try {
+      if (!commentId) {
+        throw new Error("ID bình luận không được để trống");
+      }
+
+      try {
+        const response = await axiosInstance.get(
+          `/Comments/${commentId}/likes/count`
+        );
+        return response.data?.likeCount || 0;
+      } catch (error) {
+        console.error(
+          `Lỗi khi lấy số lượt thích cho bình luận ${commentId}:`,
+          error
+        );
+        return 0;
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượt thích:", error);
+      return 0;
+    }
+  },
+
+  // Kiểm tra trạng thái thích của người dùng với một bình luận
+  checkCommentLikeStatus: async (commentId, userId) => {
+    try {
+      if (!commentId || !userId) {
+        return false;
+      }
+
+      // Kiểm tra trong cache trước
+      const cacheKey = `${commentId}_${userId}`;
+      if (typeof commentService.likedCommentsCache[cacheKey] !== "undefined") {
+        return commentService.likedCommentsCache[cacheKey];
+      }
+
+      // Kiểm tra trong localStorage
+      try {
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        if (typeof likedCommentsStorage[cacheKey] !== "undefined") {
+          // Cập nhật lại cache từ localStorage
+          commentService.likedCommentsCache[cacheKey] =
+            likedCommentsStorage[cacheKey];
+          return likedCommentsStorage[cacheKey];
+        }
+      } catch (storageError) {
+        console.error("Lỗi khi đọc localStorage:", storageError);
+      }
+
+      // Nếu không có trong cache và localStorage, gọi API để kiểm tra
+      try {
+        const response = await axiosInstance.get(
+          `/Comments/${commentId}/likes`
+        );
+
+        const likes = response.data || [];
+        const isLiked =
+          Array.isArray(likes) &&
+          likes.some(
+            (like) =>
+              like.userId === userId || like.userId === parseInt(userId, 10)
+          );
+
+        // Lưu kết quả vào cache
+        commentService.likedCommentsCache[cacheKey] = isLiked;
+
+        // Lưu vào localStorage
+        const likedCommentsStorage = JSON.parse(
+          localStorage.getItem("likedComments") || "{}"
+        );
+        if (isLiked) {
+          likedCommentsStorage[cacheKey] = true;
+        } else {
+          delete likedCommentsStorage[cacheKey];
+        }
+        localStorage.setItem(
+          "likedComments",
+          JSON.stringify(likedCommentsStorage)
+        );
+
+        return isLiked;
+      } catch (error) {
+        console.error(
+          `Lỗi khi kiểm tra trạng thái thích cho bình luận ${commentId}:`,
+          error
+        );
+        return false;
+      }
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra trạng thái thích:", error);
+      return false;
+    }
+  },
+
+  // Chuyển đổi thả tim (toggle like)
+  toggleCommentLike: async (commentId, userId) => {
+    try {
+      if (!commentId || !userId) {
+        throw new Error("ID bình luận và ID người dùng không được để trống");
+      }
+
+      // Kiểm tra trạng thái thích hiện tại
+      const isCurrentlyLiked = await commentService.checkCommentLikeStatus(
+        commentId,
+        userId
+      );
+
+      // Nếu đã thích, thì bỏ thích; nếu chưa thích, thì thích
+      if (isCurrentlyLiked) {
+        return await commentService.unlikeComment(commentId, userId);
+      } else {
+        return await commentService.likeComment(commentId, userId);
+      }
+    } catch (error) {
+      console.error("Lỗi khi chuyển đổi trạng thái thích bình luận:", error);
+      handleApiError(error, "Lỗi khi thích/bỏ thích bình luận");
     }
   },
 };
