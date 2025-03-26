@@ -625,93 +625,12 @@ $tag-colors: (
       flex-shrink: 0;
     }
 
-<<<<<<< HEAD
-    &.reply-image {
-      max-width: 200px; // Hình ảnh trong reply nhỏ hơn
-    }
-  }
-
-  /* Style cho comment actions kiểu Facebook */
-  .facebook-style-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 6px;
-
-    .action-button {
-      background: none;
-      border: none;
-      color: #65676b;
-      font-size: 0.85rem;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s, color 0.2s;
-
-      &:hover {
-        background-color: #f2f2f2;
-      }
-
-      &.liked {
-        color: #1877f2;
-        font-weight: 500;
-      }
-    }
-  }
-
-  /* Style cho nút toggle replies */
-  .toggle-replies-button {
-    background: none;
-    border: none;
-    color: #65676b;
-    font-size: 0.85rem;
-    margin-top: 6px;
-    padding: 4px 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  /* Cấu trúc replies kiểu Facebook */
-  .facebook-style-replies {
-    margin-top: 5px;
-    margin-left: 8px;
-
-    .view-replies-button,
-    .hide-replies-button {
-      background: none;
-      border: none;
-      color: #65676b;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 5px 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-
-      &:hover {
-        text-decoration: underline;
-      }
-
-      &::before {
-        content: "";
-        display: inline-block;
-        width: 16px;
-        height: 1px;
-        background-color: #ccd0d5;
-        margin-right: 8px;
-      }
-=======
     .comment-content {
       flex: 1;
       background-color: white;
       border-radius: 6px;
       padding: 12px;
       @include card-shadow;
->>>>>>> d5e8178c07ad097b181f66b66a287b73e16818b7
     }
 
     .comment-header {
