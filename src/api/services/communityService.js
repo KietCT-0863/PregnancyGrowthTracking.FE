@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosConfig";
-import { ENDPOINTS } from "../apiEndpoints";
+import { ENDPOINTS } from "../constants/apiEndpoints";
 
 // Kiểm tra environment (safe check)
 const isDevelopment = () => {
@@ -337,10 +337,55 @@ const communityService = {
         throw new Error("ID bài viết không được để trống");
       }
 
-      await axiosInstance.delete(ENDPOINTS.POSTS.DELETE(postId));
-      return { success: true, message: "Xóa bài viết thành công" };
+      try {
+        await axiosInstance.delete(ENDPOINTS.POSTS.DELETE(postId));
+        return { success: true, message: "Xóa bài viết thành công" };
+      } catch (apiError) {
+        // Xử lý lỗi theo từng loại mã lỗi cụ thể
+        if (apiError.response) {
+          const { status, data } = apiError.response;
+          
+          // Lỗi 401 Unauthorized - Không đăng nhập
+          if (status === 401) {
+            console.error("Lỗi 401 - Chưa đăng nhập");
+            throw {
+              status: 401,
+              message: data?.message || "Bạn cần đăng nhập để thực hiện thao tác này",
+            };
+          }
+          
+          // Lỗi 403 Forbidden - Không có quyền
+          if (status === 403) {
+            console.error("Lỗi 403 - Không có quyền xóa");
+            throw {
+              status: 403,
+              message: data?.message || "Bạn không có quyền xóa bài viết này",
+            };
+          }
+          
+          // Lỗi 404 Not Found - Bài viết không tồn tại
+          if (status === 404) {
+            console.error("Lỗi 404 - Bài viết không tồn tại");
+            throw {
+              status: 404,
+              message: data?.message || "Bài viết không tồn tại hoặc đã bị xóa",
+            };
+          }
+        }
+        
+        // Ném lại lỗi cho hàm xử lý lỗi chung
+        throw apiError;
+      }
     } catch (error) {
-      handleApiError(error, "Lỗi khi xóa bài viết");
+      // Tạo đối tượng lỗi mới với cấu trúc đồng nhất thay vì sửa đổi tham số exception
+      const formattedError = error.status ? error : {
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || error.message || "Lỗi khi xóa bài viết",
+        originalError: error
+      };
+      
+      console.error("Chi tiết lỗi xóa bài viết:", formattedError);
+      throw formattedError; // Ném ra lỗi đã được định dạng để component xử lý
     }
   },
 

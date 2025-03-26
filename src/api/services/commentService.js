@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosConfig";
-import { ENDPOINTS } from "../apiEndpoints";
+import { ENDPOINTS } from "../constants/apiEndpoints";
 
 const handleApiError = (error, defaultMessage) => {
   console.error("API Error:", error);
@@ -248,7 +248,7 @@ const commentService = {
   },
 
   // Cập nhật comment
-  updateComment: async (commentId, commentText) => {
+  updateComment: async (commentId, commentText, imageFile = null) => {
     try {
       if (!commentId) {
         throw new Error("ID bình luận không được để trống");
@@ -258,17 +258,66 @@ const commentService = {
         throw new Error("Nội dung bình luận không được để trống");
       }
 
-      const payload = {
-        comment: commentText.trim(),
-      };
-
-      console.log(`Cập nhật comment ID ${commentId}:`, payload);
-      const response = await axiosInstance.put(
-        ENDPOINTS.COMMENTS.UPDATE(commentId),
-        payload
-      );
-      return response.data;
+      // Kiểm tra xem có ảnh mới không
+      const hasNewImage = imageFile instanceof File || imageFile instanceof Blob;
+      
+      // Sử dụng FormData nếu có ảnh mới, ngược lại sử dụng JSON thông thường
+      if (hasNewImage) {
+        console.log(`Cập nhật comment ID ${commentId} với ảnh mới:`, {
+          commentText: commentText.trim(),
+          imageFileName: imageFile.name,
+          imageSize: imageFile.size,
+          imageType: imageFile.type
+        });
+        
+        const formData = new FormData();
+        formData.append("Comment", commentText.trim());
+        formData.append("Image", imageFile);
+        
+        // Log FormData để debug
+        console.log("FormData gửi đi khi update comment:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ": " + (pair[0] === "Image" ? "File hình ảnh" : pair[1]));
+        }
+        
+        const response = await axiosInstance.put(
+          ENDPOINTS.COMMENTS.UPDATE(commentId),
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          }
+        );
+        return response.data;
+      } else {
+        // Trường hợp chỉ cập nhật văn bản
+        console.log(`Cập nhật text cho comment ID ${commentId}:`, {
+          comment: commentText.trim()
+        });
+        
+        const payload = {
+          comment: commentText.trim()
+        };
+        
+        const response = await axiosInstance.put(
+          ENDPOINTS.COMMENTS.UPDATE(commentId),
+          payload
+        );
+        return response.data;
+      }
     } catch (error) {
+      console.error("Lỗi khi cập nhật bình luận:", error);
+      
+      // Log chi tiết lỗi để debug
+      if (error.response) {
+        console.error("Chi tiết phản hồi lỗi:", {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      
       handleApiError(error, "Lỗi khi cập nhật bình luận");
     }
   },

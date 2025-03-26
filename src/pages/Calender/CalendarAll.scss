@@ -76,26 +76,46 @@ $duration: 0.3s;
 }
 
 @keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
   from {
+    transform: translateY(20px);
     opacity: 0;
-    transform: translateY(-10px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 body.calendar-page {
@@ -114,6 +134,7 @@ body.calendar-page {
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .calendar-header {
@@ -1090,7 +1111,7 @@ body.calendar-page {
                 font-weight: 600 !important;
                 margin-bottom: 2px !important;
                 opacity: 1 !important;
-                color: #000000 !important;
+                color: #FFFFFF !important;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
                 visibility: visible !important;
                 display: block !important;
@@ -1100,7 +1121,7 @@ body.calendar-page {
                 font-size: 14px !important;
                 font-weight: 500 !important;
                 word-break: break-word !important;
-                color: #2c2525 !important;
+                color: #FFFFFF !important;
                 text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
                 visibility: visible !important;
                 display: block !important;
@@ -1166,7 +1187,6 @@ body.calendar-page {
             display: block !important;
             z-index: 100 !important;
             opacity: 1 !important;
-            margin: 4px 0 !important;
             
             &:hover {
               transform: translateY(-2px) !important;
@@ -2128,6 +2148,181 @@ button:focus, input:focus, select:focus, textarea:focus {
   &:focus-visible {
     outline: 2px solid rgba(26, 115, 232, 0.5);
     outline-offset: 2px;
+  }
+}
+
+// Animate the calendar container
+.calendar-all-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Animate calendar days and events
+.calendar-day {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(255, 107, 139, 0.2);
+  }
+
+  &.today {
+    animation: pulse 2s infinite;
+  }
+  
+  &.has-event {
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255, 107, 139, 0.2), rgba(255,255,255,0));
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+      pointer-events: none;
+    }
+  }
+}
+
+// Animate events
+.calendar-event {
+  animation: slideInUp 0.3s ease-out;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+// Animate modals
+.event-modal {
+  .modal-content {
+    animation: scaleIn 0.3s ease-out;
+  }
+}
+
+// Animate event form fields
+.event-form-input, 
+.event-form-select {
+  transition: all 0.3s ease;
+  
+  &:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 139, 0.2);
+  }
+}
+
+// Animate buttons
+.calendar-btn, 
+.add-event-btn,
+.nav-button {
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:hover {
+    animation: pulse 1s infinite;
+  }
+}
+
+// Animate category filters
+.category-filter {
+  transition: all 0.3s ease;
+  
+  &.active, &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(255, 107, 139, 0.2);
+  }
+  
+  .category-badge {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Animate mini calendar days
+.mini-calendar-day {
+  transition: all 0.3s ease;
+  
+  &:hover:not(.disabled) {
+    transform: scale(1.15);
+    font-weight: bold;
+  }
+  
+  &.selected {
+    animation: pulse 1.5s infinite;
+  }
+}
+
+// Animate navigation between months/weeks
+.month-header,
+.week-header {
+  animation: fadeIn 0.5s ease-out;
+}
+
+// Animate current time indicator
+.current-time-indicator {
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -8px;
+    width: 8px;
+    height: 8px;
+    background-color: #ff6b8b;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    animation: pulse 2s infinite;
+  }
+}
+
+// Animate upcoming events
+.upcoming-event {
+  animation: slideInUp 0.4s ease-out;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(255, 107, 139, 0.15);
+  }
+  
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+}
+
+// Animate view mode selector
+.view-mode-selector {
+  .view-mode-option {
+    transition: all 0.3s ease;
+    
+    &:hover:not(.active) {
+      transform: translateY(-2px);
+    }
+    
+    &.active {
+      animation: bounce 1s ease infinite;
+    }
   }
 }
 

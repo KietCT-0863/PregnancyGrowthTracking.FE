@@ -1,6 +1,10 @@
 export const API_BASE_URL =
   "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api";
 
+// Đây là alias cho truy cập dễ dàng
+export const BASE_URL = API_BASE_URL;
+export const USER_API = `${API_BASE_URL}/User`;
+
 export const ENDPOINTS = {
   AUTH: {
     LOGIN: "/Auth/Login",
@@ -35,8 +39,9 @@ export const ENDPOINTS = {
     DETAIL: (id) => `/Foetus/${id}`,
     CREATE: "/Foetus/Create",
     DELETE: (id) => `/Foetus/${id}`,
+    // Thêm endpoint cập nhật tuần thai
+    UPDATE_AGE: (id) => `/Foetus/UpdateAge?foetusId=${id}`, // Endpoint mới
   },
-
   USER_NOTES: {
     GET_BY_USER: (userId) => `/user-notes/user/${userId}`,
     GET_BY_ID: (id) => `/user-notes/${id}`,
@@ -69,6 +74,25 @@ export const ENDPOINTS = {
     LIST: "/Reminder/history",
     DELETE: (remindId) => `/Reminder/delete/${remindId}`,
     UPDATE: (remindId) => `/Reminder/update/${remindId}`,
+  },
+  // Thêm endpoints cho Community/Posts
+  POSTS: {
+    LIST: "/posts",
+    CREATE: "/posts",
+    UPDATE: "/posts",
+    DELETE: (postId) => `/posts?postID=${postId}`,
+    // Endpoints cho chức năng like
+    LIKE: (postId) => `/posts/${postId}/likes`,
+    UNLIKE: (postId) => `/posts/${postId}/likes`,
+    GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
+    GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
+  },
+  COMMENTS: {
+    LIST: "/Comments",
+    CREATE: "/Comments/with-image",
+    CREATE_WITH_IMAGE: "/Comments/with-image",
+    UPDATE: (commentId) => `/Comments/${commentId}/with-image`,
+    DELETE: (commentId) => `/Comments/${commentId}`,
   },
 };
 

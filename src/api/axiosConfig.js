@@ -34,16 +34,20 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     // Xử lý token hết hạn (status 401)
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       // TODO: Thêm logic refresh token ở đây nếu cần
-
-      // Xóa token và chuyển về trang đăng nhập
+      console.warn("Token hết hạn hoặc không hợp lệ");
+      
+      // Không tự động chuyển hướng đến login, chỉ xóa token nếu hết hạn
       localStorage.removeItem("token");
-      window.location.href = "/login";
+      
+      // Thêm flag để component biết đây là lỗi xác thực
+      error.isAuthError = true;
     }
 
+    // Trả về lỗi để component có thể xử lý (hiển thị thông báo hoặc chuyển hướng)
     return Promise.reject(error);
   }
 );
