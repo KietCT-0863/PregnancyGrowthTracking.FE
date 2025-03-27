@@ -82,8 +82,8 @@ export const ENDPOINTS = {
     UPDATE: "/posts",
     DELETE: (postId) => `/posts?postID=${postId}`,
     // Endpoints cho chức năng like
-    LIKE: (postId) => `/posts/${postId}/likes`,
-    UNLIKE: (postId) => `/posts/${postId}/likes`,
+    LIKE: (postId) => `/posts/${postId}/toggle-like`,
+    UNLIKE: (postId) => `/posts/${postId}/toggle-like`,
     GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
     GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
   },

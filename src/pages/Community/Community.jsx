@@ -465,15 +465,19 @@ const CommentSection = ({ postId, initialComments = [] }) => {
   const handleEditComment = (comment) => {
     setEditingCommentId(comment.commentId);
     setEditText(comment.comment);
-    
+
     // Lấy URL ảnh hiện tại của comment nếu có
-    const commentImage = comment.imageUrl || comment.image || comment.commentImageUrl || comment.photoUrl;
+    const commentImage =
+      comment.imageUrl ||
+      comment.image ||
+      comment.commentImageUrl ||
+      comment.photoUrl;
     if (commentImage) {
       setEditImagePreview(commentImage);
     } else {
       setEditImagePreview("");
     }
-    
+
     setEditCommentImage(null); // Reset ảnh mới khi bắt đầu chỉnh sửa
     setShowDropdown(null);
   };
@@ -504,14 +508,18 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     try {
       setIsLoading(true);
       // Gọi API với editCommentImage nếu có file ảnh mới
-      await commentService.updateComment(editingCommentId, editText, editCommentImage);
-      
+      await commentService.updateComment(
+        editingCommentId,
+        editText,
+        editCommentImage
+      );
+
       // Reset state sau khi cập nhật
       setEditingCommentId(null);
       setEditText("");
       setEditCommentImage(null);
       setEditImagePreview("");
-      
+
       // Cập nhật lại danh sách bình luận
       fetchComments();
       toast.success("Bình luận đã được cập nhật");
@@ -724,7 +732,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                   onChange={(e) => setEditText(e.target.value)}
                   placeholder="Chỉnh sửa bình luận..."
                 />
-                
+
                 {/* Thêm chức năng upload ảnh khi edit */}
                 <div className="edit-image-upload">
                   <input
@@ -735,10 +743,10 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                     accept="image/*"
                     style={{ display: "none" }}
                   />
-                  
+
                   {!editImagePreview ? (
-                    <label 
-                      htmlFor={`edit-comment-image-${comment.commentId}`} 
+                    <label
+                      htmlFor={`edit-comment-image-${comment.commentId}`}
                       className="edit-image-label"
                     >
                       <Camera size={18} />
@@ -747,9 +755,9 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                   ) : (
                     <div className="edit-image-preview">
                       <img src={editImagePreview} alt="Preview" />
-                      <button 
-                        type="button" 
-                        className="remove-edit-image-btn" 
+                      <button
+                        type="button"
+                        className="remove-edit-image-btn"
                         onClick={removeEditCommentImage}
                       >
                         <X size={16} />
@@ -757,7 +765,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="edit-actions">
                   <button
                     onClick={submitEditComment}
@@ -765,7 +773,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                   >
                     Lưu
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       setEditingCommentId(null);
                       setEditText("");
@@ -837,16 +845,25 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 
             {showDropdown === comment.commentId && (
               <div className="comment-dropdown">
-                <button onClick={() => handleReplyComment(comment)} className="dropdown-reply-btn">
-                  <MessageCircle size={14} className="dropdown-icon" /> 
+                <button
+                  onClick={() => handleReplyComment(comment)}
+                  className="dropdown-reply-btn"
+                >
+                  <MessageCircle size={14} className="dropdown-icon" />
                   <span className="dropdown-text">Trả lời</span>
                 </button>
-                <button onClick={() => handleEditComment(comment)} className="dropdown-edit-btn">
-                  <Edit size={14} className="dropdown-icon" /> 
+                <button
+                  onClick={() => handleEditComment(comment)}
+                  className="dropdown-edit-btn"
+                >
+                  <Edit size={14} className="dropdown-icon" />
                   <span className="dropdown-text">Chỉnh sửa</span>
                 </button>
-                <button onClick={() => handleDeleteComment(comment.commentId)} className="dropdown-delete-btn">
-                  <Trash size={14} className="dropdown-icon" /> 
+                <button
+                  onClick={() => handleDeleteComment(comment.commentId)}
+                  className="dropdown-delete-btn"
+                >
+                  <Trash size={14} className="dropdown-icon" />
                   <span className="dropdown-text">Xóa</span>
                 </button>
               </div>
@@ -916,7 +933,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                   onChange={(e) => setEditText(e.target.value)}
                                   placeholder="Chỉnh sửa phản hồi..."
                                 />
-                                
+
                                 {/* Thêm chức năng upload ảnh khi edit reply */}
                                 <div className="edit-image-upload">
                                   <input
@@ -927,10 +944,10 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                     accept="image/*"
                                     style={{ display: "none" }}
                                   />
-                                  
+
                                   {!editImagePreview ? (
-                                    <label 
-                                      htmlFor={`edit-reply-image-${reply.commentId}`} 
+                                    <label
+                                      htmlFor={`edit-reply-image-${reply.commentId}`}
                                       className="edit-image-label"
                                     >
                                       <Camera size={16} />
@@ -938,10 +955,13 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                     </label>
                                   ) : (
                                     <div className="edit-image-preview">
-                                      <img src={editImagePreview} alt="Preview" />
-                                      <button 
-                                        type="button" 
-                                        className="remove-edit-image-btn" 
+                                      <img
+                                        src={editImagePreview}
+                                        alt="Preview"
+                                      />
+                                      <button
+                                        type="button"
+                                        className="remove-edit-image-btn"
                                         onClick={removeEditCommentImage}
                                       >
                                         <X size={14} />
@@ -949,7 +969,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                     </div>
                                   )}
                                 </div>
-                                
+
                                 <div className="edit-actions">
                                   <button
                                     onClick={submitEditComment}
@@ -957,7 +977,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                   >
                                     Lưu
                                   </button>
-                                  <button 
+                                  <button
                                     onClick={() => {
                                       setEditingCommentId(null);
                                       setEditText("");
@@ -996,7 +1016,11 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                 }
                               >
                                 <span className="reply-btn-text">Thích</span>{" "}
-                                {replyLikeCount > 0 && <span className="reply-like-count">({replyLikeCount})</span>}
+                                {replyLikeCount > 0 && (
+                                  <span className="reply-like-count">
+                                    ({replyLikeCount})
+                                  </span>
+                                )}
                               </button>
                               <button
                                 className="action-button reply-btn"
@@ -1027,15 +1051,22 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                     onClick={() => handleReplyComment(comment)}
                                     className="dropdown-reply-btn"
                                   >
-                                    <MessageCircle size={14} className="dropdown-icon" /> 
-                                    <span className="dropdown-text">Trả lời</span>
+                                    <MessageCircle
+                                      size={14}
+                                      className="dropdown-icon"
+                                    />
+                                    <span className="dropdown-text">
+                                      Trả lời
+                                    </span>
                                   </button>
                                   <button
                                     onClick={() => handleEditComment(reply)}
                                     className="dropdown-edit-btn"
                                   >
-                                    <Edit size={14} className="dropdown-icon" /> 
-                                    <span className="dropdown-text">Chỉnh sửa</span>
+                                    <Edit size={14} className="dropdown-icon" />
+                                    <span className="dropdown-text">
+                                      Chỉnh sửa
+                                    </span>
                                   </button>
                                   <button
                                     onClick={() =>
@@ -1043,7 +1074,10 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                                     }
                                     className="dropdown-delete-btn"
                                   >
-                                    <Trash size={14} className="dropdown-icon" /> 
+                                    <Trash
+                                      size={14}
+                                      className="dropdown-icon"
+                                    />
                                     <span className="dropdown-text">Xóa</span>
                                   </button>
                                 </div>
@@ -1197,8 +1231,9 @@ const Community = () => {
   const [currentPost, setCurrentPost] = useState({});
   const [showDropdown, setShowDropdown] = useState(null);
   const [expandedComments, setExpandedComments] = useState({});
-  const [likedPosts, setLikedPosts] = useState({}); // { postId: true/false }
-  const [likesCount, setLikesCount] = useState({}); // { postId: count }
+  const [likedPosts, setLikedPosts] = useState({});
+  const [likesCount, setLikesCount] = useState({});
+  const [postAuthors, setPostAuthors] = useState({});
   const userId = 4; // Tạm thời hardcode userId, sau này lấy từ context hoặc localStorage
 
   // Hàm để toggle phần bình luận
@@ -1307,19 +1342,19 @@ const Community = () => {
           // Xử lý trường hợp createdDate có thể là null hoặc không hợp lệ
           if (!a.createdDate) return 1; // Đẩy những bài không có ngày xuống dưới
           if (!b.createdDate) return -1; // Đẩy những bài có ngày lên trên
-          
+
           // Chuyển đổi chuỗi ngày thành đối tượng Date để so sánh
           const dateA = new Date(a.createdDate);
           const dateB = new Date(b.createdDate);
-          
+
           // Kiểm tra nếu ngày không hợp lệ
           const isValidDateA = !isNaN(dateA.getTime());
           const isValidDateB = !isNaN(dateB.getTime());
-          
+
           if (!isValidDateA && !isValidDateB) return 0;
           if (!isValidDateA) return 1;
           if (!isValidDateB) return -1;
-          
+
           // Sắp xếp giảm dần (mới nhất trước)
           return dateB - dateA;
         });
@@ -1405,17 +1440,18 @@ const Community = () => {
       posts.forEach((post) => {
         fetchLikesCount(post.id);
         checkLikeStatus(post.id);
+        fetchPostAuthor(post.id); // Thêm gọi API lấy thông tin tác giả
       });
     }
   }, [posts]);
 
-  // Thêm hàm xử lý like/unlike
+  // Thêm hàm xử lý like/unlike với API toggle-like
   const handleLikeToggle = async (postId) => {
     try {
       // Ngăn chặn việc like bài viết không tồn tại
       if (!posts.some((post) => post.id === postId)) {
         console.warn(
-          `Không thể like/unlike bài viết ID ${postId} vì không tồn tại trong danh sách hiện tại`
+          `Không thể thực hiện thao tác yêu thích bài viết ID ${postId} vì không tồn tại trong danh sách hiện tại`
         );
         toast.warning("Bài viết không tồn tại hoặc đã bị xóa");
         return;
@@ -1434,35 +1470,28 @@ const Community = () => {
         [postId]: (prev[postId] || 0) + (currentLikeStatus ? -1 : 1),
       }));
 
-      // Thêm timeout để tạo cảm giác mượt mà hơn
-      setTimeout(async () => {
-        try {
-          let result;
-          // Gọi API
-          if (currentLikeStatus) {
-            result = await communityService.unlikePost(postId, userId);
-          } else {
-            result = await communityService.likePost(postId, userId);
-          }
+      // Gọi API để toggle like bài viết
+      const result = await communityService.togglePostLike(postId, userId);
 
-          // Kiểm tra xem kết quả có phải là giả lập và có thông báo không
-          if (result && result.simulated && result.message) {
-            console.log(`Thông báo từ API: ${result.message}`);
-            // Nếu muốn hiển thị cho người dùng (tùy chọn)
-            // toast.info(result.message);
-          } else {
-            // Sau khi API thành công, cập nhật lại số lượng like chính xác
-            fetchLikesCount(postId);
-          }
-        } catch (error) {
-          console.error(
-            `Error calling like/unlike API for post ${postId}:`,
-            error
-          );
-          // Để trạng thái UI như đã cập nhật, không rollback vì API đang lỗi
-          console.log("API gặp lỗi nhưng vẫn giữ trạng thái UI đã cập nhật");
-        }
-      }, 300);
+      // Thêm thông báo trực quan khi thao tác thành công
+      if (result.success) {
+        console.log(
+          `${
+            currentLikeStatus ? "Đã bỏ thích" : "Đã thích"
+          } bài viết ID ${postId}`
+        );
+        // Hiển thị toast nếu muốn (tùy chọn)
+        // toast.success(`${currentLikeStatus ? "Đã bỏ thích" : "Đã thích"} bài viết!`, {
+        //   position: "bottom-right",
+        //   autoClose: 2000,
+        // });
+      }
+
+      // Cập nhật lại dữ liệu từ server sau 1 giây
+      setTimeout(() => {
+        fetchLikesCount(postId);
+        checkLikeStatus(postId);
+      }, 1000);
     } catch (error) {
       console.error(`Error toggling like for post ${postId}:`, error);
 
@@ -1550,31 +1579,32 @@ const Community = () => {
 
     try {
       // Tìm bài viết để kiểm tra quyền sở hữu
-      const post = posts.find(p => p.id === postId);
-      
+      const post = posts.find((p) => p.id === postId);
+
       // Nếu không tìm thấy bài viết, hiện thông báo
       if (!post) {
         toast.error("Không tìm thấy bài viết này!");
         return;
       }
-      
+
       // Kiểm tra quyền xóa bài viết - ví dụ: so sánh userId với người tạo bài viết
       // Giả sử post.userId hoặc post.createdById là ID người tạo, và userId là người dùng hiện tại
       const postOwnerId = post.userId || post.createdById;
-      
+
       // Nếu không phải chủ sở hữu bài viết, hiển thị thông báo lỗi
-      if (postOwnerId && postOwnerId !== userId && userId !== 1) { // Giả định userId 1 là admin
+      if (postOwnerId && postOwnerId !== userId && userId !== 1) {
+        // Giả định userId 1 là admin
         toast.error("Bạn không thể xóa bài viết không phải của mình!", {
           position: "top-center",
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
-          draggable: true
+          draggable: true,
         });
         return;
       }
-      
+
       // Nếu là chủ sở hữu, thực hiện xóa
       await communityService.deletePost(postId);
       setPosts(posts.filter((p) => p.id !== postId));
@@ -1582,7 +1612,7 @@ const Community = () => {
       playDeleteSound();
     } catch (error) {
       console.error("Error deleting post:", error);
-      
+
       // Xử lý các loại lỗi khác nhau
       if (error.status === 401) {
         toast.error("Bạn cần đăng nhập để thực hiện thao tác này!");
@@ -1597,22 +1627,23 @@ const Community = () => {
   const openEditModal = (post) => {
     // Kiểm tra quyền sở hữu bài viết - tương tự như khi xóa bài viết
     const postOwnerId = post.userId || post.createdById;
-    
+
     // Nếu không phải chủ sở hữu bài viết, hiển thị thông báo lỗi
-    if (postOwnerId && postOwnerId !== userId && userId !== 1) { // Giả định userId 1 là admin
+    if (postOwnerId && postOwnerId !== userId && userId !== 1) {
+      // Giả định userId 1 là admin
       toast.error("Bạn không thể chỉnh sửa bài viết không phải của mình!", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
-        draggable: true
+        draggable: true,
       });
       // Đóng dropdown nếu đang mở
       setShowDropdown(null);
       return;
     }
-    
+
     // Nếu là chủ sở hữu, mở modal chỉnh sửa
     setCurrentPost(post);
     setModalOpen(true);
@@ -1642,6 +1673,22 @@ const Community = () => {
       return format(new Date(dateString), "dd/MM/yyyy HH:mm");
     } catch (error) {
       return dateString;
+    }
+  };
+
+  // Hàm lấy thông tin tác giả của bài viết
+  const fetchPostAuthor = async (postId) => {
+    try {
+      const authorInfo = await communityService.getPostAuthor(postId);
+      setPostAuthors((prev) => ({
+        ...prev,
+        [postId]: authorInfo,
+      }));
+    } catch (error) {
+      console.error(
+        `Lỗi khi lấy thông tin tác giả của bài viết ${postId}:`,
+        error
+      );
     }
   };
 
@@ -1686,11 +1733,20 @@ const Community = () => {
                   <div className="post-header">
                     <div className="user-info">
                       <div className="avatar">
-                        <User size={20} />
+                        {postAuthors[post.id]?.profileImageUrl ? (
+                          <img
+                            src={postAuthors[post.id].profileImageUrl}
+                            alt={postAuthors[post.id].fullName}
+                            className="author-avatar"
+                          />
+                        ) : (
+                          <User size={20} />
+                        )}
                       </div>
                       <div className="post-meta">
                         <h3>
-                          {post.createdBy ||
+                          {postAuthors[post.id]?.fullName ||
+                            post.createdBy ||
                             post.userName ||
                             post.author ||
                             post.user?.name ||
@@ -1705,7 +1761,9 @@ const Community = () => {
                       <button
                         className="menu-button"
                         onClick={() =>
-                          setShowDropdown(showDropdown === post.id ? null : post.id)
+                          setShowDropdown(
+                            showDropdown === post.id ? null : post.id
+                          )
                         }
                       >
                         <MoreVertical size={18} />
@@ -1760,7 +1818,8 @@ const Community = () => {
                           size={18}
                           className={likedPosts[post.id] ? "heart-filled" : ""}
                         />
-                        Thích {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
+                        Thích{" "}
+                        {likesCount[post.id] > 0 && `(${likesCount[post.id]})`}
                       </button>
                       <button
                         className="reaction-button"
@@ -1772,7 +1831,9 @@ const Community = () => {
                     </div>
 
                     {/* Hiển thị phần bình luận nếu đã mở rộng */}
-                    {expandedComments[post.id] && <CommentSection postId={post.id} />}
+                    {expandedComments[post.id] && (
+                      <CommentSection postId={post.id} />
+                    )}
                   </div>
                 </div>
               ))

@@ -1,16 +1,13 @@
 import axiosInstance from "../axiosConfig";
 import { ENDPOINTS } from "../constants/apiEndpoints";
 
-
 const isDevelopment = () => {
-
   try {
     return (
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1"
     );
   } catch (e) {
-
     return false;
   }
 };
@@ -26,23 +23,18 @@ const handleApiError = (error, defaultMessage) => {
 };
 
 const communityService = {
-
   getPosts: async () => {
     try {
       const response = await axiosInstance.get(ENDPOINTS.POSTS.LIST);
       console.log("API response data:", response.data);
 
-
       const normalizePostData = (posts) => {
         if (!Array.isArray(posts)) return [];
 
         return posts.map((post) => {
-  
           let normalizedTags = [];
 
-
           if (post.postTags) {
-
             if (Array.isArray(post.postTags)) {
               normalizedTags = post.postTags.map((tag, index) => {
                 if (typeof tag === "string") {
@@ -55,16 +47,12 @@ const communityService = {
                 }
                 return { id: `tag_${index}`, name: "Unknown Tag" };
               });
-            }
-
-            else if (typeof post.postTags === "string") {
+            } else if (typeof post.postTags === "string") {
               normalizedTags = post.postTags.split(",").map((tag, index) => ({
                 id: `tag_${index}`,
                 name: tag.trim(),
               }));
-            }
-         
-            else if (typeof post.postTags === "object") {
+            } else if (typeof post.postTags === "object") {
               const entries = Object.entries(post.postTags);
               normalizedTags = entries.map(([key, value], index) => {
                 if (typeof value === "string") {
@@ -79,7 +67,6 @@ const communityService = {
               });
             }
           }
-
 
           let authorName = "Người dùng";
           if (post.createdBy) {
@@ -344,16 +331,17 @@ const communityService = {
         // Xử lý lỗi theo từng loại mã lỗi cụ thể
         if (apiError.response) {
           const { status, data } = apiError.response;
-          
+
           // Lỗi 401 Unauthorized - Không đăng nhập
           if (status === 401) {
             console.error("Lỗi 401 - Chưa đăng nhập");
             throw {
               status: 401,
-              message: data?.message || "Bạn cần đăng nhập để thực hiện thao tác này",
+              message:
+                data?.message || "Bạn cần đăng nhập để thực hiện thao tác này",
             };
           }
-          
+
           // Lỗi 403 Forbidden - Không có quyền
           if (status === 403) {
             console.error("Lỗi 403 - Không có quyền xóa");
@@ -362,7 +350,7 @@ const communityService = {
               message: data?.message || "Bạn không có quyền xóa bài viết này",
             };
           }
-          
+
           // Lỗi 404 Not Found - Bài viết không tồn tại
           if (status === 404) {
             console.error("Lỗi 404 - Bài viết không tồn tại");
@@ -372,18 +360,23 @@ const communityService = {
             };
           }
         }
-        
+
         // Ném lại lỗi cho hàm xử lý lỗi chung
         throw apiError;
       }
     } catch (error) {
       // Tạo đối tượng lỗi mới với cấu trúc đồng nhất thay vì sửa đổi tham số exception
-      const formattedError = error.status ? error : {
-        status: error.response?.status || 500,
-        message: error.response?.data?.message || error.message || "Lỗi khi xóa bài viết",
-        originalError: error
-      };
-      
+      const formattedError = error.status
+        ? error
+        : {
+            status: error.response?.status || 500,
+            message:
+              error.response?.data?.message ||
+              error.message ||
+              "Lỗi khi xóa bài viết",
+            originalError: error,
+          };
+
       console.error("Chi tiết lỗi xóa bài viết:", formattedError);
       throw formattedError; // Ném ra lỗi đã được định dạng để component xử lý
     }
@@ -393,6 +386,86 @@ const communityService = {
   likedPostsCache: {},
   // Cache cho bài viết không tồn tại để tránh gọi API quá nhiều
   nonExistentPostsCache: new Set(),
+
+  // Thêm phương thức toggle like để sử dụng cho bài viết, tương tự như comments
+  togglePostLike: async (postId, userId) => {
+    try {
+      if (!postId || !userId) {
+        throw new Error("ID bài viết và ID người dùng không được để trống");
+      }
+
+      // Kiểm tra trạng thái thích hiện tại
+      const isCurrentlyLiked = await communityService.checkLikeStatus(
+        postId,
+        userId
+      );
+
+      console.log(
+        `Toggle like bài viết ID ${postId}, trạng thái hiện tại: ${
+          isCurrentlyLiked ? "đã thích" : "chưa thích"
+        }`
+      );
+
+      // Cập nhật cache trước để UI phản hồi nhanh
+      const cacheKey = `${postId}_${userId}`;
+      communityService.likedPostsCache[cacheKey] = !isCurrentlyLiked;
+
+      // Lưu vào localStorage để giữ trạng thái giữa các lần load trang
+      try {
+        const likedPostsStorage = JSON.parse(
+          localStorage.getItem("likedPosts") || "{}"
+        );
+
+        if (!isCurrentlyLiked) {
+          // Nếu chưa thích thì thêm vào danh sách thích
+          likedPostsStorage[cacheKey] = true;
+        } else {
+          // Nếu đã thích thì xóa khỏi danh sách thích
+          delete likedPostsStorage[cacheKey];
+        }
+
+        localStorage.setItem("likedPosts", JSON.stringify(likedPostsStorage));
+      } catch (storageError) {
+        console.error(
+          "Lỗi khi lưu trạng thái like vào localStorage:",
+          storageError
+        );
+      }
+
+      try {
+        // Gọi API toggle-like
+        const response = await axiosInstance.post(
+          ENDPOINTS.POSTS.LIKE(postId),
+          { userId }
+        );
+
+        // Kiểm tra kết quả từ API
+        console.log(
+          `Kết quả toggle like bài viết ID ${postId}:`,
+          response.data
+        );
+
+        return {
+          success: true,
+          isLiked: !isCurrentlyLiked,
+          ...response.data,
+        };
+      } catch (error) {
+        console.error(`Lỗi khi toggle like bài viết ID ${postId}:`, error);
+
+        // Giữ nguyên giá trị đã cập nhật trong cache để UX tốt hơn
+        return {
+          success: true,
+          simulated: true,
+          isLiked: !isCurrentlyLiked,
+        };
+      }
+    } catch (error) {
+      console.error("Lỗi khi toggle like bài viết:", error);
+      // Không throw lỗi để tránh làm gián đoạn UX
+      return { success: false, message: error.message };
+    }
+  },
 
   // Kiểm tra xem bài viết có tồn tại không
   checkPostExists: async (postId) => {
@@ -446,7 +519,8 @@ const communityService = {
       console.log(`Thả tim bài viết ID ${postId}:`, payload);
 
       try {
-        const response = await axiosInstance.put(
+        // Gọi API toggle-like với phương thức POST
+        const response = await axiosInstance.post(
           ENDPOINTS.POSTS.LIKE(postId),
           payload
         );
@@ -503,9 +577,10 @@ const communityService = {
       console.log(`Bỏ tim bài viết ID ${postId}:`, payload);
 
       try {
-        const response = await axiosInstance.delete(
+        // Gọi API toggle-like với phương thức POST
+        const response = await axiosInstance.post(
           ENDPOINTS.POSTS.UNLIKE(postId),
-          { data: payload }
+          payload
         );
 
         // Cập nhật cache trạng thái like
@@ -614,7 +689,25 @@ const communityService = {
         return communityService.likedPostsCache[cacheKey];
       }
 
-      // Nếu không có trong cache, lấy danh sách người đã like và kiểm tra
+      // Kiểm tra trong localStorage
+      try {
+        const likedPostsStorage = JSON.parse(
+          localStorage.getItem("likedPosts") || "{}"
+        );
+        if (typeof likedPostsStorage[cacheKey] !== "undefined") {
+          // Cập nhật lại cache từ localStorage
+          communityService.likedPostsCache[cacheKey] =
+            likedPostsStorage[cacheKey];
+          return likedPostsStorage[cacheKey];
+        }
+      } catch (storageError) {
+        console.error(
+          "Lỗi khi đọc trạng thái like từ localStorage:",
+          storageError
+        );
+      }
+
+      // Nếu không có trong cache và localStorage, lấy danh sách người đã like và kiểm tra
       const likes = await communityService.getPostLikes(postId);
 
       // Kiểm tra xem có trong danh sách không
@@ -630,10 +723,53 @@ const communityService = {
       // Lưu kết quả vào cache
       communityService.likedPostsCache[cacheKey] = isLiked;
 
+      // Lưu kết quả vào localStorage để duy trì giữa các lần tải trang
+      try {
+        const likedPostsStorage = JSON.parse(
+          localStorage.getItem("likedPosts") || "{}"
+        );
+        if (isLiked) {
+          likedPostsStorage[cacheKey] = true;
+        } else {
+          delete likedPostsStorage[cacheKey];
+        }
+        localStorage.setItem("likedPosts", JSON.stringify(likedPostsStorage));
+      } catch (storageError) {
+        console.error(
+          "Lỗi khi lưu trạng thái like vào localStorage:",
+          storageError
+        );
+      }
+
       return isLiked;
     } catch (error) {
       console.error(`Error checking like status for post ${postId}:`, error);
       return false; // Mặc định trả về false nếu có lỗi
+    }
+  },
+
+  // Lấy thông tin tác giả của bài viết
+  getPostAuthor: async (postId) => {
+    try {
+      if (!postId) {
+        throw new Error("ID bài viết không được để trống");
+      }
+
+      try {
+        const response = await axiosInstance.get(`/posts/${postId}/author`);
+        return (
+          response.data || { fullName: "Người dùng", profileImageUrl: null }
+        );
+      } catch (error) {
+        console.error(
+          `Lỗi khi lấy thông tin tác giả của bài viết ${postId}:`,
+          error
+        );
+        return { fullName: "Người dùng", profileImageUrl: null };
+      }
+    } catch (error) {
+      console.error(`Error getting author for post ${postId}:`, error);
+      return { fullName: "Người dùng", profileImageUrl: null };
     }
   },
 };

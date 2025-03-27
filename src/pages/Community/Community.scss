@@ -10,7 +10,8 @@ $border-color: #eee;
 $light-color: #fff0f3;
 $muted-color: #888;
 $card-shadow: 0 3px 10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
-$hover-shadow: 0 10px 15px -3px rgba(255, 107, 139, 0.1), 0 4px 6px -2px rgba(255, 107, 139, 0.05);
+$hover-shadow: 0 10px 15px -3px rgba(255, 107, 139, 0.1),
+  0 4px 6px -2px rgba(255, 107, 139, 0.05);
 $transition: all 0.3s ease;
 
 // Mixins
@@ -61,11 +62,11 @@ $transition: all 0.3s ease;
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
   gap: 20px;
-  
+
   @media (min-width: 1200px) {
     grid-template-columns: 260px minmax(0, 1fr);
   }
-  
+
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
@@ -79,17 +80,17 @@ $transition: all 0.3s ease;
   position: sticky;
   top: 80px;
   height: fit-content;
-  
+
   @media (max-width: 992px) {
     display: none;
   }
-  
+
   .sidebar-section {
     background-color: white;
     border-radius: 12px;
-  padding: 20px;
+    padding: 20px;
     box-shadow: $card-shadow;
-    
+
     h2 {
       font-size: 16px;
       color: $text-color;
@@ -98,9 +99,9 @@ $transition: all 0.3s ease;
       padding-bottom: 10px;
       border-bottom: 1px solid $border-color;
       position: relative;
-      
+
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: -1px;
         left: 0;
@@ -109,14 +110,18 @@ $transition: all 0.3s ease;
         background-color: $primary-color;
       }
     }
-    
-    .tunes-list, .contacts-list, .settings-list {
+
+    .tunes-list,
+    .contacts-list,
+    .settings-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-    
-    .tune-item, .contact-item, .setting-item {
+
+    .tune-item,
+    .contact-item,
+    .setting-item {
       display: flex;
       align-items: center;
       padding: 10px;
@@ -124,23 +129,25 @@ $transition: all 0.3s ease;
       transition: $transition;
       position: relative;
       cursor: pointer;
-      
+
       &:hover {
         background-color: $light-color;
         transform: translateY(-2px);
       }
-      
+
       &.playing {
         background-color: rgba($primary-color, 0.08);
-        
+
         .play-button {
           background-color: $primary-color;
           color: white;
           animation: pulse 1.5s infinite;
         }
       }
-      
-      .tune-avatar, .contact-avatar, .setting-icon {
+
+      .tune-avatar,
+      .contact-avatar,
+      .setting-icon {
         width: 36px;
         height: 36px;
         border-radius: 50%;
@@ -151,11 +158,12 @@ $transition: all 0.3s ease;
         margin-right: 12px;
         color: $primary-color;
       }
-      
-      .tune-info, .contact-info {
+
+      .tune-info,
+      .contact-info {
         flex: 1;
         min-width: 0;
-        
+
         h3 {
           font-size: 14px;
           font-weight: 500;
@@ -163,7 +171,7 @@ $transition: all 0.3s ease;
           color: $text-color;
           @include truncate;
         }
-        
+
         p {
           font-size: 12px;
           color: $muted-color;
@@ -171,7 +179,7 @@ $transition: all 0.3s ease;
           @include truncate;
         }
       }
-      
+
       .play-button {
         width: 28px;
         height: 28px;
@@ -184,17 +192,17 @@ $transition: all 0.3s ease;
         justify-content: center;
         cursor: pointer;
         transition: $transition;
-        
+
         &:hover {
           background-color: $primary-color;
           color: white;
         }
       }
-      
+
       .contact-actions {
         display: flex;
         gap: 8px;
-        
+
         .contact-btn {
           width: 28px;
           height: 28px;
@@ -207,7 +215,7 @@ $transition: all 0.3s ease;
           cursor: pointer;
           transition: $transition;
           border: none;
-          
+
           &:hover {
             background-color: $primary-color;
             color: white;
@@ -230,13 +238,13 @@ $transition: all 0.3s ease;
     align-items: center;
     margin-bottom: 20px;
     animation: slideInRight 0.5s ease-out;
-    
+
     @media (max-width: 768px) {
       flex-direction: column;
       align-items: flex-start;
       gap: 15px;
     }
-    
+
     h1 {
       font-size: 24px;
       font-weight: 700;
@@ -248,7 +256,7 @@ $transition: all 0.3s ease;
       display: flex;
       gap: 15px;
       align-items: center;
-      
+
       @media (max-width: 576px) {
         width: 100%;
         flex-direction: column;
@@ -273,17 +281,17 @@ $transition: all 0.3s ease;
           font-size: 14px;
           width: 220px;
           transition: $transition;
-          
+
           @media (max-width: 576px) {
             width: 100%;
           }
-          
+
           &:focus {
             outline: none;
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
             width: 260px;
-            
+
             @media (max-width: 576px) {
               width: 100%;
             }
@@ -305,12 +313,12 @@ $transition: all 0.3s ease;
         cursor: pointer;
         transition: all 0.25s ease;
         box-shadow: 0 2px 6px rgba($primary-color, 0.2);
-        
+
         @media (max-width: 576px) {
           width: 100%;
           justify-content: center;
         }
-        
+
         &:hover {
           background-color: darken($primary-color, 5%) !important;
           transform: translateY(-2px);
@@ -355,7 +363,7 @@ $transition: all 0.3s ease;
       transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
       animation: fadeInUp 0.5s ease-out;
       border: 1px solid transparent;
-      
+
       &:hover {
         box-shadow: 0 10px 20px rgba($primary-color, 0.15);
         transform: translateY(-5px);
@@ -363,23 +371,32 @@ $transition: all 0.3s ease;
       }
 
       .post-header {
-        @include flex-between;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         margin-bottom: 15px;
 
         .user-info {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
 
           .avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: rgba($primary-color, 0.08);
+            background-color: $light-color;
+            color: $primary-color;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: $primary-color;
+
+            .author-avatar {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+              object-fit: cover;
+            }
           }
 
           .post-meta {
@@ -410,7 +427,7 @@ $transition: all 0.3s ease;
             color: $muted-color;
             cursor: pointer;
             transition: $transition;
-            
+
             &:hover {
               background-color: $light-color;
               color: $text-color;
@@ -455,7 +472,7 @@ $transition: all 0.3s ease;
           }
         }
       }
-      
+
       .post-title {
         font-size: 18px;
         font-weight: 600;
@@ -463,9 +480,9 @@ $transition: all 0.3s ease;
         color: $text-color;
         transition: all 0.25s ease;
         position: relative;
-        
+
         &:after {
-          content: '';
+          content: "";
           position: absolute;
           bottom: -2px;
           left: 0;
@@ -474,10 +491,10 @@ $transition: all 0.3s ease;
           background-color: $primary-color;
           transition: width 0.3s ease;
         }
-        
+
         &:hover {
           color: $primary-color;
-          
+
           &:after {
             width: 100%;
           }
@@ -503,7 +520,7 @@ $transition: all 0.3s ease;
             max-height: 400px;
             object-fit: cover;
             transition: all 0.35s ease;
-            
+
             &:hover {
               transform: scale(1.02);
               box-shadow: 0 5px 15px rgba($primary-color, 0.2);
@@ -529,9 +546,9 @@ $transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             z-index: 1;
-            
+
             &:before {
-              content: '';
+              content: "";
               position: absolute;
               top: 0;
               left: 0;
@@ -542,10 +559,10 @@ $transition: all 0.3s ease;
               z-index: -1;
               transition: width 0.35s ease;
             }
-            
+
             &:hover {
               transform: translateY(-3px);
-              
+
               &:before {
                 width: 100%;
               }
@@ -557,35 +574,35 @@ $transition: all 0.3s ease;
       .post-footer {
         border-top: 1px solid $border-color;
         padding-top: 16px;
-        
+
         .reaction-section {
-        display: flex;
+          display: flex;
           gap: 20px;
 
-        .reaction-button {
+          .reaction-button {
             display: flex !important;
             align-items: center !important;
             gap: 8px !important;
-          background: none;
-          border: none;
+            background: none;
+            border: none;
             padding: 8px 12px !important;
             border-radius: 20px !important;
             color: $muted-color;
-          font-size: 14px;
+            font-size: 14px;
             font-weight: 500;
-          cursor: pointer;
+            cursor: pointer;
             transition: all 0.25s ease;
-            
+
             &:hover {
               background-color: rgba($primary-color, 0.08) !important;
               color: $primary-color !important;
               transform: translateY(-2px);
-          }
+            }
 
-          &.liked {
+            &.liked {
               color: $primary-color !important;
               background-color: rgba($primary-color, 0.08);
-              
+
               svg {
                 fill: $primary-color !important;
                 stroke: $primary-color !important;
@@ -595,7 +612,7 @@ $transition: all 0.3s ease;
         }
       }
     }
-    
+
     .no-posts {
       padding: 40px;
       text-align: center;
@@ -611,30 +628,30 @@ $transition: all 0.3s ease;
 // Comments section
 .comments-section {
   margin-top: 16px;
-  
+
   h4 {
     font-size: 16px;
     margin: 0 0 16px 0;
     color: $text-color;
   }
-  
+
   .comments-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
     margin-bottom: 20px;
-    
+
     .comment-item {
       display: flex;
       gap: 12px;
       animation: fadeInUp 0.4s ease-out;
-      
+
       @for $i from 1 through 5 {
         &:nth-child(#{$i}) {
           animation-delay: #{$i * 0.1}s;
         }
       }
-      
+
       .comment-avatar {
         width: 36px;
         height: 36px;
@@ -644,59 +661,59 @@ $transition: all 0.3s ease;
         color: $primary-color;
         flex-shrink: 0;
       }
-      
+
       .comment-content-wrapper {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
-      
+
       .comment-content {
         background-color: $light-color;
         border-radius: 10px;
         padding: 12px;
         position: relative;
-        
+
         .comment-header {
           display: flex;
           justify-content: space-between;
           margin-bottom: 8px;
-          
+
           .comment-author {
             font-weight: 600;
             font-size: 14px;
             color: $text-color;
           }
-          
+
           .comment-datetime {
             font-size: 12px;
             color: $muted-color;
           }
         }
-        
+
         .comment-text {
           font-size: 14px;
           line-height: 1.5;
           margin-bottom: 8px;
           color: $text-color;
         }
-        
+
         .comment-image {
           margin-top: 8px;
-          
+
           img {
             max-width: 100%;
             border-radius: 8px;
             max-height: 200px;
           }
         }
-        
+
         .facebook-style-actions {
           display: flex;
           gap: 16px;
           margin-top: 8px;
-          
+
           .action-button {
             background: none;
             border: none;
@@ -707,13 +724,13 @@ $transition: all 0.3s ease;
             padding: 4px 8px !important;
             border-radius: 12px !important;
             transition: all 0.25s ease;
-            
+
             &:hover {
               color: $primary-color !important;
               background-color: rgba($primary-color, 0.08) !important;
               transform: translateY(-1px);
             }
-            
+
             &.liked {
               color: $primary-color !important;
               background-color: rgba($primary-color, 0.08);
@@ -721,13 +738,13 @@ $transition: all 0.3s ease;
           }
         }
       }
-      
+
       .comment-actions {
         position: absolute;
         right: 8px;
         top: 8px;
         z-index: 5;
-        
+
         .comment-menu-button {
           background: none;
           border: none;
@@ -739,27 +756,28 @@ $transition: all 0.3s ease;
           border-radius: 50%;
           transition: all 0.2s ease;
           @include flex-center;
-          
+
           &:hover {
             color: $primary-color;
             background-color: rgba($primary-color, 0.08);
             transform: rotate(90deg);
           }
         }
-        
+
         .comment-dropdown {
           position: absolute;
           right: 0;
           top: 100%;
           background: white;
           border-radius: 10px;
-          box-shadow: 0 5px 15px rgba($primary-color, 0.15), 0 2px 5px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 5px 15px rgba($primary-color, 0.15),
+            0 2px 5px rgba(0, 0, 0, 0.1);
           padding: 8px;
           z-index: 10;
           min-width: 160px;
           animation: dropdown-appear 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
           border: 1px solid rgba($primary-color, 0.08);
-          
+
           button {
             display: flex;
             align-items: center;
@@ -774,23 +792,23 @@ $transition: all 0.3s ease;
             cursor: pointer;
             transition: all 0.2s ease;
             color: $text-color;
-            
+
             svg {
               color: $primary-color;
             }
-            
+
             &:hover {
               background-color: rgba($primary-color, 0.08);
               transform: translateX(3px);
             }
-            
+
             &:last-child {
               color: $accent-color;
-              
+
               svg {
                 color: $accent-color;
               }
-              
+
               &:hover {
                 background-color: rgba($accent-color, 0.08);
               }
@@ -798,12 +816,13 @@ $transition: all 0.3s ease;
           }
         }
       }
-      
+
       .facebook-style-replies {
         margin-top: 8px;
         padding-left: 20px;
-        
-        .view-replies-button, .hide-replies-button {
+
+        .view-replies-button,
+        .hide-replies-button {
           background: none;
           border: none;
           color: $muted-color;
@@ -811,36 +830,36 @@ $transition: all 0.3s ease;
           font-weight: 500;
           cursor: pointer;
           padding: 4px 0;
-          
+
           &:hover {
             color: $primary-color;
             text-decoration: underline;
           }
         }
-        
+
         .replies-container {
           display: flex;
           flex-direction: column;
           gap: 12px;
           margin: 12px 0;
-          
+
           .reply-item {
             display: flex;
             gap: 10px;
-            
+
             .reply-content {
               background-color: $light-color;
               border-radius: 10px;
               padding: 10px;
               flex: 1;
               position: relative;
-              
+
               .reply-actions {
                 position: absolute;
                 right: 8px;
                 top: 8px;
               }
-              
+
               .reply-image {
                 img {
                   max-height: 150px;
@@ -852,125 +871,125 @@ $transition: all 0.3s ease;
       }
     }
   }
-  
-// Cải thiện phần nhập bình luận
-.add-comment {
-  padding: 15px;
-  background-color: rgba($primary-color, 0.03);
-  border-radius: 12px;
-  margin-top: 15px;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
-  
-  &:focus-within {
-    background-color: white;
-    box-shadow: 0 5px 15px rgba($primary-color, 0.1);
-    border-color: rgba($primary-color, 0.2);
-    transform: translateY(-2px);
-  }
-  
-  .reply-info {
-    background-color: rgba($primary-color, 0.08);
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    
-    span {
-      font-size: 13px;
-      color: $text-color;
-      font-style: italic;
-    }
-    
-    .cancel-reply {
-      background: none;
-      border: none;
-      color: $text-color;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      @include flex-center;
-      
-      &:hover {
-        color: $accent-color;
-        background-color: rgba($accent-color, 0.1);
-        transform: rotate(90deg);
-      }
-    }
-  }
-  
-  .comment-input-wrapper {
-    position: relative;
-    
-    .comment-text-container {
-      .comment-input {
-        padding: 12px 16px;
-        padding-right: 80px;
-        border-radius: 24px;
-        border: 1px solid rgba($primary-color, 0.2);
-        width: 100%;
-        transition: all 0.3s ease;
-        
-        &:focus {
-          outline: none;
-          border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
-        }
-        
-        &::placeholder {
-          color: $muted-color;
-          transition: all 0.3s ease;
-        }
-        
-        &:focus::placeholder {
-          opacity: 0.7;
-          transform: translateX(5px);
-        }
-      }
-    }
-  }
-  
-  .comment-image-preview {
-    margin-top: 10px;
-    position: relative;
-    display: inline-block;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba($primary-color, 0.1);
+
+  // Cải thiện phần nhập bình luận
+  .add-comment {
+    padding: 15px;
+    background-color: rgba($primary-color, 0.03);
+    border-radius: 12px;
+    margin-top: 15px;
     transition: all 0.3s ease;
-    
-    &:hover {
-      transform: scale(1.02);
+    border: 1px solid transparent;
+
+    &:focus-within {
+      background-color: white;
+      box-shadow: 0 5px 15px rgba($primary-color, 0.1);
+      border-color: rgba($primary-color, 0.2);
+      transform: translateY(-2px);
     }
-    
-    img {
-      max-height: 150px;
-      object-fit: cover;
+
+    .reply-info {
+      background-color: rgba($primary-color, 0.08);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      span {
+        font-size: 13px;
+        color: $text-color;
+        font-style: italic;
+      }
+
+      .cancel-reply {
+        background: none;
+        border: none;
+        color: $text-color;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        @include flex-center;
+
+        &:hover {
+          color: $accent-color;
+          background-color: rgba($accent-color, 0.1);
+          transform: rotate(90deg);
+        }
+      }
+    }
+
+    .comment-input-wrapper {
+      position: relative;
+
+      .comment-text-container {
+        .comment-input {
+          padding: 12px 16px;
+          padding-right: 80px;
+          border-radius: 24px;
+          border: 1px solid rgba($primary-color, 0.2);
+          width: 100%;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+          }
+
+          &::placeholder {
+            color: $muted-color;
+            transition: all 0.3s ease;
+          }
+
+          &:focus::placeholder {
+            opacity: 0.7;
+            transform: translateX(5px);
+          }
+        }
+      }
+    }
+
+    .comment-image-preview {
+      margin-top: 10px;
+      position: relative;
+      display: inline-block;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba($primary-color, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+
+      img {
+        max-height: 150px;
+        object-fit: cover;
+      }
     }
   }
-}
-        
-        .remove-image-btn {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          background-color: rgba(0, 0, 0, 0.6) !important;
-          color: white !important;
-          border: none;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          @include flex-center;
-          cursor: pointer;
-          transition: all 0.25s ease;
-          
-          &:hover {
-            background-color: $accent-color !important;
-            transform: scale(1.1);
+
+  .remove-image-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    color: white !important;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    @include flex-center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover {
+      background-color: $accent-color !important;
+      transform: scale(1.1);
     }
   }
 }
@@ -1038,198 +1057,198 @@ $transition: all 0.3s ease;
       flex: 1;
       overflow: hidden;
 
-    .modal-content {
-      padding: 20px;
+      .modal-content {
+        padding: 20px;
         overflow-y: auto;
         flex: 1;
 
-      .user-info {
-        display: flex;
-        align-items: center;
+        .user-info {
+          display: flex;
+          align-items: center;
           gap: 12px;
           margin-bottom: 20px;
 
-        .avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
+          .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             background-color: rgba($primary-color, 0.08);
             @include flex-center;
             color: $primary-color;
-        }
+          }
 
-        span {
-          font-size: 14px;
+          span {
+            font-size: 14px;
             font-weight: 500;
             color: $text-color;
+          }
         }
-      }
 
-      .post-title {
-        width: 100%;
+        .post-title {
+          width: 100%;
           padding: 12px 15px;
           border: 1px solid $border-color;
           border-radius: 8px;
-        font-size: 16px;
+          font-size: 16px;
           margin-bottom: 16px;
           transition: $transition;
 
-        &:focus {
+          &:focus {
             outline: none;
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
         }
-      }
 
-      textarea {
-        width: 100%;
+        textarea {
+          width: 100%;
           padding: 12px 15px;
           border: 1px solid $border-color;
           border-radius: 8px;
           font-size: 15px;
           min-height: 120px;
-        resize: none;
+          resize: none;
           margin-bottom: 20px;
-        line-height: 1.5;
+          line-height: 1.5;
           transition: $transition;
-          
+
           &:focus {
             outline: none;
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
         }
-      }
 
-      .image-upload-area {
+        .image-upload-area {
           margin-bottom: 20px;
 
-        .image-upload-label {
-          display: block;
-          cursor: pointer;
+          .image-upload-label {
+            display: block;
+            cursor: pointer;
 
-          .upload-placeholder {
+            .upload-placeholder {
               border: 2px dashed $border-color;
               border-radius: 8px;
               padding: 30px;
               text-align: center;
               transition: $transition;
-              
+
               svg {
                 color: $muted-color;
-              margin-bottom: 10px;
-            }
+                margin-bottom: 10px;
+              }
 
-            span {
+              span {
                 display: block;
                 font-size: 15px;
-              margin-bottom: 5px;
+                margin-bottom: 5px;
                 color: $text-color;
                 font-weight: 500;
-            }
+              }
 
-            small {
+              small {
                 color: $muted-color;
-              font-size: 12px;
-            }
-              
+                font-size: 12px;
+              }
+
               &:hover {
                 border-color: $primary-color;
                 background-color: rgba($primary-color, 0.02);
               }
+            }
           }
-        }
 
-        .image-preview-container {
-          position: relative;
+          .image-preview-container {
+            position: relative;
 
-          .image-preview {
+            .image-preview {
               width: 100%;
               border-radius: 8px;
-            max-height: 300px;
+              max-height: 300px;
               object-fit: cover;
-          }
+            }
 
-          .remove-image-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
+            .remove-image-btn {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              width: 30px;
+              height: 30px;
               border-radius: 50%;
               background-color: rgba(0, 0, 0, 0.6);
               color: white;
               border: none;
               @include flex-center;
-            cursor: pointer;
+              cursor: pointer;
               transition: $transition;
 
-            &:hover {
+              &:hover {
                 background-color: rgba(0, 0, 0, 0.8);
+              }
             }
           }
         }
-      }
 
-      .tags-input {
-        .tag-form {
-          display: flex;
-          gap: 10px;
+        .tags-input {
+          .tag-form {
+            display: flex;
+            gap: 10px;
             margin-bottom: 12px;
 
-          input {
-            flex: 1;
+            input {
+              flex: 1;
               padding: 10px 12px;
               border: 1px solid $border-color;
               border-radius: 8px;
-            font-size: 14px;
+              font-size: 14px;
 
-            &:focus {
+              &:focus {
                 outline: none;
                 border-color: $primary-color;
                 box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
               }
-              
+
               &:disabled {
                 background-color: $light-color;
                 cursor: not-allowed;
+              }
             }
-          }
 
-          .tag-button {
+            .tag-button {
               padding: 8px 16px;
               background-color: $primary-color;
-            color: white;
-            border: none;
+              color: white;
+              border: none;
               border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
+              font-size: 14px;
+              cursor: pointer;
               transition: $transition;
 
-            &:hover {
+              &:hover {
                 background-color: darken($primary-color, 5%);
               }
-              
+
               &:disabled {
                 background-color: $muted-color;
                 cursor: not-allowed;
               }
             }
           }
-          
+
           .tag-limit-warning {
             font-size: 12px;
             color: $muted-color;
             margin-bottom: 12px;
           }
 
-        .tags-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-
-          .tag {
+          .tags-list {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .tag {
+              display: flex;
+              align-items: center;
               gap: 6px;
               background-color: rgba($primary-color, 0.08);
               color: $primary-color;
@@ -1237,8 +1256,8 @@ $transition: all 0.3s ease;
               border-radius: 16px;
               font-size: 13px;
 
-            .remove-tag {
-              cursor: pointer;
+              .remove-tag {
+                cursor: pointer;
                 width: 16px;
                 height: 16px;
                 border-radius: 50%;
@@ -1247,43 +1266,43 @@ $transition: all 0.3s ease;
                 @include flex-center;
                 transition: $transition;
 
-              &:hover {
+                &:hover {
                   background-color: rgba($accent-color, 0.2);
                   color: $accent-color;
                 }
               }
             }
           }
+        }
       }
-    }
 
-    .modal-footer {
+      .modal-footer {
         padding: 16px 20px;
         border-top: 1px solid $border-color;
         display: flex;
         justify-content: flex-end;
 
-      .submit-post {
+        .submit-post {
           padding: 10px 24px !important;
           background-color: $primary-color !important;
-        color: white;
-        border: none;
+          color: white;
+          border: none;
           border-radius: 8px;
-        font-size: 14px;
+          font-size: 14px;
           font-weight: 500;
-        cursor: pointer;
+          cursor: pointer;
           transition: all 0.25s ease;
           box-shadow: 0 2px 6px rgba($primary-color, 0.2);
-          
+
           &:hover:not(:disabled) {
             background-color: darken($primary-color, 5%) !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba($primary-color, 0.4) !important;
-        }
+          }
 
-        &:disabled {
+          &:disabled {
             background-color: $muted-color;
-          cursor: not-allowed;
+            cursor: not-allowed;
           }
         }
       }
@@ -1293,30 +1312,44 @@ $transition: all 0.3s ease;
 
 // Animations
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: scale(0.95);
   }
-  to { 
+  to {
     opacity: 1;
     transform: scale(1);
   }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 // New animations
@@ -1362,7 +1395,7 @@ $transition: all 0.3s ease;
 
 .posts-container .post-card {
   animation: fadeInUp 0.5s ease-out;
-  
+
   // Staggered animation for posts
   @for $i from 1 through 10 {
     &:nth-child(#{$i}) {
@@ -1385,7 +1418,7 @@ $transition: all 0.3s ease;
 
 .comment-item {
   animation: fadeInUp 0.4s ease-out;
-  
+
   @for $i from 1 through 5 {
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.1}s;
@@ -1395,7 +1428,7 @@ $transition: all 0.3s ease;
 
 .edit-comment-form {
   margin-bottom: 10px;
-  
+
   textarea {
     width: 100%;
     padding: 10px 12px;
@@ -1406,7 +1439,7 @@ $transition: all 0.3s ease;
     margin-bottom: 10px;
     resize: none;
     transition: $transition;
-    
+
     &:focus {
       outline: none;
       border-color: $primary-color;
@@ -1416,7 +1449,7 @@ $transition: all 0.3s ease;
 
   .edit-image-upload {
     margin-bottom: 10px;
-    
+
     .edit-image-label {
       display: inline-flex;
       align-items: center;
@@ -1433,24 +1466,24 @@ $transition: all 0.3s ease;
         background-color: rgba($primary-color, 0.1);
         transform: translateY(-2px);
       }
-      
+
       svg {
         stroke-width: 2px;
       }
     }
-    
+
     .edit-image-preview {
       position: relative;
       display: inline-block;
       margin-top: 8px;
-      
+
       img {
         max-width: 100%;
         max-height: 200px;
         border-radius: 8px;
         border: 2px solid $light-color;
       }
-      
+
       .remove-edit-image-btn {
         position: absolute;
         top: 8px;
@@ -1460,26 +1493,26 @@ $transition: all 0.3s ease;
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.6);
         color: white;
-      display: flex;
-      align-items: center;
+        display: flex;
+        align-items: center;
         justify-content: center;
         border: none;
         cursor: pointer;
         transition: $transition;
 
-      &:hover {
+        &:hover {
           background-color: $accent-color;
           transform: scale(1.1);
         }
       }
     }
   }
-  
+
   .edit-actions {
-      display: flex;
+    display: flex;
     gap: 10px;
     justify-content: flex-end;
-    
+
     button {
       padding: 6px 16px;
       border-radius: 20px;
@@ -1488,26 +1521,26 @@ $transition: all 0.3s ease;
       cursor: pointer;
       transition: $transition;
       border: none;
-      
+
       &:first-child {
         background-color: $primary-color;
         color: white;
-        
+
         &:hover:not(:disabled) {
           background-color: darken($primary-color, 5%);
           transform: translateY(-2px);
         }
-        
+
         &:disabled {
           background-color: $muted-color;
           cursor: not-allowed;
         }
       }
-      
+
       &:last-child {
         background-color: $light-color;
         color: $text-color;
-        
+
         &:hover {
           background-color: darken($light-color, 5%);
         }
@@ -1518,15 +1551,15 @@ $transition: all 0.3s ease;
 
 // Animation cho khi bài đăng mới xuất hiện
 @keyframes newPostAppear {
-  0% { 
+  0% {
     opacity: 0;
     transform: translateY(-20px);
     background-color: rgba($primary-color, 0.1);
   }
-  50% { 
+  50% {
     background-color: rgba($primary-color, 0.1);
   }
-  100% { 
+  100% {
     opacity: 1;
     transform: translateY(0);
     background-color: white;
@@ -1541,25 +1574,25 @@ $transition: all 0.3s ease;
 // Cải thiện nút tương tác cho reply
 .reply-item {
   .facebook-style-actions {
-      display: flex;
+    display: flex;
     gap: 12px;
-      margin-top: 8px;
+    margin-top: 8px;
 
     .action-button {
       background: none;
-        border: none;
+      border: none;
       color: $muted-color;
       font-size: 12px;
       font-weight: 500;
-        cursor: pointer;
+      cursor: pointer;
       padding: 5px 10px !important;
       border-radius: 16px !important;
       transition: all 0.25s ease;
       position: relative;
       overflow: hidden;
-      
+
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -1570,37 +1603,37 @@ $transition: all 0.3s ease;
         transition: width 0.3s ease;
         border-radius: 16px;
       }
-      
+
       &:hover {
         color: $primary-color !important;
         transform: translateY(-2px);
-        
+
         &::before {
           width: 100%;
         }
       }
-      
+
       &.liked {
         color: $primary-color !important;
         font-weight: 600;
-        
+
         &::before {
           width: 100%;
         }
       }
     }
   }
-  
+
   .reply-actions {
     position: absolute;
     right: 8px;
     top: 8px;
-    
+
     .comment-menu-button {
-        background: none;
-        border: none;
+      background: none;
+      border: none;
       color: $muted-color;
-        cursor: pointer;
+      cursor: pointer;
       padding: 4px;
       width: 24px;
       height: 24px;
@@ -1608,7 +1641,7 @@ $transition: all 0.3s ease;
       transition: all 0.2s ease;
       @include flex-center;
 
-        &:hover {
+      &:hover {
         color: $primary-color;
         background-color: rgba($primary-color, 0.08);
         transform: rotate(90deg);
@@ -1630,14 +1663,16 @@ $transition: all 0.3s ease;
 }
 
 // Dropdown buttons styles
-.dropdown-reply-btn, .dropdown-edit-btn, .dropdown-delete-btn {
-      display: flex;
+.dropdown-reply-btn,
+.dropdown-edit-btn,
+.dropdown-delete-btn {
+  display: flex;
   align-items: center;
-  
+
   .dropdown-icon {
     margin-right: 8px;
   }
-  
+
   .dropdown-text {
     font-weight: 500;
   }
@@ -1648,7 +1683,7 @@ $transition: all 0.3s ease;
     color: $primary-color;
   }
 
-        &:hover {
+  &:hover {
     color: $primary-color;
   }
 }
@@ -1658,7 +1693,7 @@ $transition: all 0.3s ease;
     color: $primary-color;
   }
 
-      &:hover {
+  &:hover {
     color: $primary-color;
   }
 }
@@ -1667,36 +1702,37 @@ $transition: all 0.3s ease;
   .dropdown-icon {
     color: $accent-color;
   }
-  
+
   &:hover {
     color: $accent-color;
   }
 }
 
 // Reply buttons
-.reply-like-btn, .reply-btn {
-      position: relative;
-  
+.reply-like-btn,
+.reply-btn {
+  position: relative;
+
   .reply-btn-text {
     transition: transform 0.2s ease;
   }
-  
+
   .reply-like-count {
     font-size: 11px;
     color: $muted-color;
     transition: color 0.2s ease;
   }
 
-        &:hover {
+  &:hover {
     .reply-btn-text {
       transform: translateX(2px);
     }
-    
+
     .reply-like-count {
       color: $primary-color;
     }
   }
-  
+
   &.liked {
     .reply-like-count {
       color: $primary-color;
@@ -1709,7 +1745,7 @@ $transition: all 0.3s ease;
   right: -5px;
   top: calc(100% + 2px);
   min-width: 140px;
-  
+
   button {
     padding: 8px 10px;
     font-size: 12px;
