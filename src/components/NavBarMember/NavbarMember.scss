@@ -127,7 +127,7 @@ $desktop-breakpoint: $large-desktop;
 }
 
 .navbar-container {
-  @include flex(row, space-between, center);
+  @include flex(row,column  center);
   height: 100%;
   padding: 0 20px;
   margin: 0 auto;
@@ -148,6 +148,7 @@ $desktop-breakpoint: $large-desktop;
     color: $text-dark;
     height: 100%;
     padding: 0 10px;
+    margin-right: 700px;
     
     &:hover {
       color: $primary;
@@ -156,7 +157,7 @@ $desktop-breakpoint: $large-desktop;
     .navbar-logo-image {
       height: 40px;
       width: auto;
-      margin-right: 10px;
+
       
       @include responsive(mobile) {
         height: 32px;
@@ -191,8 +192,9 @@ $desktop-breakpoint: $large-desktop;
     width: 40px;
     font-size: 1.3rem;
     color: $text-dark;
-    margin: 0 5px;
+    margin: 0 10px;
     border-radius: 50%;
+
     @include transition();
     
     &:hover {

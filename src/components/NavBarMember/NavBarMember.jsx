@@ -439,6 +439,31 @@ const NavBarMember = () => {
           {/* Header Action Buttons */}
           <div className="header-actions">
             {/* Notification Bell */}
+            {isLoggedIn ? (
+              <div className="user-profile-container" ref={dropdownRef}>
+                <div 
+                  className="user-avatar-container" 
+                  title={`${userInfo?.fullName || "Người dùng"}`}
+                  onClick={toggleDropdownWithSound}
+                >
+                  {profileImage ? (
+                    <img 
+                      src={profileImage} 
+                      alt={userInfo?.fullName || "Người dùng"} 
+                      className="user-avatar" 
+                    />
+                  ) : (
+                    <FaUserCircle className="user-icon" />
+                  )}
+                  <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
+                </div>
+              </div>
+            ) : (
+              <Link to="/login" className="login-button">
+                Đăng nhập
+                <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
+              </Link>
+            )}
             <button
               className="header-action-button notification-button"
               onClick={toggleNotificationsWithSound}
@@ -468,44 +493,13 @@ const NavBarMember = () => {
             {/* Nút đăng xuất */}
             {isLoggedIn && (
               <>
-                <button
-                  className="header-action-button logout-button"
-                  onClick={handleLogout}
-                  aria-label="Đăng xuất"
-                >
-                  <FaSignOutAlt />
-                  <div className="feature-tooltip">Đăng xuất khỏi tài khoản</div>
-                </button>
+                
                 <div className="action-separator"></div>
               </>
             )}
             
             {/* User Profile or Login Button */}
-            {isLoggedIn ? (
-              <div className="user-profile-container" ref={dropdownRef}>
-                <div 
-                  className="user-avatar-container" 
-                  title={`${userInfo?.fullName || "Người dùng"}`}
-                  onClick={toggleDropdownWithSound}
-                >
-                  {profileImage ? (
-                    <img 
-                      src={profileImage} 
-                      alt={userInfo?.fullName || "Người dùng"} 
-                      className="user-avatar" 
-                    />
-                  ) : (
-                    <FaUserCircle className="user-icon" />
-                  )}
-                  <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
-                </div>
-              </div>
-            ) : (
-              <Link to="/login" className="login-button">
-                Đăng nhập
-                <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
-              </Link>
-            )}
+
           </div>
         </div>
       </nav>
@@ -662,7 +656,16 @@ const NavBarMember = () => {
             >
               <FaUser className="nav-icon" /> <span className="nav-text">Hồ sơ</span>
               <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
+              
             </Link>
+            <button
+                  className="header-action-button logout-button"
+                  onClick={handleLogout}
+                  aria-label="Đăng xuất"
+                >
+                  <FaSignOutAlt />
+                  <div className="feature-tooltip">Đăng xuất khỏi tài khoản</div>
+                </button>
             
             {isLoggedIn && isMobile && (
               <button 
