@@ -86,11 +86,9 @@ const NavBarMember = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Thêm ref để xử lý click-outside
+  // Refs for DOM elements
   const sidebarRef = useRef(null);
   const notificationDropdownRef = useRef(null);
-  
-  // Refs for DOM elements
   const navbarRef = useRef(null);
   const horizontalNavRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -99,28 +97,36 @@ const NavBarMember = () => {
   const sidebarNotificationButtonRef = useRef(null);
   const mobileSidebarToggleRef = useRef(null);
   const navbarToggleButtonRef = useRef(null);
+  const mobileSidebarRef = useRef(null);
   
-  // Close sidebar when navigating between pages
+  // Better responsiveness handling - check screen size more precisely
+  const checkScreenSize = () => {
+    const width = window.innerWidth;
+    setIsMobile(width <= 768);
+    
+    // Close menu on resize if screen gets larger
+    if (width > 768) {
+      setIsSidebarOpen(false);
+      setShowHorizontalMenu(false);
+      document.body.classList.remove('sidebar-open');
+    }
+  };
+
+  // Close sidebar/menus when navigating
   useEffect(() => {
-    // Immediately hide menus when navigation occurs
     setIsSidebarOpen(false);
     setShowSidebarNotifications(false);
     setShowHorizontalMenu(false); 
+    setIsDropdownOpen(false);
+    setShowNotifications(false);
     document.body.classList.remove('sidebar-open');
     
-    // Force menu closing with setTimeout to ensure UI updates
-    setTimeout(() => {
-      setShowHorizontalMenu(false);
-    }, 10);
-    
     return () => {
-      setIsSidebarOpen(false);
-      setShowSidebarNotifications(false);
-      setShowHorizontalMenu(false);
       document.body.classList.remove('sidebar-open');
     };
-  }, [location.pathname]); // Add pathname as dependency to ensure it runs on route changes
+  }, [location.pathname]);
 
+  // User authentication check
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("userData");
@@ -154,309 +160,284 @@ const NavBarMember = () => {
       }
     }
 
-    // Xử lý sự kiện cuộn trang
+    // Scroll event handler
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Responsive design handler
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Handle clicks outside of menus to close them
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Handle dropdown clicks
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+          isDropdownOpen && !event.target.closest('.user-dropdown')) {
+        setIsDropdownOpen(false);
+      }
       
-      // Close sidebar if screen size becomes larger than mobile breakpoint
-      if (!mobile && isSidebarOpen) {
+      // Handle notification clicks
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target) && 
+          !notificationButtonRef.current?.contains(event.target) && showNotifications) {
+        setShowNotifications(false);
+      }
+      
+      // Handle horizontal menu clicks on mobile
+      if (horizontalNavRef.current && !horizontalNavRef.current.contains(event.target) && 
+          !navbarToggleButtonRef.current?.contains(event.target) && 
+          showHorizontalMenu && isMobile) {
+        setShowHorizontalMenu(false);
+      }
+      
+      // Handle mobile sidebar clicks
+      if (mobileSidebarRef.current && !mobileSidebarRef.current.querySelector('.sidebar-content')?.contains(event.target) &&
+          !mobileSidebarToggleRef.current?.contains(event.target) && isSidebarOpen) {
         setIsSidebarOpen(false);
-        setShowSidebarNotifications(false);
+        document.body.classList.remove('sidebar-open');
+      }
+    };
+    
+    // Handle escape key to close menus
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsDropdownOpen(false);
+        setShowNotifications(false);
+        setShowHorizontalMenu(false);
+        setIsSidebarOpen(false);
         document.body.classList.remove('sidebar-open');
       }
     };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
     
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isSidebarOpen]);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen, showNotifications, showHorizontalMenu, isSidebarOpen, isMobile]);
 
-  // Lấy lịch hẹn từ API
+  // Fetch reminders data
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchReminders();
+    }
+  }, [isLoggedIn]);
+
+  // Save read notifications to localStorage
+  useEffect(() => {
+    localStorage.setItem('readNotifications', JSON.stringify(readNotifications));
+  }, [readNotifications]);
+
+  // Fetch reminders
   const fetchReminders = async () => {
     try {
       const response = await reminderService.getReminderHistory();
 
-      if (!response || !Array.isArray(response)) {
+      if (response && Array.isArray(response)) {
+        setReminders(response);
+      } else {
         setReminders([]);
-        return;
       }
-
-      setReminders(response);
     } catch (error) {
+      console.error("Error fetching reminders:", error);
       setReminders([]);
     }
   };
 
-  // Tải lịch hẹn
-  useEffect(() => {
-    fetchReminders();
-    
-    const interval = setInterval(() => {
-      fetchReminders();
-    }, 60000); // Cập nhật mỗi phút
-    
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
+  // Handle logout
   const handleLogout = () => {
+    playUISound('logoutSound');
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
+    localStorage.removeItem("readNotifications");
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsAdmin(false);
     setIsDropdownOpen(false);
-    setIsSidebarOpen(false);
-    setShowSidebarNotifications(false);
-    setShowHorizontalMenu(false);
-    document.body.classList.remove('sidebar-open');
-    navigate("/");
+    navigate("/login");
   };
 
+  // Close sidebar
   const closeSidebar = () => {
     setIsSidebarOpen(false);
     document.body.classList.remove('sidebar-open');
   };
 
+  // Toggle dropdown
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    
+    // Close other menus
+    setShowNotifications(false);
+    setShowHorizontalMenu(false);
   };
 
+  // Toggle sidebar for mobile
   const toggleSidebar = () => {
-    // Close notifications dropdown when opening sidebar
-    if (!isSidebarOpen) {
-      setShowSidebarNotifications(false);
-      setShowHorizontalMenu(false); // Close horizontal menu when opening sidebar
+    const newState = !isSidebarOpen;
+    setIsSidebarOpen(newState);
+    
+    // Toggle body class for preventing background scroll
+    if (newState) {
       document.body.classList.add('sidebar-open');
     } else {
       document.body.classList.remove('sidebar-open');
     }
-    setIsSidebarOpen(!isSidebarOpen);
+    
+    // Close other menus
+    setShowNotifications(false);
+    setIsDropdownOpen(false);
+    setShowHorizontalMenu(false);
   };
 
-  // Toggle horizontal navigation menu
+  // Toggle horizontal menu
   const toggleHorizontalMenu = () => {
-    setShowHorizontalMenu(!showHorizontalMenu);
-    setShowSidebarNotifications(false); // Close notifications when toggling horizontal menu
-    setIsSidebarOpen(false); // Close sidebar when toggling horizontal menu
-    if (isSidebarOpen) {
+    const newState = !showHorizontalMenu;
+    setShowHorizontalMenu(newState);
+    
+    // Close other menus
+    setShowNotifications(false);
+    setIsDropdownOpen(false);
+    
+    // On mobile, treat this like a sidebar
+    if (isMobile && newState) {
+      document.body.classList.add('sidebar-open');
+    } else {
       document.body.classList.remove('sidebar-open');
     }
   };
 
-  // Close sidebar with ESC key
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setIsSidebarOpen(false);
-        setShowSidebarNotifications(false);
-        setShowHorizontalMenu(false); // Also close horizontal menu with ESC
-        document.body.classList.remove('sidebar-open');
-      }
-    };
+  // Toggle notifications
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
     
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.classList.remove('sidebar-open');
-    };
-  }, []);
+    // Close other menus
+    setIsDropdownOpen(false);
+    setShowHorizontalMenu(false);
+  };
 
-  // Unified click outside handler for all menus
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Handle horizontal menu clicks
-      if (showHorizontalMenu && 
-          horizontalNavRef.current && 
-          !horizontalNavRef.current.contains(event.target) &&
-          navbarToggleButtonRef.current &&
-          !navbarToggleButtonRef.current.contains(event.target)) {
-        setShowHorizontalMenu(false);
-      }
-      
-      // Handle dropdown menu clicks
-      if (isDropdownOpen && 
-          dropdownRef.current && 
-          !dropdownRef.current.contains(event.target) &&
-          !event.target.closest('.user-menu-button')) {
-        setIsDropdownOpen(false);
-      }
-      
-      // Handle notification clicks
-      if (showNotifications && 
-          notificationsRef.current && 
-          !notificationsRef.current.contains(event.target) &&
-          notificationButtonRef.current &&
-          !notificationButtonRef.current.contains(event.target)) {
-        setShowNotifications(false);
-      }
-      
-      // Handle sidebar notification clicks
-      if (showSidebarNotifications && 
-          notificationDropdownRef.current && 
-          !notificationDropdownRef.current.contains(event.target) && 
-          !sidebarNotificationButtonRef.current.contains(event.target)) {
-        setShowSidebarNotifications(false);
-      }
-      
-      // Handle sidebar clicks
-      if (isSidebarOpen && 
-          sidebarRef.current && 
-          !sidebarRef.current.contains(event.target) &&
-          !(mobileSidebarToggleRef.current && mobileSidebarToggleRef.current.contains(event.target)) &&
-          !event.target.closest('.sidebar-toggle')) {
-        setIsSidebarOpen(false);
-        document.body.classList.remove('sidebar-open');
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showHorizontalMenu, isDropdownOpen, showNotifications, showSidebarNotifications, isSidebarOpen]);
-
-  // Hàm đánh dấu thông báo đã đọc
+  // Mark notification as read
   const markAsRead = (reminder) => {
-    const notificationId = `reminder_${reminder.remindId || reminder.id}`;
-    
-    if (!readNotifications.includes(notificationId)) {
-      const updatedReadList = [...readNotifications, notificationId];
-      setReadNotifications(updatedReadList);
-      localStorage.setItem('readNotifications', JSON.stringify(updatedReadList));
+    const newReadNotifications = [...readNotifications];
+    if (!isNotificationRead(reminder)) {
+      newReadNotifications.push(reminder.id);
+      setReadNotifications(newReadNotifications);
     }
   };
 
-  // Hàm kiểm tra thông báo đã đọc chưa
+  // Check if notification is read
   const isNotificationRead = (reminder) => {
-    const notificationId = `reminder_${reminder.remindId || reminder.id}`;
-    return readNotifications.includes(notificationId);
+    return readNotifications.includes(reminder.id);
   };
 
-  // Tổng số thông báo
-  const totalNotifications = reminders.length;
-  // Số thông báo chưa đọc
+  // Calculate unread count
   const unreadCount = reminders.filter(reminder => !isNotificationRead(reminder)).length;
 
-  // Cập nhật display của reminder item để hiển thị rõ hơn
+  // Render a reminder item
   const renderReminderItem = (reminder, index) => (
     <div 
-      key={index} 
-      className={`notification-item reminder ${isNotificationRead(reminder) ? 'read' : 'unread'}`}
-      onClick={() => {
-        markAsRead(reminder);
-        navigate('/member/calendar');
-        setShowNotifications(false);
-      }}
+      key={reminder.id || index} 
+      className={`notification-item ${!isNotificationRead(reminder) ? 'unread' : ''}`}
+      onClick={() => markAsRead(reminder)}
     >
+      <div className="notification-title">
+        <FaCalendarAlt />
+        {reminder.title || "Lịch hẹn mới"}
+      </div>
       <div className="notification-content">
-        <div className="notification-type">
-          {reminder.reminderType || "Lịch hẹn"}
-        </div>
-        <h4>{reminder.title}</h4>
-        {reminder.notification && (
-          <p className="notification-medicine">
-            <strong>Thuốc:</strong> {reminder.notification}
-          </p>
+        {reminder.description || "Bạn có một lịch hẹn mới."}
+      </div>
+      <div className="notification-actions">
+        {!isNotificationRead(reminder) && (
+          <button 
+            className="mark-read"
+            onClick={(e) => {
+              e.stopPropagation();
+              markAsRead(reminder);
+            }}
+          >
+            Đánh dấu đã đọc
+          </button>
         )}
-        <p className="notification-time">
-          <strong>Thời gian:</strong> {reminder.time}, {new Date(reminder.date).toLocaleDateString('vi-VN')}
-        </p>
-        {reminder.isEmailSent && (
-          <p className="notification-email-status">
-            <small>Email đã được gửi</small>
-          </p>
-        )}
+        <span className="notification-time">
+          {new Date(reminder.reminderTime || reminder.date || Date.now()).toLocaleTimeString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit'
+          })}
+        </span>
       </div>
     </div>
   );
 
-  // Add this function before the return statement
+  // Handle nav link click
   const handleNavLinkClick = () => {
-    setShowHorizontalMenu(false);
-    // Force an update to ensure UI state is consistent
-    setTimeout(() => {
+    if (isMobile) {
       setShowHorizontalMenu(false);
-    }, 50);
+      document.body.classList.remove('sidebar-open');
+    }
+    
+    if (soundEnabled) {
+      playUISound('buttonClick');
+    }
   };
 
-  // Function to handle clicks with sound
+  // Handle click with sound
   const handleClickWithSound = (callback) => {
-    return (e) => {
-      playUISound();
-      if (callback) {
-        callback(e);
-      }
-    };
-  };
-
-  // Helpers for common actions with sound
-  const toggleDropdownWithSound = () => {
-    playUISound();
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const toggleNotificationsWithSound = () => {
-    playUISound();
-    setShowNotifications(!showNotifications);
-  };
-
-  const toggleSidebarWithSound = () => {
-    playUISound();
-    setIsSidebarOpen(!isSidebarOpen);
-    document.body.classList.toggle('sidebar-open');
-  };
-
-  const navigationWithSound = (path) => {
     return () => {
-      playUISound();
-      navigate(path);
+      if (soundEnabled) {
+        playUISound('buttonClick');
+      }
+      
+      if (callback) callback();
     };
+  };
+
+  // Toggle dropdown with sound
+  const toggleDropdownWithSound = () => {
+    handleClickWithSound(toggleDropdown)();
+  };
+
+  // Toggle notifications with sound
+  const toggleNotificationsWithSound = () => {
+    handleClickWithSound(toggleNotifications)();
+  };
+
+  // Toggle sidebar with sound
+  const toggleSidebarWithSound = () => {
+    handleClickWithSound(toggleSidebar)();
+  };
+
+  // Navigation with sound
+  const navigationWithSound = (path) => {
+    handleClickWithSound(() => navigate(path))();
   };
 
   return (
     <>
-      <nav
-        className={`navbar ${scrolled ? "scrolled" : ""}`}
-        style={{ margin: 0, padding: 0 }}
-      >
-        <div className="navbar-container" ref={navbarRef} style={{ justifyContent: 'space-between', padding: '0 30px' }}>
-          <div className="logo-section" style={{ justifyContent: 'flex-start', marginRight: 'auto' }}>
+      <nav className={`navbar ${scrolled ? "scrolled" : ""}`} ref={navbarRef}>
+        <div className="navbar-container">
+          <div className="logo-section">
             <Link to="/member" className="navbar-logo">
-              <img
-                src="/Logo bau-02.png"
-                alt="Mẹ Bầu"
-                className="navbar-logo-image"
-              />
+              <img src="/public/Logo bau-02.png" alt="Logo Mẹ Bầu" className="navbar-logo-image" />
               <span className="navbar-logo-text">Mẹ Bầu</span>
             </Link>
           </div>
 
           {/* Header Action Buttons */}
           <div className="header-actions">
-            {/* Edit Profile Button */}
-
-            <div className="action-separator"></div>
-            
             {/* Notification Bell */}
             <button
               className="header-action-button notification-button"
@@ -470,6 +451,8 @@ const NavBarMember = () => {
             </button>
             
             <div className="action-separator"></div>
+            
+            {/* Menu Toggle Button */}
             <button
               className="navbar-toggle-button"
               onClick={toggleHorizontalMenu}
@@ -479,10 +462,25 @@ const NavBarMember = () => {
               {showHorizontalMenu ? <FaTimes /> : <FaBars />}
               <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
             </button>
-            {/* Thêm nút đăng xuất */}
-           
             
-            {/* User Profile */}
+            <div className="action-separator"></div>
+            
+            {/* Nút đăng xuất */}
+            {isLoggedIn && (
+              <>
+                <button
+                  className="header-action-button logout-button"
+                  onClick={handleLogout}
+                  aria-label="Đăng xuất"
+                >
+                  <FaSignOutAlt />
+                  <div className="feature-tooltip">Đăng xuất khỏi tài khoản</div>
+                </button>
+                <div className="action-separator"></div>
+              </>
+            )}
+            
+            {/* User Profile or Login Button */}
             {isLoggedIn ? (
               <div className="user-profile-container" ref={dropdownRef}>
                 <div 
@@ -501,13 +499,6 @@ const NavBarMember = () => {
                   )}
                   <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
                 </div>
-                
-                <div className="profile-menu-separator"></div>
-                
-                <div className="user-profile-button" onClick={toggleDropdownWithSound} title="Bấm để xem tùy chọn tài khoản">
-               
-                  <div className="profile-tooltip">Tùy chọn tài khoản</div>
-                </div>
               </div>
             ) : (
               <Link to="/login" className="login-button">
@@ -515,44 +506,39 @@ const NavBarMember = () => {
                 <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
               </Link>
             )}
-            
-            <div className="action-separator"></div>
-            
-            {/* Hamburger menu button */}
-            
           </div>
         </div>
       </nav>
 
       {/* Notification Dropdown */}
-                {showNotifications && (
+      {showNotifications && (
         <div className="notification-dropdown" ref={notificationsRef}>
-                    <div className="notification-header">
+          <div className="notification-header">
             <h3>Thông báo</h3>
             <button className="close-button no-sound" onClick={() => setShowNotifications(false)}>
               <FaTimes />
-                      </button>
-                    </div>
-                    <div className="notification-list">
+            </button>
+          </div>
+          <div className="notification-list">
             {reminders.length > 0 ? (
               reminders.map((reminder, index) => renderReminderItem(reminder, index))
             ) : (
-                        <div className="no-notifications">
+              <div className="no-notifications">
                 <p>Không có thông báo nào.</p>
-                        </div>
-                      )}
-                    </div>
+              </div>
+            )}
+          </div>
           {reminders.length > 0 && (
-                    <div className="notification-footer">
-                      <button
-                        className="view-all-button"
-                        onClick={() => {
-                          navigate('/member/calendar');
-                          setShowNotifications(false);
-                        }}
-                      >
+            <div className="notification-footer">
+              <button
+                className="view-all-button"
+                onClick={() => {
+                  navigate('/member/calendar');
+                  setShowNotifications(false);
+                }}
+              >
                 Xem tất cả
-                        </button>
+              </button>
             </div>
           )}
         </div>
@@ -575,67 +561,132 @@ const NavBarMember = () => {
             </div>
           </div>
           <div className="dropdown-menu">
-            <Link to={`/member/profile/view/${userInfo?.userId}`} className="dropdown-item">
+            <Link to={`/member/profile/view/${userInfo?.userId}`} className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
               <FaUserCircle />
               Thông tin cá nhân
-              <div className="dropdown-tooltip">Xem thông tin cá nhân của bạn</div>
             </Link>
-            
-              </div>
-            </div>
-          )}
+            <Link to="/member/profile/edit" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+              <FaUserEdit />
+              Chỉnh sửa hồ sơ
+            </Link>
+            <Link to="/member/profile/change-password" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}>
+              <FaKey />
+              Đổi mật khẩu
+            </Link>
+            <button className="dropdown-item logout" onClick={handleLogout}>
+              <FaSignOutAlt />
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      )}
           
-      {/* Horizontal Navigation with conditional rendering instead of just CSS classes */}
+      {/* Horizontal Navigation Menu */}
       {showHorizontalMenu && (
-        <div className="horizontal-nav visible" ref={horizontalNavRef} id="horizontal-nav-container" style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)' }}>
+        <div className={`horizontal-nav visible ${isMobile ? 'mobile' : ''}`} ref={horizontalNavRef}>
           <div className="horizontal-nav-items">
-         
-            <Link to="/member" className={`nav-item ${location.pathname === '/member' ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            {isMobile && (
+              <div className="mobile-menu-header">
+                <h3>Menu</h3>
+                <button className="close-button" onClick={() => setShowHorizontalMenu(false)}>
+                  <FaTimes />
+                </button>
+              </div>
+            )}
+            
+            <Link 
+              to="/member" 
+              className={`nav-item ${location.pathname === '/member' ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 0}}
+            >
               <FaHome className="nav-icon" /> <span className="nav-text">Trang chủ</span>
               <div className="nav-tooltip">Quay về trang chính</div>
             </Link>
-            <Link to="/member/basic-tracking" className={`nav-item ${location.pathname.includes('/member/basic-tracking') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            
+            <Link 
+              to="/member/basic-tracking" 
+              className={`nav-item ${location.pathname.includes('/member/basic-tracking') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 1}}
+            >
               <FaBaby className="nav-icon" /> <span className="nav-text">Theo dõi thai kỳ</span>
               <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
             </Link>
-            <Link to="/member/calendar" className={`nav-item ${location.pathname.includes('/member/calendar') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            
+            <Link 
+              to="/member/calendar" 
+              className={`nav-item ${location.pathname.includes('/member/calendar') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 2}}
+            >
               <FaCalendarAlt className="nav-icon" /> <span className="nav-text">Lịch khám</span>
               <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
             </Link>
-            <Link to="/member/doctor-notes" className={`nav-item ${location.pathname.includes('/member/doctor-notes') ? 'active' : ''}`} onClick={handleNavLinkClick}>
-              <FaAppleAlt className="nav-icon" /> <span className="nav-text">Ghi chú bác sĩ</span>
+            
+            <Link 
+              to="/member/doctor-notes" 
+              className={`nav-item ${location.pathname.includes('/member/doctor-notes') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 3}}
+            >
+              <FaNotesMedical className="nav-icon" /> <span className="nav-text">Ghi chú bác sĩ</span>
               <div className="nav-tooltip">Thông tin về ghi chú bác sĩ cho bà bầu</div>
             </Link>
-            <Link to="/member/blog" className={`nav-item ${location.pathname.includes('/member/blog') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            
+            <Link 
+              to="/member/blog" 
+              className={`nav-item ${location.pathname.includes('/member/blog') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 4}}
+            >
               <FaBlog className="nav-icon" /> <span className="nav-text">Blog</span>
               <div className="nav-tooltip">Những bài viết hữu ích về thai kỳ</div>
             </Link>
-            <Link to="/member/community" className={`nav-item ${location.pathname.includes('/member/community') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            
+            <Link 
+              to="/member/community" 
+              className={`nav-item ${location.pathname.includes('/member/community') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 5}}
+            >
               <FaUsers className="nav-icon" /> <span className="nav-text">Cộng đồng</span>
               <div className="nav-tooltip">Kết nối với cộng đồng mẹ bầu</div>
             </Link>
-            <Link to="/member/profile" className={`nav-item ${location.pathname.includes('/member/profile') ? 'active' : ''}`} onClick={handleNavLinkClick}>
+            
+            <Link 
+              to="/member/profile" 
+              className={`nav-item ${location.pathname.includes('/member/profile') ? 'active' : ''}`} 
+              onClick={handleNavLinkClick}
+              style={{"--item-index": 6}}
+            >
               <FaUser className="nav-icon" /> <span className="nav-text">Hồ sơ</span>
               <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
             </Link>
-            {isLoggedIn && (
-              <>
-            <button 
-                  className="nav-item"
-                  onClick={handleLogout}
-                  aria-label="Đăng xuất"
-                  title="Đăng xuất khỏi tài khoản"
-                >
-                  <FaSignOutAlt />
-                  <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-            </button>
-                
-                <div className="action-separator"></div>
-              </>
+            
+            {isLoggedIn && isMobile && (
+              <button 
+                className="nav-item logout-button"
+                onClick={handleLogout}
+                style={{"--item-index": 7}}
+              >
+                <FaSignOutAlt className="nav-icon" /> <span className="nav-text">Đăng xuất</span>
+              </button>
             )}
-            </div>
           </div>
-        )}
+        </div>
+      )}
+      
+      {/* Overlay for mobile menu */}
+      {isMobile && showHorizontalMenu && (
+        <div 
+          className="menu-overlay" 
+          onClick={() => {
+            setShowHorizontalMenu(false);
+            document.body.classList.remove('sidebar-open');
+          }}
+        ></div>
+      )}
     </>
   );
 };
