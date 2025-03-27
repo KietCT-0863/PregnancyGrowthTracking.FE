@@ -80,6 +80,7 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
         <div 
           key={i} 
           className={`week-day ${isToday ? 'today' : ''}`}
+          title={`${weekdays[i]} - ${day.format('DD/MM/YYYY')}`}
         >
           <div className="weekday-name">{weekdays[day.day()]}</div>
           <div className="weekday-date">{day.format('DD')}</div>
@@ -95,14 +96,14 @@ const CalendarWeekFilter = ({ onWeekChange, currentTimePosition }) => {
       <div className="filter-header">
         <h3>Tuần: {formatWeekRange()}</h3>
         <div className="filter-actions">
-          <button className="today-btn" onClick={goToCurrentWeek}>
+          <button className="today-btn" onClick={goToCurrentWeek} title="Về tuần hiện tại">
             <CalendarIcon size={16} />
             Hôm nay
           </button>
-          <button className="nav-btn" onClick={goToPrevWeek}>
+          <button className="nav-btn" onClick={goToPrevWeek} title="Tuần trước">
             <ChevronLeft size={18} />
           </button>
-          <button className="nav-btn" onClick={goToNextWeek}>
+          <button className="nav-btn" onClick={goToNextWeek} title="Tuần sau">
             <ChevronRight size={18} />
           </button>
         </div>

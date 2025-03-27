@@ -23,6 +23,7 @@ import { getColorByType } from './calendarHelpers';
 import CalendarStats from './CalendarStats';
 import CalendarDayFilter from "./CalendarDayFilter";
 import NotificationPopup from './components/NotificationPopup';
+import CalendarWeekFilter from './CalendarWeekFilter';
 
 
 import "./CalendarAll.scss";
@@ -780,71 +781,27 @@ const CalendarAll = () => {
   };
 
   const renderWeekView = (filteredEvents) => {
-      return (
+    return (
       <div className="week-view-container">
-        <div className="week-header">
-          <div className="week-info">
-            <h3>
-              Tuần: {moment(weekDates[0]).format('DD/MM')} - {moment(weekDates[6]).format('DD/MM/YYYY')}
-            </h3>
-            <div className="week-navigation">
-              <button 
-                className="today-btn" 
-                onClick={navigateToToday}
-              >
-                <CalendarIcon size={16} />
-                Hôm nay
-              </button>
-              <button 
-                className="nav-btn prev" 
-                onClick={() => {
-                  const prevWeek = moment(weekDates[0]).subtract(7, 'days');
-                  setWeekDates(Array.from({length: 7}, (_, i) => moment(prevWeek).add(i, 'days').toDate()));
-                }}
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                className="nav-btn next" 
-                onClick={() => {
-                  const nextWeek = moment(weekDates[0]).add(7, 'days');
-                  setWeekDates(Array.from({length: 7}, (_, i) => moment(nextWeek).add(i, 'days').toDate()));
-                }}
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="week-days-header">
-          {weekDates.map((date, index) => {
-            const isToday = date.toDateString() === new Date().toDateString();
-            return (
-              <div 
-                key={index} 
-                className={`week-day-header ${isToday ? 'today' : ''}`}
-                onClick={() => {
-                  setSelectedDayDate(date);
-                  setViewMode(VIEW_MODES.DAY);
-                }}
-              >
-                <div className="weekday-name">{WEEKDAYS[date.getDay()]}</div>
-                <div className="weekday-date">{date.getDate()}</div>
-              </div>
-            );
-          })}
-        </div>
+        <CalendarWeekFilter 
+          onWeekChange={(weekDays) => setWeekDates(weekDays)} 
+          currentTimePosition={currentTimePosition}
+        />
         
         <div className="week-events">
           {weekDates.map((date, index) => {
             const dayEvents = getEventsForDay(filteredEvents, date);
             const isToday = date.toDateString() === new Date().toDateString();
+            const formattedDate = moment(date).format('DD/MM/YYYY');
             
-      return (
+            return (
               <div 
                 key={index} 
                 className={`day-column ${isToday ? "today" : ""}`}
+                onClick={() => {
+                  setSelectedDayDate(date);
+                  setViewMode(VIEW_MODES.DAY);
+                }}
               >
                 <div className="events-container">
                   {dayEvents.length > 0 ? (
@@ -853,42 +810,16 @@ const CalendarAll = () => {
                         key={event.id || event.remindId} 
                         className="week-event"
                         style={{ 
-                          backgroundColor: `${getColorByType(event.reminderType) || "#2563eb"} !important`, 
-                          color: "#FFFFFF !important",
-                          opacity: "1 !important",
-                          fontWeight: "bold !important",
-                          border: "1px solid rgba(255,255,255,0.3) !important",
-                          boxShadow: "0 2px 4px rgba(0,0,0,0.2) !important",
-                          padding: "8px !important",
-                          borderRadius: "6px !important",
-                          cursor: "pointer !important",
-                          zIndex: "100 !important",
-                          position: "relative !important",
-                          visibility: "visible !important",
-                          display: "block !important",
-                          margin: "2px 4px !important"
+                          backgroundColor: getColorByType(event.reminderType) || "#2563eb",
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
                         }}
-                        onClick={() => handleEventClick(event)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEventClick(event);
+                        }}
                       >
-                        <div className="event-time" style={{
-                          color: "#FFFFFF !important", 
-                          textShadow: "0 1px 2px rgba(0,0,0,0.5) !important",
-                          fontWeight: "600 !important",
-                          fontSize: "12px !important",
-                          marginBottom: "2px !important",
-                          visibility: "visible !important",
-                          display: "block !important",
-                          opacity: "1 !important"
-                        }}>{event.time}</div>
-                        <div className="event-title" style={{
-                          color: "#FFFFFF !important", 
-                          textShadow: "0 1px 2px rgba(0,0,0,0.5) !important",
-                          fontWeight: "500 !important",
-                          fontSize: "14px !important",
-                          visibility: "visible !important",
-                          display: "block !important",
-                          opacity: "1 !important"
-                        }}>{event.title}</div>
+                        <div className="event-time">{event.time}</div>
+                        <div className="event-title">{event.title}</div>
                       </div>
                     ))
                   ) : (
