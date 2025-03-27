@@ -234,7 +234,7 @@ body.calendar-page {
     padding: 0 20px;
     max-width: 1800px;
     margin: 0 auto;
-    overflow: hidden;
+  overflow: hidden;
 
 .calendar-sidebar {
       width: 300px;
@@ -310,10 +310,10 @@ body.calendar-page {
           
           h4 {
             font-size: 13px;
-            margin: 0;
+        margin: 0;
             color: #5f6368;
             font-weight: 500;
-          }
+      }
       
       .mini-calendar-nav {
         display: flex;
@@ -604,8 +604,8 @@ body.calendar-page {
               @include primary-button;
             font-size: 14px;
               padding: 8px 15px;
-      display: flex;
-          align-items: center;
+              display: flex;
+              align-items: center;
               gap: 6px;
           }
           
@@ -623,7 +623,7 @@ body.calendar-page {
           display: flex;
           align-items: center;
               gap: 6px;
-            font-size: 14px;
+              font-size: 14px;
               padding: 8px 15px;
               border-radius: $border-radius-sm;
             }
@@ -651,7 +651,7 @@ body.calendar-page {
         box-shadow: 0 2px 8px $shadow-color;
         
         .view-mode-btn {
-          flex: 1;
+        flex: 1;
           text-align: center;
           padding: 12px;
           font-weight: 500;
@@ -766,8 +766,8 @@ body.calendar-page {
             cursor: pointer;
             position: relative;
             transition: background-color 0.2s ease, transform 0.2s ease;
-            
-            &:hover {
+        
+        &:hover {
               background-color: rgba(0, 0, 0, 0.02);
               transform: translateY(-1px);
             }
@@ -780,7 +780,7 @@ body.calendar-page {
             &:nth-child(7n) {
               border-right: none;
             }
-            
+
             &.empty {
               background-color: rgba(0, 0, 0, 0.02);
               cursor: default;
@@ -797,16 +797,16 @@ body.calendar-page {
             
             &.selected {
               background-color: rgba(#1a73e8, 0.08);
-            }
-            
-            .day-number {
+          }
+
+          .day-number {
               display: inline-flex;
-              align-items: center;
-              justify-content: center;
+            align-items: center;
+        justify-content: center;
               width: 24px;
               height: 24px;
               border-radius: 0;
-              font-weight: 500;
+            font-weight: 500;
               font-size: 12px;
               margin-bottom: 4px;
               color: #3c4043;
@@ -816,11 +816,11 @@ body.calendar-page {
                 background-color: rgba(0, 0, 0, 0.04);
                 transform: scale(1.05);
               }
-            }
-            
-            .day-events {
-              display: flex;
-              flex-direction: column;
+          }
+
+          .day-events {
+          display: flex;
+          flex-direction: column;
               gap: 2px;
               max-height: calc(100% - 28px);
               overflow: hidden;
@@ -829,13 +829,13 @@ body.calendar-page {
                 padding-bottom: 18px;
               }
               
-              .events-container {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-              }
-              
-              .month-event {
+          .events-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+          }
+
+          .month-event {
                 display: flex !important;
                 align-items: center !important;
                 padding: 0 4px !important;
@@ -890,13 +890,13 @@ body.calendar-page {
                 bottom: 4px;
                 left: 8px;
                 right: 8px;
-                font-size: 10px;
+            font-size: 10px;
                 color: #70757a;
                 background-color: rgba(255, 255, 255, 0.8);
                 border-radius: 0;
                 padding: 2px 4px;
                 text-align: center;
-                cursor: pointer;
+            cursor: pointer;
                 
                 &:hover {
                   background-color: rgba(#1a73e8, 0.1);
@@ -915,11 +915,11 @@ body.calendar-page {
         border-radius: 0 !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
         border: 1px solid rgba(0, 0, 0, 0.05) !important;
-        overflow: hidden;
+            overflow: hidden;
         animation: fadeIn $duration ease;
         transition: box-shadow 0.3s ease;
-        
-        &:hover {
+            
+            &:hover {
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
         }
         
@@ -1104,9 +1104,9 @@ body.calendar-page {
               &:active {
                 transform: translateY(0) !important;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
-              }
-              
-              .event-time {
+            }
+            
+            .event-time {
                 font-size: 12px !important;
                 font-weight: 600 !important;
                 margin-bottom: 2px !important;
@@ -1115,9 +1115,9 @@ body.calendar-page {
                 text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
                 visibility: visible !important;
                 display: block !important;
-              }
-              
-              .event-title {
+            }
+            
+            .event-title {
                 font-size: 14px !important;
                 font-weight: 500 !important;
                 word-break: break-word !important;
@@ -1139,7 +1139,7 @@ body.calendar-page {
         border-radius: 0 !important;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
         border: 1px solid rgba(0, 0, 0, 0.05) !important;
-        overflow: hidden;
+          overflow: hidden;
         animation: fadeIn $duration ease;
         transition: box-shadow 0.3s ease;
         display: flex;
@@ -1265,15 +1265,15 @@ body.calendar-page {
         height: 56px;
         border-radius: 0;
         background-color: #1a73e8;
-        color: white;
+          color: white;
         @include flex-center;
         border: none;
-    cursor: pointer;
+          cursor: pointer;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
         z-index: 200;
-    
-    &:hover {
+          
+          &:hover {
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
           transform: translateY(-4px) scale(1.05);
           background-color: darken(#1a73e8, 5%);
@@ -1285,7 +1285,7 @@ body.calendar-page {
 .modal-overlay {
   position: fixed;
   top: 0;
-      left: 0;
+  left: 0;
   right: 0;
   bottom: 0;
     background-color: rgba(#000, 0.6);
@@ -1298,9 +1298,9 @@ body.calendar-page {
       background-color: $bg-color;
       border-radius: 0;
       box-shadow: 0 8px 30px rgba(#000, 0.2);
-        width: 90%;
+      width: 90%;
       max-width: 500px;
-        overflow: hidden;
+  overflow: hidden;
 
       &.simple-modal {
   .modal-header {
@@ -1310,7 +1310,7 @@ body.calendar-page {
     h2 {
       font-size: 20px;
       margin: 0;
-          color: $text-color;
+            color: $text-color;
     }
   }
   
@@ -1396,9 +1396,9 @@ body.calendar-page {
             width: 32px;
             height: 32px;
             border-radius: $border-radius-circle;
-        cursor: pointer;
-        
-        &:hover {
+      cursor: pointer;
+      
+      &:hover {
               background-color: $bg-light;
     }
   }
@@ -1412,19 +1412,19 @@ body.calendar-page {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-          color: white;
+            color: white;
             margin-bottom: 12px;
           }
           
           .event-title {
             font-size: 22px;
-          font-weight: 600;
+            font-weight: 600;
             margin: 0 0 20px 0;
             color: $text-color;
           }
           
           .detail-row {
-            display: flex;
+        display: flex;
         align-items: center;
             gap: 12px;
             margin-bottom: 12px;
@@ -1502,14 +1502,14 @@ body.calendar-page {
       }
       
       .calendar-main {
-    .calendar-header {
+  .calendar-header {
           .header-top {
-      flex-direction: column;
+    flex-direction: column;
             gap: 15px;
-      align-items: flex-start;
-      
+            align-items: flex-start;
+    
     .search-filter-section {
-        width: 100%;
+      width: 100%;
     
               .search-box input {
       width: 100%;
@@ -1532,7 +1532,7 @@ body.calendar-page {
 
 /* Week Days Header - Hiển thị ngang các ngày trong tuần */
 .week-days-header {
-    display: flex;
+          display: flex;
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(255, 143, 171, 0.2) !important;
   background-color: rgba(255, 255, 255, 0.85) !important;
@@ -1542,13 +1542,13 @@ body.calendar-page {
   overflow: hidden;
   
   .week-day-header {
-    flex: 1;
+      flex: 1;
     text-align: center;
     padding: 10px 5px;
-    cursor: pointer;
+  cursor: pointer;
     transition: background-color 0.2s ease;
-    
-    &:hover {
+            
+            &:hover {
       background-color: rgba(255, 240, 245, 0.9) !important;
     }
     
@@ -1563,7 +1563,7 @@ body.calendar-page {
 
 /* Week Events Container */
 .week-events {
-    display: flex;
+  display: flex;
   height: calc(100vh - 300px);
     overflow-y: auto;
   max-width: 100%;
@@ -1586,8 +1586,8 @@ body.calendar-page {
   display: flex;
   flex-direction: column;
       gap: 8px;
-      
-      .week-event {
+    
+    .week-event {
       padding: 8px !important;
         border-radius: 0 !important;
         cursor: pointer !important;
@@ -1625,7 +1625,7 @@ body.calendar-page {
           display: block !important;
       }
       
-        .event-title {
+      .event-title {
           font-size: 14px !important;
           font-weight: 500 !important;
           word-break: break-word !important;
@@ -1659,14 +1659,14 @@ body.calendar-page {
 
     h3 {
       font-size: 16px;
-    font-weight: 600;
+      font-weight: 600;
       color: $text-color;
               margin: 0;
-  }
-  
+    }
+
     .week-navigation {
-    display: flex;
-    align-items: center;
+        display: flex;
+        align-items: center;
         gap: 8px;
 
       button {

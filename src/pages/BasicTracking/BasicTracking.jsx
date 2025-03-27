@@ -71,6 +71,11 @@ const BasicTracking = () => {
   const [weeksToShow, setWeeksToShow] = useState(4)
   const [lastUpdateDate, setLastUpdateDate] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
+  
+  // Theo dõi thay đổi của weeksToShow cho debug
+  useEffect(() => {
+    console.log("BasicTracking: weeksToShow đã thay đổi:", weeksToShow);
+  }, [weeksToShow]);
 
   // Thêm hàm handleUpdate
   const handleUpdate = async () => {

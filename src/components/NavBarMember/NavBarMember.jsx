@@ -450,7 +450,7 @@ const NavBarMember = () => {
               <span className="navbar-logo-text">Mẹ Bầu</span>
             </Link>
           </div>
-          
+
           {/* Header Action Buttons */}
           <div className="header-actions">
             {/* Edit Profile Button */}
@@ -525,34 +525,34 @@ const NavBarMember = () => {
       </nav>
 
       {/* Notification Dropdown */}
-      {showNotifications && (
+                {showNotifications && (
         <div className="notification-dropdown" ref={notificationsRef}>
-          <div className="notification-header">
+                    <div className="notification-header">
             <h3>Thông báo</h3>
             <button className="close-button no-sound" onClick={() => setShowNotifications(false)}>
               <FaTimes />
-            </button>
-          </div>
-          <div className="notification-list">
+                      </button>
+                    </div>
+                    <div className="notification-list">
             {reminders.length > 0 ? (
               reminders.map((reminder, index) => renderReminderItem(reminder, index))
             ) : (
-              <div className="no-notifications">
+                        <div className="no-notifications">
                 <p>Không có thông báo nào.</p>
-              </div>
-            )}
-          </div>
+                        </div>
+                      )}
+                    </div>
           {reminders.length > 0 && (
-            <div className="notification-footer">
-              <button 
-                className="view-all-button"
-                onClick={() => {
-                  navigate('/member/calendar');
-                  setShowNotifications(false);
-                }}
-              >
+                    <div className="notification-footer">
+                      <button
+                        className="view-all-button"
+                        onClick={() => {
+                          navigate('/member/calendar');
+                          setShowNotifications(false);
+                        }}
+                      >
                 Xem tất cả
-              </button>
+                        </button>
             </div>
           )}
         </div>
@@ -581,10 +581,10 @@ const NavBarMember = () => {
               <div className="dropdown-tooltip">Xem thông tin cá nhân của bạn</div>
             </Link>
             
-          </div>
-        </div>
-      )}
-
+              </div>
+            </div>
+          )}
+          
       {/* Horizontal Navigation with conditional rendering instead of just CSS classes */}
       {showHorizontalMenu && (
         <div className="horizontal-nav visible" ref={horizontalNavRef} id="horizontal-nav-container" style={{ boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)' }}>
@@ -620,7 +620,7 @@ const NavBarMember = () => {
             </Link>
             {isLoggedIn && (
               <>
-                <button
+            <button 
                   className="nav-item"
                   onClick={handleLogout}
                   aria-label="Đăng xuất"
@@ -628,14 +628,14 @@ const NavBarMember = () => {
                 >
                   <FaSignOutAlt />
                   <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-                </button>
+            </button>
                 
                 <div className="action-separator"></div>
               </>
             )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </>
   );
 };

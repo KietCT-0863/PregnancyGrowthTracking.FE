@@ -18,6 +18,13 @@ $font-heading: "Playfair Display", serif;
 $font-main: "Roboto", sans-serif;
 $font-accent: "Amatic SC", cursive;
 
+/* Breakpoints */
+$mobile-small: 375px;
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 992px;
+$large-desktop: 1200px;
+
 /* Mixins */
 @mixin flex-center {
   display: flex;
@@ -60,6 +67,31 @@ $font-accent: "Amatic SC", cursive;
   }
 }
 
+/* Responsive Mixins */
+@mixin mobile {
+  @media screen and (max-width: #{$mobile}) {
+    @content;
+  }
+}
+
+@mixin mobile-small {
+  @media screen and (max-width: #{$mobile-small}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width: #{$tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (max-width: #{$desktop}) {
+    @content;
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
@@ -94,17 +126,25 @@ $font-accent: "Amatic SC", cursive;
   left: 0;
   z-index: 1000;
   box-shadow: none !important;
-  
+
   &.scrolled {
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05) !important;
     background-color: rgba(255, 255, 255, 0.6) !important; 
     background: rgba(255, 255, 255, 0.6) !important;
   }
+  
+  @include tablet {
+    height: 70px;
+  }
+  
+  @include mobile {
+    height: 60px;
+  }
 }
 
 .navbar-container {
   display: flex;
-  align-items: center;
+      align-items: center;
   justify-content: space-between !important;
   height: 100%;
   padding: 0 30px !important;
@@ -112,11 +152,19 @@ $font-accent: "Amatic SC", cursive;
   margin: 0 auto;
   background-color: transparent !important;
   background: transparent !important;
+  
+  @include tablet {
+    padding: 0 20px !important;
+  }
+  
+  @include mobile {
+    padding: 0 15px !important;
+  }
 }
 
 .logo-section {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
   justify-content: flex-start !important;
   margin-right: auto !important;
   width: auto !important;
@@ -124,9 +172,23 @@ $font-accent: "Amatic SC", cursive;
   background: transparent !important;
   padding-right: 800px !important; /* Tăng khoảng cách */
   
+  @include desktop {
+    padding-right: 300px !important;
+  }
+  
+  @include tablet {
+    padding-right: 20px !important;
+    margin-right: 0 !important;
+  }
+  
+  @include mobile {
+    padding-right: 10px !important;
+    flex-grow: 1;
+  }
+  
   .navbar-logo {
-    display: flex;
-    align-items: center;
+        display: flex;
+        align-items: center;
     text-decoration: none;
     background-color: transparent !important;
     background: transparent !important;
@@ -134,6 +196,21 @@ $font-accent: "Amatic SC", cursive;
     .navbar-logo-image {
       height: 55px;
       margin-right: 18px;
+      
+      @include tablet {
+        height: 45px;
+        margin-right: 12px;
+      }
+      
+      @include mobile {
+        height: 40px;
+        margin-right: 8px;
+      }
+      
+      @include mobile-small {
+        height: 35px;
+        margin-right: 6px;
+      }
     }
     
     .navbar-logo-text {
@@ -141,6 +218,18 @@ $font-accent: "Amatic SC", cursive;
       font-weight: 600;
       color: #FF6B81;
       text-shadow: 0px 2px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ để tên logo nổi bật hơn */
+      
+      @include tablet {
+        font-size: 1.8rem;
+      }
+      
+      @include mobile {
+        font-size: 1.5rem;
+      }
+      
+      @include mobile-small {
+        font-size: 1.3rem;
+      }
     }
   }
 }
@@ -166,6 +255,20 @@ $font-accent: "Amatic SC", cursive;
   overflow: visible !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
+  
+  @include tablet {
+    top: 70px;
+    padding: 12px 16px !important;
+    width: 100%;
+    max-width: 100% !important;
+  }
+  
+  @include mobile {
+    top: 60px;
+    padding: 10px !important;
+    border-radius: 0 !important;
+    width: 100%;
+  }
   
   // Hiệu ứng viền gradient
   &::before {
@@ -220,8 +323,8 @@ $font-accent: "Amatic SC", cursive;
       padding: 10px 16px; /* Tăng padding để các item rộng hơn */
       border-radius: 12px !important; /* Tăng bo góc */
       color: $text-dark;
-      text-decoration: none;
-      font-weight: 500;
+        text-decoration: none;
+        font-weight: 500;
       font-size: 0.95rem; /* Tăng font-size */
       transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
       background-color: rgba(255, 255, 255, 0.9); /* Tăng độ đục */
@@ -273,8 +376,8 @@ $font-accent: "Amatic SC", cursive;
           opacity: 0.7;
         }
       }
-      
-      &:hover {
+
+        &:hover {
         background-color: rgba(255, 255, 255, 0.97);
         color: $primary;
         transform: translateY(-2px) scale(1.02);
@@ -298,7 +401,7 @@ $font-accent: "Amatic SC", cursive;
         background-color: $primary !important;
         box-shadow: 0 4px 12px rgba($primary, 0.3);
         font-weight: 600;
-        
+
         &::before {
           background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
           transform: translateX(0);
@@ -417,7 +520,7 @@ $font-accent: "Amatic SC", cursive;
       gap: 16px !important; // Tăng khoảng cách giữa các mục menu trên mobile
       width: 100%;
       padding: 5px !important;
-      
+
       .nav-item {
         width: 100%;
         justify-content: flex-start;
@@ -1074,6 +1177,21 @@ body.sidebar-open {
   gap: 20px; /* Tăng từ 12px lên 20px */
   margin-left: auto;
   padding-left: 30px; /* Add padding to push away from logo section */
+  
+  @include tablet {
+    gap: 15px;
+    padding-left: 20px;
+  }
+  
+  @include mobile {
+    gap: 10px;
+    padding-left: 10px;
+  }
+  
+  @include mobile-small {
+    gap: 8px;
+    padding-left: 5px;
+  }
 }
 
 /* Notification Button */
@@ -1092,26 +1210,50 @@ body.sidebar-open {
   font-size: 1.1rem;
   transition: all 0.2s ease;
   
+  @include tablet {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+  
+  @include mobile {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+  
+  @include mobile-small {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
   &:hover {
     background-color: rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
   }
   
-  .notification-badge {
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &.has-notifications:after {
+    content: '';
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: $primary;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    width: 20px;
-    height: 20px;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #ff6b81;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    border: 2px solid white;
+    
+    @include mobile {
+      width: 6px;
+      height: 6px;
+      top: 6px;
+      right: 6px;
+    }
   }
 }
 
@@ -1949,4 +2091,279 @@ main, .main-content, .page-container {
   margin-top: 100px; /* Tăng khoảng cách với navbar */
   padding: 20px;
   min-height: calc(100vh - 100px);
+}
+
+/* === MOBILE NAVIGATION === */
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  color: $primary;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  @include tablet {
+    display: flex;
+  }
+  
+  @include mobile {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* === MOBILE SIDEBAR === */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: white;
+  z-index: 1100;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  
+  &.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      
+      img {
+        height: 40px;
+        margin-right: 10px;
+      }
+      
+      span {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: $primary;
+      }
+    }
+    
+    .close-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba($primary, 0.1);
+      color: $primary;
+      border: none;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: rgba($primary, 0.2);
+      }
+    }
+  }
+  
+  .sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    
+    .nav-item {
+      margin-bottom: 10px;
+      
+      a {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-radius: 8px;
+        color: $text-dark;
+        text-decoration: none;
+        transition: all 0.2s;
+        
+        svg {
+          margin-right: 12px;
+          font-size: 1.2rem;
+        }
+        
+        &:hover, &.active {
+          background-color: rgba($primary, 0.1);
+        }
+      }
+    }
+  }
+  
+  .sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 12px;
+        
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+      
+      .user-details {
+        h4 {
+          margin: 0 0 4px;
+          font-size: 16px;
+          font-weight: 500;
+          
+          @include mobile {
+            font-size: 14px;
+          }
+        }
+        
+        p {
+          margin: 0;
+          font-size: 14px;
+          opacity: 0.9;
+          
+          @include mobile {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+    
+    .logout-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: rgba($primary, 0.1);
+      color: $primary;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      svg {
+        margin-right: 12px;
+        font-size: 16px;
+      }
+      
+      &:hover {
+        background-color: rgba($primary, 0.2);
+      }
+    }
+  }
+  
+  @include mobile-small {
+    width: 260px;
+  }
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Mobile Menu Button - Only visible on mobile screens */
+.mobile-menu-button {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  cursor: pointer;
+  color: $primary;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  
+  @include tablet {
+    display: flex;
+  }
+  
+  @include mobile {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  
+  @include mobile-small {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Hide desktop navigation on mobile */
+@include tablet {
+  .horizontal-nav .nav-menu {
+    display: none;
+  }
+  
+  .horizontal-nav .mobile-menu-items {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    
+    .nav-link {
+      padding: 12px 16px;
+      margin: 4px 0;
+      border-radius: 8px;
+      
+      &:hover, &.active {
+        background-color: rgba($primary, 0.1);
+      }
+    }
+  }
+}
+
+// Khu vực dành riêng cho màn hình mobile siêu nhỏ
+@include mobile-small {
+  .navbar-logo-text {
+    display: none; // Ẩn text logo trên điện thoại rất nhỏ
+  }
+  
+  .header-actions {
+    gap: 5px;
+  }
 }

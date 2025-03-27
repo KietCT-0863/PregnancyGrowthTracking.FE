@@ -49,6 +49,68 @@
       font-weight: 600;
       font-size: 13px;
       color: #666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .close-button {
+        background: none;
+        border: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        color: #999;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 16px;
+        
+        &:hover {
+          background-color: #f0f0f0;
+          color: #333;
+        }
+      }
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #f0f0f0;
+      background-color: #f9f9f9;
+      
+      .tab {
+        flex: 1;
+        padding: 10px 0;
+        text-align: center;
+        font-size: 13px;
+        border: none;
+        background: none;
+        color: #666;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        
+        &:hover {
+          color: #333;
+        }
+        
+        &.active {
+          color: #ff6b81;
+          font-weight: 500;
+          
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ff6b81;
+          }
+        }
+      }
     }
 
     .options-container {
@@ -139,6 +201,70 @@
         }
       }
     }
+
+    .specific-week-container {
+      padding: 15px;
+      
+      .specific-week-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+        color: #666;
+        
+        span {
+          font-size: 13px;
+          font-weight: 500;
+        }
+      }
+      
+      .specific-week-input-container {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+        
+        .specific-week-input {
+          flex: 1;
+          padding: 8px 10px;
+          border: 1px solid rgba(255, 107, 129, 0.3);
+          border-radius: 6px;
+          font-size: 14px;
+          
+          &:focus {
+            outline: none;
+            border-color: #ff6b81;
+            box-shadow: 0 0 0 2px rgba(255, 107, 129, 0.2);
+          }
+        }
+        
+        .apply-button {
+          padding: 8px 12px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          border: none;
+          background-color: #ff6b81;
+          color: white;
+          white-space: nowrap;
+          
+          &:hover {
+            background-color: darken(#ff6b81, 10%);
+          }
+        }
+      }
+      
+      .specific-week-note {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+        text-align: center;
+        padding: 8px 0;
+        border-radius: 4px;
+        background-color: rgba(255, 107, 129, 0.05);
+      }
+    }
   }
 }
 
@@ -154,6 +280,13 @@
       
       .dropdown-header {
         font-size: 12px;
+      }
+      
+      .tabs {
+        .tab {
+          font-size: 12px;
+          padding: 8px 0;
+        }
       }
       
       .options-container {
@@ -173,6 +306,32 @@
               font-size: 11px;
             }
           }
+        }
+      }
+      
+      .specific-week-container {
+        padding: 10px;
+        
+        .specific-week-header {
+          span {
+            font-size: 12px;
+          }
+        }
+        
+        .specific-week-input-container {
+          .specific-week-input {
+            font-size: 12px;
+            padding: 6px 8px;
+          }
+          
+          .apply-button {
+            padding: 6px 10px;
+            font-size: 11px;
+          }
+        }
+        
+        .specific-week-note {
+          font-size: 11px;
         }
       }
     }

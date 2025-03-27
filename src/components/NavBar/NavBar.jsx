@@ -132,7 +132,7 @@ const NavBar = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        
+
         setIsLoggedIn(true);
         setUserInfo({
           ...decoded,
@@ -256,7 +256,7 @@ const NavBar = () => {
               <span className="navbar-logo-text">Mẹ Bầu</span>
             </Link>
           </div>
-          
+
           {/* Header Action Buttons */}
           <div className="header-actions">
             {isLoggedIn && (
@@ -283,12 +283,12 @@ const NavBar = () => {
                   onClick={toggleNotifications}
                   ref={notificationButtonRef}
                   aria-label="Thông báo"
-                >
-                  <FaBell />
+              >
+                <FaBell />
                   {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
                   <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
-                </button>
-                
+              </button>
+
                 <div className="action-separator"></div>
               </>
             )}
@@ -296,7 +296,7 @@ const NavBar = () => {
             {/* Đăng xuất nút */}
             {isLoggedIn && (
               <>
-                <button
+                    <button
                   className="header-action-button logout-button"
                   onClick={handleLogout}
                   aria-label="Đăng xuất"
@@ -304,7 +304,7 @@ const NavBar = () => {
                 >
                   <FaSignOutAlt />
                   <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-                </button>
+                    </button>
                 
                 <div className="action-separator"></div>
               </>
@@ -328,48 +328,48 @@ const NavBar = () => {
                     <FaUserCircle className="user-icon" />
                   )}
                   <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
-                </div>
-                
+                  </div>
+
                 <div className="profile-menu-separator"></div>
                 
                 <div className="user-profile-button" onClick={toggleDropdown} title="Bấm để xem tùy chọn tài khoản">
                   <span className="dropdown-indicator"></span>
                   <div className="profile-tooltip">Tùy chọn tài khoản</div>
                 </div>
-              </div>
+            </div>
             ) : (
-              <div className="auth-buttons">
-                <Link
-                  to="/login"
+                <div className="auth-buttons">
+                  <Link
+                    to="/login"
                   className="login-button"
-                >
-                  Đăng Nhập
+                  >
+                    Đăng Nhập
                   <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
-                </Link>
+                  </Link>
                 
                 <div className="action-separator"></div>
                 
-                <Link
-                  to="/register"
+                  <Link
+                    to="/register"
                   className="register-button"
-                >
-                  Đăng Ký
+                  >
+                    Đăng Ký
                   <div className="feature-tooltip register-tooltip">Đăng ký tài khoản mới</div>
-                </Link>
-              </div>
+                  </Link>
+                </div>
             )}
             
             <div className="action-separator"></div>
             
             {/* Hamburger menu button */}
-            <button
+                  <button
               className="navbar-toggle-button"
               onClick={toggleHorizontalMenu}
               aria-label="Toggle Navigation Menu"
             >
               {showHorizontalMenu ? <FaTimes /> : <FaBars />}
               <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
-            </button>
+                      </button>
           </div>
         </div>
       </nav>
@@ -380,9 +380,9 @@ const NavBar = () => {
           <div className="notification-header">
             <h3>Thông báo</h3>
             <button className="close-button" onClick={toggleNotifications}>
-              <FaTimes />
-            </button>
-          </div>
+                <FaTimes />
+              </button>
+            </div>
           <div className="notification-list">
             {notifications.length > 0 ? (
               notifications.map((notification, index) => (
@@ -397,10 +397,10 @@ const NavBar = () => {
                 <p>Không có thông báo nào.</p>
               </div>
             )}
-          </div>
+                </div>
           {notifications.length > 0 && (
             <div className="notification-footer">
-              <button 
+              <button
                 className="view-all-button"
                 onClick={() => {
                   navigate('/calendar');
@@ -445,9 +445,9 @@ const NavBar = () => {
               <FaSignOutAlt />
               Đăng xuất
               <div className="dropdown-tooltip">Đăng xuất khỏi tài khoản</div>
-            </button>
-          </div>
-        </div>
+                </button>
+                      </div>
+                    </div>
       )}
 
       {/* Horizontal Navigation */}
@@ -481,7 +481,7 @@ const NavBar = () => {
             <Link to="/admin" className={`nav-item ${location.pathname.includes('/admin') ? 'active' : ''}`}>
               <FaUserCircle /> Quản trị
               <div className="nav-tooltip">Quản lý hệ thống</div>
-            </Link>
+              </Link>
           )}
         </div>
       </div>
