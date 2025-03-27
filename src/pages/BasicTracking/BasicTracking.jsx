@@ -141,20 +141,15 @@ const BasicTracking = () => {
   }
 
   const handleInputChange = (foetusId, field, value) => {
-    // Thêm console.log để debug
     console.log(`BasicTracking - handleInputChange for ${foetusId}, field: ${field}, value: ${value}`);
     
-    // Đảm bảo giá trị không null hoặc undefined
     const processedValue = value === '' ? '' : value;
     
-    // Validate giá trị
     handleInputValidation(field, processedValue);
     
-    // Cập nhật tempStats một cách an toàn
     setTempStats((prev) => {
       const foetusStats = prev[foetusId] || {};
       
-      // Log cho debug
       console.log('Previous stats:', foetusStats);
       console.log('New state:', { ...foetusStats, [field]: processedValue });
       
@@ -172,7 +167,6 @@ const BasicTracking = () => {
     setSelectedChild(child === selectedChild ? null : child) // Toggle selection
   }
 
-  // Thêm hàm để lấy khoảng chuẩn từ API
   const handleFetchStandardRanges = async (age) => {
     if (!age || standardRanges[age]) return;
     
@@ -188,7 +182,7 @@ const BasicTracking = () => {
     }
   };
 
-  // Cập nhật useEffect để lấy khoảng chuẩn khi chọn thai nhi
+
   useEffect(() => {
     if (selectedChild && growthData[selectedChild.foetusId]) {
       const currentData = growthData[selectedChild.foetusId]

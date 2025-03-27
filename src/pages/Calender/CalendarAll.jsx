@@ -13,18 +13,18 @@ import "react-toastify/dist/ReactToastify.css";
 import PropTypes from "prop-types";
 import { playNotificationSound } from '../../utils/soundUtils';
 
-// Import services and helpers
+
 import reminderService from "../../api/services/reminderService";
 import userService from "../../api/services/userService";
 import profileImageService from "../../api/services/profileImageService";
 import { getColorByType } from './calendarHelpers';
 
-// Import components
+
 import CalendarStats from './CalendarStats';
 import CalendarDayFilter from "./CalendarDayFilter";
 import NotificationPopup from './components/NotificationPopup';
 
-// Import styles
+
 import "./CalendarAll.scss";
 
 const INITIAL_USER_DATA = {
@@ -72,12 +72,12 @@ const WEEKDAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 const MINI_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 const CalendarAll = () => {
-  // Set Vietnamese locale 
+
   moment.locale('vi');
   
   const navigate = useNavigate();
   
-  // State definitions
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);

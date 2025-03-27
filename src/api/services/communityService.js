@@ -1,23 +1,23 @@
 import axiosInstance from "../axiosConfig";
 import { ENDPOINTS } from "../constants/apiEndpoints";
 
-// Kiểm tra environment (safe check)
+
 const isDevelopment = () => {
-  // Sử dụng hostname để kiểm tra môi trường phát triển
+
   try {
     return (
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1"
     );
   } catch (e) {
-    // Fallback trong trường hợp có lỗi
+
     return false;
   }
 };
 
 const handleApiError = (error, defaultMessage) => {
   console.error("API Error:", error);
-  // Đảm bảo trả về một đối tượng lỗi có cấu trúc
+
   throw {
     message: error.response?.data?.message || error.message || defaultMessage,
     status: error.response?.status || 500,
@@ -26,23 +26,23 @@ const handleApiError = (error, defaultMessage) => {
 };
 
 const communityService = {
-  // Lấy danh sách bài viết
+
   getPosts: async () => {
     try {
       const response = await axiosInstance.get(ENDPOINTS.POSTS.LIST);
       console.log("API response data:", response.data);
 
-      // Chuẩn hóa dữ liệu bài viết khi nhận từ API
+
       const normalizePostData = (posts) => {
         if (!Array.isArray(posts)) return [];
 
         return posts.map((post) => {
-          // Chuẩn hóa cấu trúc postTags
+  
           let normalizedTags = [];
 
-          // Xử lý trường hợp API trả về postTags dưới nhiều dạng khác nhau
+
           if (post.postTags) {
-            // Trường hợp 1: postTags là mảng các object {id, name}
+
             if (Array.isArray(post.postTags)) {
               normalizedTags = post.postTags.map((tag, index) => {
                 if (typeof tag === "string") {
@@ -56,14 +56,14 @@ const communityService = {
                 return { id: `tag_${index}`, name: "Unknown Tag" };
               });
             }
-            // Trường hợp 2: postTags là string (comma-separated)
+
             else if (typeof post.postTags === "string") {
               normalizedTags = post.postTags.split(",").map((tag, index) => ({
                 id: `tag_${index}`,
                 name: tag.trim(),
               }));
             }
-            // Trường hợp 3: postTags là object (không phải mảng)
+         
             else if (typeof post.postTags === "object") {
               const entries = Object.entries(post.postTags);
               normalizedTags = entries.map(([key, value], index) => {
@@ -80,7 +80,7 @@ const communityService = {
             }
           }
 
-          // Chuẩn hóa thông tin người đăng bài
+
           let authorName = "Người dùng";
           if (post.createdBy) {
             authorName = post.createdBy;
