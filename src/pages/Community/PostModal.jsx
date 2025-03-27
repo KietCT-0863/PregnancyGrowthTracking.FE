@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Camera, User } from "react-feather";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import "./Community.scss";
 
-const PostModal = ({ post = {}, onClose, onSubmit, isEditing = false }) => {
+const PostModal = ({
+  post = {},
+  onClose,
+  onSubmit,
+  isEditing = false,
+  authorInfo = null,
+}) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState([]);
@@ -20,7 +26,9 @@ const PostModal = ({ post = {}, onClose, onSubmit, isEditing = false }) => {
       setBody(post.body || "");
       setTags(
         Array.isArray(post.postTags)
-          ? post.postTags.map((tag) => (typeof tag === "string" ? tag : tag.name || tag))
+          ? post.postTags.map((tag) =>
+              typeof tag === "string" ? tag : tag.name || tag
+            )
           : []
       );
       setImagePreview(post.postImageUrl || "");
@@ -129,9 +137,17 @@ const PostModal = ({ post = {}, onClose, onSubmit, isEditing = false }) => {
           <div className="modal-content">
             <div className="user-info">
               <div className="avatar">
-                <User size={24} />
+                {authorInfo?.profileImageUrl ? (
+                  <img
+                    src={authorInfo.profileImageUrl}
+                    alt={authorInfo.fullName}
+                    className="author-avatar"
+                  />
+                ) : (
+                  <User size={24} />
+                )}
               </div>
-              <span>Người dùng</span>
+              <span>{authorInfo?.fullName || "Người dùng"}</span>
             </div>
 
             <input
@@ -242,6 +258,10 @@ PostModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   isEditing: PropTypes.bool,
+  authorInfo: PropTypes.shape({
+    fullName: PropTypes.string,
+    profileImageUrl: PropTypes.string,
+  }),
 };
 
-export default PostModal; 
+export default PostModal;

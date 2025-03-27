@@ -25,7 +25,15 @@ import SidebarTunes from "./components/SidebarTunes";
 import SidebarContacts from "./components/SidebarContacts";
 
 // Modal component for creating/editing post
-const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
+const PostModal = ({
+  isOpen,
+  onClose,
+  post = {},
+  onSubmit,
+  isLoading,
+  authorInfo,
+  isEditing,
+}) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState([]);
@@ -145,7 +153,7 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="post-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>{post.id ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}</h3>
+          <h3>{isEditing ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}</h3>
           <button className="close-button" onClick={onClose}>
             <X size={20} />
           </button>
@@ -155,9 +163,17 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
           <div className="modal-content">
             <div className="user-info">
               <div className="avatar">
-                <User size={20} />
+                {authorInfo?.profileImageUrl ? (
+                  <img
+                    src={authorInfo.profileImageUrl}
+                    alt={authorInfo.fullName}
+                    className="author-avatar"
+                  />
+                ) : (
+                  <User size={20} />
+                )}
               </div>
-              <span>Người dùng</span>
+              <span>{authorInfo?.fullName || "Người dùng"}</span>
             </div>
 
             <input
@@ -262,7 +278,11 @@ const PostModal = ({ isOpen, onClose, post = {}, onSubmit, isLoading }) => {
               className="submit-post"
               disabled={isLoading || !title || !body}
             >
-              {isLoading ? "Đang xử lý..." : post.id ? "Cập nhật" : "Đăng bài"}
+              {isLoading
+                ? "Đang xử lý..."
+                : isEditing
+                ? "Cập nhật"
+                : "Đăng bài"}
             </button>
           </div>
         </form>
@@ -277,6 +297,8 @@ PostModal.propTypes = {
   post: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
+  authorInfo: PropTypes.object,
+  isEditing: PropTypes.bool.isRequired,
 };
 
 // Comment component
@@ -1513,41 +1535,84 @@ const Community = () => {
     try {
       if (postId) {
         // Update existing post
-        await communityService.updatePost(postId, formData);
-        const updatedPosts = posts.map((p) => {
-          if (p.id === postId) {
-            const updatedPost = { ...p };
+        // Tạo một đối tượng chứa dữ liệu bài viết và ID
+        const postData = {
+          id: postId, // Đảm bảo ID được truyền vào
+        };
 
-            // Update properties from formData
-            for (let [key, value] of formData.entries()) {
-              if (key === "postTags") {
-                // Parse JSON string back to array
-                try {
-                  const tagsArray = JSON.parse(value);
-                  updatedPost.postTags = tagsArray.map((tag) => ({
-                    name: tag,
-                    postId: postId,
-                  }));
-                } catch (e) {
-                  console.error("Error parsing tags:", e);
-                }
-              } else if (key === "title") {
-                updatedPost.title = value;
-              } else if (key === "body") {
-                updatedPost.body = value;
-              }
-              // Note: Image handling is more complex and will be done on reload
+        // Thêm các trường dữ liệu từ formData vào postData
+        for (let [key, value] of formData.entries()) {
+          if (key === "postTags") {
+            // Parse JSON string back to array
+            try {
+              const tagsArray = JSON.parse(value);
+              postData.postTags = tagsArray;
+            } catch (e) {
+              console.error("Error parsing tags:", e);
             }
-
-            return updatedPost;
+          } else if (key === "title") {
+            postData.title = value;
+          } else if (key === "body") {
+            postData.body = value;
           }
-          return p;
-        });
+          // Note: Image handling is more complex and will be done on reload
+        }
 
-        setPosts(updatedPosts);
-        setCurrentPost({});
-        toast.success("Đã cập nhật bài viết thành công!");
-        playNotificationSound();
+        console.log("Dữ liệu cập nhật sẽ gửi đi:", postData);
+
+        // Gọi API cập nhật với đối tượng postData đã có ID
+        try {
+          await communityService.updatePost(postData);
+
+          const updatedPosts = posts.map((p) => {
+            if (p.id === postId) {
+              const updatedPost = { ...p };
+
+              // Update properties from formData
+              for (let [key, value] of formData.entries()) {
+                if (key === "postTags") {
+                  // Parse JSON string back to array
+                  try {
+                    const tagsArray = JSON.parse(value);
+                    updatedPost.postTags = tagsArray.map((tag) => ({
+                      name: tag,
+                      postId: postId,
+                    }));
+                  } catch (e) {
+                    console.error("Error parsing tags:", e);
+                  }
+                } else if (key === "title") {
+                  updatedPost.title = value;
+                } else if (key === "body") {
+                  updatedPost.body = value;
+                }
+                // Note: Image handling is more complex and will be done on reload
+              }
+
+              return updatedPost;
+            }
+            return p;
+          });
+
+          setPosts(updatedPosts);
+          setCurrentPost({});
+          toast.success("Đã cập nhật bài viết thành công!");
+          playNotificationSound();
+        } catch (updateError) {
+          console.error("Lỗi chi tiết khi cập nhật bài viết:", updateError);
+
+          // Hiển thị thông báo lỗi cụ thể
+          if (updateError.message) {
+            toast.error(`Lỗi: ${updateError.message}`);
+          } else {
+            toast.error(
+              "Đã xảy ra lỗi khi cập nhật bài viết. Vui lòng thử lại sau."
+            );
+          }
+
+          // Không đóng modal để người dùng có thể thử lại
+          return;
+        }
       } else {
         // Create new post
         const result = await communityService.createPost(formData);
@@ -1653,6 +1718,25 @@ const Community = () => {
   const openNewPostModal = () => {
     setCurrentPost({});
     setModalOpen(true);
+
+    // Lấy thông tin tác giả hiện tại từ API
+    try {
+      // Giả sử userId là ID của người dùng hiện tại
+      communityService
+        .getPostAuthor(userId)
+        .then((authorInfo) => {
+          // Cập nhật thông tin tác giả vào state
+          setPostAuthors((prev) => ({
+            ...prev,
+            currentUser: authorInfo,
+          }));
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy thông tin tác giả:", error);
+        });
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin tác giả:", error);
+    }
   };
 
   const filteredPosts = posts.filter(
@@ -1847,11 +1931,17 @@ const Community = () => {
           </div>
 
           <PostModal
-            isOpen={modalOpen}
-            onClose={() => setModalOpen(false)}
             post={currentPost}
+            onClose={() => setModalOpen(false)}
             onSubmit={handleCreatePost}
+            isEditing={Boolean(currentPost.id)}
+            authorInfo={
+              currentPost.id
+                ? postAuthors[currentPost.id]
+                : postAuthors.currentUser
+            }
             isLoading={isLoading}
+            isOpen={modalOpen}
           />
         </div>
       </div>
