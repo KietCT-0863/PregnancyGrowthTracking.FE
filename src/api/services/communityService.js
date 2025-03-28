@@ -772,6 +772,99 @@ const communityService = {
       return { fullName: "Người dùng", profileImageUrl: null };
     }
   },
+
+  // Lấy các bài viết của một người dùng cụ thể
+  getPostsByUserId: async (userId) => {
+    try {
+      if (!userId) {
+        throw new Error("ID người dùng không được để trống");
+      }
+
+      // Danh sách các endpoint có thể sử dụng để lấy bài viết theo userId
+      const possibleEndpoints = [
+        ENDPOINTS.POSTS.GET_BY_USER(userId), // Endpoint chính
+        `/posts/userid/${userId}`, // Endpoint thay thế 1
+        `/api/posts/user/${userId}`, // Endpoint thay thế 2
+        `/api/posts/userid/${userId}`, // Endpoint thay thế 3
+        `/posts/${userId}/user`, // Endpoint thay thế 4
+      ];
+
+      let lastError = null;
+
+      // Thử từng endpoint cho đến khi một trong số chúng hoạt động
+      for (const endpoint of possibleEndpoints) {
+        try {
+          console.log(
+            `Đang thử endpoint: ${endpoint} để lấy bài viết của user ID: ${userId}`
+          );
+
+          const response = await axiosInstance.get(endpoint);
+          console.log(
+            "Phản hồi API thành công:",
+            response.status,
+            response.statusText
+          );
+          console.log("Dữ liệu trả về:", response.data);
+
+          // Kiểm tra và chuẩn hóa dữ liệu trả về
+          if (Array.isArray(response.data)) {
+            console.log(
+              `Tìm thấy ${response.data.length} bài viết của người dùng ID ${userId}`
+            );
+            // Chuẩn hóa dữ liệu bài viết
+            return response.data.map((post) => ({
+              ...post,
+              postTags: Array.isArray(post.postTags) ? post.postTags : [],
+            }));
+          } else if (response.data && Array.isArray(response.data.posts)) {
+            console.log(
+              `Tìm thấy ${response.data.posts.length} bài viết từ trường posts`
+            );
+            return response.data.posts.map((post) => ({
+              ...post,
+              postTags: Array.isArray(post.postTags) ? post.postTags : [],
+            }));
+          } else if (response.data && response.data.length === 0) {
+            console.warn("API trả về mảng rỗng");
+            return [];
+          } else if (response.status === 204) {
+            console.warn("API trả về 204 No Content");
+            return [];
+          } else {
+            console.warn(
+              `Endpoint ${endpoint} trả về dữ liệu không phải mảng:`,
+              response.data
+            );
+            // Tiếp tục thử endpoint tiếp theo
+          }
+        } catch (apiError) {
+          lastError = apiError;
+          console.error(`Lỗi với endpoint ${endpoint}:`, apiError.message);
+          // Ghi log chi tiết hơn nếu có
+          if (apiError.response) {
+            console.error("Status:", apiError.response.status);
+            console.error("Headers:", apiError.response.headers);
+            console.error("Data:", apiError.response.data);
+          }
+          // Tiếp tục thử endpoint tiếp theo
+        }
+      }
+
+      // Nếu tất cả các endpoint đều thất bại, ném lỗi từ lần thử cuối cùng
+      if (lastError) {
+        throw lastError;
+      }
+
+      // Nếu không có lỗi nhưng cũng không có dữ liệu hợp lệ, trả về mảng rỗng
+      console.warn(
+        "Không tìm thấy định dạng dữ liệu phù hợp từ tất cả các endpoint"
+      );
+      return [];
+    } catch (error) {
+      console.error(`Lỗi khi lấy bài viết theo user ID ${userId}:`, error);
+      throw error; // Ném lỗi để component xử lý
+    }
+  },
 };
 
 export default communityService;

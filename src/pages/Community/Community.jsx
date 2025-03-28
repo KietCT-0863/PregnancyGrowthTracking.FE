@@ -1257,6 +1257,8 @@ const Community = () => {
   const [likesCount, setLikesCount] = useState({});
   const [postAuthors, setPostAuthors] = useState({});
   const userId = 1; // Admin role để test
+  const [filterByUserId, setFilterByUserId] = useState(null);
+  const [userFilterName, setUserFilterName] = useState("");
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
@@ -1393,6 +1395,98 @@ const Community = () => {
         "Không thể tải bài viết: " + (error.message || "Lỗi không xác định")
       );
       setPosts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Thêm hàm để reset bộ lọc và hiển thị tất cả bài viết
+  const resetPostFilters = () => {
+    setFilterByUserId(null);
+    setUserFilterName("");
+    fetchPosts();
+  };
+
+  const handleViewUserPosts = async (userId, userName) => {
+    try {
+      setIsLoading(true);
+      console.log(
+        `Đang gọi API để lấy bài viết của người dùng ID: ${userId}, tên: ${userName}`
+      );
+
+      // Gọi hàm API từ communityService để lấy bài viết theo userId
+      try {
+        const userPosts = await communityService.getPostsByUserId(userId);
+
+        console.log(
+          `Đã lấy ${
+            userPosts ? userPosts.length : 0
+          } bài viết của user ID: ${userId}`
+        );
+
+        if (userPosts && userPosts.length > 0) {
+          setPosts(userPosts);
+          setFilterByUserId(userId);
+          setUserFilterName(userName || `Người dùng #${userId}`);
+          // Hiển thị thông báo thành công
+          toast.success(
+            `Đang xem bài viết của ${userName || `Người dùng #${userId}`}`
+          );
+          // Cuộn lên đầu trang
+          window.scrollTo(0, 0);
+        } else {
+          // Nếu không tìm thấy bài viết nào, vẫn hiển thị bộ lọc nhưng giữ lại danh sách bài viết hiện tại
+          setFilterByUserId(userId);
+          setUserFilterName(userName || `Người dùng #${userId}`);
+
+          // Hiển thị thông báo thân thiện hơn
+          toast.info(
+            `Người dùng ${
+              userName || `#${userId}`
+            } chưa đăng bài viết nào. Đang hiển thị tất cả bài viết.`,
+            { autoClose: 5000 }
+          );
+        }
+      } catch (apiError) {
+        // Xử lý trường hợp lỗi 404 (Not Found)
+        if (apiError.response && apiError.response.status === 404) {
+          console.error("API endpoint không tồn tại (404 Not Found)");
+          toast.error(
+            `Lỗi 404: Không tìm thấy API endpoint cho bài viết của người dùng - Vui lòng kiểm tra lại cấu hình API`
+          );
+        } else {
+          throw apiError; // Ném lại lỗi để xử lý bên ngoài
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy bài viết theo người dùng:", error);
+
+      let errorMessage = "Lỗi không xác định";
+
+      // Xử lý các loại lỗi khác nhau
+      if (error.response) {
+        const { status } = error.response;
+        if (status === 401) {
+          errorMessage = "Bạn cần đăng nhập để xem bài viết của người dùng này";
+        } else if (status === 403) {
+          errorMessage = "Bạn không có quyền xem bài viết của người dùng này";
+        } else {
+          errorMessage = `Lỗi ${status}: ${
+            error.message || "Không thể tải bài viết"
+          }`;
+        }
+      } else if (error.request) {
+        errorMessage =
+          "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(`Không thể tải bài viết: ${errorMessage}`);
+
+      // Reset bộ lọc nếu có lỗi
+      setFilterByUserId(null);
+      setUserFilterName("");
     } finally {
       setIsLoading(false);
     }
@@ -1786,7 +1880,20 @@ const Community = () => {
         </div>
         <div className="community-main">
           <div className="community-header">
-            <h1>Cộng đồng</h1>
+            <div className="header-title-area">
+              <h1>Cộng đồng</h1>
+              {filterByUserId && (
+                <div className="user-filter-chip">
+                  <span>Bài viết của: {userFilterName}</span>
+                  <button
+                    onClick={resetPostFilters}
+                    className="clear-filter-btn"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
             <div className="header-actions">
               <div className="search-box">
                 <Search size={18} className="search-icon" />
@@ -1816,7 +1923,29 @@ const Community = () => {
                 <div key={post.id} className="post-card">
                   <div className="post-header">
                     <div className="user-info">
-                      <div className="avatar">
+                      <div
+                        className="avatar"
+                        onClick={() =>
+                          handleViewUserPosts(
+                            post.userId,
+                            postAuthors[post.id]?.fullName ||
+                              post.createdBy ||
+                              post.userName ||
+                              post.author ||
+                              post.user?.name ||
+                              "Người dùng"
+                          )
+                        }
+                        style={{ cursor: "pointer" }}
+                        title={`Xem tất cả bài viết của ${
+                          postAuthors[post.id]?.fullName ||
+                          post.createdBy ||
+                          post.userName ||
+                          post.author ||
+                          post.user?.name ||
+                          "Người dùng"
+                        }`}
+                      >
                         {postAuthors[post.id]?.profileImageUrl ? (
                           <img
                             src={postAuthors[post.id].profileImageUrl}
@@ -1828,7 +1957,28 @@ const Community = () => {
                         )}
                       </div>
                       <div className="post-meta">
-                        <h3>
+                        <h3
+                          onClick={() =>
+                            handleViewUserPosts(
+                              post.userId,
+                              postAuthors[post.id]?.fullName ||
+                                post.createdBy ||
+                                post.userName ||
+                                post.author ||
+                                post.user?.name ||
+                                "Người dùng"
+                            )
+                          }
+                          style={{ cursor: "pointer" }}
+                          title={`Xem tất cả bài viết của ${
+                            postAuthors[post.id]?.fullName ||
+                            post.createdBy ||
+                            post.userName ||
+                            post.author ||
+                            post.user?.name ||
+                            "Người dùng"
+                          }`}
+                        >
                           {postAuthors[post.id]?.fullName ||
                             post.createdBy ||
                             post.userName ||

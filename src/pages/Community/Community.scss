@@ -245,11 +245,42 @@ $transition: all 0.3s ease;
       gap: 15px;
     }
 
-    h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: $text-color;
-      margin: 0;
+    .header-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      h1 {
+        margin: 0;
+      }
+
+      .user-filter-chip {
+        display: inline-flex;
+        align-items: center;
+        background-color: #e6f7ff;
+        border: 1px solid #91d5ff;
+        border-radius: 16px;
+        padding: 4px 12px;
+        font-size: 0.9rem;
+        color: #0066cc;
+        margin-left: 10px;
+
+        .clear-filter-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: none;
+          border: none;
+          color: #0066cc;
+          margin-left: 8px;
+          cursor: pointer;
+
+          &:hover {
+            color: #ff4d4f;
+          }
+        }
+      }
     }
 
     .header-actions {
@@ -1342,13 +1373,13 @@ $transition: all 0.3s ease;
 
 @keyframes pulse {
   0% {
-    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($primary-color, 0.5);
   }
-  50% {
-    transform: scale(1.05);
+  70% {
+    box-shadow: 0 0 0 10px rgba($primary-color, 0);
   }
   100% {
-    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba($primary-color, 0);
   }
 }
 
@@ -1749,5 +1780,87 @@ $transition: all 0.3s ease;
   button {
     padding: 8px 10px;
     font-size: 12px;
+  }
+}
+
+// Highlight clickable user elements
+.avatar,
+.post-meta h3 {
+  &[style*="cursor: pointer"] {
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+      transform: translateY(-2px);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: $primary-color;
+      transition: width 0.3s ease;
+    }
+
+    &:hover::after {
+      width: 100%;
+    }
+  }
+}
+
+.post-meta h3[style*="cursor: pointer"] {
+  position: relative;
+  display: inline-block;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  &::after {
+    content: "🔍";
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.2);
+  }
+}
+
+.avatar[style*="cursor: pointer"] {
+  position: relative;
+  overflow: visible;
+  transition: transform 0.3s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:hover::before {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 4px rgba($primary-color, 0.15);
+    animation: pulse 1.5s infinite;
   }
 }

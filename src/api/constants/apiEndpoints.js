@@ -86,6 +86,7 @@ export const ENDPOINTS = {
     UNLIKE: (postId) => `/posts/${postId}/toggle-like`,
     GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
     GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
+    GET_BY_USER: (userId) => `/posts/user/${userId}`,
   },
   COMMENTS: {
     LIST: "/Comments",
