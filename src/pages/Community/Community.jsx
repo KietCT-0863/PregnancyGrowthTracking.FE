@@ -316,7 +316,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
   const [expandedReplies, setExpandedReplies] = useState({});
   const [likedComments, setLikedComments] = useState({});
   const [commentLikesCount, setCommentLikesCount] = useState({});
-  const userId = 4; // Giống như trong Community component
+  const userId = 1; // Admin role để test
 
   // Thêm state cho việc chỉnh sửa ảnh trong comment
   const [editCommentImage, setEditCommentImage] = useState(null);
@@ -1256,7 +1256,7 @@ const Community = () => {
   const [likedPosts, setLikedPosts] = useState({});
   const [likesCount, setLikesCount] = useState({});
   const [postAuthors, setPostAuthors] = useState({});
-  const userId = 4; // Tạm thời hardcode userId, sau này lấy từ context hoặc localStorage
+  const userId = 1; // Admin role để test
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
