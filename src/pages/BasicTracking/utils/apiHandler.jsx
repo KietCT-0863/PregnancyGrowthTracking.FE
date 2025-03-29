@@ -63,23 +63,23 @@ export const fetchStandardRanges = async (age) => {
 
     const result = {
       hc: {
-        min: Math.round(standardData.hcMedian * 0.9),
-        max: Math.round(standardData.hcMedian * 1.1),
+        min: standardData.hcMedian * 0.9,
+        max: standardData.hcMedian * 1.1,
         median: standardData.hcMedian
       },
       ac: {
-        min: Math.round(standardData.acMedian * 0.9),
-        max: Math.round(standardData.acMedian * 1.1),
+        min: standardData.acMedian * 0.9,
+        max: standardData.acMedian * 1.1,
         median: standardData.acMedian
       },
       fl: {
-        min: Math.round(standardData.flMedian * 0.9),
-        max: Math.round(standardData.flMedian * 1.1),
+        min: standardData.flMedian * 0.9,
+        max: standardData.flMedian * 1.1,
         median: standardData.flMedian
       },
       efw: {
-        min: Math.round(standardData.efwMedian * 0.9),
-        max: Math.round(standardData.efwMedian * 1.1),
+        min: standardData.efwMedian * 0.9,
+        max: standardData.efwMedian * 1.1,
         median: standardData.efwMedian
       }
     };

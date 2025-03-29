@@ -894,6 +894,33 @@ $alert-success: #2ed573;
           }
         }
         
+        .metrics-guide-button {
+          background-color: #ffa5ba;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          padding: 8px 16px;
+          border-radius: 8px;
+          border: none;
+          font-weight: 500;
+          margin-right: 10px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 4px rgba(255, 107, 129, 0.2);
+          
+          &:hover {
+            background-color: #ff8aa0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.3);
+          }
+          
+          .icon {
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+          }
+        }
+        
         .update-button-main {
           display: flex;
           align-items: center;

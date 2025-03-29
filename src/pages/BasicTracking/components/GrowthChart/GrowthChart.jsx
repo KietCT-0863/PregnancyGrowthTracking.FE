@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
-import { BarChart2, Calendar, Check, X } from "lucide-react";
+import { BarChart2, Check, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import WeeksFilter from "../../WeeksFilter/WeeksFilter";
 import growthStatsService from "../../../../api/services/growthStatsService";
+import { fetchStandardRanges } from "../../utils/apiHandler";
 import "./GrowthChart.scss";
 
 const chartOptions = {
@@ -124,7 +125,6 @@ const chartOptions = {
 
 const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) => {
   const [weeksWithData, setWeeksWithData] = useState([]);
-  const [loadingWeeks, setLoadingWeeks] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [weekHistory, setWeekHistory] = useState([]);
   const [showWeekHistory, setShowWeekHistory] = useState(false);
@@ -134,8 +134,8 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     data: { labels: [], datasets: [] }
   });
   
-  // Kiểm tra nếu đang ở chế độ so sánh
-  const isCompareMode = typeof weeksToShow === 'object' && weeksToShow.type === 'compare';
+  // Cache cho dữ liệu khoảng chuẩn từ API
+  const [standardRangesCache, setStandardRangesCache] = useState({});
 
   useEffect(() => {
     if (selectedChild?.foetusId) {
@@ -152,7 +152,6 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
 
   const fetchWeeksWithData = async (foetusId) => {
     try {
-      setLoadingWeeks(true);
       const alertHistory = await growthStatsService.getAlertHistory(foetusId);
       
       // Lọc ra các tuần đã có dữ liệu
@@ -187,8 +186,6 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       setWeeksWithData(weeks);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu tuần:", error);
-    } finally {
-      setLoadingWeeks(false);
     }
   };
 
@@ -367,12 +364,6 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       return { data: chartData, options: currentOptions };
     }
     
-    // Hàm xử lý giá trị bất thường
-    const normalizeValue = (value, maxThreshold = 1000) => {
-      if (!value) return 0;
-      return value > maxThreshold ? maxThreshold : value;
-    };
-
     // Tạo dữ liệu với hệ số chuẩn hóa phù hợp
     let hcData, acData, flData, efwData;
     
@@ -523,7 +514,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       
       if (hasMultiplePointsForWeek || (isSpecificWeek && recentWeeks.length > 1)) {
         // Thêm ngày vào nhãn, trừ khi là điểm nhân tạo
-        return recentWeeks.map((data, index) => {
+        return recentWeeks.map((data) => {
           if (data.isHidden || data.isClone) {
             // Đối với điểm nhân tạo, sử dụng nhãn trống hoặc ẩn đi
             return '';
@@ -539,7 +530,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       }
       
       // Trường hợp bình thường, chỉ hiển thị tuần
-      return recentWeeks.map((data, index) => {
+      return recentWeeks.map((data) => {
         if (data.isHidden || data.isClone) {
           return '';
         }
@@ -613,7 +604,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       <div className="week-calendar">
         <div className="week-calendar-header">
           <h3>Lịch tuần thai</h3>
-          <p>Nhấn vào tuần để xem/nhập dữ liệu</p>
+          <p>Nhấn vào tuần để xem</p>
         </div>
         <div className="week-grid">
           {weeks.map(week => {
@@ -652,18 +643,60 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       setLoadingHistory(true);
       setShowWeekHistory(true);
       
+      // Kiểm tra cache trước khi gọi API
+      let standardRanges;
+      if (standardRangesCache[week]) {
+        standardRanges = standardRangesCache[week];
+      } else {
+        // Lấy khoảng chuẩn từ API bằng hàm fetchStandardRanges
+        standardRanges = await fetchStandardRanges(week);
+        
+        // Cập nhật cache
+        if (standardRanges) {
+          setStandardRangesCache(prevCache => ({
+            ...prevCache,
+            [week]: standardRanges
+          }));
+        }
+      }
+      
       // Lấy dữ liệu tuần đã chọn từ growthData
       const weekData = [];
       if (growthData[selectedChild.foetusId] && Array.isArray(growthData[selectedChild.foetusId])) {
         growthData[selectedChild.foetusId].forEach(data => {
           if (data.age === week) {
+            // Tạo đối tượng dữ liệu với chỉ số đo được và khoảng chuẩn
             weekData.push({
               date: new Date(data.date || data.measurementDate).toLocaleDateString('vi-VN'),
+              // Dữ liệu đo
               hc: data.hc?.value || 0,
               ac: data.ac?.value || 0,
               fl: data.fl?.value || 0,
               efw: data.efw?.value || 0,
-              id: data.measurementId || `${data.date}-${data.age}`
+              // Dữ liệu chuẩn từ API
+              hcStandard: standardRanges ? standardRanges.hc : {
+                min: data.hc?.min || 0, 
+                max: data.hc?.max || 0, 
+                median: data.hc?.median || 0
+              },
+              acStandard: standardRanges ? standardRanges.ac : {
+                min: data.ac?.min || 0, 
+                max: data.ac?.max || 0, 
+                median: data.ac?.median || 0
+              },
+              flStandard: standardRanges ? standardRanges.fl : {
+                min: data.fl?.min || 0, 
+                max: data.fl?.max || 0, 
+                median: data.fl?.median || 0
+              },
+              efwStandard: standardRanges ? standardRanges.efw : {
+                min: data.efw?.min || 0, 
+                max: data.efw?.max || 0, 
+                median: data.efw?.median || 0
+              },
+              id: data.measurementId || `${data.date}-${data.age}`,
+              // Thêm flag để biết nguồn của khoảng chuẩn
+              isApiStandard: !!standardRanges
             });
           }
         });
@@ -686,6 +719,37 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
   const renderWeekHistoryModal = () => {
     if (!showWeekHistory) return null;
     
+    // Hàm tính độ lệch và trạng thái
+    const calculateDeviation = (value, standard) => {
+      if (!value || !standard || !standard.median) return { deviation: 0, percent: 0, status: 'normal' };
+      
+      const deviation = value - standard.median;
+      const percent = (deviation / standard.median) * 100;
+      
+      let status = 'normal';
+      if (value < standard.min) status = 'low';
+      if (value > standard.max) status = 'high';
+      
+      return {
+        deviation: deviation.toFixed(1),
+        percent: percent.toFixed(1),
+        status
+      };
+    };
+
+    // Hàm tạo class CSS dựa trên trạng thái
+    const getStatusClass = (status) => {
+      switch(status) {
+        case 'low': return 'status-low';
+        case 'high': return 'status-high';
+        case 'normal': return 'status-normal';
+        default: return '';
+      }
+    };
+    
+    // Kiểm tra xem khoảng chuẩn có đến từ API không
+    const isStandardFromApi = weekHistory.length > 0 && weekHistory[0].isApiStandard;
+    
     return (
       <div className="week-history-modal">
         <div className="week-history-content">
@@ -705,6 +769,15 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
               </div>
             ) : (
               <>
+                <div className="api-source-info">
+                  <div className="info-badge">
+                    {isStandardFromApi 
+                      ? <span className="api-badge">Khoảng chuẩn từ API chính thức</span>
+                      : <span className="fallback-badge">Khoảng chuẩn từ dữ liệu cục bộ</span>
+                    }
+                  </div>
+                </div>
+
                 <div className="history-table">
                   <div className="table-header">
                     <div className="table-cell">Ngày đo</div>
@@ -713,19 +786,97 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
                     <div className="table-cell">FL (mm)</div>
                     <div className="table-cell">EFW (g)</div>
                   </div>
-                  {weekHistory.map((record) => (
-                    <div className="table-row" key={record.id}>
-                      <div className="table-cell">{record.date}</div>
-                      <div className="table-cell">{record.hc}</div>
-                      <div className="table-cell">{record.ac}</div>
-                      <div className="table-cell">{record.fl}</div>
-                      <div className="table-cell">{record.efw}</div>
-                    </div>
-                  ))}
+                  
+                  {weekHistory.map((record) => {
+                    // Tính độ lệch cho từng chỉ số
+                    const hcDev = calculateDeviation(record.hc, record.hcStandard);
+                    const acDev = calculateDeviation(record.ac, record.acStandard);
+                    const flDev = calculateDeviation(record.fl, record.flStandard);
+                    const efwDev = calculateDeviation(record.efw, record.efwStandard);
+                    
+                    return (
+                      <div key={record.id}>
+                        <div className="table-row">
+                          <div className="table-cell">{record.date}</div>
+                          <div className={`table-cell ${getStatusClass(hcDev.status)}`}>
+                            {record.hc}
+                          </div>
+                          <div className={`table-cell ${getStatusClass(acDev.status)}`}>
+                            {record.ac}
+                          </div>
+                          <div className={`table-cell ${getStatusClass(flDev.status)}`}>
+                            {record.fl}
+                          </div>
+                          <div className={`table-cell ${getStatusClass(efwDev.status)}`}>
+                            {record.efw}
+                          </div>
+                        </div>
+                        
+                        <div className="table-row deviation-row">
+                          <div className="table-cell">Khoảng chuẩn</div>
+                          <div className="table-cell">
+                            {record.hcStandard.min.toFixed(2)} - {record.hcStandard.max.toFixed(2)}
+                          </div>
+                          <div className="table-cell">
+                            {record.acStandard.min.toFixed(2)} - {record.acStandard.max.toFixed(2)}
+                          </div>
+                          <div className="table-cell">
+                            {record.flStandard.min.toFixed(2)} - {record.flStandard.max.toFixed(2)}
+                          </div>
+                          <div className="table-cell">
+                            {record.efwStandard.min.toFixed(2)} - {record.efwStandard.max.toFixed(2)}
+                          </div>
+                        </div>
+                        
+                        <div className="table-row deviation-row">
+                          <div className="table-cell">Giá trị chuẩn</div>
+                          <div className="table-cell">{record.hcStandard.median.toFixed(2)}</div>
+                          <div className="table-cell">{record.acStandard.median.toFixed(2)}</div>
+                          <div className="table-cell">{record.flStandard.median.toFixed(2)}</div>
+                          <div className="table-cell">{record.efwStandard.median.toFixed(2)}</div>
+                        </div>
+                        
+                        <div className="table-row deviation-row">
+                          <div className="table-cell">Độ lệch</div>
+                          <div className={`table-cell ${getStatusClass(hcDev.status)}`}>
+                            {hcDev.deviation} ({hcDev.percent}%)
+                          </div>
+                          <div className={`table-cell ${getStatusClass(acDev.status)}`}>
+                            {acDev.deviation} ({acDev.percent}%)
+                          </div>
+                          <div className={`table-cell ${getStatusClass(flDev.status)}`}>
+                            {flDev.deviation} ({flDev.percent}%)
+                          </div>
+                          <div className={`table-cell ${getStatusClass(efwDev.status)}`}>
+                            {efwDev.deviation} ({efwDev.percent}%)
+                          </div>
+                        </div>
+                        
+                        <div className="record-separator"></div>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <div className="history-legend">
+                  <div className="legend-item">
+                    <span className="legend-color status-normal"></span>
+                    <span>Bình thường</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-color status-low"></span>
+                    <span>Thấp hơn ngưỡng</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-color status-high"></span>
+                    <span>Cao hơn ngưỡng</span>
+                  </div>
                 </div>
                 
                 <div className="history-note">
                   <p>* Dữ liệu được sắp xếp theo thời gian gần nhất</p>
+                  <p>* Độ lệch được tính so với giá trị chuẩn (median) và hiển thị dưới dạng giá trị tuyệt đối và phần trăm</p>
+                  <p>* Khoảng chuẩn được tính từ giá trị trung bình ±10% (không làm tròn) theo WHO</p>
                 </div>
               </>
             )}

@@ -41,10 +41,11 @@ import {
 import WeeklyStatsChart from './components/WeeklyStatsChart/WeeklyStatsChart'
 import { FaCalendarAlt, FaHistory, FaSave } from 'react-icons/fa'
 import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
-import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons"
+import { CloseOutlined, ExclamationCircleOutlined, BookOutlined } from "@ant-design/icons"
 import { Modal } from 'antd'
 import { taoGopYBaiViet } from './utils/blogSuggestionUtils'
 import BlogSuggestion from './components/BlogSuggestion/BlogSuggestion'
+import MetricsGuideModal from './components/MetricsGuideModal'
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
@@ -83,6 +84,8 @@ function BasicTracking() {
   // Trong function BasicTracking, thêm state:
   const [blogSuggestions, setBlogSuggestions] = useState(null)
   const [showBlogSuggestions, setShowBlogSuggestions] = useState(false)
+  // Thêm state cho MetricsGuideModal
+  const [showMetricsGuide, setShowMetricsGuide] = useState(false)
   
   // Theo dõi thay đổi của weeksToShow cho debug
   useEffect(() => {
@@ -550,6 +553,13 @@ function BasicTracking() {
               <span>Xem lịch sử</span>
             </button>
 
+            <button className="metrics-guide-button" onClick={() => setShowMetricsGuide(true)}>
+              <span className="icon">
+                <BookOutlined />
+              </span>
+              <span>Gợi ý bài blog</span>
+            </button>
+
             <button className="update-button-main" onClick={handleUpdate}>
               <span className="icon">
                 <FaSave />
@@ -668,6 +678,12 @@ function BasicTracking() {
         isOpen={showBlogSuggestions}
         onClose={() => setShowBlogSuggestions(false)}
         suggestions={blogSuggestions}
+      />
+
+      {/* Modal hướng dẫn chỉ số thai kỳ */}
+      <MetricsGuideModal
+        isOpen={showMetricsGuide}
+        onClose={() => setShowMetricsGuide(false)}
       />
     </div>
   )
