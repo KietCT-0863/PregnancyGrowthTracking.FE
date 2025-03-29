@@ -1,7 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Merriweather:wght@300;400;700&family=Nunito:wght@400;500;600;700&display=swap');
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes subtle-fade {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
   
   .blog-detail {
@@ -9,13 +15,14 @@
     margin: 0 auto;
     padding: 2rem;
     background-color: #fff;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
     border-radius: 12px;
     animation: fadeIn 0.5s ease-out;
+    font-family: 'Nunito', sans-serif;
     
     .blog-detail-header {
       position: relative;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       text-align: center;
   
       .back-button {
@@ -52,7 +59,10 @@
         color: #333;
         margin: 1.5rem 0;
         line-height: 1.3;
+        font-weight: 700;
         animation: fadeIn 0.5s ease-out 0.2s both;
+        font-family: 'Playfair Display', serif;
+        letter-spacing: -0.02em;
       }
   
       .blog-detail-image {
@@ -60,7 +70,7 @@
         height: 400px;
         overflow: hidden;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         margin-bottom: 2rem;
         animation: fadeIn 0.5s ease-out 0.1s both;
   
@@ -90,15 +100,15 @@
           gap: 0.5rem;
   
           svg {
-            color: #007bff;
+            color: #ff92a5;
           }
         }
       }
     }
   
     .blog-detail-content {
-      font-size: 1.1rem;
-      line-height: 1.8;
+      font-size: 1rem;
+      line-height: 1.7;
       color: #444;
       animation: fadeIn 0.5s ease-out 0.4s both;
       
@@ -109,24 +119,163 @@
         gap: 0.5rem;
   
         .tag {
-          background-color: #f0f0f0;
+          background-color: #f8f0f3;
           padding: 0.3rem 0.8rem;
           border-radius: 20px;
           font-size: 0.9rem;
-          color: #666;
+          color: #ff92a5;
           transition: all 0.3s ease;
   
           &:hover {
-            background-color: #007bff;
+            background-color: #ff92a5;
             color: white;
             transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(255, 146, 165, 0.3);
           }
         }
       }
   
-      p {
-        margin-bottom: 1.5rem;
-        text-align: justify;
+      .blog-content-text {
+        margin: 0 auto;
+        max-width: 850px;
+        
+        .blog-paragraph {
+          margin-bottom: 0.8rem;
+          text-align: justify;
+          font-size: 1.15rem;
+          line-height: 1.8;
+          color: #3a3a3a;
+          letter-spacing: 0.01em;
+          text-indent: 0;
+          padding: 0 0.5rem;
+          font-family: 'Merriweather', serif;
+          font-weight: 300;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          animation: subtle-fade 0.3s ease-out forwards;
+          animation-delay: calc(0.1s * var(--i, 0));
+          opacity: 0;
+          
+          @for $i from 1 through 20 {
+            &:nth-child(#{$i}) {
+              --i: #{$i};
+            }
+          }
+          
+          &:first-child {
+            font-weight: 400;
+            color: #111;
+            text-indent: 0;
+            font-size: 1.2rem;
+            letter-spacing: 0.02em;
+          }
+          
+          &:first-letter {
+            font-size: 1.25em;
+            font-weight: 400;
+            color: #222;
+          }
+          
+          &[class*="number-heading"] {
+            font-weight: 600;
+            margin-top: 1.8rem;
+            margin-bottom: 1.2rem;
+            color: #222;
+            position: relative;
+            border-left: 3px solid #ff92a5;
+            padding-left: 1rem;
+            background-color: #fff9fa;
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: 0.02em;
+            font-size: 1.25rem;
+            border-radius: 0 5px 5px 0;
+            line-height: 1.6;
+          }
+          
+          &.first-paragraph {
+            font-size: 1.25rem;
+            line-height: 1.85;
+            font-weight: 400;
+            color: #111;
+            margin-bottom: 1.5rem;
+            position: relative;
+            
+            &:after {
+              content: '';
+              display: block;
+              width: 30%;
+              height: 1px;
+              background: linear-gradient(to right, rgba(255, 146, 165, 0.5), transparent);
+              margin: 1.2rem auto 0;
+            }
+          }
+          
+          &.dash-item {
+            padding-left: 1.5rem;
+            position: relative;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            
+            &:before {
+              content: '—';
+              position: absolute;
+              left: 0.3rem;
+              color: #ff92a5;
+              font-weight: 600;
+            }
+          }
+          
+          &.short-paragraph {
+            text-align: left;
+            font-family: 'Nunito', sans-serif;
+            color: #444;
+            
+            &.dash-item {
+              font-size: 1.1rem;
+            }
+          }
+          
+          a {
+            color: #ff92a5;
+            text-decoration: none;
+            position: relative;
+            font-weight: 500;
+            padding: 0 2px;
+            
+            &:after {
+              content: '';
+              position: absolute;
+              left: 0;
+              bottom: -1px;
+              width: 100%;
+              height: 1px;
+              background-color: #ff92a5;
+              transform-origin: right;
+              transform: scaleX(0);
+              transition: transform 0.3s ease;
+            }
+            
+            &:hover:after {
+              transform-origin: left;
+              transform: scaleX(1);
+            }
+          }
+        }
+        
+        .dash-item + .dash-item {
+          margin-top: -0.3rem;
+        }
+        
+        p + p:not(.dash-item) {
+          border-top: 1px solid rgba(0, 0, 0, 0.03);
+          padding-top: 0.5rem;
+        }
+        
+        strong, b {
+          color: #ff92a5;
+          font-weight: 600;
+        }
       }
     }
   }
@@ -140,7 +289,7 @@
     
     .spinner {
       animation: spin 1s linear infinite;
-      color: #007bff;
+      color: #ff92a5;
       margin-bottom: 1rem;
     }
   
@@ -168,19 +317,21 @@
   @media (max-width: 768px) {
     .blog-detail {
       padding: 1rem;
+      margin: 0 1rem;
   
       .blog-detail-header {
         h1 {
-          font-size: 2rem;
+          font-size: 1.8rem;
+          margin: 1rem 0;
         }
   
         .blog-detail-image {
-          height: 300px;
+          height: 220px;
         }
   
         .blog-detail-meta {
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.5rem;
           align-items: center;
         }
   
@@ -199,6 +350,74 @@
   
       .blog-detail-content {
         font-size: 1rem;
+        
+        .blog-content-text {
+          padding: 0 0.3rem;
+          
+          .blog-paragraph {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0.6rem;
+            text-indent: 0;
+            padding: 0 0.2rem;
+            
+            &[class*="number-heading"] {
+              padding-left: 0.7rem;
+              margin-top: 1.2rem;
+              margin-bottom: 0.8rem;
+            }
+          }
+          
+          p + p {
+            padding-top: 0.4rem;
+          }
+          
+          .blog-paragraph {
+            &.first-paragraph {
+              font-size: 1.15rem;
+              line-height: 1.7;
+              
+              &:after {
+                width: 40%;
+                margin-top: 1rem;
+              }
+            }
+            
+            &.dash-item {
+              padding-left: 1.2rem;
+              
+              &:before {
+                left: 0.2rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Print styles
+  @media print {
+    .blog-detail {
+      box-shadow: none;
+      padding: 0;
+      
+      .back-button {
+        display: none;
+      }
+      
+      .blog-detail-image {
+        margin-bottom: 1rem;
+        height: 300px;
+      }
+      
+      .blog-content-text {
+        font-size: 12pt;
+        line-height: 1.6;
+        
+        .blog-paragraph {
+          margin-bottom: 1.2rem;
+        }
       }
     }
   }

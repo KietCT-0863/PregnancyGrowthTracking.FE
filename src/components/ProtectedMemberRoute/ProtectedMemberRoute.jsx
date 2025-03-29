@@ -50,25 +50,20 @@ const ProtectedMemberRoute = ({ children }) => {
           return;
         }
 
-        // Cho phép "member" truy cập vào trang /member
+        // KHÔNG cho phép "member" truy cập vào trang /member
+        // Thay vì cho phép như trước đây, chúng ta chuyển hướng họ về trang basic-user
         if (userRole === "member" && isMemberPath) {
-          setRedirectPath(null);
+          setShouldShowToast({
+            show: true,
+            message: "Bạn cần nâng cấp tài khoản VIP để truy cập tính năng này!",
+            type: "error"
+          });
+          setRedirectPath("/basic-user");
           setIsLoading(false);
           return;
         }
 
         // Chuyển hướng các role không đủ quyền
-        if (userRole === "member" && !isMemberPath) {
-          setShouldShowToast({
-            show: true,
-            message: "Bạn cần nâng cấp tài khoản để truy cập tính năng này!",
-            type: "error"
-          });
-          setRedirectPath("/member");
-          setIsLoading(false);
-          return;
-        }
-
         setShouldShowToast({
           show: true,
           message: "Bạn không có quyền truy cập trang này!",

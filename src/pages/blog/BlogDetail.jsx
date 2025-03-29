@@ -7,9 +7,6 @@ import {
   Calendar,
   User,
   ArrowLeft,
-  Baby,
-  Weight,
-  Activity,
 } from "lucide-react";
 import "./BlogDetail.scss";
 import blogService from "../../api/services/blogService";
@@ -69,6 +66,36 @@ const BlogDetail = () => {
 
   if (!post) return null;
 
+  // Phân chia nội dung thành các đoạn văn dựa trên nội dung
+  const formatContent = (content) => {
+    if (!content) return [];
+    
+    // Xử lý các cách phân đoạn dựa trên số và dấu chấm
+    // Tìm các phần bắt đầu với số + dấu chấm (ví dụ: "1. ", "2. ")
+    const numberingPattern = /(\d+\.\s+)([A-Z])/g;
+    let processedContent = content.replace(numberingPattern, '\n$1$2');
+    
+    // Thêm ngắt dòng trước các tiêu đề có dấu - 
+    processedContent = processedContent.replace(/( - )([A-Z])/g, '\n$1$2');
+    
+    // Tách thành các đoạn dựa trên dấu xuống dòng
+    let paragraphs = processedContent.split(/\n+/);
+    
+    // Lọc đoạn trống và định dạng lại
+    return paragraphs
+      .filter(para => para.trim().length > 0)
+      .map(para => {
+        para = para.trim();
+        // Đảm bảo kết thúc bằng dấu chấm hoặc dấu chấm hỏi hoặc dấu chấm than
+        if (!para.endsWith('.') && !para.endsWith('?') && !para.endsWith('!')) {
+          para += '.';
+        }
+        return para;
+      });
+  };
+
+  const paragraphs = formatContent(post.body);
+
   return (
     <div className="blog-detail">
       <div className="blog-detail-header">
@@ -107,7 +134,37 @@ const BlogDetail = () => {
             </span>
           ))}
         </div>
-        <p>{post.body}</p>
+        
+        <div className="blog-content-text">
+          {paragraphs.map((paragraph, index) => {
+            // Phát hiện nếu đoạn bắt đầu bằng số và dấu chấm (ví dụ: "1. ", "2. ")
+            const isNumberHeading = /^\d+\.\s+/.test(paragraph);
+            // Phát hiện nếu đoạn bắt đầu bằng dấu gạch ngang
+            const isDashItem = /^-\s+/.test(paragraph) || /^ - /.test(paragraph);
+            // Phát hiện nếu đoạn có nội dung ngắn (dưới 100 ký tự)
+            const isShortParagraph = paragraph.length < 100;
+            
+            let paragraphClass = 'blog-paragraph';
+            if (isNumberHeading) {
+              paragraphClass += ` number-heading-${paragraph.charAt(0)}`;
+            }
+            if (isDashItem) {
+              paragraphClass += ' dash-item';
+            }
+            if (isShortParagraph) {
+              paragraphClass += ' short-paragraph';
+            }
+            if (index === 0) {
+              paragraphClass += ' first-paragraph';
+            }
+            
+            return (
+              <p key={index} className={paragraphClass}>
+                {paragraph}
+              </p>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

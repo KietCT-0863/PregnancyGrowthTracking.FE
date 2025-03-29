@@ -108,12 +108,15 @@ const Login = () => {
         toast.success("Đăng nhập thành công!");
         
         // Navigate based on user role
-        if (userRole === "guest") {
+        if (userRole === "guest" || userRole === "member") {
           navigate("/basic-user");
         } else if (userRole === "admin") {
           navigate("/admin");
-        } else {
+        } else if (userRole === "vip") {
           navigate("/member");
+        } else {
+          // Trường hợp mặc định hoặc không xác định
+          navigate("/");
         }
       } else {
         // If we don't have a token, throw an error
