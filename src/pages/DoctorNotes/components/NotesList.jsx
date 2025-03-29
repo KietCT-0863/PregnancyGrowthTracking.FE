@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { motion } from "framer-motion"
 import { Calendar, FileText, Edit2, Trash2, AlertTriangle, Plus } from "lucide-react"
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import NoteDetailModal from './NoteDetailModal'
 import './NotesList.scss'
 
 const NotesList = ({
@@ -10,12 +12,24 @@ const NotesList = ({
   onDelete = () => {},
   onAddNote = () => {}
 }) => {
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleDelete = (noteId) => {
     const confirmDelete = window.confirm("Bạn có chắc muốn xóa ghi chú này?")
     if (confirmDelete) {
       onDelete(noteId)
     }
   }
+
+  const openNoteDetail = (note) => {
+    setSelectedNote(note);
+    setIsModalOpen(true);
+  };
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <motion.div 
@@ -25,14 +39,15 @@ const NotesList = ({
       transition={{ duration: 0.5 }}
     >
       {notes.length > 0 ? (
-        notes.map((note) => (
+        notes.map((note, index) => (
           <motion.div
-            key={note.noteId || note.id}
+            key={note.noteId || note.id || `note-${index}`}
             className="note-card"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
+            onClick={() => openNoteDetail(note)}
           >
             <div className="note-header">
               <div className="note-title">
@@ -62,7 +77,6 @@ const NotesList = ({
               {note.userNotePhoto && (
                 <div 
                   className="image-preview" 
-                  onClick={() => window.open(note.userNotePhoto, "_blank")}
                 >
                   <img src={note.userNotePhoto} alt="Ghi chú bác sĩ" />
                   <div className="image-overlay">
@@ -72,7 +86,7 @@ const NotesList = ({
               )}
             </div>
 
-            <div className="note-actions">
+            <div className="note-actions" onClick={(e) => e.stopPropagation()}>
               <Link 
                 to={`/member/doctor-notes/edit/${note.noteId || note.id}`}
                 state={{ noteData: note }}
@@ -83,7 +97,10 @@ const NotesList = ({
               </Link>
               <button 
                 className="delete-btn"
-                onClick={() => handleDelete(note.noteId || note.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(note.noteId || note.id);
+                }}
                 aria-label="Xóa ghi chú"
               >
                 <Trash2 size={18} />
@@ -110,6 +127,14 @@ const NotesList = ({
           </button>
         </motion.div>
       )}
+      
+      {/* Modal Chi tiết ghi chú */}
+      <NoteDetailModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal}
+        note={selectedNote}
+        onDelete={onDelete}
+      />
     </motion.div>
   )
 }

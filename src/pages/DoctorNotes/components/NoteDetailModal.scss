@@ -1,0 +1,225 @@
+.note-detail-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.note-detail-modal {
+  width: 100%;
+  max-width: 700px;
+  max-height: 95vh;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(255, 107, 139, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  .modal-header {
+    background-color: #ffb6c1;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    color: white;
+    flex-shrink: 0;
+    
+    h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: white;
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .date-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-right: auto;
+      margin-left: 15px;
+      
+      svg {
+        color: white;
+      }
+      
+      span {
+        font-size: 0.9rem;
+        color: white;
+      }
+    }
+    
+    .close-button {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+  }
+  
+  .modal-content {
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    max-height: calc(95vh - 150px);
+    background-color: white;
+    flex: 1;
+    
+    /* Ẩn thanh cuộn cho Chrome, Safari và Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .info-section {
+      margin-bottom: 24px;
+      
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
+      
+      p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #666;
+        margin: 0;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+    }
+    
+    .image-section {
+      margin-bottom: 24px;
+      
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
+      
+      .image-container {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        
+        img {
+          width: 100%;
+          max-height: 400px;
+          object-fit: contain;
+          display: block;
+          transition: transform 0.3s ease;
+        }
+      }
+    }
+  }
+  
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: white;
+    flex-shrink: 0;
+    
+    .edit-btn, .delete-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: none;
+    }
+    
+    .edit-btn {
+      background-color: #ffeff3;
+      color: #ff6b95;
+      
+      svg {
+        color: #ff6b95;
+      }
+      
+      &:hover {
+        background-color: #ffd6e1;
+      }
+    }
+    
+    .delete-btn {
+      background-color: #fff0f0;
+      color: #ff5252;
+      
+      svg {
+        color: #ff5252;
+      }
+      
+      &:hover {
+        background-color: #ffe0e0;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .note-detail-modal {
+    max-height: 95vh;
+    
+    .modal-header {
+      padding: 15px;
+      
+      h2 {
+        font-size: 1.2rem;
+        max-width: 50%;
+      }
+    }
+    
+    .modal-content {
+      max-height: calc(95vh - 140px);
+      padding: 15px;
+    }
+    
+    .modal-actions {
+      padding: 12px 15px;
+      
+      .edit-btn, .delete-btn {
+        padding: 10px;
+      }
+    }
+  }
+}

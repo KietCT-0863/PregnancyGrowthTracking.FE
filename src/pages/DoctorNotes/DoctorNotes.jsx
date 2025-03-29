@@ -51,13 +51,23 @@ const DoctorNotes = () => {
   const fetchNotes = async () => {
     try {
       const response = await userNoteService.getUserNotes()
+      console.log("Fetched notes:", response); // Thêm log để debug
+      
+      // Đảm bảo mỗi ghi chú có đầy đủ thông tin
       const processedNotes = response.map((note) => ({
         ...note,
+        // Đảm bảo có id và noteId
+        id: note.id || note.noteId || `note-${Date.now()}-${Math.random()}`,
+        noteId: note.noteId || note.id || `note-${Date.now()}-${Math.random()}`,
+        // Xử lý URL
         fileUrl: note.fileUrl ? `${note.fileUrl}` : note.fileUrl,
         imageUrl: note.imageUrl ? `${note.imageUrl}` : note.imageUrl,
+        userNotePhoto: note.userNotePhoto || note.imageUrl || note.fileUrl,
         file: note.file ? `${note.file}` : note.file,
       }))
+      
       setNotes(processedNotes)
+      console.log("Processed notes:", processedNotes); // Kiểm tra xem notes đã được xử lý chưa
     } catch (error) {
       console.error("Error fetching notes:", error)
       toast.error("Không thể tải danh sách ghi chú")
@@ -94,7 +104,7 @@ const DoctorNotes = () => {
       await userNoteService.createNote(currentNote)
       toast.success("Tạo ghi chú mới thành công!")
       playNotificationSound();
-      await fetchNotes()
+      await fetchNotes() // Lấy dữ liệu mới sau khi tạo ghi chú
       resetForm()
       showNotification('success', 'Ghi chú đã được thêm thành công!')
     } catch (error) {
@@ -119,10 +129,14 @@ const DoctorNotes = () => {
   const handleDelete = async (noteId) => {
     try {
       await userNoteService.deleteNote(noteId);
+      // Cập nhật state bằng việc lọc ra những ghi chú không có id trùng với noteId bị xóa
       setNotes((prevNotes) => prevNotes.filter((note) => note.noteId !== noteId && note.id !== noteId));
       toast.success("Xóa ghi chú thành công!");
       playDeleteSound();
       showNotification('success', 'Ghi chú đã được xóa thành công!')
+      
+      // Tải lại danh sách ghi chú sau khi xóa để đảm bảo dữ liệu luôn mới nhất
+      await fetchNotes();
     } catch (error) {
       console.error("Delete error:", error);
       toast.error(error.response?.data?.message || "Có lỗi xảy ra khi xóa ghi chú")
@@ -215,6 +229,10 @@ const DoctorNotes = () => {
       isVisible: false
     }));
   };
+
+  // Ghi log để debug
+  console.log("Rendering with notes:", notes.length);
+  console.log("Filtered notes:", filteredNotes.length);
 
   return (
     <div className="doctor-notes-container">

@@ -28,7 +28,16 @@ body.doctor-notes-page {
   gap: 1.5rem;
   /* Loại bỏ background gradient */
   background: transparent !important;
-  overflow: hidden;
+  overflow: visible; /* Thay đổi từ hidden sang visible */
+  
+  /* Ẩn tất cả thanh cuộn trong container và các thành phần con */
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
   
   &::before, &::after {
     content: "";
@@ -61,6 +70,12 @@ body.doctor-notes-page {
     box-shadow: 0 10px 30px rgba(255, 107, 139, 0.15) !important;
     border: 1px solid rgba(255, 255, 255, 0.9) !important;
     overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .modal-header {
       display: flex;
@@ -135,6 +150,7 @@ body.doctor-notes-page {
 .notes-list-container {
   background-color: transparent !important;
   flex: 1;
+  min-height: 600px; /* Đảm bảo có đủ không gian cho danh sách */
 }
 
 /* Note card styles */
@@ -148,6 +164,13 @@ body.doctor-notes-page {
   margin-bottom: 1.5rem !important;
   padding: 1.5rem !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  display: flex !important; /* Đảm bảo flex layout */
+  flex-direction: column !important; /* Sắp xếp phần tử theo chiều dọc */
+  
+  .note-actions {
+    margin-top: auto !important; /* Đẩy actions xuống dưới cùng */
+    z-index: 10 !important; /* Đảm bảo hiển thị trên cùng */
+  }
 }
 
 /* Filters section */
@@ -196,5 +219,26 @@ body.doctor-notes-page {
 @media (max-width: 768px) {
   .doctor-notes-container {
     padding: 1rem;
+  }
+}
+
+/* Đảm bảo nút Sửa và Xóa luôn hiển thị */
+.note-actions {
+  display: flex !important;
+  gap: 0.75rem !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-top: 15px !important;
+  
+  .edit-btn, .delete-btn {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
   }
 }
