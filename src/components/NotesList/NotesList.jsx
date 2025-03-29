@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,10 +10,8 @@ import "./NotesList.scss";
 const NotesList = () => {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const notesContainerRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const notesPerPage = 4; // Hiển thị 4 ghi chú mỗi trang
 
   useEffect(() => {
     fetchNotes();
@@ -35,37 +33,28 @@ const NotesList = () => {
     }
   };
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - e.currentTarget.offsetLeft);
-    setScrollLeft(e.currentTarget.scrollLeft);
+  // Tính toán số trang
+  const totalPages = Math.ceil(notes.length / notesPerPage);
+  
+  // Lấy các ghi chú cho trang hiện tại
+  const indexOfLastNote = currentPage * notesPerPage;
+  const indexOfFirstNote = indexOfLastNote - notesPerPage;
+  const currentNotes = notes.slice(indexOfFirstNote, indexOfLastNote);
+
+  // Chuyển trang
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - e.currentTarget.offsetLeft;
-    const walk = (x - startX) * 2;
-    e.currentTarget.scrollLeft = scrollLeft - walk;
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleScroll = (direction) => {
-    if (notesContainerRef.current) {
-      const container = notesContainerRef.current;
-      const scrollAmount = 300;
-      const newScrollLeft =
-        direction === "left"
-          ? container.scrollLeft - scrollAmount
-          : container.scrollLeft + scrollAmount;
-
-      container.scrollTo({
-        left: newScrollLeft,
-        behavior: "smooth",
-      });
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -92,21 +81,14 @@ const NotesList = () => {
         </motion.h3>
       </div>
 
-      <div
-        className="notes-container"
-        ref={notesContainerRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
+      <div className="notes-grid-container">
         {notes.length > 0 ? (
-          notes.map((note, index) => (
+          currentNotes.map((note, index) => (
             <motion.div
               key={note.noteId || note.id}
               className="note-card"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.5,
                 delay: index * 0.1,
@@ -115,11 +97,10 @@ const NotesList = () => {
               }}
               whileHover={{ scale: 1.03 }}
               onClick={() => setSelectedNote(note)}
-              style={{ background: '#ffffff' }}
             >
               <div className="note-card-header">
                 <div className="note-info">
-                  <span className="note-hospital">
+                  <span className="note-hospital" title={note.note || "Chưa có thông tin"}>
                     {note.note || "Chưa có thông tin"}
                   </span>
                   <span className="note-date">{note.date}</span>
@@ -127,7 +108,8 @@ const NotesList = () => {
               </div>
               {note.diagnosis && (
                 <div className="note-diagnosis">
-                  <span>Chẩn đoán: {note.diagnosis}</span>
+                  <div className="diagnosis-label">Chẩn đoán:</div>
+                  <div className="diagnosis-content" title={note.diagnosis}>{note.diagnosis}</div>
                 </div>
               )}
               {note.userNotePhoto && (
@@ -147,24 +129,37 @@ const NotesList = () => {
         )}
       </div>
 
-      <div className="scroll-buttons">
-        <motion.button
-          className="scroll-btn"
-          onClick={() => handleScroll("left")}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ChevronLeft size={24} />
-        </motion.button>
-        <motion.button
-          className="scroll-btn"
-          onClick={() => handleScroll("right")}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ChevronRight size={24} />
-        </motion.button>
-      </div>
+      {notes.length > 0 && (
+        <div className="pagination-container">
+          <button 
+            className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+            onClick={prevPage}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          
+          <div className="pagination-numbers">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i + 1}
+                className={`page-number ${currentPage === i + 1 ? 'active' : ''}`}
+                onClick={() => goToPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          
+          <button 
+            className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {selectedNote && (
@@ -182,7 +177,6 @@ const NotesList = () => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              style={{ background: '#ffffff' }}
             >
               <button
                 className="close-btn"
@@ -192,8 +186,10 @@ const NotesList = () => {
                 ×
               </button>
 
-              <div className="detail-header" style={{ background: '#ffffff' }}>
-                <h3>{selectedNote.note || "Chưa có thông tin"}</h3>
+              <div className="detail-header">
+                <h3 title={selectedNote.note || "Chưa có thông tin"}>
+                  {selectedNote.note || "Chưa có thông tin"}
+                </h3>
                 <span className="detail-date">
                   {new Date(selectedNote.date).toLocaleDateString("vi-VN")}
                 </span>
@@ -206,7 +202,6 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    style={{ background: '#ffffff' }}
                   >
                     <strong>Chẩn đoán : </strong>
                     <p>{selectedNote.diagnosis}</p>
@@ -219,7 +214,6 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    style={{ background: '#ffffff' }}
                   >
                     <strong>Ghi chú:</strong>
                     <p>{selectedNote.detail}</p>
@@ -232,7 +226,6 @@ const NotesList = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    style={{ background: '#ffffff' }}
                   >
                     <img
                       src={selectedNote.userNotePhoto}
