@@ -27,6 +27,7 @@ const WeeklyStatsChart = ({ age, childStats, onError }) => {
     const getStandardRange = async () => {
       if (!age || age < 12 || age > 40) {
         setStandardRange(null)
+        // Bỏ qua việc thông báo lỗi qua onError
         return
       }
       
@@ -35,7 +36,8 @@ const WeeklyStatsChart = ({ age, childStats, onError }) => {
         const rangeData = await fetchStandardRanges(parseInt(age))
         setStandardRange(rangeData)
       } catch (error) {
-        if (onError) onError('Không thể lấy dữ liệu chuẩn cho tuần thai này')
+        // Chỉ hiển thị lỗi khi không phải lỗi về phạm vi tuần thai
+        if (onError && !error.message?.includes('Tuần thai')) onError('Không thể lấy dữ liệu chuẩn cho tuần thai này')
       } finally {
         setLoading(false)
       }

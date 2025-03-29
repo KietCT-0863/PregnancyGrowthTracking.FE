@@ -457,15 +457,15 @@ const NavBar = () => {
             <FaHome /> Trang chủ
             <div className="nav-tooltip">Quay về trang chính</div>
           </Link>
-          <Link to="/basic-tracking" className={`nav-item ${location.pathname.includes('/pregnancy-tracking') ? 'active' : ''}`}>
+          <Link to="member/basic-tracking" className={`nav-item ${location.pathname.includes('/pregnancy-tracking') ? 'active' : ''}`}>
             <FaBabyCarriage /> Theo dõi thai kỳ
             <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
           </Link>
-          <Link to="/calendar" className={`nav-item ${location.pathname.includes('/appointment') ? 'active' : ''}`}>
+          <Link to="member/calendar" className={`nav-item ${location.pathname.includes('/appointment') ? 'active' : ''}`}>
             <FaCalendarAlt /> Lịch khám
             <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
           </Link>
-          <Link to="/doctor-notes" className={`nav-item ${location.pathname.includes('/doctor-notes') ? 'active' : ''}`}>
+          <Link to="member/doctor-notes" className={`nav-item ${location.pathname.includes('/doctor-notes') ? 'active' : ''}`}>
             <FaNotesMedical /> Ghi chú bác sĩ
             <div className="nav-tooltip">Ghi chú và lời khuyên từ bác sĩ</div>
           </Link>

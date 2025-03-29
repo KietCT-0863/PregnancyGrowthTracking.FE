@@ -310,6 +310,8 @@ $alert-success: #2ed573;
   grid-template-columns: 7fr 3fr;
   gap: 1.5rem;
   width: 100%;
+  position: relative;
+  z-index: 1;
   
   .main-charts-column {
     display: flex;
@@ -324,6 +326,7 @@ $alert-success: #2ed573;
       display: flex;
       flex-direction: column;
       position: relative;
+      z-index: 5;
       
       &::before {
         content: '';
@@ -1157,6 +1160,402 @@ $alert-success: #2ed573;
     width: 40px;
     height: 40px;
     font-size: 14px;
+  }
+}
+
+/* Styles cho nút hướng dẫn */
+.guide-button {
+  margin-top: 15px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, $pink-primary, $pink-dark);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba($pink-primary, 0.25);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba($pink-primary, 0.35);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba($pink-primary, 0.2);
+  }
+
+  span {
+    margin-left: 8px;
+  }
+}
+
+/* Styles cho modal hướng dẫn */
+.guide-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+
+.guide-modal {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  width: 90%;
+  max-width: 800px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalAppear 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  overflow: hidden;
+  
+  @keyframes modalAppear {
+    from {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+.guide-modal-header {
+  padding: 22px 28px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to right, #fcfcfc, #f8f8f8);
+  
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    color: $pink-dark;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  
+  .close-button {
+    background: rgba($pink-light, 0.1);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $pink-dark;
+    font-size: 16px;
+    transition: all 0.2s;
+    
+    &:hover {
+      background: rgba($pink-primary, 0.15);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.guide-modal-content {
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba($pink-light, 0.5);
+    border-radius: 10px;
+    
+    &:hover {
+      background: rgba($pink-primary, 0.6);
+    }
+  }
+}
+
+.guide-modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid #f0f0f0;
+  text-align: right;
+  background: linear-gradient(to right, #fcfcfc, #f8f8f8);
+  
+  .guide-close-btn {
+    padding: 10px 22px;
+    background: linear-gradient(135deg, $pink-primary, $pink-dark);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 10px rgba($pink-primary, 0.2);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($pink-primary, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba($pink-primary, 0.15);
+    }
+  }
+}
+
+/* Styles cho nội dung hướng dẫn */
+.user-guide {
+  color: #444;
+  padding: 28px;
+  
+  .guide-header {
+    margin-bottom: 30px;
+    
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: $pink-dark;
+      letter-spacing: -0.5px;
+      position: relative;
+      display: inline-block;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 70%;
+        height: 3px;
+        background: linear-gradient(to right, $pink-primary, transparent);
+        border-radius: 3px;
+      }
+    }
+    
+    .disclaimer {
+      background-color: rgba($pink-light, 0.12);
+      border-left: 4px solid $pink-primary;
+      padding: 18px 20px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+      
+      strong {
+        color: $pink-dark;
+        font-weight: 700;
+      }
+    }
+  }
+  
+  .guide-section {
+    margin-bottom: 35px;
+    background: white;
+    border-radius: 12px;
+    padding: 22px 25px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    }
+    
+    h3 {
+      color: $pink-primary;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba($pink-light, 0.2);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      
+      &::before {
+        content: '•';
+        color: $pink-primary;
+        margin-right: 10px;
+        font-size: 24px;
+        line-height: 1;
+      }
+    }
+    
+    p {
+      margin-bottom: 12px;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    
+    ul {
+      margin-left: 10px;
+      margin-bottom: 18px;
+      list-style-type: none;
+      
+      li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+        position: relative;
+        padding-left: 24px;
+        font-size: 15px;
+        
+        &::before {
+          content: "•";
+          color: $pink-primary;
+          font-weight: bold;
+          position: absolute;
+          left: 0;
+          font-size: 18px;
+          line-height: 1;
+        }
+        
+        strong {
+          color: $pink-dark;
+          font-weight: 700;
+        }
+      }
+    }
+  }
+  
+  .guide-footer {
+    background-color: rgba($pink-light, 0.08);
+    padding: 18px 20px;
+    border-radius: 8px;
+    margin-top: 30px;
+    position: relative;
+    border-left: 4px solid $pink-dark;
+    
+    &::before {
+      content: '!';
+      position: absolute;
+      left: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: $pink-dark;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba($pink-dark, 0.3);
+    }
+    
+    p {
+      margin: 0;
+      line-height: 1.7;
+      font-size: 15px;
+      padding-left: 10px;
+      
+      strong {
+        color: $pink-dark;
+        font-weight: 700;
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px;
+    
+    .guide-header {
+      h2 {
+        font-size: 22px;
+      }
+    }
+    
+    .guide-section {
+      padding: 18px 20px;
+      
+      h3 {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 15px;
+    
+    .guide-header {
+      h2 {
+        font-size: 20px;
+      }
+      
+      .disclaimer {
+        padding: 15px;
+        font-size: 14px;
+      }
+    }
+    
+    .guide-section {
+      padding: 15px;
+      
+      h3 {
+        font-size: 17px;
+      }
+      
+      p, ul li {
+        font-size: 14px;
+      }
+    }
+    
+    .guide-footer {
+      padding: 15px;
+      
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Cần cập nhật CSS cho phần chart-controls
+.chart-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  position: relative;  /* Thêm position relative */
+  z-index: 20;         /* Thêm z-index cao hơn các phần tử khác */
+}
+
+// Cập nhật z-index cho chart-container để không đè lên WeeksFilter dropdown
+.chart-container {
+  position: relative;
+  z-index: 5;  /* Z-index thấp hơn để không đè lên dropdown */
+}
+
+// Đảm bảo wave background không đè lên các thành phần UI
+.background-waves {
+  z-index: -1;
+  
+  .wave {
+    z-index: -2;
   }
 }
 

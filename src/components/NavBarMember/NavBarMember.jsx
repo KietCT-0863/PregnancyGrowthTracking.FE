@@ -567,6 +567,15 @@ const NavBarMember = () => {
               <FaKey />
               Đổi mật khẩu
             </Link>
+            
+            {/* Thêm nút quay lại Admin chỉ khi user có quyền admin */}
+            {isAdmin && (
+              <Link to="/admin" className="dropdown-item admin-return" onClick={() => setIsDropdownOpen(false)}>
+                <FaUserCircle />
+                Quay lại trang Admin
+              </Link>
+            )}
+            
             <button className="dropdown-item logout" onClick={handleLogout}>
               <FaSignOutAlt />
               Đăng xuất
@@ -675,6 +684,18 @@ const NavBarMember = () => {
               >
                 <FaSignOutAlt className="nav-icon" /> <span className="nav-text">Đăng xuất</span>
               </button>
+            )}
+
+            {isAdmin && (
+              <Link 
+                to="/admin" 
+                className="nav-item admin-return" 
+                onClick={handleNavLinkClick}
+                style={{"--item-index": 7}}
+              >
+                <FaUserCircle className="nav-icon" /> <span className="nav-text">Quay lại Admin</span>
+                <div className="nav-tooltip">Trở về giao diện quản trị</div>
+              </Link>
             )}
           </div>
         </div>

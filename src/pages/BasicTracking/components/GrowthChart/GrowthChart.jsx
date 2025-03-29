@@ -130,6 +130,9 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     options: JSON.parse(JSON.stringify(chartOptions)),
     data: { labels: [], datasets: [] }
   });
+  
+  // Kiểm tra nếu đang ở chế độ so sánh
+  const isCompareMode = typeof weeksToShow === 'object' && weeksToShow.type === 'compare';
 
   useEffect(() => {
     if (selectedChild?.foetusId) {
@@ -206,6 +209,10 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     
     console.log("Dữ liệu gốc:", foetusData);
     
+    // Kiểm tra nếu đang ở chế độ so sánh
+    const isCompareMode = typeof weeksToShow === 'object' && weeksToShow.type === 'compare';
+    const isSpecificWeek = typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ');
+    
     // Phần code xử lý dữ liệu từ getChartData
     // Sắp xếp dữ liệu theo tuần mới nhất trước
     const sortedData = [...foetusData].sort((a, b) => {
@@ -227,10 +234,42 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     // Lấy số tuần dựa theo filter được chọn
     let recentWeeks;
     
+    // Chế độ so sánh nhiều tuần cụ thể
+    if (typeof weeksToShow === 'object' && weeksToShow.type === 'compare' && Array.isArray(weeksToShow.weeks)) {
+      console.log("Chế độ so sánh các tuần:", weeksToShow.weeks);
+      
+      const compareWeeks = weeksToShow.weeks;
+      recentWeeks = [];
+      
+      // Thu thập dữ liệu cho mỗi tuần được chọn để so sánh
+      compareWeeks.forEach(weekNum => {
+        const weekData = foetusData.filter(data => Number(data.age) === weekNum);
+        
+        if (weekData.length > 0) {
+          // Lấy bản ghi mới nhất cho mỗi tuần
+          const latestData = weekData.sort((a, b) => 
+            new Date(b.date || b.measurementDate) - new Date(a.date || a.measurementDate))[0];
+          
+          recentWeeks.push(latestData);
+        } else {
+          console.warn(`Không tìm thấy dữ liệu cho tuần ${weekNum}`);
+        }
+      });
+      
+      // Sắp xếp lại theo thứ tự tăng dần của tuần
+      recentWeeks.sort((a, b) => a.age - b.age);
+      
+      console.log("Dữ liệu so sánh đã thu thập:", recentWeeks);
+      
+      // Không cần chuẩn hóa dữ liệu khi so sánh các tuần
+      currentOptions.scales.y.title.text = "Chỉ số (mm/g) - Giá trị thực";
+      
+      // Cập nhật tiêu đề
+      const weeksList = compareWeeks.join(', ');
+      currentOptions.plugins.title.text = `So sánh các tuần thai nhi: ${weeksList}`;
+    }
     // Kiểm tra nếu là tuần cụ thể (định dạng "Tuần X")
-    const isSpecificWeek = typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ');
-    
-    if (isSpecificWeek) {
+    else if (typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ')) {
       // Trích xuất số tuần từ chuỗi "Tuần X"
       const weekNum = parseInt(weeksToShow.replace('Tuần ', ''), 10);
       console.log(`Đang lọc dữ liệu cho tuần cụ thể: ${weekNum}`);
@@ -323,16 +362,16 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     // Tạo dữ liệu với hệ số chuẩn hóa phù hợp
     let hcData, acData, flData, efwData;
     
-    // Nếu là tuần cụ thể, không chuẩn hóa giá trị xuống quá thấp để hiển thị rõ hơn
-    if (isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1)) {
-      // Khi xem một tuần cụ thể, sử dụng giá trị gốc
+    // Sử dụng giá trị gốc để so sánh các tuần hoặc xem một tuần cụ thể
+    if (isCompareMode || isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1)) {
+      // Khi xem một tuần cụ thể hoặc so sánh các tuần, sử dụng giá trị gốc
       hcData = recentWeeks.map(data => data.hc?.value || 0);
       acData = recentWeeks.map(data => data.ac?.value || 0);
       flData = recentWeeks.map(data => data.fl?.value || 0);
       efwData = recentWeeks.map(data => data.efw?.value || 0);
       
-      // Nếu chỉ có một điểm dữ liệu, thêm một điểm nữa để tạo đường
-      if (recentWeeks.length === 1) {
+      // Nếu chỉ có một điểm dữ liệu và không phải ở chế độ so sánh, thêm một điểm nữa để tạo đường
+      if (recentWeeks.length === 1 && !isCompareMode) {
         console.log("Chỉ có một điểm dữ liệu, thêm điểm thứ hai để tạo đường");
         
         // Tạo dữ liệu điểm thứ hai gần giống điểm thứ nhất
@@ -353,7 +392,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         };
       }
       
-      console.log("Dữ liệu tuần cụ thể gốc:", {
+      console.log("Dữ liệu giá trị gốc:", {
         hc: hcData,
         ac: acData,
         fl: flData,
@@ -380,7 +419,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       const overallMax = Math.max(maxValues.hc, maxValues.ac, maxValues.fl, maxValues.efw);
       currentOptions.scales.y.max = overallMax;
       
-      console.log("Điều chỉnh cấu hình biểu đồ cho tuần cụ thể:", {
+      console.log("Điều chỉnh cấu hình biểu đồ cho dữ liệu gốc:", {
         maxValues,
         overallMax
       });
@@ -405,6 +444,8 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       currentOptions.plugins.title.text = weeksToShow;
     } else if (Array.isArray(weeksToShow) && weeksToShow.length === 1) {
       currentOptions.plugins.title.text = `Biểu đồ tăng trưởng thai nhi (Tuần ${weeksToShow[0]})`;
+    } else if (isCompareMode) {
+      // Title đã được cập nhật ở trên
     } else {
       currentOptions.plugins.title.text = weeksToShow === "Tất cả" 
         ? "Biểu đồ tăng trưởng thai nhi (tất cả các tuần)" 
@@ -659,7 +700,11 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     <div className="chart-section">
       {selectedChild && (
         <div className="chart-controls">
-          <WeeksFilter weeksToShow={weeksToShow} onWeeksChange={onWeeksChange} />
+          <WeeksFilter 
+            weeksToShow={weeksToShow} 
+            onWeeksChange={onWeeksChange} 
+            weeksWithData={weeksWithData}
+          />
         </div>
       )}
       
@@ -704,7 +749,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         </motion.p>
       </div>
       
-      {selectedChild && renderWeekCalendar()}
+      {selectedChild && !isCompareMode && renderWeekCalendar()}
       {renderWeekHistoryModal()}
     </div>
   );

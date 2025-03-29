@@ -8,10 +8,35 @@ import { Modal, Table } from 'antd';
 import "./ChildInfoCard.scss";
 import { fetchStandardRanges, getAuthToken } from '../../utils/apiHandler'
 import { format } from 'date-fns'
-import WeekWarningPopup from '../WeekWarningPopup';
+import { toast } from 'react-toastify';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
+
+// Add this handler for week change
+const handleWeekChange = (foetusId, weekNumber, handleInputChange) => {
+  // Kiểm tra tuần thai có hợp lệ không
+  const weekNum = parseInt(weekNumber);
+  const isValidWeek = weekNum >= 12 && weekNum <= 40;
+  
+  // Luôn cập nhật giá trị để người dùng có thể thấy những gì họ đã nhập
+  handleInputChange(foetusId, "age", weekNumber);
+  
+  // Hiển thị cảnh báo nếu tuần thai không hợp lệ
+  if (weekNumber && !isValidWeek) {
+    toast.warning(
+      <div>
+        <h4>Tuần thai không hợp lệ</h4>
+        <p>Tuần thai {weekNum} không nằm trong phạm vi hợp lệ.</p>
+        <p>Chỉ được nhập tuần thai từ <strong>12</strong> đến <strong>40</strong>.</p>
+      </div>,
+      {
+        position: "top-right",
+        autoClose: 3000,
+      }
+    );
+  }
+};
 
 const ChildInfoCard = ({
   selectedChild,
@@ -25,13 +50,6 @@ const ChildInfoCard = ({
   const [loadingRange, setLoadingRange] = useState(false)
   const [error, setError] = useState(null)
   const [chartError, setChartError] = useState(null)
-  const [isWeekWarningVisible, setIsWeekWarningVisible] = useState(false);
-  const [weekWarningDetails, setWeekWarningDetails] = useState({
-    weekNumber: '',
-    weekExists: false,
-    hasIssues: false,
-    isValidWeek: true
-  });
 
   // Lấy dữ liệu tuần thai hiện tại
   const currentAge = useMemo(() => {
@@ -52,8 +70,18 @@ const ChildInfoCard = ({
   const latestUpdate = useMemo(() => {
     if (!selectedChild || !growthData[selectedChild.foetusId]?.length) return null;
     
-    const data = growthData[selectedChild.foetusId][0];
-    return data.measurementDate || data.date;
+    // Sắp xếp dữ liệu theo ngày gần nhất
+    const sortedData = [...growthData[selectedChild.foetusId]].sort((a, b) => {
+      const dateA = a.date || a.measurementDate || a.createdAt || a.updatedAt;
+      const dateB = b.date || b.measurementDate || b.createdAt || b.updatedAt;
+      return new Date(dateB) - new Date(dateA);
+    });
+    
+    // Lấy mục đầu tiên (gần nhất)
+    const latestData = sortedData[0];
+    
+    // Lấy ngày từ bản ghi mới nhất
+    return latestData?.measurementDate || latestData?.date || latestData?.createdAt || latestData?.updatedAt;
   }, [selectedChild, growthData]);
 
   // Kiểm tra xem có bất kỳ thay đổi nào trong dữ liệu không
@@ -92,10 +120,11 @@ const ChildInfoCard = ({
         return;
       }
       
+      // Bỏ hiển thị lỗi khi tuần thai không hợp lệ
       if (currentAge < 12 || currentAge > 40) {
         if (isMounted) {
           setStandardRange(null);
-          setError('Tuần thai không hợp lệ (12-40)');
+          // Không hiển thị thông báo lỗi nữa
         }
         return;
       }
@@ -303,63 +332,6 @@ const ChildInfoCard = ({
     );
   };
 
-  // Add this function to check if the week exists
-  const checkWeekExists = (foetusId, weekNumber) => {
-    if (!growthData[foetusId]) return false;
-    
-    return growthData[foetusId].some(record => {
-      return parseInt(record.age) === parseInt(weekNumber);
-    });
-  };
-  
-  // Add this function to check if there are issues with the data
-  const checkForIssues = (foetusId, weekNumber) => {
-    if (!growthData[foetusId]) return false;
-    
-    const weekData = growthData[foetusId].find(record => 
-      parseInt(record.age) === parseInt(weekNumber)
-    );
-    
-    if (!weekData) return false;
-    
-    // Check if any metric has an alert flag
-    return ['hc', 'ac', 'fl', 'efw'].some(metric => 
-      weekData[metric]?.isAlert === true
-    );
-  };
-  
-  // Add this handler for week change
-  const handleWeekChange = (foetusId, weekNumber) => {
-    // First update the state as usual
-    handleInputChange(foetusId, "age", weekNumber);
-    
-    // Check if week is in valid range (12-40)
-    const isValidWeek = weekNumber >= 12 && weekNumber <= 40;
-    
-    // Check if this week exists in data
-    const weekExists = isValidWeek ? checkWeekExists(foetusId, weekNumber) : false;
-    const hasIssues = weekExists ? checkForIssues(foetusId, weekNumber) : false;
-    
-    // Show warning popup
-    setWeekWarningDetails({
-      weekNumber,
-      weekExists,
-      hasIssues,
-      isValidWeek
-    });
-    setIsWeekWarningVisible(true);
-  };
-  
-  // Add these handlers for the popup
-  const handleWeekWarningClose = () => {
-    setIsWeekWarningVisible(false);
-  };
-  
-  const handleWeekWarningConfirm = () => {
-    setIsWeekWarningVisible(false);
-    // You can add additional logic here if needed when the user confirms
-  };
-
   return (
     <div className="child-info-card">
       <div className="card-header" style={{ background: 'linear-gradient(135deg, #FF85A2, #FF9A8B)' }}>
@@ -397,8 +369,8 @@ const ChildInfoCard = ({
                       e.preventDefault();
                       
                       const newValue = e.target.value;
-                      // Use the new handler instead
-                      handleWeekChange(selectedChild.foetusId, newValue);
+                      // Sử dụng hàm handleWeekChange được nâng cấp
+                      handleWeekChange(selectedChild.foetusId, newValue, handleInputChange);
                     }}
                     min="1"
                     max="42"
@@ -434,7 +406,7 @@ const ChildInfoCard = ({
           <div className="update-info">
             <div className="update-date">
               <Clock className="icon" />
-              Cập nhật lần cuối: {latestUpdate ? format(new Date(latestUpdate), 'dd/MM/yyyy') : 'Chưa có dữ liệu'}
+              Cập nhật lần cuối: {latestUpdate ? format(new Date(latestUpdate), 'dd/MM/yyyy HH:mm') : 'Chưa có dữ liệu'}
             </div>
             {selectedChild && (
               <motion.button 
@@ -488,7 +460,10 @@ const ChildInfoCard = ({
           <Table
             columns={historyColumns}
             dataSource={sortedHistoryData}
-            rowKey={(record) => record.date}
+            rowKey={(record) => {
+              // Sử dụng id hoặc measurementId nếu có, không thì kết hợp nhiều trường để tạo key duy nhất
+              return record.id || record.measurementId || `${record.date}_${record.age}_${Math.random().toString(36).substr(2, 9)}`;
+            }}
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
@@ -498,17 +473,6 @@ const ChildInfoCard = ({
           />
         </motion.div>
       </Modal>
-
-      {/* Add this new popup component */}
-      <WeekWarningPopup 
-        visible={isWeekWarningVisible}
-        onClose={handleWeekWarningClose}
-        onConfirm={handleWeekWarningConfirm}
-        weekExists={weekWarningDetails.weekExists}
-        weekNumber={weekWarningDetails.weekNumber}
-        hasIssues={weekWarningDetails.hasIssues}
-        isValidWeek={weekWarningDetails.isValidWeek}
-      />
     </div>
   );
 };

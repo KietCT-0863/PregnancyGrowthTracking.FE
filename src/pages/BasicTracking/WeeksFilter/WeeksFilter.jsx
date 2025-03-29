@@ -1,17 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Filter, X, Calendar } from "lucide-react";
+import { ChevronDown, Filter, X, Calendar, Check, ArrowLeftRight } from "lucide-react";
 import "./WeeksFilter.scss";
 
-const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
+const WeeksFilter = ({ weeksToShow, onWeeksChange, weeksWithData = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [customValue, setCustomValue] = useState("");
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [specificWeek, setSpecificWeek] = useState("12"); // Để nhập tuần cụ thể
-  const [activeTab, setActiveTab] = useState("options"); // "options", "specific"
+  const [activeTab, setActiveTab] = useState("options"); // "options", "specific", "compare"
+  const [selectedWeeks, setSelectedWeeks] = useState([]); // Lưu trữ các tuần được chọn để so sánh
   const inputRef = useRef(null);
   const specificInputRef = useRef(null);
   const weekOptions = [4, 8, 12, 16, "Tất cả", "Tùy chỉnh"];
+  
+  // Tạo danh sách tuần từ 12-40 cho chức năng so sánh
+  const allWeeksOptions = Array.from({ length: 29 }, (_, i) => i + 12);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -19,10 +23,13 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
 
   const handleSelect = (weeks) => {
     if (weeks === "Tùy chỉnh") {
+      // Khi chọn "Tùy chỉnh", reset các tùy chọn khác
       setIsCustomMode(true);
+      setActiveTab("options");
       return;
     }
     
+    // Khi chọn một tùy chọn khác, tắt chế độ tùy chỉnh
     onWeeksChange(weeks);
     setIsCustomMode(false);
     setIsOpen(false);
@@ -69,6 +76,29 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
     }
   };
 
+  // Xử lý chọn/bỏ chọn tuần để so sánh
+  const toggleWeekSelection = (week) => {
+    if (selectedWeeks.includes(week)) {
+      // Nếu tuần đã được chọn, bỏ chọn
+      setSelectedWeeks(selectedWeeks.filter(w => w !== week));
+    } else {
+      // Nếu tuần chưa được chọn và chưa đạt giới hạn, thêm vào
+      if (selectedWeeks.length < 10) {
+        setSelectedWeeks([...selectedWeeks, week]);
+      }
+    }
+  };
+
+  // Áp dụng các tuần đã chọn để so sánh
+  const applyCompareWeeks = () => {
+    if (selectedWeeks.length > 0) {
+      // Truyền mảng các tuần đã chọn để so sánh
+      console.log("WeeksFilter: So sánh các tuần", selectedWeeks);
+      onWeeksChange({ type: 'compare', weeks: selectedWeeks });
+      setIsOpen(false);
+    }
+  };
+
   const handleKeyDown = (e, applyFunction) => {
     if (e.key === "Enter") {
       applyFunction();
@@ -91,6 +121,13 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
 
   // Kiểm tra nếu giá trị weeksToShow hiện tại không phải là một trong các lựa chọn có sẵn
   useEffect(() => {
+    // Nếu đang ở chế độ so sánh
+    if (weeksToShow && typeof weeksToShow === 'object' && weeksToShow.type === 'compare') {
+      setActiveTab("compare");
+      setSelectedWeeks(weeksToShow.weeks || []);
+      return;
+    }
+    
     // Nếu weeksToShow là mảng chỉ có 1 phần tử, giả định đó là tuần cụ thể
     if (Array.isArray(weeksToShow) && weeksToShow.length === 1) {
       setActiveTab("specific");
@@ -117,6 +154,12 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
   const getButtonText = () => {
     console.log("WeeksFilter: Trạng thái hiện tại của weeksToShow", weeksToShow);
     
+    // Nếu đang ở chế độ so sánh
+    if (typeof weeksToShow === 'object' && weeksToShow.type === 'compare') {
+      const weekList = weeksToShow.weeks.join(', ');
+      return `So sánh tuần ${weekList}`;
+    }
+    
     // Nếu là tuần cụ thể (định dạng "Tuần X")
     if (typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ')) {
       return weeksToShow;
@@ -127,8 +170,18 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
       return `Tuần ${weeksToShow[0]}`;
     }
     
+    // Nếu đang ở chế độ tùy chỉnh
+    if (isCustomMode) {
+      return `Hiển thị ${customValue || weeksToShow} tuần`;
+    }
+    
     // Các trường hợp khác
     return `Hiển thị ${weeksToShow === "Tất cả" ? "tất cả" : `${weeksToShow} tuần`}`;
+  };
+
+  // Kiểm tra xem tuần nào đã có dữ liệu
+  const hasDataForWeek = (week) => {
+    return weeksWithData.includes(week);
   };
 
   return (
@@ -171,29 +224,40 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
             >
               Tuần cụ thể
             </button>
+            <button 
+              className={`tab ${activeTab === 'compare' ? 'active' : ''}`}
+              onClick={() => setActiveTab('compare')}
+            >
+              So sánh tuần
+            </button>
           </div>
           
           {activeTab === 'options' && (
             <div className="options-container">
-              {weekOptions.map((option, index) => (
-                <motion.div
-                  key={index}
-                  className={`option ${
-                    option === weeksToShow || 
-                    (option === "Tùy chỉnh" && isCustomMode) 
-                      ? "active" 
-                      : ""
-                  }`}
-                  onClick={() => handleSelect(option)}
-                  whileHover={{ backgroundColor: "rgba(255, 107, 129, 0.1)" }}
-                >
-                  {option === "Tất cả" 
-                    ? "Tất cả các tuần" 
-                    : option === "Tùy chỉnh" 
-                      ? "Tùy chỉnh số tuần" 
-                      : `${option} tuần gần nhất`}
-                </motion.div>
-              ))}
+              {weekOptions.map((option, index) => {
+                // Xác định trạng thái active của từng option
+                const isActive = 
+                  // Nếu option là Tùy chỉnh và đang ở chế độ tùy chỉnh
+                  (option === "Tùy chỉnh" && isCustomMode) ||
+                  // Hoặc option bằng với weeksToShow và không ở chế độ tùy chỉnh
+                  (option === weeksToShow && !isCustomMode);
+                
+                return (
+                  <motion.div
+                    key={index}
+                    className={`option ${isActive ? "active" : ""}`}
+                    onClick={() => handleSelect(option)}
+                    whileHover={{ backgroundColor: "rgba(255, 107, 129, 0.1)" }}
+                  >
+                    {option === "Tất cả" 
+                      ? "Tất cả các tuần" 
+                      : option === "Tùy chỉnh" 
+                        ? "Tùy chỉnh số tuần" 
+                        : `${option} tuần gần nhất`}
+                    {isActive && <Check size={14} className="check-icon" />}
+                  </motion.div>
+                );
+              })}
 
               {isCustomMode && (
                 <div className="custom-input-container">
@@ -250,8 +314,60 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange }) => {
                   Áp dụng
                 </button>
               </div>
+              
               <div className="specific-week-note">
-                Chỉ hiển thị dữ liệu của tuần {specificWeek}
+                * Chỉ hiển thị dữ liệu cho một tuần thai nhi cụ thể (từ 12-40 tuần).
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'compare' && (
+            <div className="compare-weeks-container">
+              <div className="compare-header">
+                <ArrowLeftRight size={16} />
+                <span>So sánh dữ liệu các tuần thai</span>
+              </div>
+              
+              <div className="selection-info">
+                <span>Chọn các tuần để so sánh ({selectedWeeks.length})</span>
+              </div>
+              
+              <div className="week-selection-grid">
+                {allWeeksOptions.map(week => (
+                  <motion.div
+                    key={week}
+                    className={`week-option ${selectedWeeks.includes(week) ? 'selected' : ''} ${hasDataForWeek(week) ? 'has-data' : ''}`}
+                    onClick={() => toggleWeekSelection(week)}
+                    whileHover={{ backgroundColor: "rgba(255, 107, 129, 0.1)" }}
+                    whileTap={{ scale: 0.95 }}
+                    disabled={!selectedWeeks.includes(week) && selectedWeeks.length >= 10}
+                  >
+                    <span>Tuần {week}</span>
+                    {selectedWeeks.includes(week) && <Check size={14} className="check-icon" />}
+                    {hasDataForWeek(week) && <span className="data-indicator"></span>}
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div className="compare-note">
+                <span>* Tuần có chấm xanh là tuần đã có dữ liệu</span>
+              </div>
+              
+              <div className="compare-actions">
+                <button 
+                  className="apply-button"
+                  onClick={applyCompareWeeks}
+                  disabled={selectedWeeks.length === 0}
+                >
+                  So sánh các tuần đã chọn
+                </button>
+                <button 
+                  className="reset-button"
+                  onClick={() => setSelectedWeeks([])}
+                  disabled={selectedWeeks.length === 0}
+                >
+                  Bỏ chọn tất cả
+                </button>
               </div>
             </div>
           )}

@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ const ProtectedMemberRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [redirectPath, setRedirectPath] = useState(null);
   const [shouldShowToast, setShouldShowToast] = useState({ show: false, message: "", type: "" });
+  const location = useLocation();
 
   useEffect(() => {
     if (shouldShowToast.show) {
@@ -37,26 +38,33 @@ const ProtectedMemberRoute = ({ children }) => {
         const decoded = jwtDecode(token);
         const userRole =
           decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        
+        // Kiểm tra đường dẫn hiện tại
+        const currentPath = location.pathname;
+        const isMemberPath = currentPath.startsWith("/member");
 
-        // Chỉ cho phép role "vip" truy cập
-        if (userRole === "vip") {
+        // Cho phép role "vip" và "admin" truy cập tất cả các trang
+        if (userRole === "vip" || userRole === "admin") {
           setRedirectPath(null);
           setIsLoading(false);
           return;
         }
 
-        // Chuyển hướng các role khác về trang phù hợp
-        if (userRole === "member") {
+        // Cho phép "member" truy cập vào trang /member
+        if (userRole === "member" && isMemberPath) {
+          setRedirectPath(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Chuyển hướng các role không đủ quyền
+        if (userRole === "member" && !isMemberPath) {
           setShouldShowToast({
             show: true,
             message: "Bạn cần nâng cấp tài khoản để truy cập tính năng này!",
             type: "error"
           });
-          setRedirectPath("/basic-user");
-          setIsLoading(false);
-          return;
-        } else if (userRole === "admin") {
-          setRedirectPath("/admin");
+          setRedirectPath("/member");
           setIsLoading(false);
           return;
         }
@@ -82,7 +90,7 @@ const ProtectedMemberRoute = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [location.pathname]);
 
   if (isLoading) {
     return <div className="loading">Đang tải...</div>;

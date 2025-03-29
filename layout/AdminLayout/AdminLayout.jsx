@@ -2,7 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../src/components/SideBar/SideBar";
 import { Box, Button, AppBar, Toolbar, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const theme = createTheme({
   palette: {
@@ -25,11 +25,19 @@ const AdminLayout = () => {
   useEffect(() => {
     // Fetch user info from API or context/store
     const fetchUserInfo = async () => {
-      const userData = await getUserInfo(); // Define getUserInfo or use actual data fetching logic
-      setUserInfo(userData);
+      try {
+        // Placeholder để thay thế, gắn với fetchUserInfo thực tế sau này
+        const userData = { name: "Admin User", role: "admin" };
+        setUserInfo(userData);
+        // Log chỉ với giá trị cố định, không sử dụng state để tránh re-render
+        console.log("User info fetched successfully");
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
     };
 
     fetchUserInfo();
+    // Loại bỏ userInfo khỏi dependency array để tránh vòng lặp vô hạn
   }, []);
 
   const handleLogout = () => {
@@ -42,6 +50,10 @@ const AdminLayout = () => {
 
   const handleViewBasicUser = () => {
     navigate('/basic-user');
+  };
+  
+  const handleViewMember = () => {
+    navigate('/member');
   };
 
   return (
@@ -66,6 +78,21 @@ const AdminLayout = () => {
               onClick={handleViewBasicUser}
             >
               Xem trang Basic User
+            </Button>
+            <Button 
+              variant="outlined"
+              sx={{ 
+                borderColor: '#fff',
+                color: '#fff',
+                mr: 2,
+                '&:hover': {
+                  borderColor: '#fff',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+              onClick={handleViewMember}
+            >
+              Xem trang Member
             </Button>
             <Button 
               variant="outlined"

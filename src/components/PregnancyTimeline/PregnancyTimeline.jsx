@@ -177,7 +177,7 @@ const PregnancyTimeline = () => {
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.6 }}
       >
-        Lịch Trình Khám Thai
+        Lịch Trình Gợi Ý Khám Thai
       </motion.h2>
 
       <motion.div

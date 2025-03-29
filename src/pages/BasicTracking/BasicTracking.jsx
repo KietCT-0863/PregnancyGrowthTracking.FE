@@ -30,8 +30,7 @@ import {
   validateStats, 
   formatUpdateData, 
   handleUpdateSuccess, 
-  handleUpdateError,
-  handleInputValidation 
+  handleUpdateError
 } from './utils/statsHandler'
 import { 
   fetchFoetusData, 
@@ -42,6 +41,7 @@ import {
 import WeeklyStatsChart from './components/WeeklyStatsChart/WeeklyStatsChart'
 import { FaCalendarAlt, FaHistory, FaSave } from 'react-icons/fa'
 import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
+import { CloseOutlined } from "@ant-design/icons"
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
@@ -54,7 +54,7 @@ const STATS_FIELDS = [
   { key: "efw", label: "EFW" },
 ]
 
-const BasicTracking = () => {
+function BasicTracking() {
   // State management
   const [childrenHistory, setChildrenHistory] = useState([])
   const [growthData, setGrowthData] = useState({})
@@ -71,6 +71,7 @@ const BasicTracking = () => {
   const [weeksToShow, setWeeksToShow] = useState(4)
   const [lastUpdateDate, setLastUpdateDate] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
   
   // Theo dõi thay đổi của weeksToShow cho debug
   useEffect(() => {
@@ -112,7 +113,46 @@ const BasicTracking = () => {
     setChildrenHistory(foetusData)
     setGrowthData(growthResults)
     setError(null)
-    setLastUpdateDate(new Date().toLocaleString())
+    
+    // Tìm ngày đo gần nhất từ dữ liệu thay vì dùng ngày hiện tại
+    let latestDate = null;
+    
+    // Lặp qua tất cả dữ liệu tăng trưởng để tìm ngày gần nhất
+    Object.values(growthResults).forEach(childGrowthData => {
+      if (Array.isArray(childGrowthData) && childGrowthData.length > 0) {
+        // Sắp xếp các dữ liệu theo ngày giảm dần và lấy mục đầu tiên
+        const sortedData = [...childGrowthData].sort((a, b) => {
+          const dateA = a.date || a.measurementDate || a.createdAt || a.updatedAt;
+          const dateB = b.date || b.measurementDate || b.createdAt || b.updatedAt;
+          return new Date(dateB) - new Date(dateA);
+        });
+        
+        const firstDate = sortedData[0]?.date || 
+                          sortedData[0]?.measurementDate || 
+                          sortedData[0]?.createdAt || 
+                          sortedData[0]?.updatedAt;
+                          
+        if (firstDate) {
+          const currentDate = new Date(firstDate);
+          if (!latestDate || currentDate > latestDate) {
+            latestDate = currentDate;
+          }
+        }
+      }
+    });
+    
+    // Nếu tìm thấy ngày gần nhất thì hiển thị, nếu không thì dùng ngày hiện tại
+    if (latestDate) {
+      setLastUpdateDate(latestDate.toLocaleString('vi-VN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      }));
+    } else {
+      setLastUpdateDate(new Date().toLocaleString('vi-VN'));
+    }
   }
 
   useEffect(() => {
@@ -123,8 +163,16 @@ const BasicTracking = () => {
   const handleStatsUpdate = async (foetusId) => {
     try {
       const statsData = tempStats[foetusId] || {}
-      validateStats(statsData)
+      
+      // Kiểm tra dữ liệu và sử dụng kết quả trả về
+      const isValid = validateStats(statsData)
+      if (!isValid) {
+        return; // Dừng quá trình cập nhật nếu dữ liệu không hợp lệ
+      }
+      
+      // Thêm thuộc tính measurementDate vào dữ liệu cập nhật
       const updateData = formatUpdateData(statsData, childrenHistory.find(child => child.foetusId === foetusId))
+      
       const result = await updateGrowthStats(foetusId, updateData)
 
       if (result.success) {
@@ -144,8 +192,6 @@ const BasicTracking = () => {
     console.log(`BasicTracking - handleInputChange for ${foetusId}, field: ${field}, value: ${value}`);
     
     const processedValue = value === '' ? '' : value;
-    
-    handleInputValidation(field, processedValue);
     
     setTempStats((prev) => {
       const foetusStats = prev[foetusId] || {};
@@ -288,6 +334,13 @@ const BasicTracking = () => {
         >
           <h1>Theo dõi bé yêu</h1>
           <p>Theo dõi sự phát triển của bé yêu qua từng giai đoạn</p>
+          <button 
+            className="guide-button"
+            onClick={() => setShowGuide(true)}
+            title="Xem hướng dẫn"
+          >
+            <span>Hướng dẫn sử dụng</span>
+          </button>
         </motion.div>
 
         <div className="monitor-content">
@@ -432,6 +485,80 @@ const BasicTracking = () => {
       >
         <FaSave />
       </button>
+
+      {/* Modal Hướng dẫn sử dụng */}
+      {showGuide && (
+        <div className="guide-modal-overlay" onClick={(e) => {
+          if (e.target.className === 'guide-modal-overlay') setShowGuide(false);
+        }}>
+          <div className="guide-modal">
+            <div className="guide-modal-header">
+              <h2>Hướng dẫn sử dụng</h2>
+              <button className="close-button" onClick={() => setShowGuide(false)}>
+                <CloseOutlined />
+              </button>
+            </div>
+            <div className="guide-modal-content">
+              <div className="user-guide">
+                <div className="guide-header">
+                  <h2>Hướng dẫn sử dụng tính năng theo dõi thai kỳ</h2>
+                  <div className="disclaimer">
+                    <strong>Lưu ý quan trọng:</strong> Ứng dụng này được thiết kế để giúp bạn theo dõi và lưu trữ thông tin sau khi đi khám thai tại cơ sở y tế. Các thông tin và chỉ số hiển thị chỉ mang tính chất tham khảo, không thay thế cho việc tư vấn và thăm khám của bác sĩ chuyên khoa.
+                  </div>
+                </div>
+                
+                <div className="guide-section">
+                  <h3>Nhập và theo dõi các chỉ số thai nhi</h3>
+                  <p>Bạn có thể nhập các chỉ số sau khi đi khám thai, bao gồm:</p>
+                  <ul>
+                    <li><strong>HC (Chu vi đầu):</strong> Đo bằng cm, giúp đánh giá sự phát triển não bộ của thai nhi.</li>
+                    <li><strong>AC (Chu vi bụng):</strong> Đo bằng cm, giúp đánh giá sự phát triển nội tạng và lượng mỡ dưới da.</li>
+                    <li><strong>FL (Chiều dài xương đùi):</strong> Đo bằng cm, giúp đánh giá chiều cao và sự phát triển xương.</li>
+                    <li><strong>EFW (Cân nặng ước tính):</strong> Tính bằng gram, là ước tính cân nặng hiện tại của thai nhi.</li>
+                  </ul>
+                  <p>Các chỉ số này giúp bạn theo dõi sự phát triển của thai nhi qua từng tuần tuổi thai.</p>
+                </div>
+                
+                <div className="guide-section">
+                  <h3>Biểu đồ chỉ số chuẩn (WeeklyStatsChart)</h3>
+                  <p>Biểu đồ này hiển thị các giá trị tham khảo về HC, AC, FL và EFW theo từng tuần tuổi thai. Đây chỉ là các số liệu tham khảo, giúp bạn có cái nhìn tổng quan về khoảng giá trị hợp lý khi nhập các chỉ số.</p>
+                  <p>Các đường biểu đồ thể hiện khoảng phát triển bình thường của thai nhi theo tuần tuổi dựa trên dữ liệu tham khảo.</p>
+                </div>
+                
+                <div className="guide-section">
+                  <h3>Hệ thống cảnh báo (AlertSection)</h3>
+                  <p>Phần này sẽ hiển thị các cảnh báo khi các chỉ số bạn nhập vào nằm ngoài khoảng tham khảo bình thường. Lưu ý:</p>
+                  <ul>
+                    <li>Cảnh báo chỉ mang tính chất tham khảo, giúp bạn nhận biết các chỉ số có thể cần được bác sĩ kiểm tra kỹ hơn.</li>
+                    <li>Một số cảnh báo có thể xuất hiện do sự khác biệt tự nhiên trong quá trình phát triển của mỗi thai nhi.</li>
+                    <li>Luôn tham khảo ý kiến bác sĩ nếu bạn thấy bất kỳ cảnh báo nào.</li>
+                  </ul>
+                </div>
+                
+                <div className="guide-section">
+                  <h3>Biểu đồ tăng trưởng (GrowthChart)</h3>
+                  <p>Biểu đồ này hiển thị các chỉ số HC, AC, FL và EFW của thai nhi bạn qua từng tuần tuổi thai dựa trên dữ liệu bạn đã nhập sau mỗi lần khám thai.</p>
+                  <p>Bạn có thể:</p>
+                  <ul>
+                    <li>Theo dõi sự phát triển của thai nhi qua thời gian.</li>
+                    <li>So sánh với các đường tham chiếu để có cái nhìn tổng quan về sự phát triển.</li>
+                    <li>Xem lại lịch sử các chỉ số đã nhập trước đó.</li>
+                  </ul>
+                </div>
+                
+                <div className="guide-footer">
+                  <p><strong>Quan trọng:</strong> Ứng dụng này là công cụ hỗ trợ theo dõi thai kỳ, không phải công cụ chẩn đoán y khoa. Mọi lo ngại về sức khỏe của bạn và thai nhi cần được tham vấn trực tiếp với bác sĩ chuyên khoa.</p>
+                </div>
+              </div>
+            </div>
+            <div className="guide-modal-footer">
+              <button className="guide-close-btn" onClick={() => setShowGuide(false)}>
+                Tôi đã hiểu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

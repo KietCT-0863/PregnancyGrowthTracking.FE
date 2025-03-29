@@ -28,10 +28,23 @@ const FoetusList = () => {
   const getLatestGrowthData = (growthData) => {
     if (!growthData?.length) return null;
 
+    // Chỉ sắp xếp theo ngày đo gần nhất để lấy dữ liệu mới nhất
     return [...growthData].sort((a, b) => {
-      if (a.age !== b.age) return b.age - a.age;
-      return new Date(b.date) - new Date(a.date);
+      // Lấy ngày đo từ nhiều trường có thể
+      const dateA = new Date(a.date || a.measurementDate || a.createdAt || a.updatedAt);
+      const dateB = new Date(b.date || b.measurementDate || b.createdAt || b.updatedAt);
+      
+      // Sắp xếp ngày gần nhất lên đầu
+      return dateB - dateA;
     })[0];
+  };
+
+  // Thêm hàm mới để lấy tuần thai lớn nhất
+  const getHighestWeek = (growthData) => {
+    if (!growthData?.length) return null;
+    
+    // Sắp xếp theo tuần thai giảm dần và lấy tuần cao nhất
+    return [...growthData].sort((a, b) => b.age - a.age)[0].age;
   };
 
   const calculateDueDate = (age, date) => {
@@ -195,37 +208,15 @@ const FoetusList = () => {
     </div>
   );
 
-  const styles = `
-  .add-foetus-form {
-    .form-group {
-      .gender-select {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        background-color: white;
-        cursor: pointer;
-        
-        &:focus {
-          outline: none;
-          border-color: #4a90e2;
-          box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-        }
-
-        option {
-          padding: 8px;
-        }
-      }
-    }
-  }
-  `;
-
   const renderFoetusItem = (foetus) => {
     const growthData = growthDataMap[foetus.foetusId];
     const latestGrowthData = getLatestGrowthData(growthData);
-    const dueDate = latestGrowthData
-      ? calculateDueDate(latestGrowthData.age, latestGrowthData.date)
+    
+    // Lấy tuần thai cao nhất thay vì dùng tuần thai của dữ liệu mới nhất
+    const highestWeek = growthData ? getHighestWeek(growthData) : null;
+    
+    const dueDate = latestGrowthData && highestWeek
+      ? calculateDueDate(highestWeek, latestGrowthData.date || latestGrowthData.measurementDate || latestGrowthData.createdAt)
       : null;
 
     return (
@@ -243,10 +234,16 @@ const FoetusList = () => {
                 <>
                   <span className="pregnancy-week">
                     <Calendar size={16} />
-                    Tuần {latestGrowthData.age}
-                    <span className="measurement-date">
-                      (Ngày đo: {new Date(latestGrowthData.date).toLocaleDateString("vi-VN")})
-                    </span>
+                    Tuần {highestWeek || latestGrowthData.age}
+                  </span>
+                  <span className="measurement-date">
+                    <Clock size={16} />
+                    Ngày đo: {new Date(latestGrowthData.date || latestGrowthData.measurementDate || latestGrowthData.createdAt || latestGrowthData.updatedAt).toLocaleString("vi-VN", {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+     
+                    })}
                   </span>
                   {dueDate && (
                     <span className="due-date">

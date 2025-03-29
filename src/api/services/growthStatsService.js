@@ -30,6 +30,9 @@ const growthStatsService = {
         throw new Error("Vui lòng đăng nhập để thực hiện chức năng này");
       }
 
+      // Sử dụng measurementDate từ tham số nếu có, nếu không mới dùng thời gian hiện tại
+      const measurementDate = statsData.measurementDate || new Date().toISOString();
+
       const requestData = {
         foetusId: foetusId,
         userId: userData.userId,
@@ -38,7 +41,7 @@ const growthStatsService = {
         ac: Number(statsData.ac) || 0,
         fl: Number(statsData.fl) || 0,
         efw: Number(statsData.efw) || 0,
-        measurementDate: new Date().toISOString(),
+        measurementDate: measurementDate,
       };
 
       const response = await axiosInstance.post(

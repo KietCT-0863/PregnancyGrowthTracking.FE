@@ -67,6 +67,8 @@ $transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     display: flex;
     justify-content: flex-end;
     margin-bottom: 15px;
+    position: relative;
+    z-index: 50;
     
     .weeks-filter {
       display: flex;
@@ -214,11 +216,13 @@ $transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   
   .chart-container {
     position: relative;
-    height: 300px;
+    height: 350px;
+    z-index: 5;
     width: 100%;
     margin-bottom: 15px;
     
     canvas {
+      z-index: 1;
       max-width: 100%;
       border-radius: 10px;
     }
