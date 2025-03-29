@@ -169,9 +169,7 @@ const ViewProfile = () => {
               <Edit size={16} />
               Chỉnh sửa thông tin
             </Link>
-            <Link to="/member/basic-tracking" className="action-button secondary">
-              Theo dõi thai kỳ
-            </Link>
+
             {userInfo.role !== "vip" && (
               <Link to="/basic-user/choose-vip" className="action-button upgrade">
                 Nâng cấp lên VIP
