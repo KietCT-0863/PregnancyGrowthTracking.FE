@@ -175,6 +175,151 @@ Với Cộng đồng, mẹ bầu sẽ không còn cảm thấy đơn độc trê
 30. Có thể đăng ký VIP bằng thẻ ngân hàng không?
     Có, chúng tôi hỗ trợ thanh toán qua thẻ Visa, Mastercard và ATM nội địa.
 
+# Hướng dẫn tư vấn bài đọc theo chỉ số thai kỳ ngoài khoảng cho phép
 
+## Nguyên tắc chung
+- Khi chỉ số đo được thấp hơn minRange: Cần tư vấn bài đọc liên quan đến nguyên nhân và cách khắc phục
+- Khi chỉ số đo được cao hơn maxRange: Cần tư vấn bài đọc liên quan đến kiểm soát và theo dõi
+- Mức độ chênh lệch càng lớn, càng ưu tiên các tag về xét nghiệm, bệnh lý thai kỳ và tư vấn bác sĩ
+
+## Phân loại mức độ
+- **Mức nhẹ**: Chênh lệch nhỏ so với khoảng cho phép
+- **Mức cần theo dõi**: Chênh lệch trung bình, cần lưu ý
+- **Mức đáng lo ngại**: Chênh lệch lớn, cần tư vấn y tế gấp
+
+## Tư vấn theo loại chỉ số
+
+### 1. HC (Chu vi đầu) thấp hơn khoảng cho phép
+- **Tag chính**: "Phát triển thai nhi", "Sức khỏe thai kỳ", "Lịch khám thai"
+- **Mức nhẹ**:
+  - Thêm tag: "Dinh dưỡng mẹ bầu"
+  - Ưu tiên bài viết về dinh dưỡng bổ sung DHA, omega-3, chất đạm
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm"
+  - Ưu tiên bài viết về theo dõi định kỳ, sàng lọc dị tật
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ"
+  - Ưu tiên bài viết về tham vấn bác sĩ gấp, dấu hiệu cần nhập viện
+
+### 2. HC (Chu vi đầu) cao hơn khoảng cho phép
+- **Tag chính**: "Phát triển thai nhi", "Sức khỏe thai kỳ"
+- **Mức nhẹ**:
+  - Thêm tag: "Lịch khám thai"
+  - Ưu tiên bài viết về theo dõi đường huyết, chế độ ăn kiểm soát đường
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm"
+  - Ưu tiên bài viết về sàng lọc đái tháo đường thai kỳ, tiền sản giật
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ"
+  - Ưu tiên bài viết về nguy cơ não úng thủy, tiền sản giật, đi khám ngay
+
+### 3. AC (Chu vi bụng) thấp hơn khoảng cho phép
+- **Tag chính**: "Dinh dưỡng mẹ bầu", "Sức khỏe thai kỳ"
+- **Mức nhẹ**:
+  - Thêm tag: "Tập thể dục bầu" 
+  - Ưu tiên bài viết về bổ sung dinh dưỡng, chất đạm, sắt, kẽm
+- **Mức cần theo dõi**:
+  - Thêm tag: "Lịch khám thai", "Xét nghiệm & siêu âm"
+  - Ưu tiên bài viết về nhận biết thai chậm tăng trưởng
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ"
+  - Ưu tiên bài viết về FGR (thai chậm tăng trưởng), rau thai vấn đề
+
+### 4. AC (Chu vi bụng) cao hơn khoảng cho phép
+- **Tag chính**: "Dinh dưỡng mẹ bầu", "Giảm cân thăng"
+- **Mức nhẹ**:
+  - Thêm tag: "Tập thể dục bầu"
+  - Ưu tiên bài viết về chế độ ăn kiểm soát đường, giảm tinh bột
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm", "Triệu chứng thai kỳ"
+  - Ưu tiên bài viết về sàng lọc đái tháo đường thai kỳ
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ", "Sinh thường & sinh mổ"
+  - Ưu tiên bài viết về LGA (thai to), đái tháo đường thai kỳ, chuẩn bị sinh
+
+### 5. FL (Chiều dài xương đùi) thấp hơn khoảng cho phép
+- **Tag chính**: "Phát triển thai nhi", "Sức khỏe thai kỳ"
+- **Mức nhẹ**:
+  - Thêm tag: "Dinh dưỡng mẹ bầu"
+  - Ưu tiên bài viết về bổ sung canxi, vitamin D
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm"
+  - Ưu tiên bài viết về theo dõi hệ cơ xương thai nhi
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ"
+  - Ưu tiên bài viết về dị tật xương, sàng lọc rối loạn phát triển xương
+
+### 6. FL (Chiều dài xương đùi) cao hơn khoảng cho phép
+- **Tag chính**: "Phát triển thai nhi", "Sức khỏe thai kỳ"
+- **Mức nhẹ**:
+  - Thêm tag: "Lịch khám thai"
+  - Ưu tiên bài viết về phát triển bình thường của thai nhi
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm"
+  - Ưu tiên bài viết về theo dõi biến thiên phát triển
+- **Mức đáng lo ngại**:
+  - Ưu tiên bài viết về tư vấn di truyền, khám chuyên sâu
+
+### 7. EFW (Cân nặng ước tính) thấp hơn khoảng cho phép
+- **Tag chính**: "Dinh dưỡng mẹ bầu", "Sức khỏe thai kỳ"
+- **Mức nhẹ**:
+  - Thêm tag: "Tập thể dục bầu"
+  - Ưu tiên bài viết về bổ sung dinh dưỡng, tăng cường protein
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm", "Lịch khám thai"
+  - Ưu tiên bài viết về theo dõi thai chậm tăng trưởng (FGR/IUGR)
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ"
+  - Ưu tiên bài viết về IUGR, vấn đề nhau thai, đi khám ngay
+
+### 8. EFW (Cân nặng ước tính) cao hơn khoảng cho phép
+- **Tag chính**: "Dinh dưỡng mẹ bầu", "Giảm cân thăng"
+- **Mức nhẹ**:
+  - Thêm tag: "Tập thể dục bầu"
+  - Ưu tiên bài viết về kiểm soát cân nặng, chế độ ăn cân đối
+- **Mức cần theo dõi**:
+  - Thêm tag: "Xét nghiệm & siêu âm", "Triệu chứng thai kỳ" 
+  - Ưu tiên bài viết về sàng lọc đái tháo đường, tiền sản giật
+- **Mức đáng lo ngại**:
+  - Thêm tag: "Bệnh lý thai kỳ", "Sinh thường & sinh mổ"
+  - Với tuần thai > 32: Thêm "Chuẩn bị đồ sơ sinh"
+  - Ưu tiên bài viết về thai to (LGA), nguy cơ khi sinh, chuẩn bị sinh mổ
+
+## Tư vấn theo tuần thai
+
+### Thai kỳ đầu (tuần 12-20)
+- Khi chỉ số ngoài khoảng, ưu tiên tag:
+  - "Sức khỏe thai kỳ"
+  - "Dinh dưỡng mẹ bầu"
+  - "Phát triển thai nhi" 
+  - "Xét nghiệm & siêu âm"
+
+### Thai kỳ giữa (tuần 21-29)
+- Khi chỉ số ngoài khoảng, ưu tiên tag:
+  - "Dinh dưỡng mẹ bầu"
+  - "Xét nghiệm & siêu âm"
+  - "Tập thể dục bầu"
+  - "Giảm cân thăng" (nếu chỉ số cao)
+
+### Thai kỳ cuối (tuần 30-40)
+- Khi chỉ số ngoài khoảng, ưu tiên tag:
+  - "Sinh thường & sinh mổ"
+  - "Chuẩn bị đồ sơ sinh"
+  - "Triệu chứng thai kỳ"
+  - "Bệnh lý thai kỳ" (với mức đáng lo ngại)
+
+## Các thành phần khác nên kết hợp
+
+1. **Với tất cả trường hợp chỉ số bất thường**:
+   - Thêm tag "Tâm lý mẹ bầu" để hỗ trợ tinh thần
+
+2. **Với các chỉ số AC, EFW bất thường**:
+   - Thêm tag "Làm đẹp khi mang thai" nếu thay đổi quá lớn (hỗ trợ tinh thần)
+
+3. **Với các tuần thai cuối có chỉ số khác thường**:
+   - Thêm tag "Dấu hiệu chuyển dạ" để sẵn sàng
+
+4. **Với trường hợp mức độ đáng lo ngại**:
+   - LUÔN khuyến nghị "Lịch khám thai" và tư vấn bác sĩ
 
 `;

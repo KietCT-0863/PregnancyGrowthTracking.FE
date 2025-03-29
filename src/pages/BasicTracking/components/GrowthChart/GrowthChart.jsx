@@ -44,14 +44,17 @@ const chartOptions = {
           const label = context.dataset.label || '';
           const originalValue = context.dataset.originalData?.[context.dataIndex];
           if (originalValue !== undefined) {
-            return `${label}: ${originalValue}`;
+            // Làm tròn giá trị đến 2 chữ số thập phân
+            const roundedValue = parseFloat(originalValue).toFixed(2);
+            return `${label}: ${roundedValue}`;
           }
-          return `${label}: ${context.raw}`;
+          // Làm tròn giá trị raw đến 2 chữ số thập phân
+          const roundedRaw = parseFloat(context.raw).toFixed(2);
+          return `${label}: ${roundedRaw}`;
         },
         title: function(context) {
           // Hiển thị tiêu đề tooltip chi tiết hơn
           const title = context[0].label || '';
-          const dataIndex = context[0].dataIndex;
           const data = context[0].chart.data;
           
           if (data.datasets[0]?.originalData?.length > 0) {
@@ -214,22 +217,27 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     const isSpecificWeek = typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ');
     
     // Phần code xử lý dữ liệu từ getChartData
-    // Sắp xếp dữ liệu theo tuần mới nhất trước
+    // Sắp xếp dữ liệu theo tuần tăng dần (thay vì tuần mới nhất trước)
     const sortedData = [...foetusData].sort((a, b) => {
-      if (a.age !== b.age) return b.age - a.age;
+      // Sắp xếp chính theo tuần tăng dần
+      if (a.age !== b.age) return a.age - b.age;
+      // Nếu cùng tuần, sắp xếp theo ngày đo mới nhất trước
       return new Date(b.date || b.measurementDate) - new Date(a.date || a.measurementDate);
     });
     
-    // Lọc ra các tuần khác nhau
+    // Lọc ra các tuần khác nhau - lấy dữ liệu mới nhất cho mỗi tuần
     const uniqueWeeks = [];
     const processedWeeks = new Set();
     
     sortedData.forEach(data => {
-      if (!processedWeeks.has(data.age)) {
+      if (!processedWeeks.has(data.age) && data.age >= 12 && data.age <= 40) {
         uniqueWeeks.push(data);
         processedWeeks.add(data.age);
       }
     });
+    
+    // Sắp xếp lại theo tuần
+    uniqueWeeks.sort((a, b) => a.age - b.age);
     
     // Lấy số tuần dựa theo filter được chọn
     let recentWeeks;
@@ -270,17 +278,15 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
     }
     // Kiểm tra nếu là tuần cụ thể (định dạng "Tuần X")
     else if (typeof weeksToShow === 'string' && weeksToShow.startsWith('Tuần ')) {
-      // Trích xuất số tuần từ chuỗi "Tuần X"
+      // Xử lý tuần cụ thể (giữ nguyên code)
       const weekNum = parseInt(weeksToShow.replace('Tuần ', ''), 10);
       console.log(`Đang lọc dữ liệu cho tuần cụ thể: ${weekNum}`);
       
-      // Lọc dữ liệu cho tuần cụ thể
       const weekData = foetusData.filter(data => Number(data.age) === weekNum);
       
       if (weekData.length === 0) {
         console.warn(`Không tìm thấy dữ liệu cho tuần ${weekNum}!`);
         
-        // Tìm tuần gần nhất có dữ liệu
         const allWeeks = [...new Set(foetusData.map(d => Number(d.age)))].sort();
         console.log("Tất cả các tuần có dữ liệu:", allWeeks);
         
@@ -288,23 +294,18 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
           return { data: chartData, options: currentOptions };
         }
         
-        // Tìm tuần gần nhất
         let closestWeek = allWeeks.reduce((prev, curr) => 
           Math.abs(curr - weekNum) < Math.abs(prev - weekNum) ? curr : prev, 
           allWeeks[0]);
         
         console.log(`Sử dụng tuần gần nhất có dữ liệu: ${closestWeek}`);
         
-        // Lấy dữ liệu của tuần gần nhất
         recentWeeks = foetusData
           .filter(data => Number(data.age) === closestWeek);
       } else {
-        // Nếu có nhiều điểm dữ liệu cho cùng một tuần, hiển thị tất cả
         recentWeeks = weekData;
         
-        // Thêm thông tin về ngày đo để phân biệt trên biểu đồ nếu cần
         if (weekData.length > 1) {
-          // Sắp xếp theo ngày đo mới nhất trước (hoặc theo thứ tự nào đó)
           recentWeeks = weekData.sort((a, b) => 
             new Date(b.date || b.measurementDate) - new Date(a.date || a.measurementDate));
           
@@ -312,16 +313,15 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         }
       }
     } else if (Array.isArray(weeksToShow)) {
+      // Xử lý trường hợp mảng (giữ nguyên code)
       console.log("Lọc cho tuần cụ thể (mảng):", weeksToShow);
       
-      // Nếu không tìm thấy dữ liệu tuần cụ thể, dùng toàn bộ dữ liệu và cảnh báo
       const weekData = foetusData.filter(data => 
         weeksToShow.includes(Number(data.age)));
       
       if (weekData.length === 0) {
         console.warn(`Không tìm thấy dữ liệu cho tuần ${weeksToShow[0]}!`);
         
-        // Tìm tuần gần nhất có dữ liệu
         const allWeeks = foetusData.map(d => Number(d.age));
         const targetWeek = Number(weeksToShow[0]);
         let closestWeek = allWeeks.reduce((prev, curr) => 
@@ -330,21 +330,35 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         
         console.log(`Sử dụng tuần gần nhất có dữ liệu: ${closestWeek}`);
         
-        // Lấy dữ liệu của tuần gần nhất
         recentWeeks = foetusData
           .filter(data => Number(data.age) === closestWeek)
           .sort((a, b) => new Date(b.date || b.measurementDate) - new Date(a.date || a.measurementDate))
           .slice(0, 1); // Lấy bản ghi mới nhất của tuần đó
       } else {
-        // Sử dụng dữ liệu của tuần cụ thể
         recentWeeks = weekData;
       }
       
       console.log("Dữ liệu tuần được lọc:", recentWeeks);
     } else if (weeksToShow === "Tất cả") {
-      recentWeeks = uniqueWeeks.sort((a, b) => a.age - b.age);
+      // Khi xem tất cả các tuần, sử dụng mảng đã được sắp xếp theo tuần tăng dần
+      recentWeeks = uniqueWeeks;
     } else {
-      recentWeeks = uniqueWeeks.slice(0, Number(weeksToShow)).sort((a, b) => a.age - b.age);
+      // Khi xem X tuần gần nhất, lấy X tuần cuối cùng từ dữ liệu đã sắp xếp theo tuần tăng dần
+      // Lấy X tuần gần đây nhất (từ cao xuống thấp), sau đó sắp xếp lại theo tuần tăng dần để hiển thị
+      const sortedByNewest = [...foetusData].sort((a, b) => b.age - a.age);
+      const newestWeeks = [];
+      const processedNewestWeeks = new Set();
+      
+      // Lấy X tuần gần nhất (mỗi tuần lấy 1 bản ghi mới nhất)
+      sortedByNewest.forEach(data => {
+        if (!processedNewestWeeks.has(data.age) && newestWeeks.length < Number(weeksToShow)) {
+          newestWeeks.push(data);
+          processedNewestWeeks.add(data.age);
+        }
+      });
+      
+      // Sắp xếp lại theo tuần tăng dần để hiển thị
+      recentWeeks = newestWeeks.sort((a, b) => a.age - b.age);
     }
     
     // Vẫn không có dữ liệu sau khi lọc, trả về trống
@@ -387,8 +401,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         // Điều chỉnh cấu hình hiển thị cho trường hợp chỉ một điểm dữ liệu
         currentOptions.plugins.tooltip.filter = function(tooltipItem) {
           // Lọc để chỉ hiển thị tooltip cho điểm dữ liệu thật, không hiển thị cho điểm nhân tạo
-          const dataIndex = tooltipItem.dataIndex;
-          return !recentWeeks[dataIndex]?.isHidden;
+          return !recentWeeks[tooltipItem.dataIndex]?.isHidden;
         };
       }
       
@@ -404,7 +417,8 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       
       // Điều chỉnh các tham số hiển thị cho phù hợp
       currentOptions.scales.y.ticks.callback = function(value) {
-        return value;
+        // Làm tròn giá trị trục y đến 2 chữ số thập phân
+        return parseFloat(value).toFixed(2);
       };
       
       // Điều chỉnh khoảng giá trị để dữ liệu hiển thị rõ ràng
@@ -412,7 +426,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         hc: Math.max(...hcData.filter(v => v > 0)) * 1.2 || 500,
         ac: Math.max(...acData.filter(v => v > 0)) * 1.2 || 500,
         fl: Math.max(...flData.filter(v => v > 0)) * 1.2 || 200,
-        efw: Math.max(...efwData.filter(v => v > 0)) * 1.2 || 500
+        efw: Math.max(...efwData.filter(v => v > 0)) * 1.2 || 4000
       };
       
       // Điều chỉnh thang đo Y để phù hợp với dữ liệu
@@ -424,11 +438,31 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         overallMax
       });
     } else {
-      // Khi xem nhiều tuần, chuẩn hóa dữ liệu để có thể so sánh các giá trị
-      hcData = recentWeeks.map(data => normalizeValue(data.hc?.value, 500) / 5);
-      acData = recentWeeks.map(data => normalizeValue(data.ac?.value, 500) / 5);
-      flData = recentWeeks.map(data => normalizeValue(data.fl?.value, 200) / 2);
-      efwData = recentWeeks.map(data => normalizeValue(data.efw?.value, 5000) / 50);
+      // Khi xem nhiều tuần, hiển thị giá trị thực (không chuẩn hóa) để người dùng dễ đọc
+      hcData = recentWeeks.map(data => data.hc?.value || 0);
+      acData = recentWeeks.map(data => data.ac?.value || 0);
+      flData = recentWeeks.map(data => data.fl?.value || 0);
+      efwData = recentWeeks.map(data => data.efw?.value || 0);
+      
+      // Cấu hình cho biểu đồ khi xem nhiều tuần
+      currentOptions.scales.y.title.text = "Chỉ số (mm/g) - Giá trị thực";
+      
+      // Điều chỉnh các tham số hiển thị cho phù hợp
+      currentOptions.scales.y.ticks.callback = function(value) {
+        // Làm tròn giá trị trục y đến 2 chữ số thập phân
+        return parseFloat(value).toFixed(2);
+      };
+      
+      // Điều chỉnh các giá trị tối đa cho phù hợp
+      const maxValues = {
+        hc: Math.max(...hcData) * 1.1 || 500,
+        ac: Math.max(...acData) * 1.1 || 500,
+        fl: Math.max(...flData) * 1.1 || 200,
+        efw: Math.max(...efwData) * 1.1 || 4000
+      };
+      
+      // Điều chỉnh thang đo Y để phù hợp với dữ liệu
+      currentOptions.scales.y.max = Math.max(maxValues.hc, maxValues.ac, maxValues.fl, maxValues.efw);
     }
 
     // Lưu dữ liệu gốc
@@ -450,6 +484,20 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       currentOptions.plugins.title.text = weeksToShow === "Tất cả" 
         ? "Biểu đồ tăng trưởng thai nhi (tất cả các tuần)" 
         : `Biểu đồ tăng trưởng thai nhi (${weeksToShow} tuần gần nhất)`;
+    }
+    
+    // Thiết lập định dạng hiển thị số cho y-axis dựa vào giá trị cao nhất
+    const maxEfwValue = Math.max(...efwData.filter(Boolean));
+    if (maxEfwValue > 1000) {
+      // Nếu có giá trị lớn, tùy chỉnh hiển thị số nguyên
+      currentOptions.scales.y.ticks.callback = function(value) {
+        // Với giá trị lớn, hiển thị số nguyên, không có thập phân
+        if (value >= 1000) {
+          return Math.round(value).toString();
+        }
+        // Với giá trị nhỏ, hiển thị tối đa 2 chữ số thập phân
+        return parseFloat(value).toFixed(2);
+      };
     }
     
     console.log("Dữ liệu biểu đồ cuối cùng:", {
@@ -506,7 +554,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
       datasets: [
         {
           label: "HC (mm)",
-          data: hcData,
+          data: hcData.map(val => parseFloat(parseFloat(val).toFixed(2))), // Làm tròn giá trị xuất ra
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
           tension: isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1) ? 0 : 0.3, // Không làm cong đường khi chỉ có một tuần
@@ -518,7 +566,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         },
         {
           label: "AC (mm)",
-          data: acData,
+          data: acData.map(val => parseFloat(parseFloat(val).toFixed(2))), // Làm tròn giá trị xuất ra
           borderColor: "rgb(54, 162, 235)",
           backgroundColor: "rgba(54, 162, 235, 0.5)",
           tension: isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1) ? 0 : 0.3,
@@ -530,7 +578,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         },
         {
           label: "FL (mm)",
-          data: flData,
+          data: flData.map(val => parseFloat(parseFloat(val).toFixed(2))), // Làm tròn giá trị xuất ra
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgba(75, 192, 192, 0.5)",
           tension: isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1) ? 0 : 0.3,
@@ -542,7 +590,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         },
         {
           label: "EFW (g)",
-          data: efwData,
+          data: efwData.map(val => parseFloat(parseFloat(val).toFixed(2))), // Làm tròn giá trị xuất ra
           borderColor: "rgb(153, 102, 255)",
           backgroundColor: "rgba(153, 102, 255, 0.5)",
           tension: isSpecificWeek || (Array.isArray(weeksToShow) && weeksToShow.length === 1) ? 0 : 0.3,
@@ -749,7 +797,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
         </motion.p>
       </div>
       
-      {selectedChild && !isCompareMode && renderWeekCalendar()}
+      {selectedChild && renderWeekCalendar()}
       {renderWeekHistoryModal()}
     </div>
   );

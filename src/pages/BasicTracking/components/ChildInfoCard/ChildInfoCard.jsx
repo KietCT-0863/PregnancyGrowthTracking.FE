@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, History, Baby, RefreshCw, User, Circle, TrendingUp, AlertTriangle, FileText, CheckCircle, Info } from 'lucide-react';
 import dayjs from 'dayjs';
@@ -6,9 +6,11 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/vi';
 import { Modal, Table } from 'antd';
 import "./ChildInfoCard.scss";
-import { fetchStandardRanges, getAuthToken } from '../../utils/apiHandler'
+import { fetchStandardRanges } from '../../utils/apiHandler'
+import { getAuthToken } from '../../utils/apiHandler'
 import { format } from 'date-fns'
 import { toast } from 'react-toastify';
+import { debounce } from 'lodash';
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -46,10 +48,19 @@ const ChildInfoCard = ({
   handleStatsUpdate,
 }) => {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [standardRange, setStandardRange] = useState(null)
-  const [loadingRange, setLoadingRange] = useState(false)
-  const [error, setError] = useState(null)
-  const [chartError, setChartError] = useState(null)
+  const [standardRange, setStandardRange] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Tạo state local để theo dõi giá trị đang nhập
+  const [localInputValues, setLocalInputValues] = useState({});
+
+  // Tạo một phiên bản debounced của hàm handleInputChange
+  const debouncedInputChange = useCallback(
+    debounce((foetusId, field, value) => {
+      handleInputChange(foetusId, field, value);
+    }, 300), // Độ trễ 300ms
+    [handleInputChange]
+  );
 
   // Lấy dữ liệu tuần thai hiện tại
   const currentAge = useMemo(() => {
@@ -65,6 +76,13 @@ const ChildInfoCard = ({
     
     return selectedChild.age || "";
   }, [selectedChild, tempStats, growthData]);
+
+  // Cập nhật giá trị local khi tempStats thay đổi hoặc khi chọn một đứa trẻ khác
+  useEffect(() => {
+    if (selectedChild?.foetusId) {
+      setLocalInputValues(tempStats[selectedChild.foetusId] || {});
+    }
+  }, [selectedChild?.foetusId, tempStats]);
 
   // Lấy ngày cập nhật gần nhất
   const latestUpdate = useMemo(() => {
@@ -89,7 +107,6 @@ const ChildInfoCard = ({
     if (!selectedChild) return false;
     
     const stats = tempStats[selectedChild.foetusId] || {};
-    console.log("Stats for update check:", stats);
     
     // Kiểm tra xem có bất kỳ giá trị nào không phải null, undefined, hoặc chuỗi rỗng
     return Object.values(stats).some(value => 
@@ -100,6 +117,7 @@ const ChildInfoCard = ({
     );
   };
 
+  // Tối ưu hóa fetch dữ liệu chuẩn để chỉ fetch khi currentAge thay đổi
   useEffect(() => {
     let isMounted = true;
     
@@ -107,8 +125,6 @@ const ChildInfoCard = ({
       if (!selectedChild || !currentAge) {
         return;
       }
-      
-      console.log('Fetching standard ranges for age:', currentAge);
       
       // Kiểm tra token
       const token = getAuthToken();
@@ -124,42 +140,44 @@ const ChildInfoCard = ({
       if (currentAge < 12 || currentAge > 40) {
         if (isMounted) {
           setStandardRange(null);
-          // Không hiển thị thông báo lỗi nữa
         }
         return;
       }
 
       try {
         if (isMounted) {
-          setLoadingRange(true);
           setError(null);
         }
         
-        const rangeData = await fetchStandardRanges(currentAge);
-        
-        if (isMounted) {
-          if (rangeData) {
-            console.log('Received standard range data:', rangeData);
-            setStandardRange(rangeData);
-          } else {
-            setError('Không có dữ liệu chuẩn cho tuần thai này');
-            setStandardRange(null);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching standard ranges:', error);
-        if (isMounted) {
-          const errorMessage = error.message?.includes('401')
-            ? 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại'
-            : 'Lỗi khi lấy dữ liệu chuẩn';
+        // Bọc việc gọi API trong một timeout ngắn để tránh việc nhấp nháy khi nhập liệu
+        const timeoutId = setTimeout(async () => {
+          try {
+            const rangeData = await fetchStandardRanges(currentAge);
             
-          setError(errorMessage);
-          setStandardRange(null);
-        }
-      } finally {
-        if (isMounted) {
-          setLoadingRange(false);
-        }
+            if (isMounted) {
+              if (rangeData) {
+                setStandardRange(rangeData);
+              } else {
+                setError('Không có dữ liệu chuẩn cho tuần thai này');
+                setStandardRange(null);
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching standard ranges:', error);
+            if (isMounted) {
+              const errorMessage = error.message?.includes('401')
+                ? 'Phiên đăng nhập hết hạn, vui lòng đăng nhập lại'
+                : 'Lỗi khi lấy dữ liệu chuẩn';
+                
+              setError(errorMessage);
+              setStandardRange(null);
+            }
+          }
+        }, 600); // Chờ 600ms sau khi ngừng nhập liệu
+        
+        return () => clearTimeout(timeoutId);
+      } catch (error) {
+        console.error('Error in standard ranges fetch:', error);
       }
     };
 
@@ -171,18 +189,6 @@ const ChildInfoCard = ({
       isMounted = false;
     };
   }, [selectedChild?.foetusId, currentAge]); // Chỉ phụ thuộc vào foetusId và currentAge
-
-  // Theo dõi thay đổi của tempStats
-  useEffect(() => {
-    if (selectedChild?.foetusId) {
-      console.log('tempStats changed for foetus:', selectedChild.foetusId, tempStats[selectedChild.foetusId]);
-    }
-  }, [tempStats, selectedChild?.foetusId]);
-
-  // Theo dõi thay đổi của currentAge
-  useEffect(() => {
-    console.log('currentAge changed:', currentAge);
-  }, [currentAge]);
 
   const historyColumns = [
     {
@@ -252,10 +258,6 @@ const ChildInfoCard = ({
     });
   }, [selectedChild, growthData]);
 
-  const handleChartError = (error) => {
-    setChartError(error);
-  };
-
   // Hàm render trạng thái
   function renderStatusIndicators(_, record) {
     const renderBadge = (metric, label) => {
@@ -281,15 +283,15 @@ const ChildInfoCard = ({
       </div>
     );
   }
-  
+
   // Hàm render trường đầu vào metric
   const renderMetricInput = (metricName, label, color, unit = "mm") => {
-    // Cải thiện cách lấy giá trị hiện tại
-    const currentValue = tempStats[selectedChild?.foetusId]?.[metricName];
-    console.log(`Current ${metricName} value:`, currentValue, typeof currentValue);
-    
-    // Xử lý undefined, null thành chuỗi rỗng để tránh lỗi "uncontrolled to controlled"
-    const displayValue = currentValue === null || currentValue === undefined || currentValue === '' ? '' : currentValue;
+    // Ưu tiên giá trị local, sau đó là giá trị từ tempStats
+    const displayValue = localInputValues[metricName] !== undefined 
+      ? localInputValues[metricName]
+      : (tempStats[selectedChild?.foetusId]?.[metricName] === null || 
+         tempStats[selectedChild?.foetusId]?.[metricName] === undefined ? '' : 
+         tempStats[selectedChild?.foetusId]?.[metricName]);
     
     return (
       <div className="metric-item">
@@ -306,12 +308,15 @@ const ChildInfoCard = ({
               // Ngăn chặn hành vi mặc định có thể gây ra việc mất focus
               e.preventDefault();
               
-              // Thêm console.log để debug
+              // Cập nhật giá trị local ngay lập tức
               const newValue = e.target.value;
-              console.log(`Changing ${metricName} from ${displayValue} to:`, newValue);
+              setLocalInputValues(prev => ({
+                ...prev,
+                [metricName]: newValue
+              }));
               
-              // Gọi hàm xử lý sự kiện với tham số phù hợp
-              handleInputChange(selectedChild.foetusId, metricName, newValue);
+              // Gọi hàm debounced để cập nhật state chính
+              debouncedInputChange(selectedChild.foetusId, metricName, newValue);
             }}
             placeholder="0"
             min="0"
@@ -363,14 +368,19 @@ const ChildInfoCard = ({
                   <input
                     type="number"
                     name="age"
-                    value={currentAge === null || currentAge === undefined || currentAge === '' ? '' : currentAge}
+                    value={localInputValues.age !== undefined ? localInputValues.age : (currentAge === null || currentAge === undefined || currentAge === '' ? '' : currentAge)}
                     onChange={(e) => {
                       // Prevent default behavior
                       e.preventDefault();
                       
                       const newValue = e.target.value;
-                      // Sử dụng hàm handleWeekChange được nâng cấp
-                      handleWeekChange(selectedChild.foetusId, newValue, handleInputChange);
+                      // Cập nhật giá trị local
+                      setLocalInputValues(prev => ({
+                        ...prev,
+                        age: newValue
+                      }));
+                      // Sử dụng hàm handleWeekChange với debounce
+                      handleWeekChange(selectedChild.foetusId, newValue, debouncedInputChange);
                     }}
                     min="1"
                     max="42"

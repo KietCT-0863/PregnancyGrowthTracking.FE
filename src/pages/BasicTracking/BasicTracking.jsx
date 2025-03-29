@@ -41,7 +41,10 @@ import {
 import WeeklyStatsChart from './components/WeeklyStatsChart/WeeklyStatsChart'
 import { FaCalendarAlt, FaHistory, FaSave } from 'react-icons/fa'
 import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils"
-import { CloseOutlined } from "@ant-design/icons"
+import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons"
+import { Modal } from 'antd'
+import { taoGopYBaiViet } from './utils/blogSuggestionUtils'
+import BlogSuggestion from './components/BlogSuggestion/BlogSuggestion'
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend)
@@ -72,6 +75,14 @@ function BasicTracking() {
   const [lastUpdateDate, setLastUpdateDate] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
+  
+  // Thêm state cho modal xác nhận cập nhật tuần thai đã có dữ liệu
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [pendingUpdate, setPendingUpdate] = useState(null)
+  
+  // Trong function BasicTracking, thêm state:
+  const [blogSuggestions, setBlogSuggestions] = useState(null)
+  const [showBlogSuggestions, setShowBlogSuggestions] = useState(false)
   
   // Theo dõi thay đổi của weeksToShow cho debug
   useEffect(() => {
@@ -182,17 +193,90 @@ function BasicTracking() {
         await fetchData()
         setTempStats({})
         playNotificationSound('trackingSuccess');
+        
+        // Thêm đoạn này để tạo gợi ý bài viết
+        try {
+          const tuanThai = parseInt(updateData.age);
+          if (!isNaN(tuanThai)) {
+            const chiSoList = {
+              HC: updateData.hc !== undefined ? parseFloat(updateData.hc) : null,
+              AC: updateData.ac !== undefined ? parseFloat(updateData.ac) : null,
+              FL: updateData.fl !== undefined ? parseFloat(updateData.fl) : null,
+              EFW: updateData.efw !== undefined ? parseFloat(updateData.efw) : null
+            };
+            
+            const suggestions = await taoGopYBaiViet(tuanThai, chiSoList);
+            setBlogSuggestions(suggestions);
+            setShowBlogSuggestions(true);
+          }
+        } catch (err) {
+          console.error("Lỗi khi tạo gợi ý bài viết:", err);
+        }
       }
     } catch (err) {
       handleUpdateError(err)
     }
   }
 
+  // Kiểm tra xem tuần thai đã có dữ liệu chưa
+  const checkWeekHasData = (foetusId, age) => {
+    if (!foetusId || !age || !growthData[foetusId]) return false;
+    
+    // Kiểm tra nếu có dữ liệu cho tuần thai này
+    return growthData[foetusId].some(record => record.age === parseInt(age));
+  };
+
+  // Xử lý khi người dùng xác nhận cập nhật tuần thai đã có dữ liệu
+  const handleConfirmUpdate = () => {
+    if (!pendingUpdate) return;
+    
+    const { foetusId, field, value } = pendingUpdate;
+    
+    // Cập nhật dữ liệu
+    setTempStats((prev) => {
+      const foetusStats = prev[foetusId] || {};
+      return {
+        ...prev,
+        [foetusId]: {
+          ...foetusStats,
+          [field]: value,
+        },
+      };
+    });
+    
+    // Đóng modal và xóa dữ liệu chờ
+    setShowConfirmModal(false);
+    setPendingUpdate(null);
+    
+    // Thông báo cho người dùng
+    toast.info("Dữ liệu sẽ được thay đổi. Lưu ý: Bạn cần  nhập chỉ số mới và nhấn  'Cập nhật chỉ số' để lưu thay đổi.", {
+      autoClose: 5000
+    });
+  };
+
+  // Xử lý khi người dùng hủy cập nhật
+  const handleCancelUpdate = () => {
+    // Đóng modal và xóa dữ liệu chờ
+    setShowConfirmModal(false);
+    setPendingUpdate(null);
+  };
+
   const handleInputChange = (foetusId, field, value) => {
     console.log(`BasicTracking - handleInputChange for ${foetusId}, field: ${field}, value: ${value}`);
     
     const processedValue = value === '' ? '' : value;
     
+    // Nếu là trường tuần thai (age) và có giá trị hợp lệ, kiểm tra xem tuần đã có dữ liệu chưa
+    if (field === 'age' && processedValue !== '' && parseInt(processedValue) > 0) {
+      if (checkWeekHasData(foetusId, processedValue)) {
+        // Lưu thông tin cập nhật vào state và hiển thị modal xác nhận
+        setPendingUpdate({ foetusId, field, value: processedValue });
+        setShowConfirmModal(true);
+        return;
+      }
+    }
+    
+    // Nếu không phải tuần thai hoặc tuần thai chưa có dữ liệu, cập nhật bình thường
     setTempStats((prev) => {
       const foetusStats = prev[foetusId] || {};
       
@@ -486,6 +570,25 @@ function BasicTracking() {
         <FaSave />
       </button>
 
+      {/* Modal Xác nhận cập nhật tuần thai đã có dữ liệu */}
+      <Modal
+        title={
+          <div className="confirm-modal-title">
+            <ExclamationCircleOutlined style={{ color: '#faad14', marginRight: '8px' }} />
+            <span>Tuần thai đã có dữ liệu</span>
+          </div>
+        }
+        open={showConfirmModal}
+        onOk={handleConfirmUpdate}
+        onCancel={handleCancelUpdate}
+        okText="Tiếp tục cập nhật"
+        cancelText="Hủy"
+        className="confirm-update-modal"
+      >
+        <p>Tuần thai này đã có dữ liệu trong hệ thống. Nếu bạn tiếp tục, dữ liệu mới sẽ ghi đè lên dữ liệu hiện có.</p>
+        <p>Bạn có chắc chắn muốn tiếp tục không?</p>
+      </Modal>
+
       {/* Modal Hướng dẫn sử dụng */}
       {showGuide && (
         <div className="guide-modal-overlay" onClick={(e) => {
@@ -559,6 +662,13 @@ function BasicTracking() {
           </div>
         </div>
       )}
+
+      {/* Modal gợi ý bài đọc */}
+      <BlogSuggestion 
+        isOpen={showBlogSuggestions}
+        onClose={() => setShowBlogSuggestions(false)}
+        suggestions={blogSuggestions}
+      />
     </div>
   )
 }
