@@ -248,36 +248,52 @@ $transition: all 0.3s ease;
     .header-title-area {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
 
       h1 {
         margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: $text-color;
+        position: relative;
+        padding-bottom: 5px;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 30px;
+          height: 2px;
+          background-color: $primary-color;
+          transition: $transition;
+        }
       }
 
       .user-filter-chip {
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        background-color: #e6f7ff;
-        border: 1px solid #91d5ff;
-        border-radius: 16px;
-        padding: 4px 12px;
-        font-size: 0.9rem;
-        color: #0066cc;
-        margin-left: 10px;
+        gap: 8px;
+        background-color: rgba($primary-color, 0.08);
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 13px;
+        color: $primary-color;
 
         .clear-filter-btn {
+          background: none;
+          border: none;
+          color: $primary-color;
+          cursor: pointer;
+          padding: 0;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: none;
-          border: none;
-          color: #0066cc;
-          margin-left: 8px;
-          cursor: pointer;
+          transition: all 0.2s ease;
 
           &:hover {
-            color: #ff4d4f;
+            transform: scale(1.2);
           }
         }
       }
@@ -287,31 +303,60 @@ $transition: all 0.3s ease;
       display: flex;
       gap: 15px;
       align-items: center;
+      flex-wrap: wrap;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        justify-content: space-between;
+      }
 
       @media (max-width: 576px) {
-        width: 100%;
         flex-direction: column;
         align-items: flex-start;
       }
 
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+
+        @media (max-width: 576px) {
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+
       .search-box {
         position: relative;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+        color: black;
+        background-color: white;
 
         .search-icon {
           position: absolute;
           left: 12px;
           top: 50%;
           transform: translateY(-50%);
-          color: $muted-color;
+          color: black;
+          transition: all 0.3s ease;
+          pointer-events: none;
         }
 
         input {
-          padding: 10px 10px 10px 40px;
+          height: 38px;
+          padding: 0 40px 0 40px;
           border: 1px solid $border-color;
           border-radius: 8px;
           font-size: 14px;
           width: 220px;
-          transition: $transition;
+          transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+          background-color: rgba($light-color, 0.2);
 
           @media (max-width: 576px) {
             width: 100%;
@@ -322,11 +367,114 @@ $transition: all 0.3s ease;
             border-color: $primary-color;
             box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
             width: 260px;
+            background-color: white;
+
+            & + .search-icon {
+              color: $primary-color;
+            }
 
             @media (max-width: 576px) {
               width: 100%;
             }
           }
+
+          &::placeholder {
+            color: $muted-color;
+            transition: all 0.3s ease;
+          }
+
+          &:focus::placeholder {
+            opacity: 0.7;
+            transform: translateX(5px);
+          }
+        }
+
+        .clear-search-btn {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: rgba($light-color, 0.8);
+          border: none;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: $muted-color;
+          cursor: pointer;
+          opacity: 0.7;
+          transition: all 0.2s ease;
+
+          &:hover {
+            opacity: 1;
+            background-color: rgba($primary-color, 0.15);
+            color: $primary-color;
+            transform: translateY(-50%) scale(1.1);
+          }
+        }
+
+        &:hover {
+          .search-icon {
+            color: $primary-color;
+          }
+
+          input {
+            border-color: rgba($primary-color, 0.3);
+            background-color: rgba($light-color, 0.8);
+          }
+        }
+
+        @keyframes searchPulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba($primary-color, 0.5);
+          }
+          70% {
+            box-shadow: 0 0 0 6px rgba($primary-color, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba($primary-color, 0);
+          }
+        }
+
+        &.searching input {
+          animation: searchPulse 1.5s 1;
+        }
+      }
+
+      .my-posts-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba($primary-color, 0.08);
+        color: $primary-color;
+        border: 1px solid rgba($primary-color, 0.1);
+        padding: 0 18px;
+        height: 38px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+
+        @media (max-width: 576px) {
+          width: 100%;
+          justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+          width: 100%;
+        }
+
+        &:hover {
+          background-color: rgba($primary-color, 0.15);
+          transform: translateY(-2px);
+        }
+
+        svg {
+          color: $primary-color;
         }
       }
 
@@ -337,17 +485,23 @@ $transition: all 0.3s ease;
         background-color: $primary-color !important;
         color: white;
         border: none;
-        padding: 10px 18px;
+        padding: 0 18px;
+        height: 38px;
         border-radius: 8px;
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.25s ease;
         box-shadow: 0 2px 6px rgba($primary-color, 0.2);
+        white-space: nowrap;
 
         @media (max-width: 576px) {
           width: 100%;
           justify-content: center;
+        }
+
+        @media (max-width: 480px) {
+          width: 100%;
         }
 
         &:hover {
@@ -732,11 +886,15 @@ $transition: all 0.3s ease;
 
         .comment-image {
           margin-top: 8px;
+          border-radius: 8px;
+          overflow: hidden;
+          display: inline-block;
+          max-width: 200px;
+          border: 1px solid $border-color;
 
           img {
             max-width: 100%;
-            border-radius: 8px;
-            max-height: 200px;
+            vertical-align: middle;
           }
         }
 
@@ -1862,5 +2020,97 @@ $transition: all 0.3s ease;
     border-color: $primary-color;
     box-shadow: 0 0 0 4px rgba($primary-color, 0.15);
     animation: pulse 1.5s infinite;
+  }
+}
+
+// Thêm CSS cho hình ảnh có thể nhấp vào và popup hiển thị ảnh lớn
+.clickable-image {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.image-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.image-popup-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    max-width: 95%;
+    max-height: 80vh;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+    object-fit: contain;
+    background-color: #111;
+    animation: zoomIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    @media (max-width: 768px) {
+      max-height: 80vh;
+    }
+  }
+
+  .close-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 768px) {
+      top: 5px;
+      right: 5px;
+      padding: 8px;
+    }
+  }
+}
+
+// Định nghĩa animations
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

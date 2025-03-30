@@ -302,7 +302,7 @@ PostModal.propTypes = {
 };
 
 // Comment component
-const CommentSection = ({ postId, initialComments = [] }) => {
+const CommentSection = ({ postId, initialComments = [], openImagePopup }) => {
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -824,7 +824,12 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                 <div className="comment-text">{comment.comment}</div>
                 {commentImage && (
                   <div className="comment-image">
-                    <img src={commentImage} alt="Comment attachment" />
+                    <img
+                      src={commentImage}
+                      alt="Comment attachment"
+                      onClick={() => openImagePopup(commentImage)}
+                      className="clickable-image"
+                    />
                   </div>
                 )}
               </>
@@ -1031,6 +1036,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
 CommentSection.propTypes = {
   postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   initialComments: PropTypes.array,
+  openImagePopup: PropTypes.func.isRequired,
 };
 
 // New component for Forums sidebar
@@ -1060,6 +1066,7 @@ const Community = () => {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentPost, setCurrentPost] = useState({});
   const [showDropdown, setShowDropdown] = useState(null);
@@ -1070,6 +1077,7 @@ const Community = () => {
   const userId = 1; // Admin role để test
   const [filterByUserId, setFilterByUserId] = useState(null);
   const [userFilterName, setUserFilterName] = useState("");
+  const [imagePopup, setImagePopup] = useState(null);
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
@@ -1077,6 +1085,16 @@ const Community = () => {
       ...prev,
       [postId]: !prev[postId],
     }));
+  };
+
+  const handleSearch = (value) => {
+    setSearchQuery(value);
+
+    if (value.length > 0) {
+      // Kích hoạt animation tìm kiếm
+      setIsSearching(true);
+      setTimeout(() => setIsSearching(false), 1500);
+    }
   };
 
   const fetchPosts = async () => {
@@ -1551,7 +1569,7 @@ const Community = () => {
       // Tìm bài viết để kiểm tra quyền sở hữu
       const post = posts.find((p) => p.id === postId);
 
-      // Nếu không tìm thấy bài viết, hiện thông báo
+      // Nếu không tìm thấy bài viết, hiển thông báo
       if (!post) {
         toast.error("Không tìm thấy bài viết này!");
         return;
@@ -1706,19 +1724,50 @@ const Community = () => {
               )}
             </div>
             <div className="header-actions">
-              <div className="search-box">
+              <div className={`search-box ${isSearching ? "searching" : ""}`}>
                 <Search size={18} className="search-icon" />
                 <input
                   type="text"
                   placeholder="Tìm kiếm bài viết..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      // Thêm hiệu ứng khi nhấn Enter
+                      setIsSearching(true);
+                      setTimeout(() => setIsSearching(false), 1500);
+                      e.target.blur();
+                      e.target.focus();
+                    }
+                  }}
                 />
+                {searchQuery && (
+                  <button
+                    className="clear-search-btn"
+                    onClick={() => setSearchQuery("")}
+                    title="Xóa tìm kiếm"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
-              <button className="create-post-button" onClick={openNewPostModal}>
-                <Plus size={18} />
-                Tạo bài viết
-              </button>
+              <div className="action-buttons">
+                <button
+                  className="my-posts-button"
+                  onClick={() => handleViewUserPosts(userId, "Tôi")}
+                  title="Xem bài viết của tôi"
+                >
+                  <User size={18} />
+                  Bài viết của tôi
+                </button>
+                <button
+                  className="create-post-button"
+                  onClick={openNewPostModal}
+                >
+                  <Plus size={18} />
+                  Tạo bài viết
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1838,7 +1887,12 @@ const Community = () => {
                     <p>{post.body}</p>
                     {post.postImageUrl && (
                       <div className="post-images">
-                        <img src={post.postImageUrl} alt={post.title} />
+                        <img
+                          src={post.postImageUrl}
+                          alt={post.title}
+                          className="clickable-image"
+                          onClick={() => setImagePopup(post.postImageUrl)}
+                        />
                       </div>
                     )}
                     {post.postTags && post.postTags.length > 0 && (
@@ -1877,7 +1931,10 @@ const Community = () => {
 
                     {/* Hiển thị phần bình luận nếu đã mở rộng */}
                     {expandedComments[post.id] && (
-                      <CommentSection postId={post.id} />
+                      <CommentSection
+                        postId={post.id}
+                        openImagePopup={setImagePopup}
+                      />
                     )}
                   </div>
                 </div>
@@ -1904,6 +1961,27 @@ const Community = () => {
             isLoading={isLoading}
             isOpen={modalOpen}
           />
+
+          {/* Popup hiển thị hình ảnh đầy đủ */}
+          {imagePopup && (
+            <div
+              className="image-popup-overlay"
+              onClick={() => setImagePopup(null)}
+            >
+              <div
+                className="image-popup-content"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src={imagePopup} alt="Hình ảnh đầy đủ" />
+                <button
+                  className="close-popup-btn"
+                  onClick={() => setImagePopup(null)}
+                >
+                  <X size={24} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
