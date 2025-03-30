@@ -845,6 +845,12 @@ $transition: all 0.3s ease;
         @include flex-center;
         color: $primary-color;
         flex-shrink: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+
+        &:hover {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
       }
 
       .comment-content-wrapper {
@@ -866,9 +872,14 @@ $transition: all 0.3s ease;
           margin-bottom: 8px;
 
           .comment-author {
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 500;
             color: $text-color;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: $primary-color;
+              text-decoration: underline;
+            }
           }
 
           .comment-datetime {

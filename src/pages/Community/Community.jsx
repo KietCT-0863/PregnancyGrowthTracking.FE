@@ -302,7 +302,12 @@ PostModal.propTypes = {
 };
 
 // Comment component
-const CommentSection = ({ postId, initialComments = [], openImagePopup }) => {
+const CommentSection = ({
+  postId,
+  initialComments = [],
+  openImagePopup,
+  onViewUserPosts,
+}) => {
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -739,6 +744,9 @@ const CommentSection = ({ postId, initialComments = [], openImagePopup }) => {
 
     const currentPath = [...parentPath, comment.commentId];
 
+    // Lấy userId của người bình luận
+    const commentUserId = comment.userId || comment.user?.id;
+
     return (
       <div
         key={comment.commentId}
@@ -747,13 +755,31 @@ const CommentSection = ({ postId, initialComments = [], openImagePopup }) => {
           marginLeft: depth > 0 ? `${Math.min(depth * 20, 60)}px` : "0",
         }}
       >
-        <div className="comment-avatar">
+        <div
+          className="comment-avatar"
+          onClick={() =>
+            commentUserId ? onViewUserPosts(commentUserId, authorName) : null
+          }
+          style={{ cursor: commentUserId ? "pointer" : "default" }}
+          title={commentUserId ? `Xem bài viết của ${authorName}` : ""}
+        >
           <User size={24} />
         </div>
         <div className="comment-content-wrapper">
           <div className="comment-content">
             <div className="comment-header">
-              <div className="comment-author">{authorName}</div>
+              <div
+                className="comment-author"
+                onClick={() =>
+                  commentUserId
+                    ? onViewUserPosts(commentUserId, authorName)
+                    : null
+                }
+                style={{ cursor: commentUserId ? "pointer" : "default" }}
+                title={commentUserId ? `Xem bài viết của ${authorName}` : ""}
+              >
+                {authorName}
+              </div>
               <div className="comment-datetime">
                 {formatDate(comment.createdDate)}
               </div>
@@ -1037,6 +1063,7 @@ CommentSection.propTypes = {
   postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   initialComments: PropTypes.array,
   openImagePopup: PropTypes.func.isRequired,
+  onViewUserPosts: PropTypes.func.isRequired,
 };
 
 // New component for Forums sidebar
@@ -1934,6 +1961,7 @@ const Community = () => {
                       <CommentSection
                         postId={post.id}
                         openImagePopup={setImagePopup}
+                        onViewUserPosts={handleViewUserPosts}
                       />
                     )}
                   </div>
