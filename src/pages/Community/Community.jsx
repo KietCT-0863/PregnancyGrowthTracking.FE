@@ -694,26 +694,33 @@ const CommentSection = ({ postId, initialComments = [] }) => {
     }
   };
 
-  // Hiển thị comment theo cấu trúc cha/con
-  const renderCommentItem = (comment) => {
-    // Lấy tất cả các reply cho comment này
-    const childComments = comments.filter(
-      (c) => c.parentCommentId === comment.commentId
-    );
+  // Hàm để tạo cấu trúc cây cho bình luận
+  const buildCommentTree = () => {
+    // Lấy các bình luận gốc (không có parentCommentId)
+    const rootComments = comments.filter((c) => !c.parentCommentId);
 
-    console.log(
-      `Rendering comment ID ${comment.commentId} with ${childComments.length} replies`
-    );
-    if (childComments.length > 0) {
-      console.log(
-        `- Child comments:`,
-        childComments.map((c) => c.commentId)
-      );
-    }
+    // Hàm đệ quy để xây dựng cây bình luận
+    const buildReplies = (parentId) => {
+      return comments
+        .filter((c) => c.parentCommentId === parentId)
+        .map((comment) => ({
+          ...comment,
+          replies: buildReplies(comment.commentId),
+        }));
+    };
 
-    const hasReplies = childComments.length > 0;
-    const isExpanded = expandedReplies[comment.commentId];
+    // Thêm replies vào mỗi bình luận gốc
+    return rootComments.map((rootComment) => ({
+      ...rootComment,
+      replies: buildReplies(rootComment.commentId),
+    }));
+  };
 
+  // Tạo cây bình luận từ dữ liệu lấy được
+  const commentTree = buildCommentTree();
+
+  // Hàm render cho các bình luận đa cấp
+  const renderComment = (comment, depth = 0, parentPath = []) => {
     // Lấy tên người dùng từ API hoặc dùng giá trị mặc định
     const authorName = comment.userName || comment.user?.name || "Người dùng";
 
@@ -725,16 +732,21 @@ const CommentSection = ({ postId, initialComments = [] }) => {
       comment.photoUrl ||
       null;
 
-    // Log thông tin hình ảnh để debug
-    if (commentImage) {
-      console.log(`Comment ID ${comment.commentId} has image:`, commentImage);
-    }
-
     const isLiked = likedComments[comment.commentId] || false;
     const likeCount = commentLikesCount[comment.commentId] || 0;
+    const hasReplies = comment.replies && comment.replies.length > 0;
+    const isExpanded = expandedReplies[comment.commentId];
+
+    const currentPath = [...parentPath, comment.commentId];
 
     return (
-      <div key={comment.commentId} className="comment-item">
+      <div
+        key={comment.commentId}
+        className={`comment-item depth-${depth}`}
+        style={{
+          marginLeft: depth > 0 ? `${Math.min(depth * 20, 60)}px` : "0",
+        }}
+      >
         <div className="comment-avatar">
           <User size={24} />
         </div>
@@ -755,7 +767,7 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                   placeholder="Chỉnh sửa bình luận..."
                 />
 
-                {/* Thêm chức năng upload ảnh khi edit */}
+                {/* Chức năng upload ảnh khi edit */}
                 <div className="edit-image-upload">
                   <input
                     type="file"
@@ -900,215 +912,16 @@ const CommentSection = ({ postId, initialComments = [] }) => {
                   className="view-replies-button"
                   onClick={() => toggleReplies(comment.commentId)}
                 >
-                  {childComments.length === 1
+                  {comment.replies.length === 1
                     ? "Xem 1 phản hồi"
-                    : `Xem ${childComments.length} phản hồi`}
+                    : `Xem ${comment.replies.length} phản hồi`}
                 </button>
               ) : (
                 <>
                   <div className="replies-container">
-                    {childComments.map((reply) => {
-                      // Lấy thông tin reply
-                      const replyAuthorName =
-                        reply.userName || reply.user?.name || "Người dùng";
-                      // Xử lý hình ảnh reply - kiểm tra tất cả các trường có thể chứa URL hình ảnh
-                      const replyImage =
-                        reply.imageUrl ||
-                        reply.image ||
-                        reply.commentImageUrl ||
-                        reply.photoUrl ||
-                        null;
-
-                      console.log(
-                        `Rendering reply ID ${reply.commentId} cho comment ID ${comment.commentId}`
-                      );
-                      if (replyImage) {
-                        console.log(
-                          `- Reply ID ${reply.commentId} has image:`,
-                          replyImage
-                        );
-                      }
-
-                      const isReplyLiked =
-                        likedComments[reply.commentId] || false;
-                      const replyLikeCount =
-                        commentLikesCount[reply.commentId] || 0;
-
-                      return (
-                        <div key={reply.commentId} className="reply-item">
-                          <div className="comment-avatar">
-                            <User size={20} />
-                          </div>
-                          <div className="reply-content">
-                            <div className="comment-header">
-                              <div className="comment-author">
-                                {replyAuthorName}
-                              </div>
-                              <div className="comment-datetime">
-                                {formatDate(reply.createdDate)}
-                              </div>
-                            </div>
-                            {editingCommentId === reply.commentId ? (
-                              <div className="edit-comment-form">
-                                <textarea
-                                  value={editText}
-                                  onChange={(e) => setEditText(e.target.value)}
-                                  placeholder="Chỉnh sửa phản hồi..."
-                                />
-
-                                {/* Thêm chức năng upload ảnh khi edit reply */}
-                                <div className="edit-image-upload">
-                                  <input
-                                    type="file"
-                                    id={`edit-reply-image-${reply.commentId}`}
-                                    ref={editCommentImageRef}
-                                    onChange={handleEditCommentImageChange}
-                                    accept="image/*"
-                                    style={{ display: "none" }}
-                                  />
-
-                                  {!editImagePreview ? (
-                                    <label
-                                      htmlFor={`edit-reply-image-${reply.commentId}`}
-                                      className="edit-image-label"
-                                    >
-                                      <Camera size={16} />
-                                      <span>Thêm ảnh</span>
-                                    </label>
-                                  ) : (
-                                    <div className="edit-image-preview">
-                                      <img
-                                        src={editImagePreview}
-                                        alt="Preview"
-                                      />
-                                      <button
-                                        type="button"
-                                        className="remove-edit-image-btn"
-                                        onClick={removeEditCommentImage}
-                                      >
-                                        <X size={14} />
-                                      </button>
-                                    </div>
-                                  )}
-                                </div>
-
-                                <div className="edit-actions">
-                                  <button
-                                    onClick={submitEditComment}
-                                    disabled={isLoading || !editText.trim()}
-                                  >
-                                    Lưu
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      setEditingCommentId(null);
-                                      setEditText("");
-                                      setEditCommentImage(null);
-                                      setEditImagePreview("");
-                                    }}
-                                  >
-                                    Hủy
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="comment-text">
-                                  {reply.comment}
-                                </div>
-                                {replyImage && (
-                                  <div className="comment-image reply-image">
-                                    <img
-                                      src={replyImage}
-                                      alt="Reply attachment"
-                                    />
-                                  </div>
-                                )}
-                              </>
-                            )}
-
-                            {/* Nút like và reply cho replies */}
-                            <div className="facebook-style-actions">
-                              <button
-                                className={`action-button ${
-                                  isReplyLiked ? "liked" : ""
-                                } reply-like-btn`}
-                                onClick={() =>
-                                  handleCommentLikeToggle(reply.commentId)
-                                }
-                              >
-                                <span className="reply-btn-text">Thích</span>{" "}
-                                {replyLikeCount > 0 && (
-                                  <span className="reply-like-count">
-                                    ({replyLikeCount})
-                                  </span>
-                                )}
-                              </button>
-                              <button
-                                className="action-button reply-btn"
-                                onClick={() => handleReplyComment(comment)} // Trả lời comment cha
-                              >
-                                <span className="reply-btn-text">Phản hồi</span>
-                              </button>
-                            </div>
-
-                            {/* Menu dropdown cho replies */}
-                            <div className="reply-actions">
-                              <button
-                                className="comment-menu-button"
-                                onClick={() =>
-                                  setShowDropdown(
-                                    showDropdown === reply.commentId
-                                      ? null
-                                      : reply.commentId
-                                  )
-                                }
-                              >
-                                <MoreVertical size={14} />
-                              </button>
-
-                              {showDropdown === reply.commentId && (
-                                <div className="comment-dropdown reply-dropdown">
-                                  <button
-                                    onClick={() => handleReplyComment(comment)}
-                                    className="dropdown-reply-btn"
-                                  >
-                                    <MessageCircle
-                                      size={14}
-                                      className="dropdown-icon"
-                                    />
-                                    <span className="dropdown-text">
-                                      Trả lời
-                                    </span>
-                                  </button>
-                                  <button
-                                    onClick={() => handleEditComment(reply)}
-                                    className="dropdown-edit-btn"
-                                  >
-                                    <Edit size={14} className="dropdown-icon" />
-                                    <span className="dropdown-text">
-                                      Chỉnh sửa
-                                    </span>
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      handleDeleteComment(reply.commentId)
-                                    }
-                                    className="dropdown-delete-btn"
-                                  >
-                                    <Trash
-                                      size={14}
-                                      className="dropdown-icon"
-                                    />
-                                    <span className="dropdown-text">Xóa</span>
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {comment.replies.map((reply) =>
+                      renderComment(reply, depth + 1, currentPath)
+                    )}
                   </div>
                   <button
                     className="hide-replies-button"
@@ -1134,10 +947,8 @@ const CommentSection = ({ postId, initialComments = [] }) => {
       )}
 
       <div className="comments-list">
-        {/* Hiển thị các comment gốc (parentCommentId = 0 hoặc null) */}
-        {comments
-          .filter((comment) => !comment.parentCommentId)
-          .map((comment) => renderCommentItem(comment))}
+        {/* Hiển thị các comment gốc và replies đa cấp của chúng */}
+        {commentTree.map((comment) => renderComment(comment))}
 
         {comments.length === 0 && !isLoading && (
           <div className="no-comments">
