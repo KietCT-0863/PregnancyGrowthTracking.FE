@@ -32,7 +32,6 @@ const PostModal = ({
   post = {},
   onSubmit,
   isLoading,
-  authorInfo,
   isEditing,
 }) => {
   const [title, setTitle] = useState("");
@@ -298,7 +297,6 @@ PostModal.propTypes = {
   post: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  authorInfo: PropTypes.object,
   isEditing: PropTypes.bool.isRequired,
 };
 
@@ -478,9 +476,9 @@ const CommentSection = ({
 
   const handleReplyComment = (comment) => {
     setReplyToComment(comment);
-    // Tự động focus vào ô nhập comment
+    // Tự động focus vào ô nhập comment của post hiện tại bằng cách sử dụng postId
     setTimeout(() => {
-      document.querySelector(".comment-input")?.focus();
+      document.querySelector(`.comment-input-post-${postId}`)?.focus();
     }, 100);
   };
 
@@ -532,10 +530,19 @@ const CommentSection = ({
 
     try {
       setIsLoading(true);
+
+      console.log(`Đang cập nhật bình luận ID ${editingCommentId}`, {
+        text: editText.trim(),
+        hasImage: editCommentImage ? true : false,
+        hasExistingImage: !!editImagePreview,
+        imageType: editCommentImage?.type,
+        imageSize: editCommentImage?.size,
+      });
+
       // Gọi API với editCommentImage nếu có file ảnh mới
       await commentService.updateComment(
         editingCommentId,
-        editText,
+        editText.trim(),
         editCommentImage
       );
 
@@ -551,6 +558,16 @@ const CommentSection = ({
       playNotificationSound();
     } catch (error) {
       console.error("Error updating comment:", error);
+
+      // Log thêm chi tiết lỗi để debug
+      if (error.response) {
+        console.error("Chi tiết lỗi API:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers,
+        });
+      }
+
       toast.error(
         "Không thể cập nhật bình luận: " +
           (error.message || "Lỗi không xác định")
@@ -858,17 +875,19 @@ const CommentSection = ({
               </>
             )}
 
-            {/* Nút like và reply theo kiểu Facebook */}
+            {/* Nút thích/phản hồi theo kiểu Facebook */}
             <div className="facebook-style-actions">
               <button
                 className={`action-button ${isLiked ? "liked" : ""}`}
                 onClick={() => handleCommentLikeToggle(comment.commentId)}
               >
-                Thích {likeCount > 0 && `(${likeCount})`}
+                {isLiked ? "Đã thích" : "Thích"}{" "}
+                {likeCount > 0 && `(${likeCount})`}
               </button>
               <button
                 className="action-button"
                 onClick={() => handleReplyComment(comment)}
+                data-post-id={postId}
               >
                 Phản hồi
               </button>
@@ -904,9 +923,17 @@ const CommentSection = ({
               ) : (
                 <>
                   <div className="replies-container">
-                    {comment.replies.map((reply) =>
-                      renderComment(reply, depth + 1, currentPath)
-                    )}
+                    {comment.replies.map((reply) => {
+                      // Hiển thị reply và thêm data-post-id cho các nút phản hồi trong reply
+                      const replyElement = renderComment(
+                        reply,
+                        depth + 1,
+                        currentPath
+                      );
+
+                      // Trả về phần tử reply với các nút đã được sửa
+                      return replyElement;
+                    })}
                   </div>
                   <button
                     className="hide-replies-button"
@@ -964,7 +991,7 @@ const CommentSection = ({
             <div className="comment-text-container">
               <input
                 type="text"
-                className="comment-input"
+                className={`comment-input comment-input-post-${postId}`}
                 placeholder={
                   replyToComment ? "Viết phản hồi..." : "Viết bình luận..."
                 }
@@ -2066,11 +2093,6 @@ const Community = () => {
             onClose={() => setModalOpen(false)}
             onSubmit={handleCreatePost}
             isEditing={Boolean(currentPost.id)}
-            authorInfo={
-              currentPost.id
-                ? postAuthors[currentPost.id]
-                : postAuthors.currentUser
-            }
             isLoading={isLoading}
             isOpen={modalOpen}
           />

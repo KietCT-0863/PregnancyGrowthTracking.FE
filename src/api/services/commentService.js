@@ -259,65 +259,74 @@ const commentService = {
       }
 
       // Kiểm tra xem có ảnh mới không
-      const hasNewImage = imageFile instanceof File || imageFile instanceof Blob;
-      
-      // Sử dụng FormData nếu có ảnh mới, ngược lại sử dụng JSON thông thường
+      const hasNewImage =
+        imageFile instanceof File || imageFile instanceof Blob;
+
+      console.log(`[DEBUG] Đang cập nhật bình luận ID ${commentId}:`, {
+        commentText: commentText.trim(),
+        hasNewImage: hasNewImage,
+        imageInfo: hasNewImage
+          ? {
+              name: imageFile.name,
+              size: imageFile.size,
+              type: imageFile.type,
+            }
+          : "Không có ảnh mới",
+      });
+
+      // Sử dụng FormData cho tất cả các trường hợp
+      const formData = new FormData();
+      formData.append("Comment", commentText.trim());
+
+      // Thêm ảnh hoặc cờ xóa ảnh
       if (hasNewImage) {
-        console.log(`Cập nhật comment ID ${commentId} với ảnh mới:`, {
-          commentText: commentText.trim(),
-          imageFileName: imageFile.name,
-          imageSize: imageFile.size,
-          imageType: imageFile.type
-        });
-        
-        const formData = new FormData();
-        formData.append("Comment", commentText.trim());
         formData.append("Image", imageFile);
-        
-        // Log FormData để debug
-        console.log("FormData gửi đi khi update comment:");
-        for (let pair of formData.entries()) {
-          console.log(pair[0] + ": " + (pair[0] === "Image" ? "File hình ảnh" : pair[1]));
-        }
-        
+        formData.append("RemoveImage", "false"); // Không xóa ảnh vì chúng tôi đang thêm ảnh mới
+      } else {
+        // Trường hợp không có ảnh mới, có thể người dùng muốn xóa ảnh cũ
+        formData.append("RemoveImage", "true"); // Đặt thành true để xóa ảnh hiện tại
+      }
+
+      // Log FormData để debug
+      console.log("[DEBUG] FormData gửi đi khi update comment:");
+      for (let pair of formData.entries()) {
+        console.log(
+          pair[0] + ": " + (pair[0] === "Image" ? "File hình ảnh" : pair[1])
+        );
+      }
+
+      try {
+        // Gọi API với endpoint có /with-image
         const response = await axiosInstance.put(
           ENDPOINTS.COMMENTS.UPDATE(commentId),
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data"
-            }
+              "Content-Type": "multipart/form-data",
+            },
           }
         );
+        console.log("[DEBUG] Phản hồi API thành công:", response.data);
         return response.data;
-      } else {
-        // Trường hợp chỉ cập nhật văn bản
-        console.log(`Cập nhật text cho comment ID ${commentId}:`, {
-          comment: commentText.trim()
-        });
-        
-        const payload = {
-          comment: commentText.trim()
-        };
-        
-        const response = await axiosInstance.put(
-          ENDPOINTS.COMMENTS.UPDATE(commentId),
-          payload
-        );
-        return response.data;
+      } catch (error) {
+        console.error("[DEBUG] Lỗi khi cập nhật bình luận:", error);
+
+        // Log chi tiết lỗi để debug
+        if (error.response) {
+          console.error("[DEBUG] Chi tiết phản hồi lỗi:", {
+            status: error.response.status,
+            statusText: error.response.statusText,
+            data: error.response.data,
+            headers: error.response.headers,
+            method: error.config?.method,
+            url: error.config?.url,
+          });
+        }
+
+        throw error; // Chuyển tiếp lỗi để xử lý ở cấp cao hơn
       }
     } catch (error) {
-      console.error("Lỗi khi cập nhật bình luận:", error);
-      
-      // Log chi tiết lỗi để debug
-      if (error.response) {
-        console.error("Chi tiết phản hồi lỗi:", {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        });
-      }
-      
+      console.error("[DEBUG] Lỗi khi cập nhật bình luận:", error);
       handleApiError(error, "Lỗi khi cập nhật bình luận");
     }
   },
