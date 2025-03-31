@@ -77,7 +77,7 @@ const AppRoutes = () => {
         <Route index element={<HomePublic />} />
         <Route path="about" element={<AboutUs />} />
         <Route path="/community" element={<Community />} />
-        <Route path="payment-result" element={<PaymentResult />} />
+
         <Route path="/blog" element={<BlogPublic />}>
           <Route index element={<BlogAllPublic />} />
           <Route path=":id" element={<BlogDetailPublic />} />
@@ -109,6 +109,7 @@ const AppRoutes = () => {
         <Route path="community" element={<Community />} />
         <Route path="choose-vip" element={<ChooseVip />} />
         <Route path="profile" element={<ViewProfile />} />
+        <Route path="payment-result" element={<PaymentResult />} />
         <Route path="profile/edit" element={<EditProfile />} />
         <Route path="blog" element={<BlogGuest />}>
           <Route index element={<GuestBlogAll />} />

@@ -24,12 +24,12 @@ export const AuthProvider = ({ children }) => {
   // Khởi tạo flag khi component được mount
   useEffect(() => {
     // Kiểm tra ngay khi vừa load trang
-    const sessionToken = sessionStorage.getItem("sessionActive");
     const userData = localStorage.getItem("userData");
     const token = localStorage.getItem("token");
+    const accessToken = localStorage.getItem("accessToken");
 
     // Nếu có userData hoặc token, thiết lập sessionActive để duy trì phiên đăng nhập
-    if (userData || token) {
+    if (userData || token || accessToken) {
       console.log("Có dữ liệu đăng nhập, thiết lập phiên làm việc");
       sessionStorage.setItem("sessionActive", "true");
     }
@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }) => {
     const checkAuthStatus = async () => {
       try {
         setLoading(true);
-        const sessionToken = sessionStorage.getItem("sessionActive");
         const userData = localStorage.getItem("userData");
         const token = localStorage.getItem("token");
         const accessToken = localStorage.getItem("accessToken");
@@ -62,6 +61,7 @@ export const AuthProvider = ({ children }) => {
                   const parsedUser = JSON.parse(userData);
                   setCurrentUser(parsedUser);
                 }
+                // Đảm bảo đặt lại sessionActive
                 sessionStorage.setItem("sessionActive", "true");
               } else {
                 console.log("Token không hợp lệ, đăng xuất người dùng");
@@ -74,6 +74,8 @@ export const AuthProvider = ({ children }) => {
               if (userData) {
                 const parsedUser = JSON.parse(userData);
                 setCurrentUser(parsedUser);
+                // Đảm bảo đặt lại sessionActive ngay cả khi không kết nối được server
+                sessionStorage.setItem("sessionActive", "true");
                 console.log(
                   "Sử dụng dữ liệu đăng nhập cục bộ khi không kết nối được server"
                 );
@@ -81,6 +83,16 @@ export const AuthProvider = ({ children }) => {
             }
           } catch (tokenErr) {
             console.error("Lỗi xử lý token:", tokenErr);
+            // Ngay cả khi có lỗi xử lý token, vẫn cố gắng sử dụng dữ liệu đã lưu
+            if (userData) {
+              try {
+                const parsedUser = JSON.parse(userData);
+                setCurrentUser(parsedUser);
+                sessionStorage.setItem("sessionActive", "true");
+              } catch (e) {
+                console.error("Không thể phân tích dữ liệu người dùng:", e);
+              }
+            }
           }
         } else {
           console.log("Không tìm thấy token");
@@ -96,6 +108,25 @@ export const AuthProvider = ({ children }) => {
 
     checkAuthStatus();
 
+    // Thêm một event listener cho 'storage' để đồng bộ giữa các tab
+    const handleStorageChange = (e) => {
+      if (
+        e.key === "token" ||
+        e.key === "accessToken" ||
+        e.key === "userData"
+      ) {
+        if (e.newValue) {
+          // Đặt lại sessionActive khi token/userData được cập nhật
+          sessionStorage.setItem("sessionActive", "true");
+        } else {
+          // Nếu token/userData bị xóa, cũng xóa sessionActive
+          sessionStorage.removeItem("sessionActive");
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
     // Xử lý khi người dùng mở lại tab sau khi đóng hoặc tạm dừng tab
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
@@ -105,6 +136,8 @@ export const AuthProvider = ({ children }) => {
           // Nếu có token, thiết lập lại session
           sessionStorage.setItem("sessionActive", "true");
           console.log("Tab được kích hoạt lại, đặt lại sessionActive");
+          // Tự động kiểm tra lại trạng thái xác thực
+          checkAuthStatus();
         }
       }
     };
@@ -112,23 +145,33 @@ export const AuthProvider = ({ children }) => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      window.removeEventListener("storage", handleStorageChange);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
-  const login = async (credentials) => {
+  const login = async (token, userData, rememberMe) => {
     try {
       setLoading(true);
-      const response = await authService.login(credentials);
 
-      if (response.success) {
-        localStorage.setItem("userData", JSON.stringify(response.data));
-        sessionStorage.setItem("sessionActive", "true");
-        setCurrentUser(response.data);
-        return { success: true };
-      } else {
-        throw new Error(response.message || "Đăng nhập thất bại");
+      // Lưu token và userData vào localStorage
+      if (token) {
+        localStorage.setItem("token", token);
+        // Đồng bộ với các token khác nếu có
+        localStorage.setItem("accessToken", token);
       }
+
+      if (userData) {
+        localStorage.setItem("userData", JSON.stringify(userData));
+      }
+
+      // Đánh dấu phiên làm việc
+      sessionStorage.setItem("sessionActive", "true");
+
+      // Cập nhật state
+      setCurrentUser(userData);
+
+      return { success: true };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -144,6 +187,8 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.removeItem("userData");
       localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
       sessionStorage.removeItem("sessionActive");
       sessionStorage.clear();
 
