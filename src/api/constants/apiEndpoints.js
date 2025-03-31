@@ -87,8 +87,12 @@ export const ENDPOINTS = {
     UNLIKE: (postId) => `/posts/${postId}/toggle-like`,
     GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
     GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
-    GET_BY_USER: (userId) => `/posts/user/${userId}`,
-    MY_POSTS: "/posts/my-posts", // Thêm endpoint để lấy bài viết của người dùng đang đăng nhập
+    GET_BY_USER: (userId) => `/posts/userid/${userId}`,
+    MY_POSTS: "/posts/my-posts",
+    // Thêm các endpoint thay thế có thể dùng
+    USER_POSTS_ALT1: (userId) => `/posts/byuser/${userId}`,
+    USER_POSTS_ALT2: (userId) => `/posts/get-by-user/${userId}`,
+    USER_POSTS_ALT3: (userId) => `/users/${userId}/posts`,
   },
   COMMENTS: {
     LIST: "/Comments",

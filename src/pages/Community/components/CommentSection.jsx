@@ -223,7 +223,6 @@ const CommentSection = ({ postId, initialComments = [] }) => {
         setIsLoading(false);
       }
     }
-    setShowDropdown(null);
   };
 
   const formatDate = (dateString) => {
@@ -611,4 +610,4 @@ CommentSection.propTypes = {
   initialComments: PropTypes.array,
 };
 
-export default CommentSection; 
+export default CommentSection;

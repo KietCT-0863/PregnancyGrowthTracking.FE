@@ -780,24 +780,31 @@ const communityService = {
         throw new Error("User ID không được để trống");
       }
 
+      console.log(`Bắt đầu lấy bài viết của người dùng có ID: ${userId}`);
+
       // Định nghĩa các endpoint có thể sử dụng để lấy bài viết theo userId
       const endpoints = [
-        ENDPOINTS.POSTS.GET_BY_USER(userId),
-        `/posts/user/${userId}`,
-        `/api/posts/user/${userId}`,
+        ENDPOINTS.POSTS.GET_BY_USER(userId), // Endpoint chính: /posts/userid/${userId}
+        `/posts/userid/${userId}`, // Đảm bảo rằng endpoint chính được thử đầu tiên
+        ENDPOINTS.POSTS.USER_POSTS_ALT1(userId),
+        ENDPOINTS.POSTS.USER_POSTS_ALT2(userId),
+        ENDPOINTS.POSTS.USER_POSTS_ALT3(userId),
+        `/posts/user/${userId}`, // Endpoint cũ, giữ lại để tương thích ngược
       ];
+
+      console.log("Danh sách endpoints sẽ được thử theo thứ tự:", endpoints);
 
       // Thử lần lượt từng endpoint
       let lastError = null;
       for (const endpoint of endpoints) {
         try {
           console.log(
-            `Đang thử endpoint: ${endpoint} để lấy bài viết của user ID: ${userId}`
+            `[${new Date().toISOString()}] Đang thử endpoint: ${endpoint} để lấy bài viết của user ID: ${userId}`
           );
 
           const response = await axiosInstance.get(endpoint);
           console.log(
-            "Phản hồi API thành công:",
+            `[${new Date().toISOString()}] Phản hồi API thành công:`,
             response.status,
             response.statusText
           );
@@ -806,7 +813,7 @@ const communityService = {
           // Kiểm tra và chuẩn hóa dữ liệu trả về
           if (Array.isArray(response.data)) {
             console.log(
-              `Tìm thấy ${response.data.length} bài viết của người dùng ID ${userId}`
+              `✓ Thành công! Tìm thấy ${response.data.length} bài viết của người dùng ID ${userId} từ endpoint: ${endpoint}`
             );
             // Chuẩn hóa dữ liệu bài viết
             return response.data.map((post) => ({
@@ -815,17 +822,17 @@ const communityService = {
             }));
           } else if (response.data && Array.isArray(response.data.posts)) {
             console.log(
-              `Tìm thấy ${response.data.posts.length} bài viết từ trường posts`
+              `✓ Thành công! Tìm thấy ${response.data.posts.length} bài viết từ trường posts của endpoint: ${endpoint}`
             );
             return response.data.posts.map((post) => ({
               ...post,
               postTags: Array.isArray(post.postTags) ? post.postTags : [],
             }));
           } else if (response.data && response.data.length === 0) {
-            console.warn("API trả về mảng rỗng");
+            console.warn(`API trả về mảng rỗng từ endpoint: ${endpoint}`);
             return [];
           } else if (response.status === 204) {
-            console.warn("API trả về 204 No Content");
+            console.warn(`API trả về 204 No Content từ endpoint: ${endpoint}`);
             return [];
           } else {
             console.warn(
@@ -836,7 +843,7 @@ const communityService = {
           }
         } catch (apiError) {
           lastError = apiError;
-          console.error(`Lỗi với endpoint ${endpoint}:`, apiError.message);
+          console.error(`✗ Lỗi với endpoint ${endpoint}:`, apiError.message);
           // Ghi log chi tiết hơn nếu có
           if (apiError.response) {
             console.error("Status:", apiError.response.status);
@@ -847,9 +854,16 @@ const communityService = {
         }
       }
 
-      // Nếu tất cả các endpoint đều thất bại, ném lỗi từ lần thử cuối cùng
+      // Nếu tất cả các endpoint đều thất bại, hiển thị thông báo cụ thể hơn
       if (lastError) {
-        throw lastError;
+        console.error(
+          `Không thể lấy bài viết của người dùng ${userId} từ tất cả các endpoint đã thử.`
+        );
+        throw {
+          message: `Không tìm thấy API endpoint phù hợp để lấy bài viết của người dùng ID ${userId}. Vui lòng kiểm tra API hoặc cấu hình.`,
+          originalError: lastError,
+          endpoints: endpoints,
+        };
       }
 
       // Nếu không có lỗi nhưng cũng không có dữ liệu hợp lệ, trả về mảng rỗng

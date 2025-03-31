@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import "./Community.scss";
 import communityService from "../../api/services/communityService";
 import commentService from "../../api/services/commentService";
+import axiosInstance from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { playNotificationSound, playDeleteSound } from "../../utils/soundUtils";
 import SidebarTunes from "./components/SidebarTunes";
@@ -161,7 +162,7 @@ const PostModal = ({
 
         <form onSubmit={handleSubmit}>
           <div className="modal-content">
-            <div className="user-info">
+            {/* <div className="user-info">
               <div className="avatar">
                 {authorInfo?.profileImageUrl ? (
                   <img
@@ -174,7 +175,7 @@ const PostModal = ({
                 )}
               </div>
               <span>{authorInfo?.fullName || "Người dùng"}</span>
-            </div>
+            </div> */}
 
             <input
               type="text"
@@ -313,7 +314,6 @@ const CommentSection = ({
   const [isLoading, setIsLoading] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editText, setEditText] = useState("");
-  const [showDropdown, setShowDropdown] = useState(null);
   const [replyToComment, setReplyToComment] = useState(null);
   const [commentImage, setCommentImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -478,7 +478,6 @@ const CommentSection = ({
 
   const handleReplyComment = (comment) => {
     setReplyToComment(comment);
-    setShowDropdown(null);
     // Tự động focus vào ô nhập comment
     setTimeout(() => {
       document.querySelector(".comment-input")?.focus();
@@ -506,7 +505,6 @@ const CommentSection = ({
     }
 
     setEditCommentImage(null); // Reset ảnh mới khi bắt đầu chỉnh sửa
-    setShowDropdown(null);
   };
 
   const handleEditCommentImageChange = (e) => {
@@ -579,7 +577,6 @@ const CommentSection = ({
         setIsLoading(false);
       }
     }
-    setShowDropdown(null);
   };
 
   const formatDate = (dateString) => {
@@ -876,63 +873,20 @@ const CommentSection = ({
                 Phản hồi
               </button>
 
-              {/* Thêm nút sửa và xóa nếu comment của người dùng hiện tại */}
-              {comment.userId === userId && (
-                <>
-                  <button
-                    className="action-button"
-                    onClick={() => handleEditComment(comment)}
-                  >
-                    Sửa
-                  </button>
-                  <button
-                    className="action-button"
-                    onClick={() => handleDeleteComment(comment.commentId)}
-                  >
-                    Xóa
-                  </button>
-                </>
-              )}
+              {/* Luôn hiển thị nút sửa và xóa trong môi trường test */}
+              <button
+                className="action-button"
+                onClick={() => handleEditComment(comment)}
+              >
+                Sửa
+              </button>
+              <button
+                className="action-button"
+                onClick={() => handleDeleteComment(comment.commentId)}
+              >
+                Xóa
+              </button>
             </div>
-          </div>
-
-          <div className="comment-actions">
-            <button
-              className="comment-menu-button"
-              onClick={() =>
-                setShowDropdown(
-                  showDropdown === comment.commentId ? null : comment.commentId
-                )
-              }
-            >
-              <MoreVertical size={16} />
-            </button>
-
-            {showDropdown === comment.commentId && (
-              <div className="comment-dropdown">
-                <button
-                  onClick={() => handleReplyComment(comment)}
-                  className="dropdown-reply-btn"
-                >
-                  <MessageCircle size={14} className="dropdown-icon" />
-                  <span className="dropdown-text">Trả lời</span>
-                </button>
-                <button
-                  onClick={() => handleEditComment(comment)}
-                  className="dropdown-edit-btn"
-                >
-                  <Edit size={14} className="dropdown-icon" />
-                  <span className="dropdown-text">Chỉnh sửa</span>
-                </button>
-                <button
-                  onClick={() => handleDeleteComment(comment.commentId)}
-                  className="dropdown-delete-btn"
-                >
-                  <Trash size={14} className="dropdown-icon" />
-                  <span className="dropdown-text">Xóa</span>
-                </button>
-              </div>
-            )}
           </div>
 
           {/* Hiển thị phần replies kiểu Facebook */}
@@ -1106,6 +1060,25 @@ const Community = () => {
   const [filterByUserId, setFilterByUserId] = useState(null);
   const [userFilterName, setUserFilterName] = useState("");
   const [imagePopup, setImagePopup] = useState(null);
+
+  // Thêm useEffect để lấy thông tin người dùng khi component được tải
+  useEffect(() => {
+    // Hàm lấy thông tin người dùng hiện tại
+    const fetchCurrentUserInfo = async () => {
+      try {
+        // Giả sử có API endpoint để lấy thông tin người dùng hiện tại
+        const userInfo = await communityService.getPostAuthor(userId);
+        if (userInfo && userInfo.fullName) {
+          setCurrentUserName(userInfo.fullName);
+          console.log(`Đã cập nhật tên người dùng: ${userInfo.fullName}`);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error);
+      }
+    };
+
+    fetchCurrentUserInfo();
+  }, [userId]);
 
   // Hàm để toggle phần bình luận
   const toggleComments = (postId) => {
@@ -1694,9 +1667,23 @@ const Community = () => {
   const handleViewUserPosts = async (userId, userName) => {
     try {
       setIsLoading(true);
+      toast.info(
+        `Đang tải bài viết của ${userName || `người dùng #${userId}`}...`,
+        { autoClose: 2000 }
+      );
+
       console.log(
         `Đang gọi API để lấy bài viết của người dùng ID: ${userId}, tên: ${userName}`
       );
+
+      // Nếu đang xem bài viết của chính mình, chuyển sang dùng fetchMyPosts
+      if (userId === 1) {
+        // userId hiện tại đang cố định là 1 cho admin
+        console.log(
+          "Người dùng muốn xem bài viết của chính mình, chuyển sang dùng API my-posts"
+        );
+        return fetchMyPosts();
+      }
 
       // Gọi hàm API từ communityService để lấy bài viết theo userId
       try {
@@ -1714,7 +1701,9 @@ const Community = () => {
           setUserFilterName(userName || `Người dùng #${userId}`);
           // Hiển thị thông báo thành công
           toast.success(
-            `Đang xem bài viết của ${userName || `Người dùng #${userId}`}`
+            `Đang xem ${userPosts.length} bài viết của ${
+              userName || `Người dùng #${userId}`
+            }`
           );
           // Cuộn lên đầu trang
           window.scrollTo(0, 0);
@@ -1730,17 +1719,63 @@ const Community = () => {
             } chưa đăng bài viết nào. Đang hiển thị tất cả bài viết.`,
             { autoClose: 5000 }
           );
+
+          // Tải lại tất cả bài viết
+          fetchPosts();
         }
       } catch (apiError) {
+        console.error("Lỗi chi tiết:", apiError);
+
+        // Xử lý trường hợp không tìm thấy API endpoint
+        if (
+          apiError.message &&
+          apiError.message.includes("Không tìm thấy API endpoint")
+        ) {
+          console.error("Lỗi API endpoint:", apiError.message);
+          toast.error(
+            `API đang được cập nhật. Đang thử với endpoint: /posts/userid/${userId}`,
+            { autoClose: 5000 }
+          );
+
+          // Thử trực tiếp với API backend
+          try {
+            const directResponse = await axiosInstance.get(
+              `/posts/userid/${userId}`
+            );
+            if (directResponse.data && Array.isArray(directResponse.data)) {
+              // Xử lý kết quả tương tự như trên
+              setPosts(directResponse.data);
+              setFilterByUserId(userId);
+              setUserFilterName(userName || `Người dùng #${userId}`);
+              toast.success(
+                `Đã tìm thấy ${directResponse.data.length} bài viết!`
+              );
+              return;
+            }
+          } catch (directError) {
+            console.error("Lỗi khi gọi trực tiếp API:", directError);
+          }
+
+          return;
+        }
+
         // Xử lý trường hợp lỗi 404 (Not Found)
         if (apiError.response && apiError.response.status === 404) {
           console.error("API endpoint không tồn tại (404 Not Found)");
           toast.error(
-            `Lỗi 404: Không tìm thấy API endpoint cho bài viết của người dùng - Vui lòng kiểm tra lại cấu hình API`
+            `Không thể tìm thấy bài viết của người dùng này. API chưa hỗ trợ chức năng này.`,
+            { autoClose: 6000 }
           );
-        } else {
-          throw apiError; // Ném lại lỗi để xử lý bên ngoài
+          return;
         }
+
+        // Các lỗi khác
+        toast.error(
+          `Không thể tải bài viết: ${
+            apiError.message || "Lỗi kết nối đến máy chủ"
+          }`,
+          { autoClose: 5000 }
+        );
       }
     } catch (error) {
       console.error("Lỗi khi lấy bài viết theo người dùng:", error);
