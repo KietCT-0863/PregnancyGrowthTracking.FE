@@ -302,6 +302,7 @@ const NavBarGuest = () => {
         setShowNotifications(false);
       }
       
+      
       // Handle sidebar notification clicks
       if (showSidebarNotifications && 
           notificationDropdownRef.current && 
@@ -406,26 +407,7 @@ const NavBarGuest = () => {
         </div>
 
         <div className="header-actions">
-          <button
-            className="header-action-button notification-button"
-            onClick={() => setShowNotifications(!showNotifications)}
-            ref={notificationButtonRef}
-            aria-label="Thông báo"
-          >
-            <FaBell />
-            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-            <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
-          </button>
-
-          <div className="action-separator"></div>
-
-          {isLoggedIn ? (
-            <>
-
-              
-              <div className="action-separator"></div>
-              
-              <div className="user-profile-container" ref={dropdownRef}>
+        <div className="user-profile-container" ref={dropdownRef}>
                 <div
                   className="user-avatar-container"
                   title={`${userInfo?.fullName || "Người dùng"}`}
@@ -443,6 +425,35 @@ const NavBarGuest = () => {
                   <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
                 </div>
               </div>
+          <button
+            className="header-action-button notification-button"
+            onClick={() => setShowNotifications(!showNotifications)}
+            ref={notificationButtonRef}
+            aria-label="Thông báo"
+          >
+            <FaBell />
+            {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+            <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
+          </button>
+          <button
+                className="header-action-button logout-button"
+                onClick={handleLogout}
+                aria-label="Đăng xuất"
+                title="Đăng xuất khỏi tài khoản"
+              >
+                <FaSignOutAlt />
+                <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
+              </button>
+
+          <div className="action-separator"></div>
+
+          {isLoggedIn ? (
+            <>
+
+              
+              <div className="action-separator"></div>
+              
+
             </>
           ) : (
             <div className="auth-buttons">
@@ -585,6 +596,7 @@ const NavBarGuest = () => {
               <FaUser /> <span className="nav-text">Hồ sơ</span>
               <div className="nav-tooltip">Xem và quản lý hồ sơ cá nhân</div>
             </Link>
+            
             <button
                 className="header-action-button logout-button"
                 onClick={handleLogout}

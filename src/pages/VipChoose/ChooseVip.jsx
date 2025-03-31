@@ -68,15 +68,16 @@ const ChooseVip = () => {
 
   const vipOptions = [
     {
-      title: "2 Quý",
-      duration: "9 tháng sử dụng",
+      title: "Vĩnh viễn",
+      duration: "Vĩnh viễn",
       benefits: [
         "Truy cập không giới hạn",
         "Hỗ trợ 24/7",
-        "Tư vấn dinh dưỡng cá nhân",
-        "Theo dõi thai kỳ chi tiết",
-        "Lịch sử khám thai đầy đủ",
+        "Hỗ trợ theo dõi thay kỳ",
+        "Lên lịch trình thăm khám ",
+        "Ghi chú bác sĩ sau thăm khám",
         "Tài liệu chăm sóc trẻ sơ sinh",
+        "Cộng động kết nối Mẹ Bầu",
       ],
       price: "245,000VND",
       highlight: true,
