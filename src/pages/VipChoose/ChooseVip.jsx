@@ -21,7 +21,7 @@ const ChooseVip = () => {
       const user = JSON.parse(userData)
       console.log("User role:", user.role) // Log để debug
 
-      // Set current plan dựa vào role (không phải roleId)
+      // Set current plan dựa vào role
       if (user.role === "member") {
         setCurrentPlan("free")
       } else if (user.role === "vip") {
@@ -45,7 +45,6 @@ const ChooseVip = () => {
       }
 
       const user = JSON.parse(userData)
-
       const paymentData = {
         name: user.userName,
         userId: user.userId,
@@ -68,28 +67,16 @@ const ChooseVip = () => {
 
   const vipOptions = [
     {
-<<<<<<< Updated upstream
-      title: "Vĩnh viễn",
-=======
       title: "Đặc quyền thành viên Vip",
->>>>>>> Stashed changes
       duration: "Vĩnh viễn",
       benefits: [
-        "Hỗ trợ Theo dõi thai kỳ ",
+        "Hỗ trợ Theo dõi thai kỳ",
         "Truy cập không giới hạn",
         "Hỗ trợ 24/7",
-<<<<<<< Updated upstream
-        "Hỗ trợ theo dõi thay kỳ",
-        "Lên lịch trình thăm khám ",  
-        "Ghi chú bác sĩ sau thăm khám",
-        "Tài liệu chăm sóc trẻ sơ sinh",
-        "Cộng động kết nối Mẹ Bầu",
-=======
         "Lịch trình nhắc nhở cá nhân hoá",
         "Lưu trữ lịch sử khám thai đầy đủ",
         "Tài liệu chăm sóc trẻ sơ sinh",
-        "Cộng đồng chia sẻ kết nối với các Mẹ Bầu"
->>>>>>> Stashed changes
+        "Cộng đồng chia sẻ kết nối với các Mẹ Bầu",
       ],
       price: "245,000VND",
       highlight: true,

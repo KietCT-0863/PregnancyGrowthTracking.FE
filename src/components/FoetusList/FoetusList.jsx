@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Baby, Trash2, Calendar, User, Clock } from "lucide-react";
+import { Baby, Trash2, Calendar, User, Clock, AlertTriangle, X } from "lucide-react";
 import foetusService from "../../api/services/foetusService";
 import growthStatsService from "../../api/services/growthStatsService";
 import "./FoetusList.scss";
@@ -24,6 +24,8 @@ const FoetusList = () => {
   const [error, setError] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newFoetus, setNewFoetus] = useState(INITIAL_FOETUS_STATE);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [foetusToDelete, setFoetusToDelete] = useState(null);
 
   const getLatestGrowthData = (growthData) => {
     if (!growthData?.length) return null;
@@ -144,15 +146,32 @@ const FoetusList = () => {
     }
   };
 
-  const handleDeleteFoetus = async (id) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa thai nhi này?")) return;
-    
+  const openDeleteModal = (foetus) => {
+    setFoetusToDelete(foetus);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setFoetusToDelete(null);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await foetusService.deleteFoetus(id);
+      await foetusService.deleteFoetus(foetusToDelete.foetusId);
       playDeleteSound();
       fetchData();
+      closeDeleteModal();
     } catch (err) {
       setError(err.message);
+      closeDeleteModal();
+    }
+  };
+
+  const handleDeleteFoetus = (id, name) => {
+    const foetusToRemove = foetusList.find(f => f.foetusId === id);
+    if (foetusToRemove) {
+      openDeleteModal(foetusToRemove);
     }
   };
 
@@ -258,10 +277,40 @@ const FoetusList = () => {
         </div>
         <button
           className="delete-btn"
-          onClick={() => handleDeleteFoetus(foetus.foetusId)}
+          onClick={() => handleDeleteFoetus(foetus.foetusId, foetus.name)}
         >
           <Trash2 size={20} />
         </button>
+      </div>
+    );
+  };
+
+  const DeleteConfirmationModal = () => {
+    if (!showDeleteModal || !foetusToDelete) return null;
+
+    return (
+      <div className="delete-modal-overlay">
+        <div className="delete-modal">
+          <div className="delete-modal-header">
+            <AlertTriangle className="warning-icon" />
+            <h3>Xác nhận xóa</h3>
+            <button className="close-modal-btn" onClick={closeDeleteModal}>
+              <X size={20} />
+            </button>
+          </div>
+          <div className="delete-modal-content">
+            <p>Mẹ bầu có muốn xóa thông tin bé <strong>{foetusToDelete.name}</strong> không?</p>
+            <p className="delete-warning">Lưu ý: Hành động này sẽ đi dữ liệu của bé {foetusToDelete.name}</p>
+          </div>
+          <div className="delete-modal-actions">
+            <button className="delete-cancel-btn" onClick={closeDeleteModal}>
+              Hủy bỏ
+            </button>
+            <button className="delete-confirm-btn" onClick={confirmDelete}>
+              Xác nhận xóa
+            </button>
+          </div>
+        </div>
       </div>
     );
   };
@@ -292,6 +341,8 @@ const FoetusList = () => {
           foetusList.map(renderFoetusItem)
         )}
       </div>
+
+      <DeleteConfirmationModal />
     </div>
   );
 };
