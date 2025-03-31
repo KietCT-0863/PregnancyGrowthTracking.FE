@@ -1260,24 +1260,47 @@ body.calendar-page {
       .floating-add-btn {
             position: fixed;
         bottom: 24px;
-        right: 24px;
+        left: 24px;
         width: 56px;
         height: 56px;
-        border-radius: 0;
-        background-color: #1a73e8;
-          color: white;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #FF6B81, #FF8FAB);
+        color: white;
         @include flex-center;
         border: none;
-          cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(255, 107, 129, 0.4);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         z-index: 200;
+        font-size: 16px;
+          
+          &::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
           
           &:hover {
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-          transform: translateY(-4px) scale(1.05);
-          background-color: darken(#1a73e8, 5%);
-        }
+            box-shadow: 0 8px 20px rgba(255, 107, 129, 0.6);
+            transform: translateY(-5px);
+            
+            &::before {
+              opacity: 1;
+            }
+          }
+          
+          &:active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 107, 129, 0.5);
+          }
+          
+          svg {
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+          }
       }
     }
   }
@@ -2014,34 +2037,46 @@ button:focus, input:focus, select:focus, textarea:focus {
 .floating-add-btn {
   position: fixed;
   bottom: 24px;
-  right: 24px;
+  left: 24px;
   width: 56px;
   height: 56px;
-  border-radius: 0;
-  background-color: #1a73e8;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #FF6B81, #FF8FAB);
   color: white;
   @include flex-center;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 107, 129, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   z-index: 200;
+  font-size: 16px;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
   
   &:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    transform: translateY(-4px) scale(1.05);
-    background-color: darken(#1a73e8, 5%);
+    box-shadow: 0 8px 20px rgba(255, 107, 129, 0.6);
+    transform: translateY(-5px);
+    
+    &::before {
+      opacity: 1;
+    }
   }
   
   &:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 107, 129, 0.5);
   }
   
-  &:before {
-    content: '+';
-    font-size: 24px;
-    font-weight: 300;
+  svg {
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
   }
 }
 

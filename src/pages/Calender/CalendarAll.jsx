@@ -342,11 +342,16 @@ const CalendarAll = () => {
   };
 
   // Function to show notification
-  const showNotification = (type, message) => {
-    setNotification({
-      type,
-      message,
-      isVisible: true
+  const showNotification = (type, message, autoClose = 3000, delay = 0) => {
+    toast[type](message, {
+      position: "bottom-right",
+      autoClose: autoClose,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      delay: delay,
     });
   };
 
@@ -384,6 +389,15 @@ const CalendarAll = () => {
         updateEventsAfterAdd(response);
         resetForm();
         showNotification('success', 'Sự kiện đã được thêm thành công');
+        
+        setTimeout(() => {
+          showNotification('success', 'Đã gửi nhắc nhở qua email và sẽ tự động nhắc nhở trước 1 tiếng', 5000);
+        }, 1000);
+
+        setTimeout(() => {  
+          showNotification('success', 'Vui lòng kiểm tra email để xác nhận', 7000);
+        }, 2500);
+
         playNotificationSound();
         fetchEvents();
       }
