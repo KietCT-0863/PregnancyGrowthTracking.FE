@@ -74,7 +74,7 @@ const ChooseVip = () => {
         "Truy cập không giới hạn",
         "Hỗ trợ 24/7",
         "Hỗ trợ theo dõi thay kỳ",
-        "Lên lịch trình thăm khám ",
+        "Lên lịch trình thăm khám ",  
         "Ghi chú bác sĩ sau thăm khám",
         "Tài liệu chăm sóc trẻ sơ sinh",
         "Cộng động kết nối Mẹ Bầu",
