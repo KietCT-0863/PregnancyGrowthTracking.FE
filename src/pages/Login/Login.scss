@@ -1,1099 +1,330 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap");
 
-// Variables - Soft pink color scheme
-$primary-color: #ff92a5;
-$primary-light: #ffccd5;
-$primary-dark: #e57282;
-$secondary-color: #ffe4e8;
-$dark-color: #4a4a4a;
-$light-color: #ffffff;
-$background-color: #ffeff2;
-$border-color: rgba(0, 0, 0, 0.1);
-$card-bg: rgba(255, 255, 255, 0.9);
-$text-color: #6d6d6d;
+// Variables
+$primary-color: #ffd1dc;
+$primary-light: #ffecf1;
+$primary-dark: #ffb6c1;
+$text-color: #5a5a5a;
+$error-color: #ff6b81;
+$white: #ffffff;
+$input-bg: #f0f8ff;
+$shadow-color: rgba(0, 0, 0, 0.05);
 
-// Animations
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+// Reset and base styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@keyframes slideInRight {
-  from { 
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from { 
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideInUp {
-  from { 
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-@keyframes gradientBg {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  15% { transform: scale(1.15); }
-  30% { transform: scale(1); }
-  45% { transform: scale(1.15); }
-  60% { transform: scale(1); }
+body {
+  font-family: "Nunito", sans-serif;
+  color: $text-color;
+  background-color: $primary-light;
 }
 
 // Main container
 .login-container {
   min-height: 100vh;
-  width: 100%;
-  background-color: $background-color;
-  background-image: url('/7.png');
-  background-position: bottom right;
-  background-repeat: no-repeat;
-  background-size: 300px;
-  background-blend-mode: overlay;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, $primary-light, $white);
   position: relative;
   overflow: hidden;
-  animation: gradientBg 15s ease infinite;
-  background-size: 200% 200%, 300px;
-  background-image: linear-gradient(45deg, $background-color, $primary-light, $secondary-color, $background-color), url('/7.png');
-  
-  &::before {
-    content: '';
+
+  // Background decorative elements
+  &::before,
+  &::after {
+    content: "";
     position: absolute;
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba($primary-color, 0.1), transparent 70%);
-    top: -100px;
-    left: -100px;
+    background: rgba($primary-color, 0.1);
     z-index: 0;
-    animation: float 8s ease-in-out infinite;
   }
-  
+
+  &::before {
+    top: -100px;
+    right: -100px;
+  }
+
   &::after {
-    content: '';
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba($primary-color, 0.1), transparent 70%);
-    bottom: -50px;
-    right: -50px;
-    z-index: 0;
-    animation: float 10s ease-in-out infinite reverse;
+    bottom: -100px;
+    left: -100px;
   }
 }
 
-// Login box - main container
+// Decorative elements
+.leaves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+
+  .leaf {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgba($primary-color, 0.2);
+    border-radius: 50%;
+
+    @for $i from 1 through 15 {
+      &:nth-child(#{$i}) {
+        top: random(100) * 1%;
+        left: random(100) * 1%;
+        opacity: (random(5) + 2) * 0.1;
+        transform: scale(random(10) * 0.1 + 0.5);
+      }
+    }
+  }
+}
+
+.wave-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  z-index: 0;
+
+  .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath fill='%23FFD1DC' fill-opacity='0.1' d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' opacity='.25'%3E%3C/path%3E%3Cpath fill='%23FFD1DC' fill-opacity='0.1' d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' opacity='.5'%3E%3C/path%3E%3Cpath fill='%23FFD1DC' fill-opacity='0.1' d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' opacity='.75'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat;
+    background-size: cover;
+  }
+}
+
+.waterfall {
+  display: none; // Hidden for cleaner design
+}
+
+// Login box
 .login-box {
   width: 100%;
-  max-width: 1200px;
-  min-height: 650px;
-  background: $light-color;
-  border-radius: 30px;
+  max-width: 400px;
+  background-color: $white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px $shadow-color;
   overflow: hidden;
-  display: flex;
-  box-shadow: 0 20px 60px rgba($primary-color, 0.15);
   position: relative;
   z-index: 1;
-  animation: slideInUp 0.8s ease-out;
-  transform-origin: center bottom;
-  
-  &:hover {
-    box-shadow: 0 25px 70px rgba($primary-color, 0.2);
-    transition: box-shadow 0.5s ease;
-  }
-}
 
-// Left side - Form container
-.login-form-container {
-  width: 50%;
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  
-  // Brand section
-  .brand {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeIn 0.8s ease-out;
-    
-    .brand-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: $primary-dark;
-      margin: 0;
-      letter-spacing: -0.5px;
-      position: relative;
-      text-align: center;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 50px;
-        height: 3px;
-        background-color: $primary-color;
-        transition: width 0.3s ease;
-      }
-      
-      &:hover::after {
-        width: 100%;
-      }
-    }
-    
-    .tagline {
-      font-size: 1rem;
+  .login-header {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
       color: $text-color;
-      margin-top: 1rem;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out 0.3s forwards;
-      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo {
+      width: 60px;
+      height: auto;
+      margin: 0 auto;
     }
   }
 
-  // Logo image
-  .brand-logo {
-    max-width: 120px;
-    height: auto;
-    margin: 0 auto 1.5rem;
-    display: block;
-    opacity: 0;
-    animation: slideInUp 0.8s ease-out 0.2s forwards, float 6s ease-in-out 2s infinite;
-    transform-origin: center center;
-    transition: transform 0.3s ease;
-    
-    &:hover {
-      transform: scale(1.05);
-    }
-  }
-  
-  // Action buttons
-  .action-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    width: 100%;
-    max-width: 350px;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 0.4s forwards;
-    
-    .btn {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border-radius: 12px;
-      font-weight: 500;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      
-      &-outline {
-        background: transparent;
-        border: 1px solid $border-color;
-        color: $text-color;
-        position: relative;
-        overflow: hidden;
-        
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: rgba($primary-color, 0.1);
-          transition: all 0.4s ease;
-          z-index: -1;
-        }
-        
-        &:hover {
-          background: transparent;
-          border-color: $primary-color;
-          color: $primary-dark;
-          
-          &::before {
-            left: 0;
-          }
-        }
-      }
-      
-      &-primary {
-        background: $primary-color;
-        border: none;
-        color: $light-color;
-        box-shadow: 0 4px 10px rgba($primary-color, 0.2);
-        position: relative;
-        overflow: hidden;
-        
-        &::after {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 0;
-          height: 0;
-          background: rgba($light-color, 0.2);
-          border-radius: 50%;
-          transform: translate(-50%, -50%);
-          transition: width 0.6s ease, height 0.6s ease;
-        }
-        
-        &:hover {
-          background: $primary-dark;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba($primary-color, 0.3);
-          
-          &::after {
-            width: 300px;
-            height: 300px;
-          }
-        }
-      }
-    }
-  }
-  
-  // Login title
-  .login-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: $dark-color;
-    margin-bottom: 0.5rem;
-    text-align: center;
-    position: relative;
-    opacity: 0;
-    animation: slideInUp 0.8s ease-out 0.5s forwards;
-    
-    &::after {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 3px;
-      background-color: $primary-color;
-      margin: 0.5rem auto 0;
-      border-radius: 5px;
-      transition: width 0.3s ease;
-    }
-    
-    &:hover::after {
-      width: 100px;
-    }
-  }
-  
-  .login-subtitle {
-    font-size: 0.95rem;
-    color: $text-color;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 0.6s forwards;
-  }
-  
-  // Social login
-  .social-login {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    justify-content: center;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 0.7s forwards;
-    
-    .social-btn {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: $light-color;
-      border: 1px solid $border-color;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      
-      &:hover {
-        background: rgba($primary-color, 0.05);
-        border-color: $primary-color;
-        transform: translateY(-5px) scale(1.1);
-        box-shadow: 0 10px 20px rgba($primary-color, 0.15);
-      }
-      
-      svg, img {
-        width: 24px;
-        height: 24px;
-        transition: transform 0.3s ease;
-      }
-      
-      &:hover svg {
-        transform: scale(1.1);
-      }
-    }
-  }
-  
-  // Divider
-  .divider {
-    position: relative;
-    text-align: center;
-    color: $text-color;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    width: 100%;
-    max-width: 350px;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 0.8s forwards;
-    
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      width: calc(50% - 20px);
-      height: 1px;
-      background-color: $border-color;
-      transition: all 0.3s ease;
-    }
-    
-    &::before {
-      left: 0;
-    }
-    
-    &::after {
-      right: 0;
-    }
-    
-    &:hover::before,
-    &:hover::after {
-      background-color: $primary-color;
-    }
-  }
-  
-  // Error message
-  .error-message {
-    background-color: rgba(#ff4757, 0.1);
-    border-left: 3px solid #ff4757;
-    color: #ff4757;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-    width: 100%;
-    max-width: 350px;
-    animation: slideInUp 0.3s ease-out;
-  }
-  
-  // Form
   form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    width: 100%;
-    max-width: 350px;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 0.9s forwards;
-    
+    padding: 1.5rem 2rem 2rem;
+
     .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      width: 100%;
-      
+      margin-bottom: 1.5rem;
+
       label {
+        display: block;
         font-size: 0.9rem;
         font-weight: 500;
-        color: $dark-color;
-        transition: color 0.3s ease;
+        margin-bottom: 0.5rem;
+        color: $text-color;
       }
-      
-      &:focus-within label {
-        color: $primary-color;
-      }
-      
+
       input {
         width: 100%;
-        height: 50px;
-        padding: 0.9rem 1rem;
-        border-radius: 12px;
-        border: 1px solid $border-color;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-        background-color: rgba($light-color, 0.8);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        
-        &:hover {
-          border-color: rgba($primary-color, 0.5);
-          background-color: rgba($light-color, 0.95);
-        }
-        
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba($primary-color, 0.3);
+        border-radius: 8px;
+        background-color: $input-bg;
+        color: $text-color;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+
         &:focus {
           outline: none;
           border-color: $primary-color;
-          box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
-          transform: translateY(-2px);
-          background-color: $light-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
         }
-        
-        &::placeholder {
-          color: rgba($dark-color, 0.4);
-          transition: opacity 0.3s ease;
-        }
-        
-        &:focus::placeholder {
+
+        &:disabled {
           opacity: 0.7;
-        }
-      }
-      
-      .password-field {
-        position: relative;
-        width: 100%;
-        
-        input {
-          width: 100%;
-          padding-right: 3rem;
-        }
-        
-        .toggle-password {
-          position: absolute;
-          right: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          color: $text-color;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          
-          &:hover {
-            color: $primary-color;
-            transform: translateY(-50%) scale(1.1);
-          }
+          cursor: not-allowed;
         }
       }
     }
-    
-    .form-options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-top: 0.5rem;
-      
-      .checkbox-container {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        
-        input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          cursor: pointer;
-          accent-color: $primary-color;
-          transition: all 0.3s ease;
-          
-          &:checked {
-            animation: pulse 0.3s ease-in-out;
-          }
-        }
-        
-        label {
-          font-size: 0.9rem;
-          color: $text-color;
-          cursor: pointer;
-          transition: color 0.3s ease;
-          margin: 0;
-          
-          &:hover {
-            color: $primary-dark;
-          }
-        }
-      }
-      
+
+    .error-message {
+      background-color: rgba($error-color, 0.1);
+      color: $error-color;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .form-actions {
+      text-align: right;
+      margin-bottom: 1.5rem;
+
       .forgot-password {
         font-size: 0.9rem;
-        color: $primary-dark;
+        color: $text-color;
         text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        padding: 0.25rem 0;
-        
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          left: 0;
-          width: 0;
-          height: 1px;
-          background-color: $primary-dark;
-          transition: width 0.3s ease;
-        }
-        
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+
         &:hover {
-          color: darken($primary-dark, 10%);
-          
-          &::after {
-            width: 100%;
-          }
+          opacity: 1;
         }
       }
     }
-    
-    .login-button {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      border-radius: 12px;
-      background: $primary-color;
-      color: $light-color;
-      font-weight: 500;
-      font-size: 1rem;
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: $primary-color;
+      color: $text-color;
       border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 4px 10px rgba($primary-color, 0.2);
-      font-family: 'Poppins', sans-serif;
-      position: relative;
-      overflow: hidden;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgba($light-color, 0.2);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: width 0.6s ease, height 0.6s ease;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: darken($primary-color, 5%);
       }
-      
-      &:hover:not(:disabled) {
-        background: $primary-dark;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba($primary-color, 0.3);
-        
-        &::after {
-          width: 300px;
-          height: 300px;
-        }
+
+      &:active {
+        transform: translateY(1px);
       }
-      
-      &:active:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 3px 8px rgba($primary-color, 0.2);
-      }
-      
+
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
       }
-      
+
       .spinner {
         display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 2px solid rgba($light-color, 0.3);
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba($white, 0.3);
         border-radius: 50%;
-        border-top-color: $light-color;
-        animation: spin 0.8s linear infinite;
+        border-top-color: $white;
+        animation: spin 1s linear infinite;
         margin-right: 0.5rem;
       }
     }
 
-    // Home button
-    .home-button {
-      margin-top: 1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem;
-      background: transparent;
-      border: 1px solid $border-color;
-      border-radius: 12px;
-      color: $text-color;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      font-family: 'Poppins', sans-serif;
-      position: relative;
-      overflow: hidden;
-      
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: rgba($primary-color, 0.1);
-        transition: all 0.4s ease;
-        z-index: -1;
-      }
-      
-      &:hover {
-        border-color: $primary-color;
-        color: $primary-dark;
-        transform: translateY(-2px);
-        
-        &::before {
-          left: 0;
-        }
-        
-        svg {
-          transform: translateX(-3px);
-        }
-      }
-      
-      svg {
-        width: 18px;
-        height: 18px;
-        transition: transform 0.3s ease;
-      }
-    }
-  }
-}
-
-// Right side - Image container
-.image-container {
-  width: 50%;
-  position: relative;
-  overflow: hidden;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba($primary-color, 0.4), rgba($primary-color, 0.2));
-    z-index: 1;
-  }
-  
-  // Info card
-  .info-card {
-    position: absolute;
-    top: 2rem;
-    right: 2rem;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    padding: 1.5rem;
-    border-radius: 16px;
-    max-width: 280px;
-    z-index: 2;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transform: translateX(50px);
-    opacity: 0;
-    animation: slideInLeft 0.8s ease-out 0.5s forwards;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-5px) !important;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    }
-    
-    .info-title {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: $primary-dark;
-      margin-top: 0;
-      margin-bottom: 0.5rem;
-      position: relative;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background-color: $primary-color;
-        transition: width 0.3s ease;
-      }
-      
-      &:hover::after {
-        width: 100%;
-      }
-    }
-    
-    .info-desc {
-      font-size: 0.9rem;
-      color: $text-color;
-      line-height: 1.6;
-      margin-bottom: 0.75rem;
-    }
-    
-    .location {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: $text-color;
-      
-      .pin-icon {
-        color: $primary-color;
-        animation: heartbeat 2s infinite;
-      }
-    }
-    
-    .arrow-icon {
-      position: absolute;
-      right: 1rem;
-      bottom: 1rem;
-      color: $primary-color;
-      transition: transform 0.3s ease;
-      
-      &:hover {
-        transform: translateX(5px);
-      }
-    }
-  }
-  
-  // Tagline
-  .tagline {
-    position: absolute;
-    bottom: 6rem;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    z-index: 2;
-    opacity: 0;
-    animation: fadeIn 1s ease-out 0.8s forwards;
-    
-    .tagline-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      font-weight: 700;
-      color: $light-color;
-      margin: 0;
-      line-height: 1.3;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      animation: slideInUp 0.8s ease-out 1s forwards;
-      transform: translateY(20px);
-    }
-    
-    .experience-button {
+    .register-prompt {
+      text-align: center;
       margin-top: 1.5rem;
-      padding: 1rem 2rem;
-      background: rgba($light-color, 0.25);
-      backdrop-filter: blur(5px);
-      color: $light-color;
-      border: 1px solid rgba($light-color, 0.3);
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      font-family: 'Poppins', sans-serif;
-      opacity: 0;
-      animation: fadeIn 0.8s ease-out 1.2s forwards;
-      position: relative;
-      overflow: hidden;
-      
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgba($light-color, 0.3);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: width 0.6s ease, height 0.6s ease;
+      font-size: 0.9rem;
+
+      p {
+        margin-bottom: 0.5rem;
       }
-      
-      &:hover {
-        background: rgba($light-color, 0.3);
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        
-        &::after {
-          width: 300px;
-          height: 300px;
+
+      .register-link {
+        color: darken($primary-color, 10%);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
         }
       }
     }
-  }
-  
-  // Navigation dots
-  .navigation-dots {
-    position: absolute;
-    bottom: 2rem;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 0.75rem;
-    z-index: 2;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out 1.4s forwards;
-    
-    .dot {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba($light-color, 0.2);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba($light-color, 0.3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+
+    .btn-back {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: transparent;
+      border: 1px solid $primary-color;
+      color: $text-color;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      
-      svg {
-        color: $light-color;
-        width: 18px;
-        height: 18px;
-        transition: transform 0.3s ease;
-      }
-      
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+
       &:hover {
-        background: rgba($light-color, 0.3);
-        transform: translateY(-5px) scale(1.1);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
-      
-      &:first-child:hover svg {
-        transform: translateX(-2px);
-      }
-      
-      &:last-child:hover svg {
-        transform: translateX(2px);
+        background-color: rgba($primary-color, 0.1);
       }
     }
   }
 }
 
-// Responsive styles
-@media (max-width: 1024px) {
-  .login-box {
-    max-width: 900px;
-  }
-  
-  .login-form-container {
-    padding: 2rem;
-  }
-  
-  .brand-logo {
-    max-width: 100px;
+// Animations
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@media (max-width: 768px) {
-  .login-container {
-    padding: 1rem;
-  }
-  
-  .login-box {
-    flex-direction: column-reverse;
-    max-height: none;
-  }
-  
-  .login-form-container,
-  .image-container {
-    width: 100%;
-  }
-  
-  .login-form-container {
-    padding: 2rem 1.5rem;
-    
-    .form-group, 
-    form, 
-    .error-message, 
-    .divider, 
-    .action-buttons {
-      max-width: 100%;
-    }
-  }
-  
-  .image-container {
-    height: 350px;
-    
-    .info-card {
-      top: 1rem;
-      right: 1rem;
-      max-width: 200px;
-      padding: 1rem;
-    }
-    
-    .tagline {
-      bottom: 4rem;
-      
-      .tagline-title {
-        font-size: 1.5rem;
-      }
-      
-      .experience-button {
-        padding: 0.8rem 1.5rem;
-        font-size: 0.9rem;
-      }
-    }
-  }
-}
-
+// Media queries
 @media (max-width: 480px) {
-  .login-container {
-    padding: 0.5rem;
-  }
-  
   .login-box {
-    border-radius: 20px;
-  }
-  
-  .login-form-container {
-    padding: 1.5rem 1rem;
-    
-    .brand {
-      margin-bottom: 1rem;
-      
-      .brand-name {
-        font-size: 1.8rem;
+    max-width: 90%;
+
+    .login-header {
+      padding: 1.5rem 1rem 0.5rem;
+
+      h1 {
+        font-size: 1.75rem;
       }
     }
-    
-    .login-title {
-      font-size: 1.5rem;
-    }
-    
-    .social-login {
-      gap: 1rem;
-    }
-    
-    .form-options {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-  }
-  
-  .image-container {
-    height: 280px;
-    
-    .info-card {
-      max-width: 180px;
-      font-size: 0.8rem;
-      
-      .info-title {
-        font-size: 1rem;
-      }
-      
-      .info-desc {
-        font-size: 0.8rem;
-      }
-    }
-    
-    .tagline {
-      .tagline-title {
-        font-size: 1.3rem;
-      }
-      
-      .experience-button {
-        padding: 0.7rem 1.3rem;
-        font-size: 0.8rem;
-      }
-    }
-    
-    .navigation-dots .dot {
-      width: 36px;
-      height: 36px;
+
+    form {
+      padding: 1rem 1.5rem 1.5rem;
     }
   }
 }
 
-// Add these styles for error handling to the existing file
-
-// For input fields with errors
-.form-group {
-  input.input-error {
-    border-color: #e91e63 !important;
-    background-color: rgba(233, 30, 99, 0.03) !important;
-    
-    &:focus {
-      box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15) !important;
-    }
-  }
-  
-  .error-message {
-    color: #e91e63;
-    font-size: 12px;
-    margin-top: 4px;
-    animation: fadeIn 0.3s ease;
-    display: flex;
-    align-items: center;
-    
-    &::before {
-      content: "!";
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 14px;
-      height: 14px;
-      background-color: #e91e63;
-      color: white;
-      border-radius: 50%;
-      font-size: 10px;
-      margin-right: 6px;
-      font-weight: bold;
-    }
-  }
+.success-message {
+  background-color: rgba(46, 213, 115, 0.1);
+  color: #2ed573;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 500;
+  border-left: 4px solid #2ed573;
+  animation: fadeIn 0.5s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
