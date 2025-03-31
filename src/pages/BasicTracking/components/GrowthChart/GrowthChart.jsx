@@ -772,7 +772,7 @@ const GrowthChart = ({ selectedChild, growthData, weeksToShow, onWeeksChange }) 
                 <div className="api-source-info">
                   <div className="info-badge">
                     {isStandardFromApi 
-                      ? <span className="api-badge">Khoảng chuẩn từ API chính thức</span>
+                      ? <span className="api-badge">Lịch sử</span>
                       : <span className="fallback-badge">Khoảng chuẩn từ dữ liệu cục bộ</span>
                     }
                   </div>

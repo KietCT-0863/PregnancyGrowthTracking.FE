@@ -540,18 +540,12 @@ function BasicTracking() {
         <div className="update-info">
           <div className="update-date">
             <span className="icon">
-              <FaCalendarAlt />
+  
             </span>
-            <span>Cập nhật lần cuối: {lastUpdateDate}</span>
           </div>
           
           <div className="action-buttons">
-            <button className="view-history" onClick={() => setShowHistory(true)}>
-              <span className="icon">
-                <FaHistory />
-              </span>
-              <span>Xem lịch sử</span>
-            </button>
+
 
             <button className="metrics-guide-button" onClick={() => setShowMetricsGuide(true)}>
               <span className="icon">
@@ -560,12 +554,7 @@ function BasicTracking() {
               <span>Gợi ý bài blog</span>
             </button>
 
-            <button className="update-button-main" onClick={handleUpdate}>
-              <span className="icon">
-                <FaSave />
-              </span>
-              <span>Cập nhật</span>
-            </button>
+
           </div>
         </div>
 

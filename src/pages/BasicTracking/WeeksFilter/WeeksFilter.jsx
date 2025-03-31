@@ -307,12 +307,7 @@ const WeeksFilter = ({ weeksToShow, onWeeksChange, weeksWithData = [] }) => {
                   placeholder="Nhập tuần từ 12-40..."
                   className="specific-week-input"
                 />
-                <button 
-                  className="apply-button"
-                  onClick={applySpecificWeek}
-                >
-                  Áp dụng
-                </button>
+   
               </div>
               
               <div className="specific-week-note">
