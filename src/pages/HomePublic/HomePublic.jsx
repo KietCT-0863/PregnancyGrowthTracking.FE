@@ -21,7 +21,7 @@ const HomePublic = () => {
       <ChatAI />
       <HeaderContent />
       <BlogSilde />
-      <FooterContent />
+
     </div>
   );
 };
