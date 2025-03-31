@@ -54,7 +54,10 @@ const AppRoutes = () => {
       {/* Các trang đăng nhập và đăng ký - không có NavBar và Footer */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/register/test-validation" element={<ValidationErrorsTest />} />
+      <Route
+        path="/register/test-validation"
+        element={<ValidationErrorsTest />}
+      />
       {/* <Route path="/forgot-password" element={<ForgotPassword />} /> */}
       {/* <Route path="/reset-password" element={<ResetPassword />} /> */}
 
@@ -73,7 +76,8 @@ const AppRoutes = () => {
       >
         <Route index element={<HomePublic />} />
         <Route path="about" element={<AboutUs />} />
-        <Route path="/community" element={<Community/>}/>
+        <Route path="/community" element={<Community />} />
+        <Route path="payment-result" element={<PaymentResult />} />
         <Route path="/blog" element={<BlogPublic />}>
           <Route index element={<BlogAllPublic />} />
           <Route path=":id" element={<BlogDetailPublic />} />
@@ -104,7 +108,6 @@ const AppRoutes = () => {
         <Route index element={<BasicUserLayout />} />
         <Route path="community" element={<Community />} />
         <Route path="choose-vip" element={<ChooseVip />} />
-        <Route path="payment-result" element={<PaymentResult />} />
         <Route path="profile" element={<ViewProfile />} />
         <Route path="profile/edit" element={<EditProfile />} />
         <Route path="blog" element={<BlogGuest />}>
@@ -124,7 +127,6 @@ const AppRoutes = () => {
               <Outlet />
               <div style={{ margin: "300px 0" }} />
               <ChatAI />
-              
             </>
           </ProtectedMemberRoute>
         }
