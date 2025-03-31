@@ -108,7 +108,7 @@ const Login = () => {
           ];
 
         // Call the AuthContext login function
-        login(response.token, response.userData, rememberMe);
+        login(response.token, response.userData);
 
         // Lưu token vào localStorage để duy trì phiên đăng nhập khi refresh trang
         localStorage.setItem("token", response.token);

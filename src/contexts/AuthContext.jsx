@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = async (token, userData, rememberMe) => {
+  const login = async (token, userData) => {
     try {
       setLoading(true);
 
