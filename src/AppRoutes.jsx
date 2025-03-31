@@ -134,7 +134,7 @@ const AppRoutes = () => {
         <Route path="calendar" element={<CalendarAll />} />
         <Route path="calendar/history" element={<CalendarHistory />} />
         <Route path="calendar/change/:remindId" element={<CalendarChange />} />
-        <Route path="calendar/detail/:remindId" element={<CalendarDetail />} />
+        <Route path="calendar-detail/:remindId" element={<CalendarDetail />} />
         <Route path="doctor-notes" element={<DoctorNotes />} />
         <Route path="doctor-notes/edit/:noteId" element={<NoteChange />} />
         <Route path="community" element={<Community />} />

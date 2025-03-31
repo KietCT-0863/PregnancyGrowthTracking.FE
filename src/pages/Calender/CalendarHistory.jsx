@@ -378,7 +378,8 @@ const CalendarHistory = () => {
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => navigate(`/member/calendar/detail/${event.id}`)}
+                    onClick={() => navigate(`/member/calendar-detail/${event.id}`)}
+                   
                   >
                     <div className="event-header" style={{ backgroundColor: event.color }}>
                       <div className="event-title-container">
