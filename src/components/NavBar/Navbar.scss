@@ -366,7 +366,7 @@ $font-accent: "Amatic SC", cursive;
       
       .register-button {
         background-color: $primary;
-        color: #fff;
+        color: #1f1d1d;
         border: 1.5px solid $primary;
         
         &:hover {
@@ -1741,8 +1741,8 @@ $font-accent: "Amatic SC", cursive;
   top: 70px;
   left: 0;
   width: 100%;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   padding: 1rem;
   z-index: 1000;
   transform: translateY(-100%);
@@ -1752,11 +1752,22 @@ $font-accent: "Amatic SC", cursive;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
   
   &.open {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+  }
+  
+  // Thêm overlay khi menu mở
+  &.open + .menu-overlay {
+    opacity: 1;
+    visibility: visible;
   }
   
   .nav-item {
@@ -1846,4 +1857,18 @@ $font-accent: "Amatic SC", cursive;
       background-color: rgba(255, 90, 95, 0.2);
     }
   }
+}
+
+// Thêm overlay để ngăn tương tác với nội dung bên dưới
+.menu-overlay {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
 }

@@ -485,7 +485,14 @@ const NavBarMember = () => {
         {/* Nút đăng xuất */}
         {isLoggedIn && (
           <>
-
+            <button
+              className="header-action-button logout-button"
+              onClick={handleLogout}
+              aria-label="Đăng xuất"
+            >
+              <FaSignOutAlt />
+              <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
+            </button>
             <div className="action-separator"></div>
           </>
         )}
@@ -568,14 +575,18 @@ const NavBarMember = () => {
             
             {/* Thêm nút quay lại Admin chỉ khi user có quyền admin */}
 
-
+            
+            <button className="dropdown-item logout" onClick={handleLogout}>
+              <FaSignOutAlt />
+              Đăng xuất
+            </button>
           </div>
         </div>
       )}
           
       {/* Horizontal Navigation Menu */}
       {showHorizontalMenu && (
-        <div className={`horizontal-nav visible ${isMobile ? 'mobile visible' : ''}`} ref={horizontalNavRef}>
+        <div className={`horizontal-nav visible ${isMobile ? 'mobile' : ''}`} ref={horizontalNavRef}>
           <div className="horizontal-nav-items">
             {isMobile && (
               <div className="mobile-menu-header">

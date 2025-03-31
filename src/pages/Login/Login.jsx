@@ -273,25 +273,7 @@ const Login = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.5 }}
           >
-            <motion.button 
-              className="social-btn"
-              whileHover={{ y: -5, scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12.0001 2C6.47715 2 2.00005 6.47711 2.00005 12C2.00005 17.5229 6.47715 22 12.0001 22C17.523 22 22.0001 17.5229 22.0001 12C22.0001 6.47711 17.523 2 12.0001 2Z"
-                  fill="#007AFF"
-                />
-                <path
-                  d="M15.7909 12.5307C15.7909 10.2132 14.0584 9.32031 12.0584 9.32031C9.89092 9.32031 8.32092 10.5403 8.32092 12.6957C8.32092 14.6957 9.67592 16.0707 11.8459 16.0707C13.0584 16.0707 14.0584 15.6957 14.7284 15.0257"
-                  stroke="white"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </motion.button>
+
             <motion.button 
               className="social-btn"
               whileHover={{ y: -5, scale: 1.1 }}
@@ -316,18 +298,7 @@ const Login = () => {
                 />
               </svg>
             </motion.button>
-            <motion.button 
-              className="social-btn"
-              whileHover={{ y: -5, scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-                  fill="#000000"
-                />
-              </svg>
-            </motion.button>
+
           </motion.div>
 
           <motion.div 
@@ -351,6 +322,7 @@ const Login = () => {
           >
           <div className="form-group">
               <label htmlFor="usernameOrEmail">Tên đăng nhập</label>
+              
               <motion.input
                 id="usernameOrEmail"
                 type="text"

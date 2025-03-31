@@ -297,18 +297,10 @@ const Register = () => {
 
           <div className="register-content">
             <h2>Bắt đầu hành trình làm mẹ</h2>
-            <p className="subtitle">Đăng ký tài khoản</p>
+            <p className="subtitle">Đăng ký tài khoản với Google</p>
 
             <div className="social-login">
-              <button
-                className="social-btn facebook"
-                onClick={() => handleSocialRegister("facebook")}
-                aria-label="Đăng ký với Facebook"
-              >
-                <svg width="20" height="20" viewBox="0 0 320 512" fill="#4267B2">
-                  <path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/>
-                </svg>
-              </button>
+  
               <button
                 className="social-btn google"
                 onClick={() => handleSocialRegister("google")}
@@ -333,13 +325,7 @@ const Register = () => {
                   />
                 </svg>
               </button>
-              <button
-                className="social-btn twitter"
-                onClick={() => handleSocialRegister("twitter")}
-                aria-label="Đăng ký với Twitter"
-              >
-                <Twitter size={20} />
-              </button>
+
             </div>
 
             <div className="divider">
