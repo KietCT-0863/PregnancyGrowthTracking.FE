@@ -83,1332 +83,755 @@ $font-accent: "Amatic SC", cursive;
 
 /* Main Navbar Component */
 .navbar {
-  background-color: rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.4) !important;
-  backdrop-filter: blur(5px) !important;
-  -webkit-backdrop-filter: blur(5px) !important;
-  height: 80px;
-  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   z-index: 1000;
-  box-shadow: none !important;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95) !important;
+  margin: 0;
+  padding: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
   
   &.scrolled {
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05) !important;
-    background-color: rgba(255, 255, 255, 0.6) !important; 
-    background: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08) !important;
+    background-color: rgba(255, 255, 255, 0.98) !important; 
   }
-}
 
-.navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between !important;
-  height: 100%;
-  padding: 0 30px !important;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: transparent !important;
-  background: transparent !important;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start !important;
-  margin-right: auto !important;
-  width: auto !important;
-  background-color: transparent !important;
-  background: transparent !important;
-  padding-right: 70px !important; /* Tăng khoảng cách */
-  
-  .navbar-logo {
+  // Logo Container
+  .logo-container {
     display: flex;
     align-items: center;
-    text-decoration: none;
-    background-color: transparent !important;
-    background: transparent !important;
+    gap: 1.5rem;
+    margin: 0;
     
-    .navbar-logo-image {
-      height: 55px;
-      margin-right: 18px;
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      gap: 0.8rem;
+      
+      .navbar-logo-image {
+        height: 40px;
+        width: auto;
+      }
+      
+      .navbar-logo-text {
+        font-family: "Amatic SC", cursive;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ff6b81;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        line-height: 1;
+      }
+    }
+  }
+
+  // Header Actions
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .action-separator {
+      width: 1px;
+      height: 24px;
+      background-color: rgba(255, 107, 129, 0.3);
+      margin: 0 0.3rem;
     }
     
-    .navbar-logo-text {
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: #FF6B81;
-      text-shadow: 0px 2px 3px rgba(0,0,0,0.1); /* Thêm đổ bóng nhẹ để tên logo nổi bật hơn */
+    .header-action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.4);
+      border: none;
+      cursor: pointer;
+      color: #2f3542;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.6);
+        transform: scale(1.05);
+      }
+      
+      &.logout-button {
+        color: #ff5a5f;
+        
+        &:hover {
+          background-color: rgba(255, 90, 95, 0.15);
+        }
+      }
+      
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: #ff5a5f;
+        color: white;
+        font-size: 0.7rem;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      
+      .feature-tooltip {
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+      
+      &:hover .feature-tooltip {
+        opacity: 1;
+      }
+    }
+    
+    .navbar-toggle-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.4);
+      border: none;
+      cursor: pointer;
+      color: #2f3542;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.6);
+        transform: scale(1.05);
+      }
+      
+      .feature-tooltip {
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+      
+      &:hover .feature-tooltip {
+        opacity: 1;
+      }
+    }
+    
+    // User profile container
+    .user-profile-container {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      
+      .user-avatar-container {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 107, 129, 0.2);
+        
+        &:hover {
+          transform: scale(1.1);
+          border-color: rgba(255, 107, 129, 0.5);
+        }
+        
+        .user-avatar {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .user-icon {
+          width: 100%;
+          height: 100%;
+          color: #2f3542;
+        }
+        
+        .feature-tooltip {
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgba(0, 0, 0, 0.7);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          
+          @media (max-width: 768px) {
+            display: none;
+          }
+        }
+        
+        &:hover .feature-tooltip {
+          opacity: 1;
+        }
+      }
+      
+      .user-icon-placeholder {
+        width: 40px;
+        height: 40px;
+        color: #2f3542;
+      }
+    }
+    
+    // Auth Buttons
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .login-button, .register-button {
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .login-button {
+        color: #2f3542;
+        background-color: transparent;
+        border: 1.5px solid rgba(255, 107, 129, 0.5);
+        
+        &:hover {
+          background-color: rgba(255, 107, 129, 0.1);
+          border-color: rgba(255, 107, 129, 0.8);
+          transform: translateY(-2px);
+        }
+        
+        .feature-tooltip {
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgba(0, 0, 0, 0.7);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          
+          @media (max-width: 768px) {
+            display: none;
+          }
+        }
+        
+        &:hover .feature-tooltip {
+          opacity: 1;
+        }
+      }
+      
+      .register-button {
+        background-color: #ff6b81;
+        color: white;
+        border: 1.5px solid #ff6b81;
+        
+        &:hover {
+          background-color: darken(#ff6b81, 8%);
+          border-color: darken(#ff6b81, 8%);
+          transform: translateY(-2px);
+        }
+        
+        .feature-tooltip {
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background-color: rgba(0, 0, 0, 0.7);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          pointer-events: none;
+          
+          @media (max-width: 768px) {
+            display: none;
+          }
+        }
+        
+        &:hover .feature-tooltip {
+          opacity: 1;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .login-button, .register-button {
+          padding: 6px 12px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+    height: 70px;
+    
+    .logo-container {
+      .navbar-logo {
+        .navbar-logo-text {
+          font-size: 1.6rem;
+        }
+        
+        .navbar-logo-image {
+          height: 32px;
+        }
+      }
+    }
+    
+    .header-actions {
+      gap: 0.3rem;
+      
+      .action-separator {
+        margin: 0 0.2rem;
+      }
+      
+      .header-action-button,
+      .navbar-toggle-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
+      
+      .user-profile-container {
+        .user-avatar-container {
+          width: 36px;
+          height: 36px;
+        }
+        
+        .user-icon-placeholder {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 0.75rem;
+    height: 60px;
+    
+    .logo-container {
+      .navbar-logo {
+        .navbar-logo-text {
+          font-size: 1.4rem;
+        }
+        
+        .navbar-logo-image {
+          height: 28px;
+        }
+      }
+    }
+    
+    .header-actions {
+      gap: 0.2rem;
+      
+      .action-separator {
+        height: 20px;
+      }
+      
+      .header-action-button,
+      .navbar-toggle-button {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+      
+      .user-profile-container {
+        .user-avatar-container {
+          width: 32px;
+          height: 32px;
+        }
+        
+        .user-icon-placeholder {
+          width: 32px;
+          height: 32px;
+        }
+      }
+      
+      .auth-buttons {
+        .login-button, .register-button {
+          padding: 4px 8px;
+          font-size: 11px;
+        }
+      }
     }
   }
 }
 
-/* === HORIZONTAL NAVIGATION === */
-.horizontal-nav {
+/* Mobile Nav Links */
+.mobile-nav-links {
   position: fixed;
-  width: 100%;
-  top: 80px; /* Giữ đúng với chiều cao navbar */
+  top: 70px;
   left: 0;
-  right: 0;
-  background-color: rgba(255, 255, 255, 0.92) !important; /* Tăng độ đục của background */
-  backdrop-filter: blur(15px) !important; /* Tăng độ blur để nổi bật hơn */
-  -webkit-backdrop-filter: blur(15px) !important; /* Hỗ trợ Safari */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important; /* Tăng đổ bóng to hơn */
-  border: 1px solid rgba(255, 255, 255, 1) !important;
-  border-radius: 0 0 16px 16px !important; /* Bo tròn góc dưới */
-  padding: 15px 20px !important; /* Tăng padding */
-  z-index: 990 !important; /* z-index hợp lý */
-  display: none; /* Ẩn mặc định */
-  margin: 0 auto !important; /* Đảm bảo căn giữa */
-  max-width: 1400px !important; /* Giới hạn chiều rộng tối đa */
-  overflow: visible !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  z-index: 1000;
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
   
-  // Hiệu ứng viền gradient
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 0 0 16px 16px; 
-    padding: 1px; 
-    background: linear-gradient(45deg, 
-      rgba(255, 107, 129, 0.2), 
-      rgba(255, 255, 255, 0.6), 
-      rgba(112, 161, 255, 0.2),
-      rgba(255, 107, 129, 0.2)
-    );
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+  &.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
   
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: #2f3542;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    gap: 0.8rem;
+    font-weight: 500;
+    position: relative;
+    
+    &:hover {
+      background-color: rgba(255, 107, 129, 0.1);
+      color: #ff6b81;
+    }
+    
+    &.active {
+      background-color: rgba(255, 107, 129, 0.15);
+      color: darken(#ff6b81, 10%);
+      font-weight: 600;
+    }
+    
+    .nav-tooltip {
+      display: none;
+    }
+  }
+  
+  .auth-mobile-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    
+    .auth-mobile-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      
+      &.login-button {
+        background-color: rgba(255, 107, 129, 0.1);
+        color: #2f3542;
+        
+        &:hover {
+          background-color: rgba(255, 107, 129, 0.2);
+        }
+      }
+      
+      &.register-button {
+        background-color: #ff6b81;
+        color: white;
+        
+        &:hover {
+          background-color: darken(#ff6b81, 8%);
+        }
+      }
+    }
+  }
+  
+  .logout-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(255, 90, 95, 0.1);
+    color: #ff5a5f;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    
+    &:hover {
+      background-color: rgba(255, 90, 95, 0.2);
+    }
+  }
+}
+
+/* Horizontal Nav */
+.horizontal-nav {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #eaeaea;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+  z-index: 999;
+  display: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  
   &.visible {
-    display: block !important; /* Hiển thị khi có class visible */
+    display: block;
     animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
   }
   
   @keyframes fadeInDown {
     from {
       opacity: 0;
-      transform: translate(-50%, -15px);
+      transform: translateY(-10px);
     }
     to {
       opacity: 1;
-      transform: translate(-50%, 0);
+      transform: translateY(0);
+    }
+  }
+  
+  &.mobile {
+    top: 0;
+    right: 0;
+    left: auto;
+    width: 280px;
+    height: 100vh;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+    transform: translateX(100%);
+    display: block;
+    opacity: 0;
+    background-color: #ffffff !important;
+    
+    &.visible {
+      transform: translateX(0);
+      opacity: 1;
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
   }
   
   .horizontal-nav-items {
     display: flex;
-    gap: 18px !important; /* Tăng gap để tạo khoảng cách giữa các items */
-    justify-content: center;
     flex-wrap: wrap;
-    max-width: 1100px; /* Chiều rộng tối đa */
-    margin: 0 auto !important;
-    padding: 0 20px !important; /* Tăng padding để cách lề*/
-    position: relative;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    height: 50px;
+    
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+      
+      h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+      
+      .close-button {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        color: #2f3542;
+        cursor: pointer;
+        
+        &:hover {
+          color: #ff5a5f;
+        }
+      }
+    }
     
     .nav-item {
+      padding: 0.8rem 1.2rem;
+      color: #2f3542;
+      text-decoration: none;
+      position: relative;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      padding: 10px 16px; /* Tăng padding để các item rộng hơn */
-      border-radius: 12px !important; /* Tăng bo góc */
-      color: $text-dark;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.95rem; /* Tăng font-size */
-      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
-      background-color: rgba(255, 255, 255, 0.9); /* Tăng độ đục */
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04); /* Tăng shadow */
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.95);
-      margin: 2px 0; /* Thêm margin trên dưới */
-      
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to right, rgba($primary, 0), rgba($primary, 0.15));
-        transform: translateX(-100%);
-        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        z-index: -1;
-        border-radius: 12px;
-      }
-      
-      .nav-icon {
-        margin-right: 10px; /* Tăng khoảng cách giữa icon và text */
-        font-size: 1.15rem; /* Tăng kích thước icon */
-        transition: all 0.3s ease;
-        color: inherit;
-      }
-      
-      .nav-text {
-        position: relative;
-        transition: transform 0.3s ease;
-        font-weight: 600; /* Tăng font-weight để text nổi bật hơn */
-        
-        &::after {
-          content: '';
-          position: absolute;
-          left: 0;
-          right: 0;
-          bottom: -2px;
-          height: 2px;
-          background-color: $primary;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.3s ease;
-          opacity: 0.7;
-        }
-      }
+      gap: 0.5rem;
       
       &:hover {
-        background-color: rgba(255, 255, 255, 0.97);
-        color: $primary;
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 5px 15px rgba($primary, 0.2);
+        color: #ff6b81;
         
-        &::before {
-          transform: translateX(0);
-        }
-        
-        .nav-icon {
-          transform: translateY(-1px) scale(1.1);
-        }
-        
-        .nav-text::after {
-          transform: scaleX(1);
+        .nav-tooltip {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
         }
       }
       
       &.active {
-        color: white !important;
-        background-color: $primary !important;
-        box-shadow: 0 4px 12px rgba($primary, 0.3);
-        font-weight: 600;
+        color: #ff6b81;
+        font-weight: 500;
         
-        &::before {
-          background: linear-gradient(45deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-          transform: translateX(0);
-        }
-        
-        .nav-icon {
-          filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-        }
-        
-        .nav-text::after {
-          background-color: white;
-          opacity: 0.5;
-          transform: scaleX(1);
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 20%;
+          width: 60%;
+          height: 3px;
+          background-color: #ff6b81;
+          border-radius: 3px 3px 0 0;
         }
       }
-    }
-  }
-  
-  // Thêm một đường viền trang trí
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 10%;
-    right: 10%;
-    height: 4px;
-    border-radius: 0 0 10px 10px;
-    background: linear-gradient(90deg, 
-      rgba(255, 107, 129, 0.0) 0%,
-      rgba(255, 107, 129, 0.3) 25%, 
-      rgba(255, 107, 129, 0.5) 50%,
-      rgba(255, 107, 129, 0.3) 75%,
-      rgba(255, 107, 129, 0.0) 100%
-    );
-  }
-}
-
-/* Tooltips for navigation items */
-.nav-item {
-  position: relative;
-  
-  .nav-tooltip {
-    position: absolute;
-    bottom: auto !important;
-    top: calc(100% + 10px) !important;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.85);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    z-index: 1200;
-    pointer-events: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    max-width: 250px;
-    text-align: center;
-    
-    &:before {
-      content: '';
-      position: absolute;
-      top: -8px !important;
-      bottom: auto !important;
-      left: 50%;
-      transform: translateX(-50%);
-      border-width: 4px;
-      border-style: solid;
-      border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent !important;
-    }
-  }
-  
-  &:hover .nav-tooltip {
-    opacity: 1;
-    visibility: visible;
-    top: calc(100% + 8px) !important;
-    bottom: auto !important;
-  }
-}
-
-/* Ghi đè mọi quy tắc CSS khác có thể ảnh hưởng đến vị trí tooltip */
-@media (max-width: 768px) {
-  .nav-item {
-    .nav-tooltip {
-      top: calc(100% + 12px) !important;
-      font-size: 12px;
-      padding: 6px 10px;
-      max-width: 200px;
       
-      &:before {
-        top: -8px !important;
+      .nav-tooltip {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        background-color: rgba(0,0,0,0.8);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        z-index: 1001;
+        pointer-events: none;
       }
     }
-    
-    &:hover .nav-tooltip {
-      top: calc(100% + 8px) !important;
-    }
   }
-}
-
-/* Mobile styles for horizontal navigation */
-@media (max-width: 768px) {
-  .horizontal-nav {
-    top: 70px; // Phù hợp với chiều cao navbar trên mobile
-    padding: 15px !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.9);
-    width: 92% !important; // Giảm chiều rộng để có khoảng cách từ mép
-    max-width: 100% !important;
-    
+  
+  @media (max-width: 768px) {
     .horizontal-nav-items {
       flex-direction: column;
-      align-items: stretch;
-      gap: 16px !important; // Tăng khoảng cách giữa các mục menu trên mobile
-      width: 100%;
-      padding: 5px !important;
+      padding: 0.5rem;
       
       .nav-item {
         width: 100%;
-        justify-content: flex-start;
-        padding: 12px 18px; // Tăng kích thước nút chạm
-        margin-bottom: 0;
-        font-size: 0.95rem;
-        position: relative;
-        background-color: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.98);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+        padding: 0.8rem;
         
-        .nav-icon {
-          font-size: 1.25rem; // Tăng kích thước icon trên mobile
-          margin-right: 12px; // Tăng khoảng cách giữa icon và text
+        &.active:after {
+          display: none;
         }
         
-        .nav-text {
-          font-weight: 600; // Làm đậm text
-        }
-        
-        &:hover {
-          transform: translateY(-1px) scale(1.01); // Hiệu ứng nhỏ hơn trên mobile
+        .nav-tooltip {
+          display: none;
         }
       }
     }
   }
-  
-  /* Điều chỉnh tooltip trên mobile */
-  .nav-item {
-    .nav-tooltip {
-      top: calc(100% + 12px) !important;
-      font-size: 12px;
-      padding: 6px 10px;
-      max-width: 200px;
-      
-      &:before {
-        top: -8px !important;
-      }
-    }
-    
-    &:hover .nav-tooltip {
-      top: calc(100% + 8px) !important;
-    }
-  }
 }
 
-// Media queries for responsive design
-@media (min-width: 768px) {
-  .horizontal-nav .horizontal-nav-items {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-  }
-  
-  .content-spacer.visible {
-    height: 70px;
-  }
-}
-
-// Thêm style cho container chính của trang
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-// Style cho tiêu đề trang
-.page-title {
-  text-align: center;
-  margin: 2rem 0;
-  width: 100%;
-  position: relative;
-
-  h1 {
-    font-family: $font-heading;
-    font-size: 2.5rem;
-    color: $text-dark;
-    margin: 0 0 1rem;
-    font-weight: 700;
-  }
-
-  .title-underline {
-    width: 100px;
-    height: 3px;
-    background: linear-gradient(to right, $primary, $secondary);
-    margin: 0 auto;
-    border-radius: 3px;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-    color: lighten($text-dark, 20%);
-    margin-top: 1rem;
-    font-style: italic;
-    max-width: 80%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-// Style cho nội dung chính
-.content-wrapper {
-  width: 100%;
-  max-width: 900px; // Giảm chiều rộng tối đa
-  margin: 0 auto;
-  background-color: $white;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba($shadow, 0.1);
-  padding: 2rem;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: linear-gradient(to right, $primary, $secondary);
-    border-radius: 15px 15px 0 0;
-  }
-
-  .content-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-// Điều chỉnh responsive
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .page-title {
-    h1 {
-      font-size: 2rem;
-    }
-
-    .subtitle {
-      max-width: 95%;
-    }
-  }
-
-  .content-wrapper {
-    padding: 1.5rem;
-    border-radius: 10px;
-  }
-}
-
-/* ===== MOBILE SIDEBAR MENU ===== */
-.sidebar-menu {
-  position: fixed;
-  top: 0;
-  left: -100%; /* Start completely offscreen */
-  width: 280px;
-  height: 100vh;
-  background-color: #fff;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  overflow-y: auto;
-  transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex;
-  flex-direction: column;
-  
-  &.open {
-    left: 0; /* Slide in when open */
-  }
-  
-  .sidebar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-    
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      
-      .sidebar-logo-image {
-        height: 36px;
-      }
-      
-      .sidebar-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-        margin: 0;
-      }
-    }
-    
-    .close-sidebar {
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      color: #555;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-      
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-  }
-  
-  .sidebar-user-profile {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #eee;
-    
-    .sidebar-user-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #fff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .sidebar-user-icon {
-      font-size: 48px;
-      color: #ccc;
-    }
-    
-    .sidebar-user-info {
-      margin-left: 12px;
-      
-      .sidebar-user-name {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0 0 4px;
-      }
-      
-      .sidebar-user-email {
-        font-size: 13px;
-        color: #888;
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 180px;
-      }
-    }
-  }
-  
-  .sidebar-items {
-    flex: 1;
-    padding: 8px;
-    
-    .sidebar-menu-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      cursor: pointer;
-      color: #555;
-      text-decoration: none;
-      transition: background-color 0.2s;
-      
-      &:hover, &:focus {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-      
-      &.active {
-        background-color: rgba(var(--primary-color-rgb), 0.1);
-        color: var(--primary-color);
-      }
-      
-      .sidebar-icon {
-        font-size: 20px;
-        min-width: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        
-        .sidebar-notification-badge {
-          position: absolute;
-          top: -6px;
-          right: -6px;
-          font-size: 10px;
-          background-color: var(--accent-color);
-          color: white;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      }
-      
-      .sidebar-text {
-        font-size: 15px;
-        font-weight: 500;
-        margin-left: 12px;
-      }
-      
-      .notification-count {
-        margin-left: auto;
-        background-color: #f0f0f0;
-        font-size: 12px;
-        padding: 2px 8px;
-        border-radius: 10px;
-        color: #666;
-      }
-    }
-  }
-  
-  .sidebar-footer {
-    padding: 16px;
-    border-top: 1px solid #eee;
-    
-    .sidebar-logout-button {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      background-color: #f8f8f8;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
-      color: #e74c3c;
-      transition: background-color 0.2s;
-      
-      &:hover {
-        background-color: #ffeaea;
-      }
-      
-      .sidebar-icon {
-        font-size: 18px;
-        margin-right: 12px;
-      }
-    }
-  }
-}
-
-.sidebar-overlay {
+/* Menu overlay */
+.menu-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s linear 0.3s, opacity 0.3s;
-  
-  &.open {
-    visibility: visible;
-    opacity: 1;
-    transition-delay: 0s;
-  }
+  background-color: rgba(0,0,0,0.5);
+  z-index: 998;
 }
 
-/* Only show the sidebar toggle on mobile */
-.sidebar-toggle {
-  display: none;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: var(--primary-color, $primary);
-  cursor: pointer;
-  padding: 8px;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-  
-  @media (max-width: 768px) {
-    display: flex;
-  }
-  
-  .toggle-icon {
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover .toggle-icon {
-    transform: rotate(90deg);
-  }
-}
-
-/* Hide desktop menu on mobile */
-@media (max-width: 768px) {
-  .menu-section {
-    display: none !important;
-  }
-  
-  .navbar-content {
-    display: none !important;
-  }
-  
-  .logo-section {
-    padding-right: 20px;
-    margin-right: 0 !important; /* Override auto margin on mobile */
-    width: auto !important;
-    justify-content: center !important;
-  }
-}
-
-/* Hide mobile menu on desktop */
-@media (min-width: 769px) {
-  .sidebar-menu,
-  .sidebar-overlay {
-    display: none;
-  }
-}
-
-/* Add body class when sidebar is open to prevent scrolling */
-body.sidebar-open {
-  overflow: hidden;
-}
-
-/* Sidebar Notification Dropdown */
-.sidebar-notification-dropdown {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 350px;
-  max-height: 80vh;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
-  z-index: 1200;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: fadeInScale 0.3s ease-out forwards;
-  
-  @keyframes fadeInScale {
-    from {
-      transform: translate(-50%, -50%) scale(0.9);
-      opacity: 0;
-    }
-    to {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-  }
-  
-  .sidebar-notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #eee;
-    
-    h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-    }
-    
-    .close-button {
-      background: transparent;
-      border: none;
-      font-size: 24px;
-      line-height: 1;
-      color: #aaa;
-      cursor: pointer;
-      transition: transform 0.2s, color 0.2s;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      
-      &:hover {
-        color: #555;
-        transform: rotate(90deg);
-      }
-    }
-  }
-  
-  .sidebar-notification-list {
-    padding: 8px;
-    overflow-y: auto;
-    max-height: calc(80vh - 130px); // Account for header and footer
-    
-    .no-notifications {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 16px;
-      color: #aaa;
-      
-      i {
-        font-size: 36px;
-        margin-bottom: 12px;
-      }
-      
-      p {
-        font-size: 16px;
-        text-align: center;
-        margin: 0;
-      }
-    }
-    
-    .sidebar-notification-item {
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 8px;
-      background-color: #f9f9f9;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      position: relative;
-      border-left: 4px solid #ddd;
-      
-      &:hover {
-        background-color: #f0f0f0;
-      }
-      
-      &.unread {
-        border-left-color: var(--primary-color);
-        background-color: rgba(var(--primary-color-rgb), 0.05);
-        
-        &::before {
-          content: '';
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: var(--primary-color);
-        }
-      }
-      
-      .notification-type {
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--primary-color);
-        margin-bottom: 4px;
-        text-transform: uppercase;
-      }
-      
-      .notification-content {
-        h4 {
-          font-size: 14px;
-          margin: 0 0 4px;
-          line-height: 1.3;
-        }
-        
-        .notification-medicine {
-          font-size: 12px;
-          color: #666;
-          margin: 0 0 4px;
-        }
-        
-        .notification-time {
-          font-size: 12px;
-          color: #888;
-          margin: 0;
-        }
-        
-        .notification-id {
-          margin: 4px 0 0;
-          font-size: 10px;
-          color: #aaa;
-        }
-      }
-    }
-  }
-  
-  .sidebar-notification-footer {
-    padding: 12px 16px;
-    border-top: 1px solid #eee;
-    
-    .view-all-button {
-      width: 100%;
-      padding: 10px;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      
-      &:hover {
-        background-color: var(--primary-dark-color);
-      }
-    }
-  }
-}
-
-// Mobile responsive adjustments for notification dropdown
-@media (max-width: 480px) {
-  .sidebar-notification-dropdown {
-    width: 95%;
-    max-width: 320px;
-    
-    .sidebar-notification-list {
-      max-height: 50vh;
-    }
-  }
-}
-
-/* === NAVBAR TOGGLE BUTTON === */
-.navbar-toggle-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.3);
-  border: none;
-  cursor: pointer;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  color: $primary;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  font-size: 1.3rem;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-/* Header Actions - contains notification, user profile and toggle button */
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px; /* Tăng từ 12px lên 20px */
-  margin-left: auto;
-  padding-left: 30px; /* Add padding to push away from logo section */
-}
-
-/* Notification Button */
-.header-action-button.notification-button {
-  position: relative;
-  background: rgba(255, 255, 255, 0.3);
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: $primary;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
-  }
-  
-  .notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: $primary;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-  }
-}
-
-/* User Avatar Container */
-.user-avatar-container {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.3);
-  border: 2px solid rgba($primary, 0.2);
-  transition: all 0.2s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-    border-color: $primary;
-    background-color: rgba(255, 255, 255, 0.5);
-  }
-  
-  .user-avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .user-icon {
-    font-size: 1.5rem;
-    color: $primary;
-  }
-}
-
-/* User Profile Button */
-.user-profile-button {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.3);
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-  }
-  
-  .dropdown-indicator {
-    position: relative;
-    width: 8px;
-    height: 8px;
-    border-right: 2px solid $primary;
-    border-bottom: 2px solid $primary;
-    transform: rotate(45deg);
-  }
-}
-
-/* Mobile Styles for Profile Container */
-@media (max-width: 768px) {
-  .user-avatar-container {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .user-profile-button {
-    width: 22px;
-    height: 22px;
-    
-    .dropdown-indicator {
-      width: 6px;
-      height: 6px;
-    }
-  }
-}
-
-/* User Profile Container and components */
-.user-profile-container {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Tăng từ 10px lên 15px */
-  position: relative;
-}
-
-/* Login button for non-logged in users */
-.login-button {
-  padding: 6px 12px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  text-decoration: none;
-  color: $primary;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-  }
-}
-
-/* Thêm hiệu ứng đổ bóng và depth cho dropdown menu */
-.notification-dropdown, .user-dropdown {
-  box-shadow: 
-    0 5px 15px rgba(0, 0, 0, 0.08),
-    0 15px 35px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-}
-
-/* Style cho các menu item bên trong dropdown */
-.dropdown-menu .dropdown-item {
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  margin-bottom: 5px;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    transform: translateX(3px);
-  }
-  
-  &.logout {
-    background-color: rgba(255, 90, 95, 0.05);
-    
-    &:hover {
-      background-color: rgba(255, 90, 95, 0.15);
-    }
-  }
-}
-
-/* Style cho các notification items */
-.notification-list .notification-item {
-  background-color: rgba(255, 255, 255, 0.5);
-  
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.8);
-    transform: translateX(3px);
-  }
-  
-  &.unread {
-    background-color: rgba($primary, 0.08);
-    
-    &:hover {
-      background-color: rgba($primary, 0.15);
-    }
-  }
-}
-
-/* Notification Dropdown */
-.notification-dropdown {
-  position: absolute;
-  top: 85px;
-  right: 20px;
-  width: 320px;
-  max-height: 400px;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1010;
-  overflow: hidden;
-  animation: slideDown 0.3s ease forwards;
-  
-  .notification-header {
-    padding: 15px;
-    background-color: rgba(255, 255, 255, 0.6);
-    border-bottom: 1px solid rgba(238, 238, 238, 0.5);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      color: $text-dark;
-    }
-    
-    .close-button {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: none;
-      background-color: transparent;
-      color: #999;
-      font-size: 1rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      
-      &:hover {
-        color: $text-dark;
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-  }
-  
-  .notification-list {
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    
-    .notification-item {
-      padding: 12px;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      margin-bottom: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-left: 3px solid transparent;
-      
-      &:hover {
-        background-color: #f0f0f0;
-      }
-      
-      &.unread {
-        border-left-color: $primary;
-        background-color: rgba($primary, 0.05);
-      }
-      
-      .notification-type {
-        font-size: 11px;
-        color: #666;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-        font-weight: 600;
-      }
-      
-      .notification-content {
-        h4 {
-          margin: 0 0 5px;
-          font-size: 14px;
-          color: $text-dark;
-        }
-        
-        p {
-          margin: 0;
-          font-size: 12px;
-          color: #777;
-        }
-      }
-    }
-    
-    .no-notifications {
-      padding: 20px;
-      text-align: center;
-      color: #999;
-    }
-  }
-  
-  .notification-footer {
-    padding: 10px;
-    border-top: 1px solid #eee;
-    
-    .view-all-button {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      background-color: $primary;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      
-      &:hover {
-        background-color: darken($primary, 5%);
-      }
-    }
-  }
-}
-
-/* User Profile Dropdown */
+/* User Dropdown */
 .user-dropdown {
   position: absolute;
-  top: 85px;
-  right: 20px;
-  width: 280px;
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  z-index: 1010;
+  top: 70px;
+  right: 10px;
+  width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 1001;
   overflow: hidden;
-  animation: slideDown 0.3s ease forwards;
   
   .user-info {
-    padding: 20px;
-    background: linear-gradient(to right, rgba($primary, 0.08), rgba($primary, 0.04));
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
     
@@ -1417,12 +840,7 @@ body.sidebar-open {
       height: 50px;
       border-radius: 50%;
       overflow: hidden;
-      border: 2px solid white;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      background-color: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin-right: 1rem;
       
       img {
         width: 100%;
@@ -1431,495 +849,213 @@ body.sidebar-open {
       }
       
       .user-icon-large {
-        font-size: 2rem;
-        color: #aaa;
+        width: 100%;
+        height: 100%;
+        color: #2f3542;
       }
     }
     
     .user-details {
-      margin-left: 15px;
-      
       h3 {
-        margin: 0 0 5px;
+        margin: 0 0 0.3rem;
         font-size: 1rem;
-        color: $text-dark;
       }
       
       p {
         margin: 0;
         font-size: 0.8rem;
-        color: #777;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 180px;
+        color: #666;
       }
     }
   }
   
   .dropdown-menu {
-    padding: 10px;
-    
     .dropdown-item {
+      padding: 0.8rem 1rem;
       display: flex;
       align-items: center;
-      padding: 10px;
-      border-radius: 8px;
-      color: $text-dark;
+      gap: 0.8rem;
+      color: #2f3542;
       text-decoration: none;
-      margin-bottom: 5px;
       transition: all 0.2s ease;
+      position: relative;
       
       &:hover {
         background-color: #f5f5f5;
       }
       
-      svg {
-        margin-right: 10px;
-        color: #666;
+      &.highlight {
+        background-color: rgba(255, 107, 129, 0.05);
       }
       
       &.logout {
-        color: #e74c3c;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-        font-size: 1rem;
+        color: #ff5a5f;
+        border-top: 1px solid #eee;
+        margin-top: 0.5rem;
         
         &:hover {
-          background-color: #fee;
+          background-color: rgba(255, 90, 95, 0.1);
         }
-        
-        svg {
-          color: #e74c3c;
-        }
+      }
+      
+      .dropdown-tooltip {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+      }
+      
+      &:hover .dropdown-tooltip {
+        opacity: 1;
+        visibility: visible;
       }
     }
   }
-}
-
-/* Mobile Styles for Header Actions */
-@media (max-width: 768px) {
-  .navbar-container {
-    padding: 0 15px !important;
-  }
   
-  .logo-section {
-    padding-right: 20px;
-    margin-right: 0 !important; /* Override auto margin on mobile */
-    width: auto !important;
-    justify-content: center !important;
-  }
-  
-  .header-actions {
-    gap: 8px;
-    padding-left: 15px;
-  }
-  
-  .navbar-logo-text {
-    font-size: 1.8rem !important; /* Smaller font on mobile */
-  }
-  
-  .navbar-logo-image {
-    height: 45px !important; /* Smaller logo on mobile */
+  @media (max-width: 768px) {
+    width: calc(100% - 20px);
+    right: 10px;
   }
 }
 
-/* Edit Profile Button */
-.header-action-button.edit-profile-button {
-  position: relative;
-  background: rgba(255, 255, 255, 0.4);
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+/* Notification Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  width: 350px;
+  max-height: 500px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  z-index: 1001;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: $primary;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  text-decoration: none;
+  flex-direction: column;
+  overflow: hidden;
   
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
-    transform: scale(1.05);
-  }
-  
-  &::after {
-    content: 'Chỉnh sửa';
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 2px 6px;
-    border-radius: 3px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: all 0.2s ease;
-    pointer-events: none;
-  }
-  
-  &:hover::after {
-    opacity: 1;
-    bottom: -25px;
-  }
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .header-action-button.edit-profile-button {
-    width: 38px;
-    height: 38px;
+  .notification-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
     
-    &::after {
-      display: none;
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
     }
-  }
-}
-
-/* Tooltip styling */
-.profile-tooltip {
-  position: absolute;
-  bottom: auto !important;
-  top: calc(100% + 10px) !important;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  z-index: 100;
-  
-  &:before {
-    content: '';
-    position: absolute;
-    top: -5px !important;
-    bottom: auto !important;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid rgba(0, 0, 0, 0.8) !important;
-    border-top: none !important;
-  }
-}
-
-.user-profile-button:hover .profile-tooltip {
-  opacity: 1;
-  visibility: visible;
-  bottom: auto !important;
-  top: calc(100% + 5px) !important;
-}
-
-/* Separators between header elements */
-.action-separator {
-  width: 1px;
-  height: 24px;
-  background-color: rgba(255, 107, 129, 0.15);
-  margin: 0 5px;
-}
-
-/* Separator between avatar and dropdown button */
-.profile-menu-separator {
-  width: 1px;
-  height: 20px;
-  background-color: rgba(255, 107, 129, 0.2);
-  margin: 0 5px;
-}
-
-/* Mobile styles for separators */
-@media (max-width: 768px) {
-  .action-separator, 
-  .profile-menu-separator {
-    height: 20px;
-    margin: 0 2px;
-  }
-  
-  /* Hide separators on very small screens */
-  @media (max-width: 480px) {
-    .action-separator {
-      display: none;
-    }
-  }
-}
-
-/* Feature Tooltips - đảm bảo hiển thị bên dưới */
-.feature-tooltip {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  white-space: nowrap;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  z-index: 1100;
-  pointer-events: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-  
-  &:before {
-    content: '';
-    position: absolute;
-    border-width: 6px;
-    border-style: solid;
-  }
-  
-  /* Tất cả tooltips đều hiển thị phía dưới */
-  &.login-tooltip, 
-  &.notification-tooltip, 
-  &.edit-tooltip, 
-  &.menu-tooltip,
-  &.logout-tooltip,
-  &.avatar-tooltip {
-    bottom: auto !important;
-    top: calc(100% + 10px) !important;
-    left: 50%;
-    transform: translateX(-50%);
     
-    &:before {
-      bottom: auto !important;
-      top: -12px !important;
-      left: 50%;
-      transform: translateX(-50%);
-      border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent !important;
+    .close-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: #2f3542;
+      
+      &:hover {
+        color: #ff5a5f;
+      }
     }
   }
-}
-
-/* Animation cho tất cả tooltips */
-.header-action-button:hover .edit-tooltip,
-.header-action-button:hover .notification-tooltip,
-.header-action-button:hover .logout-tooltip,
-.login-button:hover .login-tooltip,
-.navbar-toggle-button:hover .menu-tooltip,
-.user-avatar-container:hover .avatar-tooltip {
-  opacity: 1;
-  visibility: visible;
-  top: calc(100% + 5px) !important;
-  bottom: auto !important;
-}
-
-/* Tooltip cho dropdown-item cũng ở bên dưới */
-.dropdown-item {
-  position: relative;
   
-  .dropdown-tooltip {
-    position: absolute;
-    bottom: auto !important;
-    top: calc(100% + 10px) !important;
-    left: 50%;
-    transform: translateX(-50%);
+  .notification-list {
+    overflow-y: auto;
+    max-height: 350px;
     
-    &:before {
-      left: 50%;
-      bottom: auto !important;
-      top: -10px !important;
-      transform: translateX(-50%);
-      border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent !important;
+    .notification-item {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #f9f9f9;
+      }
+      
+      &.unread {
+        background-color: rgba(255, 107, 129, 0.05);
+        border-left: 3px solid #ff6b81;
+      }
+      
+      .notification-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        
+        svg {
+          color: #ff6b81;
+        }
+      }
+      
+      .notification-content {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: #555;
+      }
+      
+      .notification-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        
+        .mark-read {
+          background: none;
+          border: none;
+          color: #ff6b81;
+          cursor: pointer;
+          padding: 0;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        
+        .notification-time {
+          color: #999;
+        }
+      }
     }
-  }
-  
-  &:hover .dropdown-tooltip {
-    opacity: 1;
-    visibility: visible;
-    top: calc(100% + 5px) !important;
-    bottom: auto !important;
-  }
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  .nav-item .nav-tooltip,
-  .feature-tooltip,
-  .dropdown-tooltip {
-    font-size: 12px;
-    padding: 6px 10px;
-    max-width: 90%;
-  }
-}
-
-/* Cải thiện bố cục sau khi bỏ navbar-spacer */
-main, .main-content, .page-container {
-  margin-top: 80px; /* Đảm bảo nội dung không bị che bởi navbar */
-}
-
-@media (max-width: 768px) {
-  main, .main-content, .page-container {
-    margin-top: 70px; /* Điều chỉnh cho mobile */
-  }
-}
-
-/* Styling for logout button */
-.header-action-button.logout-button {
-  color: #ff5a5f;
-  background: rgba(255, 90, 95, 0.1);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background-color: rgba(255, 90, 95, 0.2);
-    transform: scale(1.1);
-  }
-  
-  .feature-tooltip.logout-tooltip {
-    background-color: rgba(255, 90, 95, 0.9);
     
-    &:before {
-      border-color: transparent transparent rgba(255, 90, 95, 0.9) transparent;
+    .no-notifications {
+      padding: 2rem;
+      text-align: center;
+      color: #999;
     }
   }
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .navbar-container {
-    padding: 0 15px !important;
+  
+  .notification-footer {
+    padding: 0.8rem;
+    border-top: 1px solid #eee;
+    
+    .view-all-button {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: #f5f5f5;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #eee;
+      }
+    }
   }
   
-  .logo-section {
-    padding-right: 20px;
-    margin-right: 0 !important; /* Override auto margin on mobile */
-    width: auto !important;
-    justify-content: center !important;
+  @media (max-width: 768px) {
+    width: calc(100% - 20px);
+    max-height: 80vh;
   }
-  
-  .header-actions {
-    padding-left: 15px;
-    gap: 8px;
-  }
-  
-  .navbar-logo-text {
-    font-size: 1.8rem !important; /* Smaller font on mobile */
-  }
-  
-  .navbar-logo-image {
-    height: 45px !important; /* Smaller logo on mobile */
-  }
-}
-
-/* Glass morphism effects */
-.navbar, 
-.horizontal-nav, 
-.notification-dropdown, 
-.user-dropdown,
-.header-action-button,
-.user-avatar-container,
-.user-profile-button,
-.login-button,
-.navbar-toggle-button {
-  /* Hiệu ứng glass morphism */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* Z-index hierarchy */
-.navbar {
-  z-index: 1000;
-}
-
-.horizontal-nav {
-  z-index: 990;
-}
-
-.notification-dropdown, 
-.user-dropdown {
-  z-index: 1010;
-}
-
-.notification-header, 
-.dropdown-menu,
-.notification-item,
-.dropdown-item {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-/* Add background để xuyên thấu cho cả content-wrapper */
-main, .main-content, .page-container {
-  background-color: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* GLOBAL TOOLTIP POSITIONING - ghi đè tất cả các tooltip */
-.nav-tooltip,
-.feature-tooltip,
-.dropdown-tooltip,
-.profile-tooltip,
-.nav-item .nav-tooltip,
-.login-tooltip, 
-.notification-tooltip, 
-.edit-tooltip, 
-.menu-tooltip,
-.logout-tooltip,
-.avatar-tooltip {
-  position: absolute !important;
-  bottom: auto !important;
-  top: calc(100% + 10px) !important;
-  color: black !important;
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  border-radius: 8px !important;
-  font-weight: 500 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-  padding: 8px 12px !important;
-  
-  &:before {
-    content: '' !important;
-    position: absolute !important;
-    bottom: auto !important;
-    top: -10px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    border-width: 5px !important;
-    border-style: solid !important;
-    border-color: transparent transparent rgba(255, 255, 255, 0.95) transparent !important;
-  }
-}
-
-/* Ngoại lệ cho logout tooltip */
-.feature-tooltip.logout-tooltip {
-  background-color: rgba(255, 240, 240, 0.98) !important;
-  color: #e74c3c !important;
-  font-weight: 500 !important;
-  border-color: rgba(231, 76, 60, 0.2) !important;
-  
-  &:before {
-    border-color: transparent transparent rgba(255, 240, 240, 0.98) transparent !important;
-  }
-}
-
-/* Hover states for all tooltips */
-*:hover > .nav-tooltip,
-*:hover > .feature-tooltip,
-*:hover > .dropdown-tooltip,
-*:hover > .profile-tooltip,
-.nav-item:hover .nav-tooltip,
-.header-action-button:hover .edit-tooltip,
-.header-action-button:hover .notification-tooltip,
-.header-action-button:hover .logout-tooltip,
-.login-button:hover .login-tooltip,
-.navbar-toggle-button:hover .menu-tooltip,
-.user-avatar-container:hover .avatar-tooltip,
-.user-profile-button:hover .profile-tooltip,
-.dropdown-item:hover .dropdown-tooltip {
-  opacity: 1 !important;
-  visibility: visible !important;
-  top: calc(100% + 5px) !important;
-  bottom: auto !important;
 }

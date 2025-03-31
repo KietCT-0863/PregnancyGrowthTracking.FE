@@ -18,6 +18,7 @@ import {
   FaBell,
   FaHome,
 } from "react-icons/fa";
+import { AiOutlineMenu } from 'react-icons/ai';
 import "./Navbar.scss";
 
 // Notification item component
@@ -53,21 +54,15 @@ const NavBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
   const [notifications, setNotifications] = useState([]);
   
   // UI state
-  const [scrolled, setScrolled] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showHorizontalMenu, setShowHorizontalMenu] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   // Refs for DOM elements
   const navbarRef = useRef(null);
   const horizontalNavRef = useRef(null);
-  const dropdownRef = useRef(null);
-  const notificationButtonRef = useRef(null);
-  const notificationsRef = useRef(null);
   
   // Format date and time
   const formatDateTime = useCallback((date, time) => {
@@ -81,46 +76,32 @@ const NavBar = () => {
     }
   }, []);
 
-  // Handle logout
+  // Handle logout function
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
     setIsLoggedIn(false);
     setUserInfo(null);
     setIsAdmin(false);
-    setProfileImage(null);
-    setIsDropdownOpen(false);
-    setShowHorizontalMenu(false);
     navigate("/");
   }, [navigate]);
 
-  // Toggle functions
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-  const toggleNotifications = () => setShowNotifications(!showNotifications);
-  
   // Toggle horizontal navigation menu
   const toggleHorizontalMenu = () => {
-    setShowHorizontalMenu(!showHorizontalMenu);
-    // Close other menus
-    setShowNotifications(false);
-    setIsDropdownOpen(false);
+    setMenuOpen(!menuOpen);
   };
 
   // Close menus when navigating
   useEffect(() => {
-    setShowHorizontalMenu(false);
-    setShowNotifications(false);
-    setIsDropdownOpen(false);
+    setMenuOpen(false);
     
     // Force menu closing with setTimeout
     setTimeout(() => {
-      setShowHorizontalMenu(false);
+      setMenuOpen(false);
     }, 10);
     
     return () => {
-      setShowHorizontalMenu(false);
-      setShowNotifications(false);
-      setIsDropdownOpen(false);
+      setMenuOpen(false);
     };
   }, [location.pathname]);
 
@@ -142,12 +123,16 @@ const NavBar = () => {
           role: userData?.role,
         });
         setIsAdmin(userData?.role === "admin");
-        setProfileImage(userData?.profileImageUrl || null);
       } catch (error) {
         console.error("Token decode error:", error);
         localStorage.removeItem("token");
         localStorage.removeItem("userData");
       }
+    } else {
+      // Đảm bảo trạng thái đăng nhập là false khi không có token
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      setIsAdmin(false);
     }
 
     // Set sample notifications
@@ -168,7 +153,7 @@ const NavBar = () => {
 
     // Xử lý sự kiện cuộn trang
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 50);
     };
 
     const handleResize = () => {
@@ -196,43 +181,24 @@ const NavBar = () => {
   // Handle outside clicks
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Handle dropdown menu clicks
-      if (isDropdownOpen && 
-          dropdownRef.current && 
-          !dropdownRef.current.contains(event.target) &&
-          !event.target.closest('.user-menu-button')) {
-        setIsDropdownOpen(false);
-      }
-      
-      // Handle notification clicks
-      if (showNotifications && 
-          notificationsRef.current && 
-          !notificationsRef.current.contains(event.target) &&
-          notificationButtonRef.current &&
-          !notificationButtonRef.current.contains(event.target)) {
-        setShowNotifications(false);
-      }
-      
       // Handle horizontal menu clicks
-      if (showHorizontalMenu && 
+      if (menuOpen && 
           horizontalNavRef.current && 
           !horizontalNavRef.current.contains(event.target) &&
           !event.target.closest('.navbar-toggle-button')) {
-        setShowHorizontalMenu(false);
+        setMenuOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isDropdownOpen, showNotifications, showHorizontalMenu]);
+  }, [menuOpen]);
   
   // Close with ESC key
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        setShowHorizontalMenu(false);
-        setShowNotifications(false);
-        setIsDropdownOpen(false);
+        setMenuOpen(false);
       }
     };
     
@@ -240,252 +206,113 @@ const NavBar = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Hàm kiểm tra người dùng đã đăng nhập hay chưa
+  const checkLoginStatus = () => {
+    const token = localStorage.getItem("token");
+    return !!token; // Trả về true nếu có token, false nếu không có
+  };
+
   return (
-    <>
-      <nav
-        className={`navbar ${scrolled ? "scrolled" : ""}`}
-      >
-        <div className="navbar-container" ref={navbarRef}>
-          <div className="logo-section">
-            <Link to="/" className="navbar-logo">
-              <img
-                src="/Logo bau-02.png"
-                alt="Mẹ Bầu"
-                className="navbar-logo-image"
-              />
-              <span className="navbar-logo-text">Mẹ Bầu</span>
-            </Link>
-          </div>
-
-          {/* Header Action Buttons */}
-          <div className="header-actions">
-            {isLoggedIn && (
-              <>
-                {/* Edit Profile Button */}
-                <Link 
-                  to="/profile/edit" 
-                  className="header-action-button edit-profile-button"
-                  title="Chỉnh sửa thông tin cá nhân"
-                >
-                  <FaUserEdit />
-                  <div className="feature-tooltip edit-tooltip">Chỉnh sửa hồ sơ</div>
-                </Link>
-                
-                <div className="action-separator"></div>
-              </>
-            )}
-            
-            {/* Notification Bell */}
-            {isLoggedIn && (
-              <>
-                <button
-                  className="header-action-button notification-button"
-                  onClick={toggleNotifications}
-                  ref={notificationButtonRef}
-                  aria-label="Thông báo"
-              >
-                <FaBell />
-                  {notifications.length > 0 && <span className="notification-badge">{notifications.length}</span>}
-                  <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
-              </button>
-
-                <div className="action-separator"></div>
-              </>
-            )}
-            
-            {/* Đăng xuất nút */}
-            {isLoggedIn && (
-              <>
-                    <button
-                  className="header-action-button logout-button"
-                  onClick={handleLogout}
-                  aria-label="Đăng xuất"
-                  title="Đăng xuất khỏi tài khoản"
-                >
-                  <FaSignOutAlt />
-                  <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-                    </button>
-                
-                <div className="action-separator"></div>
-              </>
-            )}
-            
-            {/* User Profile / Auth Buttons */}
-            {isLoggedIn ? (
-              <div className="user-profile-container" ref={dropdownRef}>
-                <div 
-                  className="user-avatar-container" 
-                  title={`${userInfo?.fullName || "Người dùng"}`}
-                  onClick={toggleDropdown}
-                >
-                  {profileImage ? (
-                    <img 
-                      src={profileImage} 
-                      alt={userInfo?.fullName || "Người dùng"} 
-                      className="user-avatar" 
-                    />
-                  ) : (
-                    <FaUserCircle className="user-icon" />
-                  )}
-                  <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
-                  </div>
-
-                <div className="profile-menu-separator"></div>
-                
-                <div className="user-profile-button" onClick={toggleDropdown} title="Bấm để xem tùy chọn tài khoản">
-                  <span className="dropdown-indicator"></span>
-                  <div className="profile-tooltip">Tùy chọn tài khoản</div>
-                </div>
-            </div>
-            ) : (
-                <div className="auth-buttons">
-                  <Link
-                    to="/login"
-                  className="login-button"
-                  >
-                    Đăng Nhập
-                  <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
-                  </Link>
-                
-                <div className="action-separator"></div>
-                
-                  <Link
-                    to="/register"
-                  className="register-button"
-                  >
-                    Đăng Ký
-                  <div className="feature-tooltip register-tooltip">Đăng ký tài khoản mới</div>
-                  </Link>
-                </div>
-            )}
-            
-            <div className="action-separator"></div>
-            
-            {/* Hamburger menu button */}
-                  <button
-              className="navbar-toggle-button"
-              onClick={toggleHorizontalMenu}
-              aria-label="Toggle Navigation Menu"
-            >
-              {showHorizontalMenu ? <FaTimes /> : <FaBars />}
-              <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
-                      </button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Notification Dropdown */}
-      {showNotifications && (
-        <div className="notification-dropdown" ref={notificationsRef}>
-          <div className="notification-header">
-            <h3>Thông báo</h3>
-            <button className="close-button" onClick={toggleNotifications}>
-                <FaTimes />
-              </button>
-            </div>
-          <div className="notification-list">
-            {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
-                <NotificationItem
-                  key={index}
-                  notification={notification}
-                  formatDateTime={formatDateTime}
-                />
-              ))
-            ) : (
-              <div className="no-notifications">
-                <p>Không có thông báo nào.</p>
-              </div>
-            )}
-                </div>
-          {notifications.length > 0 && (
-            <div className="notification-footer">
-              <button
-                className="view-all-button"
-                onClick={() => {
-                  navigate('/calendar');
-                  setShowNotifications(false);
-                }}
-              >
-                Xem tất cả
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* User Profile Dropdown */}
-      {isLoggedIn && isDropdownOpen && (
-        <div className="user-dropdown">
-          <div className="user-info">
-            <div className="user-avatar-large">
-              {profileImage ? (
-                <img src={profileImage} alt={userInfo?.fullName || "Người dùng"} />
-              ) : (
-                <FaUserCircle className="user-icon-large" />
-              )}
-            </div>
-            <div className="user-details">
-              <h3>{userInfo?.fullName || "Người dùng"}</h3>
-              <p>{userInfo?.email || ""}</p>
-            </div>
-          </div>
-          <div className="dropdown-menu">
-            <Link to="/profile" className="dropdown-item">
-              <FaUserCircle />
-              Thông tin cá nhân
-              <div className="dropdown-tooltip">Xem thông tin cá nhân của bạn</div>
-            </Link>
-            <Link to="/profile/edit" className="dropdown-item highlight">
-              <FaUserEdit />
-              Chỉnh sửa hồ sơ
-              <div className="dropdown-tooltip">Cập nhật thông tin cá nhân và hồ sơ</div>
-            </Link>
-            <button className="dropdown-item logout" onClick={handleLogout}>
-              <FaSignOutAlt />
-              Đăng xuất
-              <div className="dropdown-tooltip">Đăng xuất khỏi tài khoản</div>
-                </button>
-                      </div>
-                    </div>
-      )}
-
-      {/* Horizontal Navigation */}
-      <div className={`horizontal-nav ${showHorizontalMenu ? 'visible' : ''}`} ref={horizontalNavRef}>
-        <div className="horizontal-nav-items">
-          <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
-            <FaHome /> Trang chủ
-            <div className="nav-tooltip">Quay về trang chính</div>
-          </Link>
-          <Link to="member/basic-tracking" className={`nav-item ${location.pathname.includes('/pregnancy-tracking') ? 'active' : ''}`}>
-            <FaBabyCarriage /> Theo dõi thai kỳ
-            <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
-          </Link>
-          <Link to="member/calendar" className={`nav-item ${location.pathname.includes('/appointment') ? 'active' : ''}`}>
-            <FaCalendarAlt /> Lịch khám
-            <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
-          </Link>
-          <Link to="member/doctor-notes" className={`nav-item ${location.pathname.includes('/doctor-notes') ? 'active' : ''}`}>
-            <FaNotesMedical /> Ghi chú bác sĩ
-            <div className="nav-tooltip">Ghi chú và lời khuyên từ bác sĩ</div>
-          </Link>
-          <Link to="/blog" className={`nav-item ${location.pathname.includes('/blog') ? 'active' : ''}`}>
-            <FaBlog /> Blog
-            <div className="nav-tooltip">Đọc các bài viết về thai kỳ</div>
-          </Link>
-          <Link to="/community" className={`nav-item ${location.pathname.includes('/community') ? 'active' : ''}`}>
-            <FaUsers /> Cộng đồng
-            <div className="nav-tooltip">Kết nối với cộng đồng mẹ bầu</div>
-          </Link>
-          {isAdmin && (
-            <Link to="/admin" className={`nav-item ${location.pathname.includes('/admin') ? 'active' : ''}`}>
-              <FaUserCircle /> Quản trị
-              <div className="nav-tooltip">Quản lý hệ thống</div>
-              </Link>
-          )}
-        </div>
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="logo-container">
+        <Link to="/" className="navbar-logo">
+          <img
+            src="/Logo bau-02.png"
+            alt="Mẹ Bầu"
+            className="navbar-logo-image"
+          />
+          <span className="navbar-logo-text">Mẹ Bầu</span>
+        </Link>
       </div>
-    </>
+
+      {/* Header Actions với nút đăng nhập/đăng ký */}
+      <div className="header-actions">
+        {isLoggedIn ? (
+          <button 
+            className="header-action-button logout-button"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt />
+            <div className="feature-tooltip">Đăng xuất</div>
+          </button>
+        ) : (
+          <div className="auth-buttons">
+            <Link to="/login" className="login-button">
+              Đăng nhập
+              <div className="feature-tooltip">Đăng nhập vào tài khoản</div>
+            </Link>
+            <div className="action-separator"></div>
+            <Link to="/register" className="register-button">
+              Đăng ký
+              <div className="feature-tooltip">Tạo tài khoản mới</div>
+            </Link>
+          </div>
+        )}
+        
+        <div className="action-separator"></div>
+        <button 
+          className="navbar-toggle-button"
+          onClick={toggleHorizontalMenu}
+        >
+          <AiOutlineMenu />
+          <div className="feature-tooltip">Menu</div>
+        </button>
+      </div>
+      
+      {/* Mobile Nav Links */}
+      <div className={`mobile-nav-links ${menuOpen ? 'open' : ''}`} ref={horizontalNavRef}>
+        <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
+          <FaHome /> Trang chủ
+          <div className="nav-tooltip">Quay về trang chính</div>
+        </Link>
+        <Link to="member/basic-tracking" className={`nav-item ${location.pathname.includes('/pregnancy-tracking') ? 'active' : ''}`}>
+          <FaBabyCarriage /> Theo dõi thai kỳ
+          <div className="nav-tooltip">Theo dõi quá trình phát triển của thai nhi</div>
+        </Link>
+        <Link to="member/calendar" className={`nav-item ${location.pathname.includes('/appointment') ? 'active' : ''}`}>
+          <FaCalendarAlt /> Lịch khám
+          <div className="nav-tooltip">Đặt và quản lý lịch khám thai</div>
+        </Link>
+        <Link to="member/doctor-notes" className={`nav-item ${location.pathname.includes('/doctor-notes') ? 'active' : ''}`}>
+          <FaNotesMedical /> Ghi chú bác sĩ
+          <div className="nav-tooltip">Ghi chú và lời khuyên từ bác sĩ</div>
+        </Link>
+        <Link to="/blog" className={`nav-item ${location.pathname.includes('/blog') ? 'active' : ''}`}>
+          <FaBlog /> Blog
+          <div className="nav-tooltip">Đọc các bài viết về thai kỳ</div>
+        </Link>
+        <Link to="/community" className={`nav-item ${location.pathname.includes('/community') ? 'active' : ''}`}>
+          <FaUsers /> Cộng đồng
+          <div className="nav-tooltip">Kết nối với cộng đồng mẹ bầu</div>
+        </Link>
+        {isAdmin && (
+          <Link to="/admin" className={`nav-item ${location.pathname.includes('/admin') ? 'active' : ''}`}>
+            <FaUserCircle /> Quản trị
+            <div className="nav-tooltip">Quản lý hệ thống</div>
+          </Link>
+        )}
+        
+        {!isLoggedIn && (
+          <div className="auth-mobile-buttons">
+            <Link to="/login" className="auth-mobile-button login-button">
+              <FaUserCircle /> Đăng nhập
+            </Link>
+            <Link to="/register" className="auth-mobile-button register-button">
+              Đăng ký
+            </Link>
+          </div>
+        )}
+        
+        {isLoggedIn && (
+          <button 
+            className="auth-mobile-button logout-button"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt /> Đăng xuất
+          </button>
+        )}
+      </div>
+    </nav>
   );
 };
 

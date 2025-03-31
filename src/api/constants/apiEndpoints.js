@@ -10,6 +10,7 @@ export const ENDPOINTS = {
     LOGIN: "/Auth/Login",
     REGISTER: "/Auth/register",
     FORGOT_PASSWORD: "/Auth/ForgotPassword",
+    CHECK_TOKEN: "/Auth/ValidateToken",
   },
   USER: {
     LIST: "/User",

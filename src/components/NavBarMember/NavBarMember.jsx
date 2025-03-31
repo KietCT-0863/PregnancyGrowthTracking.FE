@@ -426,84 +426,82 @@ const NavBarMember = () => {
   };
 
   return (
-    <>
-      <nav className={`navbar ${scrolled ? "scrolled" : ""}`} ref={navbarRef}>
-        <div className="navbar-container">
-          <div className="logo-section">
-            <Link to="/member" className="navbar-logo">
-              <img src="/public/Logo bau-02.png" alt="Logo Mẹ Bầu" className="navbar-logo-image" />
-              <span className="navbar-logo-text">Mẹ Bầu</span>
-            </Link>
-          </div>
+    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+      <div className="logo-container">
+        <Link to="/member" className="navbar-logo">
+          <img
+            src="/Logo bau-02.png"
+            alt="Mẹ Bầu"
+            className="navbar-logo-image"
+          />
+          <span className="navbar-logo-text">Mẹ Bầu</span>
+        </Link>
+      </div>
 
-          {/* Header Action Buttons */}
-          <div className="header-actions">
-            {/* Notification Bell */}
-            {isLoggedIn ? (
-              <div className="user-profile-container" ref={dropdownRef}>
-                <div 
-                  className="user-avatar-container" 
-                  title={`${userInfo?.fullName || "Người dùng"}`}
-                  onClick={toggleDropdownWithSound}
-                >
-                  {profileImage ? (
-                    <img 
-                      src={profileImage} 
-                      alt={userInfo?.fullName || "Người dùng"} 
-                      className="user-avatar" 
-                    />
-                  ) : (
-                    <FaUserCircle className="user-icon" />
-                  )}
-                  <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
-                </div>
-              </div>
-            ) : (
-              <Link to="/login" className="login-button">
-                Đăng nhập
-                <div className="feature-tooltip login-tooltip">Đăng nhập vào tài khoản</div>
-              </Link>
-            )}
-            <button
-              className="header-action-button notification-button"
-              onClick={toggleNotificationsWithSound}
-              ref={notificationButtonRef}
-              aria-label="Thông báo"
+      {/* Header Actions với các nút thông báo, profile và đăng xuất */}
+      <div className="header-actions">
+        {/* User Profile */}
+        {isLoggedIn ? (
+          <div className="user-profile-container" ref={dropdownRef}>
+            <div 
+              className="user-avatar-container" 
+              title={`${userInfo?.fullName || "Người dùng"}`}
+              onClick={toggleDropdownWithSound}
             >
-              <FaBell />
-              {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
-              <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
-            </button>
-            
-            <div className="action-separator"></div>
-            
-            {/* Menu Toggle Button */}
-            <button
-              className="navbar-toggle-button"
-              onClick={toggleHorizontalMenu}
-              ref={navbarToggleButtonRef}
-              aria-label="Toggle Navigation Menu"
-            >
-              {showHorizontalMenu ? <FaTimes /> : <FaBars />}
-              <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
-            </button>
-            
-            <div className="action-separator"></div>
-            
-            {/* Nút đăng xuất */}
-            {isLoggedIn && (
-              <>
-                
-                <div className="action-separator"></div>
-              </>
-            )}
-            
-            {/* User Profile or Login Button */}
-
+              {profileImage ? (
+                <img 
+                  src={profileImage} 
+                  alt={userInfo?.fullName || "Người dùng"} 
+                  className="user-avatar" 
+                />
+              ) : (
+                <FaUserCircle className="user-icon" />
+              )}
+              <div className="feature-tooltip avatar-tooltip">Xem tùy chọn tài khoản</div>
+            </div>
           </div>
-        </div>
-      </nav>
+        ) : (
+          <div className="user-profile-container">
+            <FaUserCircle className="user-icon-placeholder" />
+          </div>
+        )}
+        
+        <div className="action-separator"></div>
+        
+        {/* Notification Button */}
+        <button
+          className="header-action-button notification-button"
+          onClick={toggleNotificationsWithSound}
+          ref={notificationButtonRef}
+          aria-label="Thông báo"
+        >
+          <FaBell />
+          {unreadCount > 0 && <span className="notification-badge">{unreadCount}</span>}
+          <div className="feature-tooltip notification-tooltip">Thông báo và nhắc nhở</div>
+        </button>
+        
+        <div className="action-separator"></div>
+        
+        {/* Nút đăng xuất */}
+        {isLoggedIn && (
+          <>
 
+            <div className="action-separator"></div>
+          </>
+        )}
+        
+        {/* Menu Toggle Button */}
+        <button
+          className="navbar-toggle-button"
+          onClick={toggleHorizontalMenu}
+          ref={navbarToggleButtonRef}
+          aria-label="Toggle Navigation Menu"
+        >
+          {showHorizontalMenu ? <FaTimes /> : <FaBars />}
+          <div className="feature-tooltip menu-tooltip">Mở menu điều hướng</div>
+        </button>
+      </div>
+      
       {/* Notification Dropdown */}
       {showNotifications && (
         <div className="notification-dropdown" ref={notificationsRef}>
@@ -569,24 +567,15 @@ const NavBarMember = () => {
             </Link>
             
             {/* Thêm nút quay lại Admin chỉ khi user có quyền admin */}
-            {isAdmin && (
-              <Link to="/admin" className="dropdown-item admin-return" onClick={() => setIsDropdownOpen(false)}>
-                <FaUserCircle />
-                Quay lại trang Admin
-              </Link>
-            )}
-            
-            <button className="dropdown-item logout" onClick={handleLogout}>
-              <FaSignOutAlt />
-              Đăng xuất
-            </button>
+
+
           </div>
         </div>
       )}
           
       {/* Horizontal Navigation Menu */}
       {showHorizontalMenu && (
-        <div className={`horizontal-nav visible ${isMobile ? 'mobile' : ''}`} ref={horizontalNavRef}>
+        <div className={`horizontal-nav visible ${isMobile ? 'mobile visible' : ''}`} ref={horizontalNavRef}>
           <div className="horizontal-nav-items">
             {isMobile && (
               <div className="mobile-menu-header">
@@ -711,7 +700,7 @@ const NavBarMember = () => {
           }}
         ></div>
       )}
-    </>
+    </nav>
   );
 };
 
