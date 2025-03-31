@@ -350,15 +350,7 @@ const NavBarGuest = () => {
               Thông báo và nhắc nhở
             </div>
           </button>
-          <button
-            className="header-action-button logout-button"
-            onClick={handleLogout}
-            aria-label="Đăng xuất"
-            title="Đăng xuất khỏi tài khoản"
-          >
-            <FaSignOutAlt />
-            <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
-          </button>
+
 
           <div className="action-separator"></div>
 
@@ -595,7 +587,7 @@ const NavBarGuest = () => {
               title="Đăng xuất khỏi tài khoản"
             >
               <FaSignOutAlt />
-              <div className="feature-tooltip logout-tooltip">Đăng xuất</div>
+
             </button>
 
             {isLoggedIn && isMobile && (

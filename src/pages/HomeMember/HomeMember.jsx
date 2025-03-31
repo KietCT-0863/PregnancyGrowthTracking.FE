@@ -6,8 +6,10 @@ import "./HomeMember.scss";
 
 const HomeMember = () => {
   return (
-    <div className="home-member">
-      <PregnancyTimeline />
+    
+    <div className="home-member" style={{ margin: "20px 0" }}>
+        
+        <PregnancyTimeline/>
       <FoetusList />
       <NotesList />
       <BlogSildeMember />

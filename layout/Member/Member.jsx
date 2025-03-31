@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import HomeMember from "../../src/pages/HomeMember/HomeMember";
-import ChatAI from "../../src/components/ChatBoxAI/ChatAI";
+
 import "./Member.scss";
-import FooterMember from "../../src/components/FooterMember/FooterMember";
+
 const Member = () => {
   useEffect(() => {
     // Thêm class và reset styles
