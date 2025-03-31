@@ -2,34 +2,33 @@
 
 /* Variables */
 // Palette chính
-$primary: #ff6b81;
-$primary-light: #ffcfd8;
-$primary-lighter: #ffe0e6;
-$primary-lightest: #fff1f4;
-$primary-dark: #e64c60;
-$accent: #ff92a5;
+$primary: #ff92a5;
+$primary-light: #ffb0bf;
+$primary-lighter: #ffc8d1;
+$primary-lightest: #ffdce2;
+$primary-dark: #ff6b88;
 
-// Màu phụ
-$dark: #6a0572;
-$dark-light: #8e3998;
-$light: #fff9f9;
-$background: #ffebf2;
+// Màu nền và màu phụ
+$dark: #1c2432;
+$dark-light: #2e3543;
+$light: #f8f9fa;
+$background: #232938;
 
 // Màu văn bản
-$text-dark: #6a0572;
-$text-medium: #7d3b7d;
-$text-light: #95539b;
+$text-light: #fff;
+$text-medium: #a0a7b7;
+$text-dark: #7d8597;
 
 // Nền và viền
 $white: #ffffff;
-$black: #333333;
-$border-color: #f0d0e0;
-$border-light: #f8e0ec;
+$black: #121824;
+$border-color: #2e3543;
+$border-light: #3a4356;
 
 // Bóng đổ
-$shadow: #e6d0e0;
-$shadow-dark: #d0c0d0;
-$shadow-light: #f0e0ec;
+$shadow: rgba(0, 0, 0, 0.2);
+$shadow-dark: rgba(0, 0, 0, 0.3);
+$shadow-light: rgba(0, 0, 0, 0.1);
 
 // Giá trị chung
 $transition: 0.3s ease;
@@ -107,8 +106,8 @@ $large-desktop: 1200px;
 /* Main Footer Styles */
 .footer-guest {
   position: relative;
-  background: linear-gradient(135deg, $light, $background, $light);
-  color: $text-dark;
+  background: $dark;
+  color: $text-light;
   font-family: $font-main;
   padding: 3.5rem 0 1rem;
   margin-top: 2rem;
@@ -122,7 +121,7 @@ $large-desktop: 1200px;
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, $primary-light, $accent, $primary-light);
+    background: linear-gradient(90deg, $primary-dark, $primary, $primary-dark);
     background-size: 200% 100%;
     animation: gradientFlow 4s ease infinite;
   }
@@ -147,7 +146,7 @@ $large-desktop: 1200px;
       font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
-      color: $dark;
+      color: $text-light;
       position: relative;
       padding-bottom: 0.5rem;
       
@@ -158,7 +157,7 @@ $large-desktop: 1200px;
         bottom: 0;
         width: 40px;
         height: 2px;
-        background-color: $accent;
+        background-color: $primary;
         @include transition();
       }
       
@@ -177,19 +176,19 @@ $large-desktop: 1200px;
         
         a, span {
           @include flex(row, flex-start, center);
-          color: $text-dark;
+          color: $text-medium;
           text-decoration: none;
           font-weight: 500;
           @include transition();
           
           &:hover {
-            color: $accent;
+            color: $primary;
             transform: translateX(5px);
           }
           
           .icon {
             margin-right: 0.75rem;
-            color: $accent;
+            color: $primary;
             font-size: 1.2rem;
           }
         }
@@ -203,17 +202,17 @@ $large-desktop: 1200px;
       font-family: $font-heading;
       font-size: 2.5rem;
       font-weight: 700;
-      color: $accent;
+      color: $primary;
       text-decoration: none;
       display: block;
       margin-bottom: 1rem;
       @include transition();
       letter-spacing: 0.5px;
-      text-shadow: 0 2px 4px $shadow-light;
+      text-shadow: 0 2px 4px $shadow-dark;
       
       &:hover {
         transform: scale(1.02);
-        color: $primary-dark;
+        color: $primary-light;
       }
     }
     
@@ -221,7 +220,7 @@ $large-desktop: 1200px;
       font-size: 1rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
-      color: $text-dark;
+      color: $text-medium;
       font-weight: 500;
     }
     
@@ -234,16 +233,16 @@ $large-desktop: 1200px;
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: $primary-lightest;
-        color: $accent;
+        background-color: $dark-light;
+        color: $text-light;
         font-size: 1.2rem;
         @include transition();
         
         &:hover, &.hovered {
-          background-color: $accent;
+          background-color: $primary;
           color: $white;
           transform: translateY(-5px);
-          box-shadow: 0 5px 15px $shadow;
+          box-shadow: 0 5px 15px $shadow-dark;
         }
       }
     }
@@ -256,20 +255,20 @@ $large-desktop: 1200px;
       margin-bottom: 1rem;
       
       .icon {
-        color: $accent;
+        color: $primary;
         font-size: 1.2rem;
         margin-right: 0.75rem;
         margin-top: 0.2rem;
       }
       
       a, span {
-        color: $text-dark;
+        color: $text-medium;
         text-decoration: none;
         font-weight: 500;
         @include transition();
         
         &:hover {
-          color: $accent;
+          color: $primary;
         }
       }
     }
@@ -285,7 +284,7 @@ $large-desktop: 1200px;
           @include transition();
           
           &:hover {
-            background-color: $primary-lightest;
+            background-color: rgba($primary, 0.1);
             padding-left: 8px;
           }
         }
@@ -305,7 +304,7 @@ $large-desktop: 1200px;
             content: '•';
             position: absolute;
             left: 0;
-            color: $accent;
+            color: $primary;
             @include transition();
           }
           
@@ -332,7 +331,7 @@ $large-desktop: 1200px;
     p {
       margin: 0;
       font-size: 0.95rem;
-      color: $text-dark;
+      color: $text-medium;
       font-weight: 500;
     }
     
@@ -341,7 +340,7 @@ $large-desktop: 1200px;
       gap: 0.5rem;
       
       .heart-icon {
-        color: $accent;
+        color: $primary;
         animation: heartbeat 1.3s infinite;
       }
     }

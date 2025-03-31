@@ -1854,10 +1854,10 @@ $font-accent: "Amatic SC", cursive;
       font-weight: 500;
       transition: all 0.3s ease;
       box-shadow: none;
-      background-color: #ffffff;
+      background-color: #242323;
 
       &.login-button {
-        background-color: #ffebef;
+        background-color: #0c0c0c;
         color: #2f3542;
 
         &:hover {
@@ -1869,7 +1869,7 @@ $font-accent: "Amatic SC", cursive;
 
       &.register-button {
         background-color: #ff6b81;
-        color: white;
+        color: rgb(0, 0, 0);
         box-shadow: 0 4px 12px rgba(255, 107, 129, 0.2);
 
         &:hover {

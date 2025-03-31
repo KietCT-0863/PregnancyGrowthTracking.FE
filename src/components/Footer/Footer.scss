@@ -36,7 +36,7 @@ $hover-color: #ff92a5;
 }
 
 .footer {
-  background: linear-gradient(135deg, #1a1b38, #2a2b58);
+  background: linear-gradient(135deg, #fdfdff, $hover-color, #fdfdff);
   color: #fff;
   padding: 60px 20px 20px;
   font-family: 'Nunito', sans-serif;
