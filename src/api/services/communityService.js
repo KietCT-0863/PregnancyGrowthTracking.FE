@@ -777,22 +777,19 @@ const communityService = {
   getPostsByUserId: async (userId) => {
     try {
       if (!userId) {
-        throw new Error("ID người dùng không được để trống");
+        throw new Error("User ID không được để trống");
       }
 
-      // Danh sách các endpoint có thể sử dụng để lấy bài viết theo userId
-      const possibleEndpoints = [
-        ENDPOINTS.POSTS.GET_BY_USER(userId), // Endpoint chính
-        `/posts/userid/${userId}`, // Endpoint thay thế 1
-        `/api/posts/user/${userId}`, // Endpoint thay thế 2
-        `/api/posts/userid/${userId}`, // Endpoint thay thế 3
-        `/posts/${userId}/user`, // Endpoint thay thế 4
+      // Định nghĩa các endpoint có thể sử dụng để lấy bài viết theo userId
+      const endpoints = [
+        ENDPOINTS.POSTS.GET_BY_USER(userId),
+        `/posts/user/${userId}`,
+        `/api/posts/user/${userId}`,
       ];
 
+      // Thử lần lượt từng endpoint
       let lastError = null;
-
-      // Thử từng endpoint cho đến khi một trong số chúng hoạt động
-      for (const endpoint of possibleEndpoints) {
+      for (const endpoint of endpoints) {
         try {
           console.log(
             `Đang thử endpoint: ${endpoint} để lấy bài viết của user ID: ${userId}`
@@ -862,6 +859,73 @@ const communityService = {
       return [];
     } catch (error) {
       console.error(`Lỗi khi lấy bài viết theo user ID ${userId}:`, error);
+      throw error; // Ném lỗi để component xử lý
+    }
+  },
+
+  // Lấy bài viết của người dùng đang đăng nhập
+  getMyPosts: async () => {
+    try {
+      console.log("Đang gọi API để lấy bài viết của người dùng đang đăng nhập");
+
+      // Gọi API endpoint my-posts
+      const response = await axiosInstance.get(ENDPOINTS.POSTS.MY_POSTS);
+      console.log("Phản hồi API my-posts:", response.data);
+
+      // Kiểm tra và chuẩn hóa dữ liệu
+      if (Array.isArray(response.data)) {
+        console.log(`Tìm thấy ${response.data.length} bài viết của tôi`);
+        // Chuẩn hóa dữ liệu bài viết
+        return response.data.map((post) => ({
+          ...post,
+          postTags: Array.isArray(post.postTags) ? post.postTags : [],
+        }));
+      } else if (response.data && Array.isArray(response.data.posts)) {
+        console.log(
+          `Tìm thấy ${response.data.posts.length} bài viết từ trường posts`
+        );
+        return response.data.posts.map((post) => ({
+          ...post,
+          postTags: Array.isArray(post.postTags) ? post.postTags : [],
+        }));
+      } else if (response.data && response.data.length === 0) {
+        console.warn("API trả về mảng rỗng");
+        return [];
+      } else if (response.status === 204) {
+        console.warn("API trả về 204 No Content");
+        return [];
+      } else {
+        console.warn(
+          "API my-posts trả về dữ liệu không phải mảng:",
+          response.data
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        "Lỗi khi lấy bài viết của người dùng đang đăng nhập:",
+        error
+      );
+
+      // Kiểm tra lỗi cụ thể
+      if (error.response) {
+        const { status, data } = error.response;
+
+        // Lỗi 401 Unauthorized - Chưa đăng nhập
+        if (status === 401) {
+          console.error("Lỗi 401 - Chưa đăng nhập");
+          throw {
+            status: 401,
+            message:
+              data?.message || "Bạn cần đăng nhập để xem bài viết của mình",
+          };
+        }
+
+        // Các lỗi khác
+        console.error("Status:", status);
+        console.error("Data:", data);
+      }
+
       throw error; // Ném lỗi để component xử lý
     }
   },

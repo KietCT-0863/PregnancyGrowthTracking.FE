@@ -1101,7 +1101,8 @@ const Community = () => {
   const [likedPosts, setLikedPosts] = useState({});
   const [likesCount, setLikesCount] = useState({});
   const [postAuthors, setPostAuthors] = useState({});
-  const userId = 1; // Admin role để test
+  const userId = 1; // Admin role tạm thời cho các chức năng khác
+  const [currentUserName, setCurrentUserName] = useState("Tôi"); // Tên của người dùng hiện tại
   const [filterByUserId, setFilterByUserId] = useState(null);
   const [userFilterName, setUserFilterName] = useState("");
   const [imagePopup, setImagePopup] = useState(null);
@@ -1263,82 +1264,45 @@ const Community = () => {
     fetchPosts();
   };
 
-  const handleViewUserPosts = async (userId, userName) => {
+  const fetchMyPosts = async () => {
     try {
       setIsLoading(true);
-      console.log(
-        `Đang gọi API để lấy bài viết của người dùng ID: ${userId}, tên: ${userName}`
-      );
+      console.log("Đang gọi API để lấy bài viết của người dùng đang đăng nhập");
 
-      // Gọi hàm API từ communityService để lấy bài viết theo userId
+      // Gọi API my-posts
       try {
-        const userPosts = await communityService.getPostsByUserId(userId);
+        const myPosts = await communityService.getMyPosts();
+        console.log(`Đã lấy ${myPosts ? myPosts.length : 0} bài viết của tôi`);
 
-        console.log(
-          `Đã lấy ${
-            userPosts ? userPosts.length : 0
-          } bài viết của user ID: ${userId}`
-        );
-
-        if (userPosts && userPosts.length > 0) {
-          setPosts(userPosts);
-          setFilterByUserId(userId);
-          setUserFilterName(userName || `Người dùng #${userId}`);
+        if (myPosts && myPosts.length > 0) {
+          setPosts(myPosts);
+          setFilterByUserId("me"); // Dùng giá trị đặc biệt để đánh dấu xem bài của mình
+          setUserFilterName(currentUserName);
           // Hiển thị thông báo thành công
-          toast.success(
-            `Đang xem bài viết của ${userName || `Người dùng #${userId}`}`
-          );
+          toast.success(`Đang xem bài viết của tôi`);
           // Cuộn lên đầu trang
           window.scrollTo(0, 0);
         } else {
-          // Nếu không tìm thấy bài viết nào, vẫn hiển thị bộ lọc nhưng giữ lại danh sách bài viết hiện tại
-          setFilterByUserId(userId);
-          setUserFilterName(userName || `Người dùng #${userId}`);
-
-          // Hiển thị thông báo thân thiện hơn
+          // Nếu không có bài viết nào
+          setFilterByUserId("me");
+          setUserFilterName(currentUserName);
           toast.info(
-            `Người dùng ${
-              userName || `#${userId}`
-            } chưa đăng bài viết nào. Đang hiển thị tất cả bài viết.`,
+            "Bạn chưa đăng bài viết nào. Đang hiển thị tất cả bài viết.",
             { autoClose: 5000 }
           );
         }
       } catch (apiError) {
-        // Xử lý trường hợp lỗi 404 (Not Found)
-        if (apiError.response && apiError.response.status === 404) {
-          console.error("API endpoint không tồn tại (404 Not Found)");
-          toast.error(
-            `Lỗi 404: Không tìm thấy API endpoint cho bài viết của người dùng - Vui lòng kiểm tra lại cấu hình API`
-          );
-        } else {
-          throw apiError; // Ném lại lỗi để xử lý bên ngoài
-        }
+        // Xử lý trường hợp lỗi API
+        console.error("Lỗi khi gọi API my-posts:", apiError);
+        toast.error(
+          "Không thể tải bài viết của bạn. Vui lòng đăng nhập hoặc thử lại sau."
+        );
       }
     } catch (error) {
-      console.error("Lỗi khi lấy bài viết theo người dùng:", error);
-
-      let errorMessage = "Lỗi không xác định";
-
-      // Xử lý các loại lỗi khác nhau
-      if (error.response) {
-        const { status } = error.response;
-        if (status === 401) {
-          errorMessage = "Bạn cần đăng nhập để xem bài viết của người dùng này";
-        } else if (status === 403) {
-          errorMessage = "Bạn không có quyền xem bài viết của người dùng này";
-        } else {
-          errorMessage = `Lỗi ${status}: ${
-            error.message || "Không thể tải bài viết"
-          }`;
-        }
-      } else if (error.request) {
-        errorMessage =
-          "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      toast.error(`Không thể tải bài viết: ${errorMessage}`);
+      console.error("Lỗi khi lấy bài viết của tôi:", error);
+      toast.error(
+        `Không thể tải bài viết: ${error.message || "Lỗi không xác định"}`
+      );
 
       // Reset bộ lọc nếu có lỗi
       setFilterByUserId(null);
@@ -1726,6 +1690,92 @@ const Community = () => {
     }
   };
 
+  // Giữ lại hàm handleViewUserPosts để xem bài viết của người dùng khác
+  const handleViewUserPosts = async (userId, userName) => {
+    try {
+      setIsLoading(true);
+      console.log(
+        `Đang gọi API để lấy bài viết của người dùng ID: ${userId}, tên: ${userName}`
+      );
+
+      // Gọi hàm API từ communityService để lấy bài viết theo userId
+      try {
+        const userPosts = await communityService.getPostsByUserId(userId);
+
+        console.log(
+          `Đã lấy ${
+            userPosts ? userPosts.length : 0
+          } bài viết của user ID: ${userId}`
+        );
+
+        if (userPosts && userPosts.length > 0) {
+          setPosts(userPosts);
+          setFilterByUserId(userId);
+          setUserFilterName(userName || `Người dùng #${userId}`);
+          // Hiển thị thông báo thành công
+          toast.success(
+            `Đang xem bài viết của ${userName || `Người dùng #${userId}`}`
+          );
+          // Cuộn lên đầu trang
+          window.scrollTo(0, 0);
+        } else {
+          // Nếu không tìm thấy bài viết nào, vẫn hiển thị bộ lọc nhưng giữ lại danh sách bài viết hiện tại
+          setFilterByUserId(userId);
+          setUserFilterName(userName || `Người dùng #${userId}`);
+
+          // Hiển thị thông báo thân thiện hơn
+          toast.info(
+            `Người dùng ${
+              userName || `#${userId}`
+            } chưa đăng bài viết nào. Đang hiển thị tất cả bài viết.`,
+            { autoClose: 5000 }
+          );
+        }
+      } catch (apiError) {
+        // Xử lý trường hợp lỗi 404 (Not Found)
+        if (apiError.response && apiError.response.status === 404) {
+          console.error("API endpoint không tồn tại (404 Not Found)");
+          toast.error(
+            `Lỗi 404: Không tìm thấy API endpoint cho bài viết của người dùng - Vui lòng kiểm tra lại cấu hình API`
+          );
+        } else {
+          throw apiError; // Ném lại lỗi để xử lý bên ngoài
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy bài viết theo người dùng:", error);
+
+      let errorMessage = "Lỗi không xác định";
+
+      // Xử lý các loại lỗi khác nhau
+      if (error.response) {
+        const { status } = error.response;
+        if (status === 401) {
+          errorMessage = "Bạn cần đăng nhập để xem bài viết của người dùng này";
+        } else if (status === 403) {
+          errorMessage = "Bạn không có quyền xem bài viết của người dùng này";
+        } else {
+          errorMessage = `Lỗi ${status}: ${
+            error.message || "Không thể tải bài viết"
+          }`;
+        }
+      } else if (error.request) {
+        errorMessage =
+          "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      toast.error(`Không thể tải bài viết: ${errorMessage}`);
+
+      // Reset bộ lọc nếu có lỗi
+      setFilterByUserId(null);
+      setUserFilterName("");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="community-container">
       <div className="community-layout">
@@ -1781,7 +1831,7 @@ const Community = () => {
               <div className="action-buttons">
                 <button
                   className="my-posts-button"
-                  onClick={() => handleViewUserPosts(userId, "Tôi")}
+                  onClick={fetchMyPosts}
                   title="Xem bài viết của tôi"
                 >
                   <User size={18} />

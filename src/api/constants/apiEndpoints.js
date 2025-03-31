@@ -88,6 +88,7 @@ export const ENDPOINTS = {
     GET_LIKES_COUNT: (postId) => `/posts/${postId}/likes/count`,
     GET_POST_LIKES: (postId) => `/posts/${postId}/likes`,
     GET_BY_USER: (userId) => `/posts/user/${userId}`,
+    MY_POSTS: "/posts/my-posts", // Thêm endpoint để lấy bài viết của người dùng đang đăng nhập
   },
   COMMENTS: {
     LIST: "/Comments",
