@@ -1,15 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Merriweather:wght@300;400&family=Nunito:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Nunito:wght@400;500;600;700&display=swap');
 
-// Variables
-$primary-color: #ffc2d1;
-$secondary-color: #ffebf2;
-$dark-color: #6a0572;
-$accent-color: #ff92a5;
-$light-color: #fff9f9;
-$text-color: #6a0572;
-$transition: all 0.3s ease;
+/* Variables */
+// Palette chính
+$primary: #ff6b81;
+$primary-light: #ffcfd8;
+$primary-lighter: #ffe0e6;
+$primary-lightest: #fff1f4;
+$primary-dark: #e64c60;
+$accent: #ff92a5;
 
-// Keyframes
+// Màu phụ
+$dark: #6a0572;
+$dark-light: #8e3998;
+$light: #fff9f9;
+$background: #ffebf2;
+
+// Màu văn bản
+$text-dark: #6a0572;
+$text-medium: #7d3b7d;
+$text-light: #95539b;
+
+// Nền và viền
+$white: #ffffff;
+$black: #333333;
+$border-color: #f0d0e0;
+$border-light: #f8e0ec;
+
+// Bóng đổ
+$shadow: #e6d0e0;
+$shadow-dark: #d0c0d0;
+$shadow-light: #f0e0ec;
+
+// Giá trị chung
+$transition: 0.3s ease;
+$border-radius: 8px;
+
+/* Typography */
+$font-heading: "Playfair Display", serif;
+$font-main: "Nunito", sans-serif;
+
+/* Breakpoints */
+$mobile-small: 375px;
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 992px;
+$large-desktop: 1200px;
+
+/* Mixins */
+@mixin flex($direction: row, $justify: flex-start, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin grid($columns: repeat(auto-fit, minmax(250px, 1fr)), $gap: 2rem) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+}
+
+@mixin box-shadow($shadow: 0 4px 12px $shadow) {
+  box-shadow: $shadow;
+}
+
+@mixin transition($property: all, $duration: $transition, $timing: ease) {
+  transition: $property $duration $timing;
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == mobile-small {
+    @media screen and (max-width: $mobile-small) {
+      @content;
+    }
+  } @else if $breakpoint == mobile {
+    @media screen and (max-width: $tablet) {
+      @content;
+    }
+  } @else if $breakpoint == tablet {
+    @media screen and (min-width: ($tablet + 1px)) and (max-width: $desktop) {
+      @content;
+    }
+  } @else if $breakpoint == desktop {
+    @media screen and (min-width: ($desktop + 1px)) {
+      @content;
+    }
+  } @else if $breakpoint == large {
+    @media screen and (min-width: $large-desktop) {
+      @content;
+    }
+  }
+}
+
+/* Keyframes */
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
@@ -21,15 +104,15 @@ $transition: all 0.3s ease;
   100% { background-position: 0% 50%; }
 }
 
-// Main Footer Styles
+/* Main Footer Styles */
 .footer-guest {
   position: relative;
-  background: linear-gradient(135deg, $light-color, $secondary-color, $light-color);
-  color: $text-color;
-  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, $light, $background, $light);
+  color: $text-dark;
+  font-family: $font-main;
   padding: 3.5rem 0 1rem;
   margin-top: 2rem;
-  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -5px 15px $shadow;
   overflow: hidden;
   
   // Border gradient at top
@@ -39,7 +122,7 @@ $transition: all 0.3s ease;
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, $primary-color, $accent-color, $primary-color);
+    background: linear-gradient(90deg, $primary-light, $accent, $primary-light);
     background-size: 200% 100%;
     animation: gradientFlow 4s ease infinite;
   }
@@ -53,20 +136,18 @@ $transition: all 0.3s ease;
   
   // Main content grid
   .footer-main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2.5rem;
+    @include grid(repeat(auto-fit, minmax(250px, 1fr)), 2.5rem);
     margin-bottom: 2.5rem;
   }
   
   // Column styling
   .footer-col {
     h3 {
-      font-family: 'Playfair Display', serif;
+      font-family: $font-heading;
       font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 1.5rem;
-      color: $dark-color;
+      color: $dark;
       position: relative;
       padding-bottom: 0.5rem;
       
@@ -77,8 +158,8 @@ $transition: all 0.3s ease;
         bottom: 0;
         width: 40px;
         height: 2px;
-        background-color: $accent-color;
-        transition: $transition;
+        background-color: $accent;
+        @include transition();
       }
       
       &:hover:after {
@@ -95,21 +176,20 @@ $transition: all 0.3s ease;
         margin-bottom: 0.8rem;
         
         a, span {
-          display: flex;
-          align-items: center;
-          color: $text-color;
+          @include flex(row, flex-start, center);
+          color: $text-dark;
           text-decoration: none;
           font-weight: 500;
-          transition: $transition;
+          @include transition();
           
           &:hover {
-            color: $accent-color;
+            color: $accent;
             transform: translateX(5px);
           }
           
           .icon {
             margin-right: 0.75rem;
-            color: $accent-color;
+            color: $accent;
             font-size: 1.2rem;
           }
         }
@@ -120,20 +200,20 @@ $transition: all 0.3s ease;
   // Brand column styling
   .brand-col {
     .brand-name {
-      font-family: 'Playfair Display', serif;
+      font-family: $font-heading;
       font-size: 2.5rem;
       font-weight: 700;
-      color: $accent-color;
+      color: $accent;
       text-decoration: none;
       display: block;
       margin-bottom: 1rem;
-      transition: $transition;
+      @include transition();
       letter-spacing: 0.5px;
-      text-shadow: 0 2px 4px rgba(255, 146, 165, 0.2);
+      text-shadow: 0 2px 4px $shadow-light;
       
       &:hover {
         transform: scale(1.02);
-        color: darken($accent-color, 10%);
+        color: $primary-dark;
       }
     }
     
@@ -141,31 +221,29 @@ $transition: all 0.3s ease;
       font-size: 1rem;
       line-height: 1.6;
       margin-bottom: 1.5rem;
-      color: $text-color;
+      color: $text-dark;
       font-weight: 500;
     }
     
     .social-links {
-      display: flex;
+      @include flex(row, flex-start, center);
       gap: 1rem;
       
       a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex(row, center, center);
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: rgba($accent-color, 0.1);
-        color: $accent-color;
+        background-color: $primary-lightest;
+        color: $accent;
         font-size: 1.2rem;
-        transition: $transition;
+        @include transition();
         
         &:hover, &.hovered {
-          background-color: $accent-color;
-          color: white;
+          background-color: $accent;
+          color: $white;
           transform: translateY(-5px);
-          box-shadow: 0 5px 15px rgba($accent-color, 0.3);
+          box-shadow: 0 5px 15px $shadow;
         }
       }
     }
@@ -174,25 +252,66 @@ $transition: all 0.3s ease;
   // Contact column styling
   .contact-col {
     li {
-      display: flex;
-      align-items: flex-start;
+      @include flex(row, flex-start, flex-start);
       margin-bottom: 1rem;
       
       .icon {
-        color: $accent-color;
+        color: $accent;
         font-size: 1.2rem;
         margin-right: 0.75rem;
         margin-top: 0.2rem;
       }
       
       a, span {
-        color: $text-color;
+        color: $text-dark;
         text-decoration: none;
         font-weight: 500;
-        transition: $transition;
+        @include transition();
         
         &:hover {
-          color: $accent-color;
+          color: $accent;
+        }
+      }
+    }
+  }
+  
+  // Services column styling
+  .services-col {
+    ul {
+      li {
+        a {
+          padding: 8px 0;
+          border-radius: $border-radius;
+          @include transition();
+          
+          &:hover {
+            background-color: $primary-lightest;
+            padding-left: 8px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Quick links column styling
+  .links-col {
+    ul {
+      li {
+        a {
+          position: relative;
+          padding-left: 15px;
+          
+          &:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: $accent;
+            @include transition();
+          }
+          
+          &:hover:before {
+            left: 5px;
+          }
         }
       }
     }
@@ -200,39 +319,36 @@ $transition: all 0.3s ease;
   
   // Footer bottom
   .footer-bottom {
-    border-top: 1px solid rgba($dark-color, 0.1);
+    border-top: 1px solid $border-color;
     padding-top: 1.5rem;
     text-align: center;
     margin: 0 auto;
     max-width: 1200px;
     padding: 1.5rem 2rem 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex(row, space-between, center);
     flex-wrap: wrap;
     gap: 1rem;
     
     p {
       margin: 0;
       font-size: 0.95rem;
-      color: $text-color;
+      color: $text-dark;
       font-weight: 500;
     }
     
     .made-with {
-      display: flex;
-      align-items: center;
+      @include flex(row, center, center);
       gap: 0.5rem;
       
       .heart-icon {
-        color: $accent-color;
+        color: $accent;
         animation: heartbeat 1.3s infinite;
       }
     }
   }
   
   // Responsive styles
-  @media (max-width: 768px) {
+  @include responsive(mobile) {
     padding-top: 2.5rem;
     
     .footer-main {
@@ -251,28 +367,29 @@ $transition: all 0.3s ease;
     }
     
     .brand-col .brand-name {
-      font-size: 2.2rem;
-      text-align: center;
-    }
-    
-    .brand-col .brand-slogan {
-      text-align: center;
-    }
-    
-    .brand-col .social-links {
-      justify-content: center;
+      font-size: 2rem;
     }
   }
   
-  @media (max-width: 576px) {
-    padding-top: 2rem;
+  @include responsive(mobile-small) {
+    padding: 2rem 0 0.5rem;
+    
+    .footer-container {
+      padding: 0 1rem;
+    }
     
     .footer-col h3 {
       font-size: 1.3rem;
     }
     
     .brand-col .brand-name {
-      font-size: 2rem;
+      font-size: 1.8rem;
+    }
+    
+    .social-links a {
+      width: 36px;
+      height: 36px;
+      font-size: 1rem;
     }
   }
 }

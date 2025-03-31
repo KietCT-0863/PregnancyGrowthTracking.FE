@@ -20,7 +20,7 @@ import FAQDetail from "./pages/FAQ/FAQDetail";
 import FAQAll from "./pages/FAQ/FAQAll";
 import Contact from "./pages/Contact/Contact";
 import NavBarGuest from "./components/NavBarGuest/NavBarGuest";
-import FooterGuest from "./components/FooterGuest/FooterGuest";
+import FooterGuest from "./components/Footer_Guest/FooterGuest";
 import ChooseVip from "./pages/VipChoose/ChooseVip";
 import NavBarMember from "./components/NavBarMember/NavBarMember";
 import NavBar from "./components/NavBar/NavBar";
@@ -128,6 +128,7 @@ const AppRoutes = () => {
               <Outlet />
               <div style={{ margin: "300px 0" }} />
               <ChatAI />
+              <FooterGuest/>
             </>
           </ProtectedMemberRoute>
         }

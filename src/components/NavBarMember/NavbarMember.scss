@@ -3,21 +3,40 @@
 @import url("https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap");
 
 /* Core Variables */
+// Palette chính
 $primary: #ff6b81;
-$primary-color: $primary; /* Đảm bảo tính nhất quán */
+$primary-light: #ffc0c8;
+$primary-lighter: #ffe0e4;
+$primary-lightest: #ffebef;
+$primary-dark: #e64c60;
+
+// Màu phụ và trạng thái
 $accent: #70a1ff;
+$warning: #e74c3c;
+$notification: #ff4757;
+$success: #2ecc71;
+
+// Màu văn bản
 $text-dark: #2f3542;
-$text-color: $text-dark; /* Đảm bảo tính nhất quán */
+$text-medium: #666666;
+$text-light: #999999;
+
+// Nền và viền
+$white: #ffffff;
+$black: #000000;
 $background: #f8f9fa;
 $secondary: #ffdde1;
 $secondary-color: #f9f9f9;
-$white: #ffffff;
-$shadow: #e6e6e6; /* Thay rgba(0, 0, 0, 0.1) */
-$shadow-color: $shadow; /* Đảm bảo tính nhất quán */
 $border-color: #eaeaea;
-$notification-badge-color: #ff4757;
+$border-light: #f0f0f0;
+
+// Bóng đổ
+$shadow: #e6e6e6;
+$shadow-dark: #cccccc;
+$shadow-light: #f0f0f0;
+
+// Giá trị chung
 $transition: 0.3s ease;
-$transition-speed: $transition;
 $border-radius: 8px;
 
 /* Typography */
@@ -31,9 +50,6 @@ $mobile: 576px;
 $tablet: 768px;
 $desktop: 992px;
 $large-desktop: 1200px;
-$mobile-breakpoint: $tablet;
-$tablet-breakpoint: $desktop;
-$desktop-breakpoint: $large-desktop;
 
 /* Mixins */
 @mixin flex($direction: row, $justify: flex-start, $align: center) {
@@ -43,16 +59,16 @@ $desktop-breakpoint: $large-desktop;
   align-items: $align;
 }
 
-@mixin box-shadow($shadow: 0 4px 12px $shadow-color) {
+@mixin box-shadow($shadow: 0 4px 12px $shadow) {
   box-shadow: $shadow;
 }
 
-@mixin transition($property: all, $duration: $transition-speed, $timing: ease) {
+@mixin transition($property: all, $duration: $transition, $timing: ease) {
   transition: $property $duration $timing;
 }
 
 @mixin close-button {
-  background-color: #ffe0e4; /* Thay rgba($primary, 0.1) */
+  background-color: $primary-lighter;
   border: none;
   width: 24px;
   height: 24px;
@@ -69,33 +85,50 @@ $desktop-breakpoint: $large-desktop;
   color: $primary;
 
   &:hover {
-    background-color: #ffc0c8; /* Thay rgba($primary, 0.2) */
+    background-color: $primary-light;
     transform: rotate(90deg);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #ffabb7; /* Thay rgba($primary, 0.3) */
+    box-shadow: 0 0 0 2px lighten($primary, 20%);
   }
 }
 
 @mixin responsive($breakpoint) {
-  @if $breakpoint == mobile {
-    @media screen and (max-width: $mobile-breakpoint) {
+  @if $breakpoint == mobile-small {
+    @media screen and (max-width: $mobile-small) {
+      @content;
+    }
+  } @else if $breakpoint == mobile {
+    @media screen and (max-width: $tablet) {
       @content;
     }
   } @else if $breakpoint == tablet {
-    @media screen and (min-width: ($mobile-breakpoint + 1px)) and (max-width: $tablet-breakpoint) {
+    @media screen and (min-width: ($tablet + 1px)) and (max-width: $desktop) {
       @content;
     }
   } @else if $breakpoint == desktop {
-    @media screen and (min-width: ($tablet-breakpoint + 1px)) {
+    @media screen and (min-width: ($desktop + 1px)) {
       @content;
     }
   } @else if $breakpoint == large {
-    @media screen and (min-width: $desktop-breakpoint) {
+    @media screen and (min-width: $large-desktop) {
       @content;
     }
+  }
+}
+
+@mixin button-style {
+  border: none;
+  border-radius: $border-radius;
+  cursor: pointer;
+  font-family: $font-main;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
   }
 }
 
@@ -106,11 +139,10 @@ $desktop-breakpoint: $large-desktop;
   left: 0;
   right: 0;
   z-index: 1000;
-  font-family: "Roboto", sans-serif;
+  font-family: $font-main;
   transition: all 0.3s ease;
-  background: #ffffff !important;
+  background: $white !important;
   margin: 0;
-  padding: 0;
   height: 80px;
   display: flex;
   align-items: center;
@@ -118,8 +150,8 @@ $desktop-breakpoint: $large-desktop;
   padding: 0 1.5rem;
 
   &.scrolled {
-    box-shadow: 0 3px 15px #e0e0e0 !important; /* Thay rgba(0, 0, 0, 0.08) thành màu đặc */
-    background-color: #ffffff !important;
+    box-shadow: 0 3px 15px $shadow !important;
+    background-color: $white !important;
   }
 
   // Logo Container
@@ -141,11 +173,11 @@ $desktop-breakpoint: $large-desktop;
       }
 
       .navbar-logo-text {
-        font-family: "Amatic SC", cursive;
+        font-family: $font-accent;
         font-size: 2rem;
         font-weight: 700;
-        color: #ff6b81;
-        text-shadow: 1px 1px 1px #e0e0e0; /* Thay rgba(0, 0, 0, 0.1) thành màu đặc */
+        color: $primary;
+        text-shadow: 1px 1px 1px $shadow;
         margin: 0;
         line-height: 1;
       }
@@ -161,7 +193,7 @@ $desktop-breakpoint: $large-desktop;
     .action-separator {
       width: 1px;
       height: 24px;
-      background-color: #ff6b81;
+      background-color: $primary;
       margin: 0 0.3rem;
     }
 
@@ -172,23 +204,23 @@ $desktop-breakpoint: $large-desktop;
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #f0f0f0;
+      background-color: $border-light;
       border: none;
       cursor: pointer;
-      color: #2f3542;
+      color: $text-dark;
       font-size: 1.2rem;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: #e5e5e5;
+        background-color: $shadow-light;
         transform: scale(1.05);
       }
 
       &.logout-button {
-        color: #ff5a5f;
+        color: $warning;
 
         &:hover {
-          background-color: #ffeaea;
+          background-color: lighten($warning, 42%);
         }
       }
 
@@ -196,8 +228,8 @@ $desktop-breakpoint: $large-desktop;
         position: absolute;
         top: -5px;
         right: -5px;
-        background-color: #ff5a5f;
-        color: #ffffff;
+        background-color: $notification;
+        color: $white;
         font-size: 0.7rem;
         width: 18px;
         height: 18px;
@@ -206,7 +238,7 @@ $desktop-breakpoint: $large-desktop;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        box-shadow: 0 2px 5px #cccccc;
+        box-shadow: 0 2px 5px $shadow-dark;
       }
 
       .feature-tooltip {
@@ -214,8 +246,8 @@ $desktop-breakpoint: $large-desktop;
         bottom: -30px;
         left: 50%;
         transform: translateX(-50%);
-        background-color: #000000;
-        color: #ffffff;
+        background-color: $black;
+        color: $white;
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 12px;
@@ -241,15 +273,15 @@ $desktop-breakpoint: $large-desktop;
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #f0f0f0;
+      background-color: $border-light;
       border: none;
       cursor: pointer;
-      color: #2f3542;
+      color: $text-dark;
       font-size: 1.2rem;
       transition: all 0.2s ease;
 
       &:hover {
-        background-color: #e5e5e5;
+        background-color: $shadow-light;
         transform: scale(1.05);
       }
 
@@ -258,8 +290,8 @@ $desktop-breakpoint: $large-desktop;
         bottom: -30px;
         left: 50%;
         transform: translateX(-50%);
-        background-color: #000000;
-        color: #ffffff;
+        background-color: $black;
+        color: $white;
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 12px;
@@ -291,11 +323,11 @@ $desktop-breakpoint: $large-desktop;
         border-radius: 50%;
         overflow: hidden;
         transition: all 0.3s ease;
-        border: 2px solid #ffcfd4;
+        border: 2px solid $secondary;
 
         &:hover {
           transform: scale(1.1);
-          border-color: #ff97a3;
+          border-color: $primary-light;
         }
 
         .user-avatar {
@@ -307,7 +339,7 @@ $desktop-breakpoint: $large-desktop;
         .user-icon {
           width: 100%;
           height: 100%;
-          color: #2f3542;
+          color: $text-dark;
         }
 
         .feature-tooltip {
@@ -315,8 +347,8 @@ $desktop-breakpoint: $large-desktop;
           bottom: -30px;
           left: 50%;
           transform: translateX(-50%);
-          background-color: #000000;
-          color: white;
+          background-color: $black;
+          color: $white;
           padding: 4px 8px;
           border-radius: 4px;
           font-size: 12px;
@@ -338,7 +370,7 @@ $desktop-breakpoint: $large-desktop;
       .user-icon-placeholder {
         width: 40px;
         height: 40px;
-        color: #2f3542;
+        color: $text-dark;
       }
     }
   }
@@ -432,59 +464,6 @@ $desktop-breakpoint: $large-desktop;
   }
 }
 
-/* Media queries */
-@media (max-width: 992px) {
-  .navbar {
-    .navbar-container {
-      padding: 0 0.75rem;
-    }
-
-    .logo-section {
-      .navbar-logo {
-        .navbar-logo-text {
-          font-size: 1.5rem;
-        }
-
-        .navbar-logo-image {
-          height: 35px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    height: 60px;
-
-    .navbar-container {
-      padding: 0 0.5rem;
-    }
-
-    .logo-section {
-      .navbar-logo {
-        .navbar-logo-text {
-          font-size: 1.3rem;
-        }
-
-        .navbar-logo-image {
-          height: 30px;
-        }
-      }
-    }
-
-    .header-actions {
-      gap: 0.25rem;
-
-      .header-action-button,
-      .navbar-toggle-button {
-        width: 35px;
-        height: 35px;
-      }
-    }
-  }
-}
-
 /* Menu overlay */
 .menu-overlay {
   position: fixed;
@@ -492,11 +471,9 @@ $desktop-breakpoint: $large-desktop;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000000;
-  opacity: 0.6;
+  background-color: $black;
   z-index: 998;
   animation: fadeIn 0.3s ease;
-  backdrop-filter: none;
 }
 
 @keyframes fadeIn {
@@ -510,7 +487,7 @@ $desktop-breakpoint: $large-desktop;
 
 /* Notification Bell */
 .header-action-button.notification-button {
-  background-color: #f0f0f0;
+  background-color: $border-light;
   border: none;
   width: 42px;
   height: 42px;
@@ -543,7 +520,7 @@ $desktop-breakpoint: $large-desktop;
   }
 
   &:hover {
-    background-color: #e5e5e5;
+    background-color: $shadow-light;
     transform: scale(1.05);
   }
 
@@ -551,8 +528,8 @@ $desktop-breakpoint: $large-desktop;
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: #e74c3c;
-    color: #ffffff;
+    background-color: $warning;
+    color: $white;
     font-size: 10px;
     width: 18px;
     height: 18px;
@@ -561,8 +538,8 @@ $desktop-breakpoint: $large-desktop;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    box-shadow: 0 2px 5px #cccccc;
-    border: 2px solid #ffffff;
+    box-shadow: 0 2px 5px $shadow-dark;
+    border: 2px solid $white;
 
     @include responsive(mobile-small) {
       width: 16px;
@@ -576,8 +553,8 @@ $desktop-breakpoint: $large-desktop;
     bottom: -30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #000000;
-    color: #ffffff;
+    background-color: $black;
+    color: $white;
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -603,9 +580,9 @@ $desktop-breakpoint: $large-desktop;
   right: 10px;
   width: 350px;
   max-height: 500px;
-  background-color: #ffffff; /* Thay white thành #ffffff */
-  border-radius: 8px;
-  @include box-shadow();
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 12px $shadow;
   z-index: 1002;
   overflow: hidden;
   display: flex;
@@ -625,19 +602,12 @@ $desktop-breakpoint: $large-desktop;
     h3 {
       margin: 0;
       font-size: 1.1rem;
+      font-weight: 600;
+      color: $text-dark;
     }
 
     .close-button {
-      background: none;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-      color: $text-dark;
-      @include transition();
-
-      &:hover {
-        color: $notification-badge-color;
-      }
+      @include close-button;
     }
   }
 
@@ -656,11 +626,12 @@ $desktop-breakpoint: $large-desktop;
       }
 
       &.unread {
-        background-color: #ffdbdf;
+        background-color: $primary-lightest;
+        border-left: 3px solid $primary;
         font-weight: 500;
-
+        
         &:hover {
-          background-color: #ffd0d5;
+          background-color: $primary-lighter;
         }
       }
 
@@ -668,6 +639,7 @@ $desktop-breakpoint: $large-desktop;
         @include flex(row, flex-start, center);
         font-weight: 600;
         margin-bottom: 5px;
+        color: $text-dark;
 
         svg {
           margin-right: 8px;
@@ -678,6 +650,7 @@ $desktop-breakpoint: $large-desktop;
       .notification-content {
         font-size: 0.9rem;
         margin: 5px 0;
+        color: $text-medium;
       }
 
       .notification-actions {
@@ -699,7 +672,7 @@ $desktop-breakpoint: $large-desktop;
 
         .notification-time {
           font-size: 0.8rem;
-          color: #8c8c8c;
+          color: $text-light;
         }
       }
     }
@@ -707,7 +680,7 @@ $desktop-breakpoint: $large-desktop;
     .no-notifications {
       padding: 20px;
       text-align: center;
-      color: #717171;
+      color: $text-light;
     }
   }
 
@@ -718,16 +691,16 @@ $desktop-breakpoint: $large-desktop;
     .view-all-button {
       width: 100%;
       padding: 8px;
-      background-color: $secondary-color;
+      background-color: $primary-lightest;
       border: none;
       border-radius: 4px;
-      color: $text-dark;
+      color: $primary;
       font-weight: 500;
       cursor: pointer;
       @include transition();
 
       &:hover {
-        background-color: #f0f0f0;
+        background-color: $primary-lighter;
       }
     }
   }
@@ -739,12 +712,12 @@ $desktop-breakpoint: $large-desktop;
   top: 70px;
   right: 10px;
   width: 300px;
-  background-color: #ffffff; /* Thay white thành #ffffff */
-  border-radius: 8px;
-  @include box-shadow();
+  background-color: $white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px $shadow;
   z-index: 1002;
   overflow: hidden;
-  @include transition();
+  animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 
   @include responsive(mobile) {
     width: calc(100vw - 40px);
@@ -763,6 +736,7 @@ $desktop-breakpoint: $large-desktop;
       border-radius: 50%;
       overflow: hidden;
       margin-right: 15px;
+      border: 2px solid $primary-light;
 
       img {
         width: 100%;
@@ -782,12 +756,13 @@ $desktop-breakpoint: $large-desktop;
       h3 {
         margin: 0 0 5px;
         font-size: 1rem;
+        font-weight: 600;
       }
 
       p {
         margin: 0;
         font-size: 0.85rem;
-        color: #717171;
+        color: $text-light;
       }
     }
   }
@@ -804,6 +779,7 @@ $desktop-breakpoint: $large-desktop;
 
       &:hover {
         background-color: $secondary-color;
+        transform: translateX(5px);
       }
 
       svg {
@@ -812,12 +788,12 @@ $desktop-breakpoint: $large-desktop;
       }
 
       &.logout {
-        color: $notification-badge-color;
+        color: $warning;
         border-top: 1px solid $border-color;
         margin-top: 5px;
 
         &:hover {
-          background-color: #ffecee;
+          background-color: lighten($warning, 42%);
         }
       }
     }
@@ -849,7 +825,7 @@ $desktop-breakpoint: $large-desktop;
 
     &:hover {
       .user-avatar {
-        border-color: #e64c60;
+        border-color: $primary-dark;
       }
 
       .user-icon {
@@ -866,7 +842,7 @@ $desktop-breakpoint: $large-desktop;
 
   .user-icon-placeholder {
     font-size: 24px;
-    color: #999;
+    color: $text-light;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -881,151 +857,20 @@ $desktop-breakpoint: $large-desktop;
   text-decoration: none;
   padding: 8px 15px;
   background-color: $primary;
-  color: #ffffff; /* Thay white thành #ffffff */
+  color: $white;
   border-radius: 4px;
   font-weight: 500;
   position: relative;
   @include transition();
 
   &:hover {
-    background-color: #e15b4e;
+    background-color: $primary-dark;
 
     .feature-tooltip {
       visibility: visible;
       opacity: 1;
       transform: translateY(0);
     }
-  }
-}
-
-/* Placeholder for Mobile Sidebar */
-.mobile-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #808080; /* Thay rgba(0, 0, 0, 0.5) thành màu đặc */
-  z-index: 1020;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-
-  &.visible {
-    display: block;
-    opacity: 1;
-  }
-
-  .sidebar-content {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 80%;
-    max-width: 320px;
-    height: 100%;
-    background-color: #ffffff; /* Thay white thành #ffffff */
-    box-shadow: -5px 0 15px #e0e0e0; /* Thay rgba(0, 0, 0, 0.1) thành màu đặc */
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    display: flex;
-    flex-direction: column;
-
-    &.visible {
-      transform: translateX(0);
-    }
-
-    .sidebar-header {
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-
-      h3 {
-        margin: 0;
-        font-size: 1.1rem;
-        color: $text-dark;
-      }
-
-      .close-button {
-        @include close-button;
-      }
-    }
-
-    .sidebar-menu {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 10px;
-
-      .menu-item {
-        display: flex;
-        align-items: center;
-        padding: 12px 15px;
-        border-radius: 8px;
-        color: $text-dark;
-        text-decoration: none;
-        margin-bottom: 10px;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: #f5f5f5;
-        }
-
-        &.active {
-          background-color: #ffe0e4; /* Thay rgba($primary, 0.1) thành màu đặc */
-          color: $primary;
-
-          svg {
-            color: $primary;
-          }
-        }
-
-        svg {
-          margin-right: 12px;
-          color: #666;
-        }
-      }
-    }
-
-    .sidebar-footer {
-      padding: 15px;
-      border-top: 1px solid #eee;
-
-      .logout-button {
-        width: 100%;
-        padding: 10px;
-        background-color: #f5f5f5;
-        border: none;
-        border-radius: 6px;
-        color: #e74c3c;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 500;
-
-        svg {
-          margin-right: 10px;
-        }
-
-        &:hover {
-          background-color: #fee;
-        }
-      }
-    }
-  }
-}
-
-/* Animation for menu items */
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
   }
 }
 
@@ -1040,7 +885,7 @@ body.sidebar-open {
 
 /* Header action button logout */
 .header-action-button.logout-button {
-  background-color: #f0f0f0;
+  background-color: $border-light;
   border: none;
   width: 42px;
   height: 42px;
@@ -1049,7 +894,7 @@ body.sidebar-open {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #e74c3c;
+  color: $warning;
   font-size: 1.1rem;
   transition: all 0.2s ease;
   position: relative;
@@ -1073,19 +918,19 @@ body.sidebar-open {
   }
 
   &:hover {
-    background-color: #fadfdd;
+    background-color: lighten($warning, 42%);
     transform: scale(1.05);
   }
 
   .feature-tooltip {
-    background-color: #000000;
+    background-color: $black;
 
     @include responsive(desktop) {
       position: absolute;
       bottom: -30px;
       left: 50%;
       transform: translateX(-50%);
-      color: white;
+      color: $white;
       padding: 4px 8px;
       border-radius: 4px;
       font-size: 12px;
@@ -1108,7 +953,7 @@ body.sidebar-open {
 /* Placeholder icon for non-logged in users */
 .user-icon-placeholder {
   font-size: 24px;
-  color: #999;
+  color: $text-light;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1122,13 +967,13 @@ body.sidebar-open {
   top: 100%;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
+  background-color: $white;
   border-radius: 0;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 20px $shadow;
   z-index: 999;
   display: none;
   border: none;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid $border-color;
   transform: none;
 
   &.visible {
@@ -1146,7 +991,7 @@ body.sidebar-open {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    background-color: #ffffff;
+    background-color: $white;
     position: relative;
 
     &::before {
@@ -1156,7 +1001,7 @@ body.sidebar-open {
       left: 0;
       right: 0;
       height: 15px;
-      background: #ffffff;
+      background: $white;
     }
 
     @media (max-width: 768px) {
@@ -1172,29 +1017,29 @@ body.sidebar-open {
     align-items: center;
     gap: 0.75rem;
     padding: 0.85rem 1.5rem;
-    color: #333;
+    color: $text-dark;
     text-decoration: none;
     border-radius: 10px;
     transition: all 0.3s ease;
     position: relative;
     white-space: nowrap;
     font-weight: 500;
-    background-color: #ffffff;
+    background-color: $white;
     box-shadow: none;
     border: none;
 
     &:hover {
-      background-color: #f9f9f9;
-      color: #ff6b81;
+      background-color: $secondary-color;
+      color: $primary;
       transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(255, 107, 129, 0.1);
+      box-shadow: 0 6px 12px $primary-lightest;
     }
 
     &.active {
-      background-color: #ffebef;
-      color: #ff6b81;
+      background-color: $primary-lightest;
+      color: $primary;
       font-weight: 600;
-      border-left: 3px solid #ff6b81;
+      border-left: 3px solid $primary;
       padding-left: calc(1.5rem - 3px);
     }
 
@@ -1213,8 +1058,8 @@ body.sidebar-open {
       bottom: 100%;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #222222;
-      color: white;
+      background-color: $black;
+      color: $white;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       font-size: 0.8rem;
@@ -1224,7 +1069,7 @@ body.sidebar-open {
       transition: all 0.3s ease;
       z-index: 1000;
       font-weight: 400;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 8px $shadow-dark;
 
       &::after {
         content: "";
@@ -1234,7 +1079,7 @@ body.sidebar-open {
         transform: translateX(-50%);
         border-width: 6px;
         border-style: solid;
-        border-color: #222222 transparent transparent transparent;
+        border-color: $black transparent transparent transparent;
       }
     }
 
@@ -1250,14 +1095,14 @@ body.sidebar-open {
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid $border-light;
     width: 100%;
-    background-color: #fff;
+    background-color: $white;
 
     h3 {
       margin: 0;
       font-size: 1.3rem;
-      color: #333;
+      color: $text-dark;
       font-weight: 600;
       position: relative;
 
@@ -1269,16 +1114,16 @@ body.sidebar-open {
         left: 0;
         width: 30px;
         height: 3px;
-        background-color: #ff6b81;
+        background-color: $primary;
         border-radius: 3px;
       }
     }
 
     .close-button {
-      background: #ffebef;
+      background: $primary-lightest;
       border: none;
       font-size: 1.2rem;
-      color: #ff6b81;
+      color: $primary;
       cursor: pointer;
       padding: 0.5rem;
       border-radius: 50%;
@@ -1290,8 +1135,8 @@ body.sidebar-open {
       height: 36px;
 
       &:hover {
-        background-color: #ffe0e6;
-        color: #ff5a5f;
+        background-color: $primary-lighter;
+        color: $primary-dark;
         transform: rotate(90deg);
       }
     }
@@ -1306,254 +1151,5 @@ body.sidebar-open {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* User Dropdown */
-.user-dropdown {
-  position: absolute;
-  top: 70px;
-  right: 10px;
-  width: 300px;
-  background-color: white;
-  border-radius: 12px; /* Tăng border-radius */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Tăng shadow */
-  z-index: 1001;
-  overflow: hidden;
-  animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1); /* Thêm animation */
-
-  .user-info {
-    padding: 1.25rem; /* Tăng padding */
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    align-items: center;
-
-    .user-avatar-large {
-      width: 60px; /* Tăng kích thước avatar */
-      height: 60px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 1rem;
-      border: 2px solid rgba(255, 107, 129, 0.2); /* Thêm border */
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .user-icon-large {
-        width: 100%;
-        height: 100%;
-        color: #2f3542;
-      }
-    }
-
-    .user-details {
-      h3 {
-        margin: 0 0 0.3rem;
-        font-size: 1.1rem;
-        font-weight: 600; /* Tăng font-weight */
-      }
-
-      p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #666;
-      }
-    }
-  }
-
-  .dropdown-menu {
-    .dropdown-item {
-      padding: 0.9rem 1.25rem; /* Tăng padding */
-      display: flex;
-      align-items: center;
-      gap: 0.9rem; /* Tăng gap */
-      color: #2f3542;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      position: relative;
-      font-weight: 500; /* Tăng font-weight */
-
-      &:hover {
-        background-color: #f5f5f5;
-        transform: translateX(5px); /* Thêm hiệu ứng hover */
-      }
-
-      &.highlight {
-        background-color: rgba(255, 107, 129, 0.05);
-      }
-
-      &.logout {
-        color: #ff5a5f;
-        border-top: 1px solid #eee;
-        margin-top: 0.5rem;
-
-        &:hover {
-          background-color: rgba(255, 90, 95, 0.1);
-        }
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    width: calc(100% - 20px);
-    right: 10px;
-    top: 80px; /* Điều chỉnh vị trí trên mobile */
-  }
-}
-
-/* Notification Dropdown */
-.notification-dropdown {
-  position: absolute;
-  top: 70px;
-  right: 10px;
-  width: 350px;
-  max-height: 500px;
-  background-color: white;
-  border-radius: 12px; /* Tăng border-radius */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Tăng shadow */
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1); /* Thêm animation */
-
-  .notification-header {
-    padding: 1rem 1.25rem; /* Tăng padding ngang */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    background-color: #f9f9f9; /* Thêm màu nền nhẹ */
-
-    h3 {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 600; /* Tăng font-weight */
-    }
-
-    .close-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.1rem;
-      color: #2f3542;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background-color: rgba(255, 107, 129, 0.1);
-        color: #ff5a5f;
-      }
-    }
-  }
-
-  .notification-list {
-    overflow-y: auto;
-    max-height: 350px;
-
-    .notification-item {
-      padding: 1rem 1.25rem; /* Tăng padding */
-      border-bottom: 1px solid #f0f0f0;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background-color: #f9f9f9;
-      }
-
-      &.unread {
-        background-color: rgba(255, 107, 129, 0.05);
-        border-left: 3px solid #ff6b81;
-      }
-
-      .notification-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        margin-bottom: 0.3rem;
-        color: #ff6b81;
-
-        svg {
-          color: #ff6b81;
-        }
-      }
-
-      .notification-content {
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        color: #555;
-      }
-
-      .notification-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        margin-top: 0.5rem;
-
-        .mark-read {
-          background: none;
-          border: none;
-          color: #ff6b81;
-          cursor: pointer;
-          padding: 0.25rem 0.5rem;
-          border-radius: 4px;
-          transition: all 0.2s ease;
-          font-weight: 500;
-
-          &:hover {
-            background-color: rgba(255, 107, 129, 0.1);
-          }
-        }
-
-        .notification-time {
-          color: #999;
-        }
-      }
-    }
-
-    .no-notifications {
-      padding: 2rem;
-      text-align: center;
-      color: #999;
-    }
-  }
-
-  .notification-footer {
-    padding: 0.8rem 1.25rem; /* Tăng padding ngang */
-    border-top: 1px solid #eee;
-    background-color: #f9f9f9; /* Thêm màu nền nhẹ */
-
-    .view-all-button {
-      width: 100%;
-      padding: 0.6rem;
-      background-color: rgba(255, 107, 129, 0.1); /* Đổi màu nền */
-      color: #ff6b81; /* Đổi màu chữ */
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-weight: 500; /* Tăng font-weight */
-
-      &:hover {
-        background-color: rgba(255, 107, 129, 0.2);
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
-    width: calc(100% - 20px);
-    max-height: 80vh;
-    top: 80px; /* Điều chỉnh vị trí trên mobile */
   }
 }
