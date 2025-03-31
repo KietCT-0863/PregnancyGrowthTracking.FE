@@ -120,7 +120,7 @@ const AddEventModal = ({ visible, onClose, onSave, categories }) => {
           <div className="form-group">
             <input
               type="text"
-              placeholder="Địa điểm (không bắt buộc)"
+              placeholder="Địa điểm "
               value={newEvent.location || ''}
               onChange={(e) =>
                 setNewEvent({ ...newEvent, location: e.target.value })
@@ -130,7 +130,7 @@ const AddEventModal = ({ visible, onClose, onSave, categories }) => {
 
           <div className="form-group">
             <textarea
-              placeholder="Thông báo (không bắt buộc)"
+              placeholder="Thông báo "
               value={newEvent.notification || ''}
               onChange={(e) =>
                 setNewEvent({ ...newEvent, notification: e.target.value })

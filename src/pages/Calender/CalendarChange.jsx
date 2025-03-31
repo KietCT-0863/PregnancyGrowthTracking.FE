@@ -262,7 +262,7 @@ const CalendarChange = () => {
               name="notification"
               value={reminder.notification}
               onChange={handleInputChange}
-              placeholder="Nhập ghi chú (không bắt buộc)"
+              placeholder="Nhập ghi chú "
               rows={4}
             />
           </div>

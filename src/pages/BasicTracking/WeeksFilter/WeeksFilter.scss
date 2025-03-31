@@ -444,7 +444,7 @@
     display: flex;
     gap: 10px;
     
-    .apply-button, .reset-button {
+     .reset-button {
       padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.9rem;
@@ -453,7 +453,16 @@
       transition: all 0.2s ease;
       border: none;
     }
-    
+    .apply-button-2{
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      
+    }
     .apply-button {
       background: linear-gradient(135deg, #d63384, #ff6b81);
       color: white;
@@ -470,7 +479,22 @@
         cursor: not-allowed;
       }
     }
-    
+    .apply-button-2{
+      background: linear-gradient(135deg, #d63384, #ff6b81);
+      color: white;
+      flex-grow: 1;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(214, 51, 132, 0.3);
+      }
+      
+      &:disabled {
+        background: #e0e0e0;
+        color: #888;
+        cursor: not-allowed;
+      }
+    }
     .reset-button {
       background: #f0f0f0;
       color: #666;

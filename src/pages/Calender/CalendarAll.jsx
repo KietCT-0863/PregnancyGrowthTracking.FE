@@ -1216,7 +1216,7 @@ const EventFormModal = ({ onClose, onSubmit, event, setEvent, categories, getCur
 
           <div className="form-group">
             <textarea
-              placeholder="Thông báo (không bắt buộc)"
+              placeholder="Thông báo "
               value={event.notification || ''}
               onChange={(e) => setEvent({ ...event, notification: e.target.value })}
               rows={4}
