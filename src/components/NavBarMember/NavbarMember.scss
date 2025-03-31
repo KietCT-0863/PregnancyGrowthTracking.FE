@@ -67,12 +67,12 @@ $desktop-breakpoint: $large-desktop;
   cursor: pointer;
   transition: all 0.3s ease;
   color: $primary;
-  
+
   &:hover {
     background-color: #ffc0c8; /* Thay rgba($primary, 0.2) */
     transform: rotate(90deg);
   }
-  
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px #ffabb7; /* Thay rgba($primary, 0.3) */
@@ -106,7 +106,7 @@ $desktop-breakpoint: $large-desktop;
   left: 0;
   right: 0;
   z-index: 1000;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   transition: all 0.3s ease;
   background: #ffffff !important;
   margin: 0;
@@ -116,7 +116,7 @@ $desktop-breakpoint: $large-desktop;
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  
+
   &.scrolled {
     box-shadow: 0 3px 15px #e0e0e0 !important; /* Thay rgba(0, 0, 0, 0.08) thành màu đặc */
     background-color: #ffffff !important;
@@ -128,18 +128,18 @@ $desktop-breakpoint: $large-desktop;
     align-items: center;
     gap: 1.5rem;
     margin: 0;
-    
+
     .navbar-logo {
       display: flex;
       align-items: center;
       text-decoration: none;
       gap: 0.8rem;
-      
+
       .navbar-logo-image {
         height: 40px;
         width: auto;
       }
-      
+
       .navbar-logo-text {
         font-family: "Amatic SC", cursive;
         font-size: 2rem;
@@ -157,14 +157,14 @@ $desktop-breakpoint: $large-desktop;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     .action-separator {
       width: 1px;
       height: 24px;
       background-color: #ff6b81;
       margin: 0 0.3rem;
     }
-    
+
     .header-action-button {
       display: flex;
       align-items: center;
@@ -178,20 +178,20 @@ $desktop-breakpoint: $large-desktop;
       color: #2f3542;
       font-size: 1.2rem;
       transition: all 0.2s ease;
-      
+
       &:hover {
         background-color: #e5e5e5;
         transform: scale(1.05);
       }
-      
+
       &.logout-button {
         color: #ff5a5f;
-        
+
         &:hover {
           background-color: #ffeaea;
         }
       }
-      
+
       .notification-badge {
         position: absolute;
         top: -5px;
@@ -208,7 +208,7 @@ $desktop-breakpoint: $large-desktop;
         font-weight: bold;
         box-shadow: 0 2px 5px #cccccc;
       }
-      
+
       .feature-tooltip {
         position: absolute;
         bottom: -30px;
@@ -223,17 +223,17 @@ $desktop-breakpoint: $large-desktop;
         opacity: 0;
         transition: opacity 0.2s ease;
         pointer-events: none;
-        
+
         @media (max-width: 768px) {
           display: none;
         }
       }
-      
+
       &:hover .feature-tooltip {
         opacity: 1;
       }
     }
-    
+
     .navbar-toggle-button {
       display: flex;
       align-items: center;
@@ -247,12 +247,12 @@ $desktop-breakpoint: $large-desktop;
       color: #2f3542;
       font-size: 1.2rem;
       transition: all 0.2s ease;
-      
+
       &:hover {
         background-color: #e5e5e5;
         transform: scale(1.05);
       }
-      
+
       .feature-tooltip {
         position: absolute;
         bottom: -30px;
@@ -267,23 +267,23 @@ $desktop-breakpoint: $large-desktop;
         opacity: 0;
         transition: opacity 0.2s ease;
         pointer-events: none;
-        
+
         @media (max-width: 768px) {
           display: none;
         }
       }
-      
+
       &:hover .feature-tooltip {
         opacity: 1;
       }
     }
-    
+
     // User profile container
     .user-profile-container {
       display: flex;
       align-items: center;
       cursor: pointer;
-      
+
       .user-avatar-container {
         position: relative;
         width: 40px;
@@ -292,24 +292,24 @@ $desktop-breakpoint: $large-desktop;
         overflow: hidden;
         transition: all 0.3s ease;
         border: 2px solid #ffcfd4;
-        
+
         &:hover {
           transform: scale(1.1);
           border-color: #ff97a3;
         }
-        
+
         .user-avatar {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        
+
         .user-icon {
           width: 100%;
           height: 100%;
           color: #2f3542;
         }
-        
+
         .feature-tooltip {
           position: absolute;
           bottom: -30px;
@@ -324,17 +324,17 @@ $desktop-breakpoint: $large-desktop;
           opacity: 0;
           transition: opacity 0.2s ease;
           pointer-events: none;
-          
+
           @media (max-width: 768px) {
             display: none;
           }
         }
-        
+
         &:hover .feature-tooltip {
           opacity: 1;
         }
       }
-      
+
       .user-icon-placeholder {
         width: 40px;
         height: 40px;
@@ -342,43 +342,43 @@ $desktop-breakpoint: $large-desktop;
       }
     }
   }
-  
+
   @media (max-width: 768px) {
     padding: 0 1rem;
     height: 70px;
-    
+
     .logo-container {
       .navbar-logo {
         .navbar-logo-text {
           font-size: 1.6rem;
         }
-        
+
         .navbar-logo-image {
           height: 32px;
         }
       }
     }
-    
+
     .header-actions {
       gap: 0.3rem;
-      
+
       .action-separator {
         margin: 0 0.2rem;
       }
-      
+
       .header-action-button,
       .navbar-toggle-button {
         width: 36px;
         height: 36px;
         font-size: 1.1rem;
       }
-      
+
       .user-profile-container {
         .user-avatar-container {
           width: 36px;
           height: 36px;
         }
-        
+
         .user-icon-placeholder {
           width: 36px;
           height: 36px;
@@ -386,43 +386,43 @@ $desktop-breakpoint: $large-desktop;
       }
     }
   }
-  
+
   @media (max-width: 480px) {
     padding: 0 0.75rem;
     height: 60px;
-    
+
     .logo-container {
       .navbar-logo {
         .navbar-logo-text {
           font-size: 1.4rem;
         }
-        
+
         .navbar-logo-image {
           height: 28px;
         }
       }
     }
-    
+
     .header-actions {
       gap: 0.2rem;
-      
+
       .action-separator {
         height: 20px;
       }
-      
+
       .header-action-button,
       .navbar-toggle-button {
         width: 32px;
         height: 32px;
         font-size: 1rem;
       }
-      
+
       .user-profile-container {
         .user-avatar-container {
           width: 32px;
           height: 32px;
         }
-        
+
         .user-icon-placeholder {
           width: 32px;
           height: 32px;
@@ -438,13 +438,13 @@ $desktop-breakpoint: $large-desktop;
     .navbar-container {
       padding: 0 0.75rem;
     }
-    
+
     .logo-section {
       .navbar-logo {
         .navbar-logo-text {
           font-size: 1.5rem;
         }
-        
+
         .navbar-logo-image {
           height: 35px;
         }
@@ -456,26 +456,26 @@ $desktop-breakpoint: $large-desktop;
 @media (max-width: 768px) {
   .navbar {
     height: 60px;
-    
+
     .navbar-container {
       padding: 0 0.5rem;
     }
-    
+
     .logo-section {
       .navbar-logo {
         .navbar-logo-text {
           font-size: 1.3rem;
         }
-        
+
         .navbar-logo-image {
           height: 30px;
         }
       }
     }
-    
+
     .header-actions {
       gap: 0.25rem;
-      
+
       .header-action-button,
       .navbar-toggle-button {
         width: 35px;
@@ -490,17 +490,21 @@ $desktop-breakpoint: $large-desktop;
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   background-color: #000000;
+  opacity: 0.6;
   z-index: 998;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  
-  &.visible {
-    opacity: 0.5;
-    visibility: visible;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -519,30 +523,30 @@ $desktop-breakpoint: $large-desktop;
   font-size: 1.1rem;
   transition: all 0.2s ease;
   position: relative;
-  
+
   @include responsive(tablet) {
     width: 38px;
     height: 38px;
     font-size: 1rem;
   }
-  
+
   @include responsive(mobile) {
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
   }
-  
+
   @include responsive(mobile-small) {
     width: 32px;
     height: 32px;
     font-size: 0.8rem;
   }
-  
+
   &:hover {
     background-color: #e5e5e5;
     transform: scale(1.05);
   }
-  
+
   .notification-badge {
     position: absolute;
     top: -5px;
@@ -559,14 +563,14 @@ $desktop-breakpoint: $large-desktop;
     font-weight: 700;
     box-shadow: 0 2px 5px #cccccc;
     border: 2px solid #ffffff;
-    
+
     @include responsive(mobile-small) {
       width: 16px;
       height: 16px;
       font-size: 9px;
     }
   }
-  
+
   .feature-tooltip {
     position: absolute;
     bottom: -30px;
@@ -583,7 +587,7 @@ $desktop-breakpoint: $large-desktop;
     pointer-events: none;
     z-index: 1002;
   }
-  
+
   &:hover .feature-tooltip {
     @include responsive(desktop) {
       display: block;
@@ -606,23 +610,23 @@ $desktop-breakpoint: $large-desktop;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  
+
   @include responsive(mobile) {
     width: calc(100vw - 20px);
     max-height: 80vh;
     right: 10px;
   }
-  
+
   .notification-header {
     @include flex(row, space-between, center);
     padding: 15px;
     border-bottom: 1px solid $border-color;
-    
+
     h3 {
       margin: 0;
       font-size: 1.1rem;
     }
-    
+
     .close-button {
       background: none;
       border: none;
@@ -630,56 +634,56 @@ $desktop-breakpoint: $large-desktop;
       cursor: pointer;
       color: $text-dark;
       @include transition();
-      
+
       &:hover {
         color: $notification-badge-color;
       }
     }
   }
-  
+
   .notification-list {
     overflow-y: auto;
     flex: 1;
-    
+
     .notification-item {
       padding: 12px 15px;
       border-bottom: 1px solid $border-color;
       cursor: pointer;
       @include transition();
-      
+
       &:hover {
         background-color: $secondary-color;
       }
-      
+
       &.unread {
         background-color: #ffdbdf;
         font-weight: 500;
-        
+
         &:hover {
           background-color: #ffd0d5;
         }
       }
-      
+
       .notification-title {
         @include flex(row, flex-start, center);
         font-weight: 600;
         margin-bottom: 5px;
-        
+
         svg {
           margin-right: 8px;
           color: $primary;
         }
       }
-      
+
       .notification-content {
         font-size: 0.9rem;
         margin: 5px 0;
       }
-      
+
       .notification-actions {
         @include flex(row, space-between, center);
         margin-top: 8px;
-        
+
         .mark-read {
           background: none;
           border: none;
@@ -687,30 +691,30 @@ $desktop-breakpoint: $large-desktop;
           font-size: 0.8rem;
           cursor: pointer;
           padding: 0;
-          
+
           &:hover {
             text-decoration: underline;
           }
         }
-        
+
         .notification-time {
           font-size: 0.8rem;
           color: #8c8c8c;
         }
       }
     }
-    
+
     .no-notifications {
       padding: 20px;
       text-align: center;
       color: #717171;
     }
   }
-  
+
   .notification-footer {
     padding: 10px 15px;
     border-top: 1px solid $border-color;
-    
+
     .view-all-button {
       width: 100%;
       padding: 8px;
@@ -721,7 +725,7 @@ $desktop-breakpoint: $large-desktop;
       font-weight: 500;
       cursor: pointer;
       @include transition();
-      
+
       &:hover {
         background-color: #f0f0f0;
       }
@@ -741,45 +745,45 @@ $desktop-breakpoint: $large-desktop;
   z-index: 1002;
   overflow: hidden;
   @include transition();
-  
+
   @include responsive(mobile) {
     width: calc(100vw - 40px);
     right: 5px;
   }
-  
+
   .user-info {
     @include flex(row, flex-start, center);
     padding: 15px;
     background-color: $secondary-color;
     border-bottom: 1px solid $border-color;
-    
+
     .user-avatar-large {
       width: 50px;
       height: 50px;
       border-radius: 50%;
       overflow: hidden;
       margin-right: 15px;
-      
+
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
       }
-      
+
       .user-icon-large {
         font-size: 50px;
         color: $text-dark;
       }
     }
-    
+
     .user-details {
       flex: 1;
-      
+
       h3 {
         margin: 0 0 5px;
         font-size: 1rem;
       }
-      
+
       p {
         margin: 0;
         font-size: 0.85rem;
@@ -787,31 +791,31 @@ $desktop-breakpoint: $large-desktop;
       }
     }
   }
-  
+
   .dropdown-menu {
     @include flex(column, flex-start, stretch);
-    
+
     .dropdown-item {
       @include flex(row, flex-start, center);
       padding: 12px 15px;
       text-decoration: none;
       color: $text-dark;
       @include transition();
-      
+
       &:hover {
         background-color: $secondary-color;
       }
-      
+
       svg {
         margin-right: 10px;
         font-size: 1.1rem;
       }
-      
+
       &.logout {
         color: $notification-badge-color;
         border-top: 1px solid $border-color;
         margin-top: 5px;
-        
+
         &:hover {
           background-color: #ffecee;
         }
@@ -825,11 +829,11 @@ $desktop-breakpoint: $large-desktop;
   @include flex(row, flex-end, center);
   position: relative;
   height: 100%;
-  
+
   .user-avatar-container {
     position: relative;
     cursor: pointer;
-    
+
     .user-avatar {
       width: 36px;
       height: 36px;
@@ -837,21 +841,21 @@ $desktop-breakpoint: $large-desktop;
       object-fit: cover;
       border: 2px solid $primary;
     }
-    
+
     .user-icon {
       font-size: 36px;
       color: $text-dark;
     }
-    
+
     &:hover {
       .user-avatar {
         border-color: #e64c60;
       }
-      
+
       .user-icon {
         color: $primary;
       }
-      
+
       .feature-tooltip {
         visibility: visible;
         opacity: 1;
@@ -859,7 +863,7 @@ $desktop-breakpoint: $large-desktop;
       }
     }
   }
-  
+
   .user-icon-placeholder {
     font-size: 24px;
     color: #999;
@@ -882,10 +886,10 @@ $desktop-breakpoint: $large-desktop;
   font-weight: 500;
   position: relative;
   @include transition();
-  
+
   &:hover {
     background-color: #e15b4e;
-    
+
     .feature-tooltip {
       visibility: visible;
       opacity: 1;
@@ -906,12 +910,12 @@ $desktop-breakpoint: $large-desktop;
   display: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  
+
   &.visible {
     display: block;
     opacity: 1;
   }
-  
+
   .sidebar-content {
     position: absolute;
     top: 0;
@@ -925,34 +929,34 @@ $desktop-breakpoint: $large-desktop;
     transition: transform 0.3s ease;
     display: flex;
     flex-direction: column;
-    
+
     &.visible {
       transform: translateX(0);
     }
-    
+
     .sidebar-header {
       padding: 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid #eee;
-      
+
       h3 {
         margin: 0;
         font-size: 1.1rem;
         color: $text-dark;
       }
-      
+
       .close-button {
         @include close-button;
       }
     }
-    
+
     .sidebar-menu {
       flex-grow: 1;
       overflow-y: auto;
       padding: 10px;
-      
+
       .menu-item {
         display: flex;
         align-items: center;
@@ -962,31 +966,31 @@ $desktop-breakpoint: $large-desktop;
         text-decoration: none;
         margin-bottom: 10px;
         transition: all 0.2s ease;
-        
+
         &:hover {
           background-color: #f5f5f5;
         }
-        
+
         &.active {
           background-color: #ffe0e4; /* Thay rgba($primary, 0.1) thành màu đặc */
           color: $primary;
-          
+
           svg {
             color: $primary;
           }
         }
-        
+
         svg {
           margin-right: 12px;
           color: #666;
         }
       }
     }
-    
+
     .sidebar-footer {
       padding: 15px;
       border-top: 1px solid #eee;
-      
+
       .logout-button {
         width: 100%;
         padding: 10px;
@@ -1000,11 +1004,11 @@ $desktop-breakpoint: $large-desktop;
         cursor: pointer;
         transition: all 0.2s ease;
         font-weight: 500;
-        
+
         svg {
           margin-right: 10px;
         }
-        
+
         &:hover {
           background-color: #fee;
         }
@@ -1049,33 +1053,33 @@ body.sidebar-open {
   font-size: 1.1rem;
   transition: all 0.2s ease;
   position: relative;
-  
+
   @include responsive(tablet) {
     width: 38px;
     height: 38px;
     font-size: 1rem;
   }
-  
+
   @include responsive(mobile) {
     width: 36px;
     height: 36px;
     font-size: 0.9rem;
   }
-  
+
   @include responsive(mobile-small) {
     width: 32px;
     height: 32px;
     font-size: 0.8rem;
   }
-  
+
   &:hover {
     background-color: #fadfdd;
     transform: scale(1.05);
   }
-  
+
   .feature-tooltip {
     background-color: #000000;
-    
+
     @include responsive(desktop) {
       position: absolute;
       bottom: -30px;
@@ -1092,7 +1096,7 @@ body.sidebar-open {
       z-index: 1002;
     }
   }
-  
+
   &:hover .feature-tooltip {
     @include responsive(desktop) {
       display: block;
@@ -1114,205 +1118,442 @@ body.sidebar-open {
 
 /* Horizontal Nav Menu */
 .horizontal-nav {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 1200px;
-  min-width: 300px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
   background-color: #ffffff;
-  box-shadow: 0 8px 30px #dadada;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #eaeaea;
+  border-radius: 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   z-index: 999;
-  
+  display: none;
+  border: none;
+  border-bottom: 1px solid #eaeaea;
+  transform: none;
+
   &.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%);
-    
-    & + .menu-overlay {
-      opacity: 0.5;
-      visibility: visible;
-    }
+    display: block;
+    animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
   }
-  
-  .horizontal-nav-container {
-    width: 100%;
-    background-color: #ffffff;
-    padding: 5px 0;
-  }
-  
+
   .horizontal-nav-items {
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-wrap: wrap;
-    padding: 5px 0;
-    background-color: #ffffff; /* Thay #000000 thành #ffffff */
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
     width: 100%;
-    
-    .mobile-menu-header {
-      display: none;
-      width: 100%;
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-      justify-content: space-between;
-      align-items: center;
-      
-      h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        color: $text-dark;
-      }
-      
-      .close-button {
-        @include close-button;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -15px;
+      left: 0;
+      right: 0;
+      height: 15px;
+      background: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0.75rem;
+      gap: 0.75rem;
+    }
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.5rem;
+    color: #333;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    white-space: nowrap;
+    font-weight: 500;
+    background-color: #ffffff;
+    box-shadow: none;
+    border: none;
+
+    &:hover {
+      background-color: #f9f9f9;
+      color: #ff6b81;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(255, 107, 129, 0.1);
+    }
+
+    &.active {
+      background-color: #ffebef;
+      color: #ff6b81;
+      font-weight: 600;
+      border-left: 3px solid #ff6b81;
+      padding-left: calc(1.5rem - 3px);
+    }
+
+    .nav-icon {
+      font-size: 1.3rem;
+      color: inherit;
+    }
+
+    .nav-text {
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #222222;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      font-weight: 400;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: #222222 transparent transparent transparent;
       }
     }
-    
-    .nav-item {
+
+    &:hover .nav-tooltip {
+      opacity: 1;
+      visibility: visible;
+      bottom: calc(100% + 10px);
+    }
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem;
+    border-bottom: 2px solid #f0f0f0;
+    width: 100%;
+    background-color: #fff;
+
+    h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: #333;
+      font-weight: 600;
+      position: relative;
+
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 30px;
+        height: 3px;
+        background-color: #ff6b81;
+        border-radius: 3px;
+      }
+    }
+
+    .close-button {
+      background: #ffebef;
+      border: none;
+      font-size: 1.2rem;
+      color: #ff6b81;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 10px 15px;
-      text-decoration: none;
-      color: $text-dark;
-      position: relative;
-      white-space: nowrap;
-      transition: all 0.3s ease;
-      font-size: 0.95rem;
-      
+      width: 36px;
+      height: 36px;
+
       &:hover {
-        color: $primary;
-      }
-      
-      &.active {
-        color: $primary;
-        font-weight: 500;
-        
-        &:after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 20%;
-          width: 60%;
-          height: 3px;
-          background-color: $primary;
-          border-radius: 3px 3px 0 0;
-        }
-      }
-      
-      .nav-icon {
-        margin-right: 8px;
-        font-size: 1.1rem;
-      }
-      
-      &.logout-button {
-        color: #e74c3c;
-        background: none;
-        border: none;
-        cursor: pointer;
-        
-        &:hover {
-          background-color: #fadfdd;
-        }
+        background-color: #ffe0e6;
+        color: #ff5a5f;
+        transform: rotate(90deg);
       }
     }
   }
-  
-  /* Điều chỉnh mobile styles */
-  &.mobile {
-    top: 0;
-    left: auto;
-    right: 0;
-    width: 80%;
-    min-width: auto;
-    max-width: 320px;
-    height: 100vh;
-    transform: translateX(100%); /* Xuất hiện từ bên phải */
-    border-radius: 0;
-    background-color: #ffffff; /* Thêm màu nền đục cho phiên bản mobile */
-    
-    &.visible {
-      transform: translateX(0);
-    }
-    
-    .horizontal-nav-container {
-      height: 100%;
-      overflow-y: auto;
-      padding: 0;
-      background-color: #ffffff; /* Đảm bảo container cũng có màu nền đục */
-    }
-    
-    .horizontal-nav-items {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 0;
-      height: auto;
-      
-      .mobile-menu-header {
-        display: flex;
-      }
-      
-      .nav-item {
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User Dropdown */
+.user-dropdown {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  width: 300px;
+  background-color: white;
+  border-radius: 12px; /* Tăng border-radius */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Tăng shadow */
+  z-index: 1001;
+  overflow: hidden;
+  animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1); /* Thêm animation */
+
+  .user-info {
+    padding: 1.25rem; /* Tăng padding */
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+
+    .user-avatar-large {
+      width: 60px; /* Tăng kích thước avatar */
+      height: 60px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 1rem;
+      border: 2px solid rgba(255, 107, 129, 0.2); /* Thêm border */
+
+      img {
         width: 100%;
-        justify-content: flex-start;
-        padding: 15px;
-        border-bottom: 1px solid #f2f2f2;
-        
-        &.active:after {
-          left: 0;
-          bottom: auto;
-          width: 4px;
-          height: 70%;
-          top: 15%;
-          border-radius: 0 3px 3px 0;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .user-icon-large {
+        width: 100%;
+        height: 100%;
+        color: #2f3542;
+      }
+    }
+
+    .user-details {
+      h3 {
+        margin: 0 0 0.3rem;
+        font-size: 1.1rem;
+        font-weight: 600; /* Tăng font-weight */
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #666;
+      }
+    }
+  }
+
+  .dropdown-menu {
+    .dropdown-item {
+      padding: 0.9rem 1.25rem; /* Tăng padding */
+      display: flex;
+      align-items: center;
+      gap: 0.9rem; /* Tăng gap */
+      color: #2f3542;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+      font-weight: 500; /* Tăng font-weight */
+
+      &:hover {
+        background-color: #f5f5f5;
+        transform: translateX(5px); /* Thêm hiệu ứng hover */
+      }
+
+      &.highlight {
+        background-color: rgba(255, 107, 129, 0.05);
+      }
+
+      &.logout {
+        color: #ff5a5f;
+        border-top: 1px solid #eee;
+        margin-top: 0.5rem;
+
+        &:hover {
+          background-color: rgba(255, 90, 95, 0.1);
         }
       }
     }
   }
-  
+
   @media (max-width: 768px) {
-    top: 70px;
-    width: 95%;
-    
-    &:not(.mobile) {
-      .horizontal-nav-items {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        justify-content: flex-start;
-        -webkit-overflow-scrolling: touch;
-        
-        &::-webkit-scrollbar {
-          display: none;
-        }
-        
-        .nav-item {
-          padding: 10px 12px;
-          font-size: 0.9rem;
-        }
+    width: calc(100% - 20px);
+    right: 10px;
+    top: 80px; /* Điều chỉnh vị trí trên mobile */
+  }
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  width: 350px;
+  max-height: 500px;
+  background-color: white;
+  border-radius: 12px; /* Tăng border-radius */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Tăng shadow */
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeInDown 0.3s cubic-bezier(0.215, 0.61, 0.355, 1); /* Thêm animation */
+
+  .notification-header {
+    padding: 1rem 1.25rem; /* Tăng padding ngang */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    background-color: #f9f9f9; /* Thêm màu nền nhẹ */
+
+    h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600; /* Tăng font-weight */
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: #2f3542;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba(255, 107, 129, 0.1);
+        color: #ff5a5f;
       }
     }
   }
-  
-  @media (max-width: 480px) {
-    top: 60px;
-    
-    &:not(.mobile) {
-      .horizontal-nav-items {
-        .nav-item {
-          padding: 8px 10px;
-          font-size: 0.85rem;
-          
-          .nav-icon {
-            margin-right: 5px;
-            font-size: 1rem;
+
+  .notification-list {
+    overflow-y: auto;
+    max-height: 350px;
+
+    .notification-item {
+      padding: 1rem 1.25rem; /* Tăng padding */
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #f9f9f9;
+      }
+
+      &.unread {
+        background-color: rgba(255, 107, 129, 0.05);
+        border-left: 3px solid #ff6b81;
+      }
+
+      .notification-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #ff6b81;
+
+        svg {
+          color: #ff6b81;
+        }
+      }
+
+      .notification-content {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        color: #555;
+      }
+
+      .notification-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+
+        .mark-read {
+          background: none;
+          border: none;
+          color: #ff6b81;
+          cursor: pointer;
+          padding: 0.25rem 0.5rem;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          font-weight: 500;
+
+          &:hover {
+            background-color: rgba(255, 107, 129, 0.1);
           }
         }
+
+        .notification-time {
+          color: #999;
+        }
       }
     }
+
+    .no-notifications {
+      padding: 2rem;
+      text-align: center;
+      color: #999;
+    }
+  }
+
+  .notification-footer {
+    padding: 0.8rem 1.25rem; /* Tăng padding ngang */
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9; /* Thêm màu nền nhẹ */
+
+    .view-all-button {
+      width: 100%;
+      padding: 0.6rem;
+      background-color: rgba(255, 107, 129, 0.1); /* Đổi màu nền */
+      color: #ff6b81; /* Đổi màu chữ */
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500; /* Tăng font-weight */
+
+      &:hover {
+        background-color: rgba(255, 107, 129, 0.2);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: calc(100% - 20px);
+    max-height: 80vh;
+    top: 80px; /* Điều chỉnh vị trí trên mobile */
   }
 }
