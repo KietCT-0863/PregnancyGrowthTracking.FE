@@ -9,7 +9,7 @@ const isPageRefreshed = () => {
   // Kiểm tra navigation type từ performance API
   if (window.performance) {
     const navEntries = performance.getEntriesByType("navigation");
-    if (navEntries.length > 0 && navEntries[0].type === 'reload') {
+    if (navEntries.length > 0 && navEntries[0].type === "reload") {
       return true;
     }
   }
@@ -26,17 +26,12 @@ export const AuthProvider = ({ children }) => {
     // Kiểm tra ngay khi vừa load trang
     const sessionToken = sessionStorage.getItem("sessionActive");
     const userData = localStorage.getItem("userData");
-    
-    if (!sessionToken && userData) {
-      console.log("Phát hiện trang được mở lại sau khi đóng - Đăng xuất người dùng");
-      localStorage.removeItem("userData");
-      localStorage.removeItem("token");
-      setCurrentUser(null);
-    } else {
-      // Thiết lập sessionActive nếu có userData và đang trong phiên làm việc
-      if (userData) {
-        sessionStorage.setItem("sessionActive", "true");
-      }
+    const token = localStorage.getItem("token");
+
+    // Nếu có userData hoặc token, thiết lập sessionActive để duy trì phiên đăng nhập
+    if (userData || token) {
+      console.log("Có dữ liệu đăng nhập, thiết lập phiên làm việc");
+      sessionStorage.setItem("sessionActive", "true");
     }
   }, []);
 
@@ -47,30 +42,26 @@ export const AuthProvider = ({ children }) => {
         const sessionToken = sessionStorage.getItem("sessionActive");
         const userData = localStorage.getItem("userData");
         const token = localStorage.getItem("token");
-        
-        // Kiểm tra xem có userData nhưng không có sessionToken không
-        if (!sessionToken && userData) {
-          console.log("Phiên đăng nhập đã hết hạn, đăng xuất người dùng");
-          localStorage.removeItem("userData");
-          localStorage.removeItem("token");
-          setCurrentUser(null);
-          setLoading(false);
-          return;
-        }
-        
-        // Chỉ kiểm tra token khi có cả userData và token
-        if (userData && token) {
-          const parsedUser = JSON.parse(userData);
-          
+        const accessToken = localStorage.getItem("accessToken");
+
+        // Sử dụng accessToken nếu có, nếu không thì sử dụng token thông thường
+        const validToken = accessToken || token;
+
+        // Chỉ kiểm tra token khi có token
+        if (validToken) {
           try {
             // Cố gắng xác thực token
             try {
               // Gọi backend để xác thực token
-              const isValid = await authService.checkToken(token);
-              
+              const isValid = await authService.checkToken(validToken);
+
               if (isValid) {
                 console.log("Token hợp lệ, phiên đăng nhập được duy trì");
-                setCurrentUser(parsedUser);
+                // Nếu có userData, sử dụng nó, nếu không thì có thể cần lấy từ backend
+                if (userData) {
+                  const parsedUser = JSON.parse(userData);
+                  setCurrentUser(parsedUser);
+                }
                 sessionStorage.setItem("sessionActive", "true");
               } else {
                 console.log("Token không hợp lệ, đăng xuất người dùng");
@@ -79,57 +70,48 @@ export const AuthProvider = ({ children }) => {
               }
             } catch (error) {
               console.error("Không thể xác thực token:", error);
-              // Nếu không kết nối được backend, mặc định xóa dữ liệu
-              authService.logout();
-              setCurrentUser(null);
+              // Nếu không kết nối được backend, không tự động đăng xuất để tránh mất dữ liệu
+              if (userData) {
+                const parsedUser = JSON.parse(userData);
+                setCurrentUser(parsedUser);
+                console.log(
+                  "Sử dụng dữ liệu đăng nhập cục bộ khi không kết nối được server"
+                );
+              }
             }
           } catch (tokenErr) {
             console.error("Lỗi xử lý token:", tokenErr);
-            authService.logout();
-            setCurrentUser(null);
           }
         } else {
-          console.log("Không tìm thấy dữ liệu đăng nhập");
+          console.log("Không tìm thấy token");
           setCurrentUser(null);
         }
       } catch (err) {
         console.error("Lỗi kiểm tra trạng thái xác thực:", err);
         setError(err.message);
-        authService.logout();
-        setCurrentUser(null);
       } finally {
         setLoading(false);
       }
     };
 
     checkAuthStatus();
-    
-    // Thêm event listener để xử lý khi người dùng đóng tab hoặc trình duyệt
-    const handleBeforeUnload = () => {
-      console.log("Đang đóng tab/trình duyệt, xóa session");
-      sessionStorage.removeItem("sessionActive");
-    };
-    
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    
+
     // Xử lý khi người dùng mở lại tab sau khi đóng hoặc tạm dừng tab
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        const sessionToken = sessionStorage.getItem("sessionActive");
-        const userData = localStorage.getItem("userData");
-        
-        if (!sessionToken && userData) {
-          console.log("Tab được kích hoạt lại, phiên đã hết hạn");
-          authService.logout();
-          setCurrentUser(null);
+      if (document.visibilityState === "visible") {
+        const token =
+          localStorage.getItem("token") || localStorage.getItem("accessToken");
+        if (token) {
+          // Nếu có token, thiết lập lại session
+          sessionStorage.setItem("sessionActive", "true");
+          console.log("Tab được kích hoạt lại, đặt lại sessionActive");
         }
       }
     };
-    
+
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    
+
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
@@ -138,7 +120,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await authService.login(credentials);
-      
+
       if (response.success) {
         localStorage.setItem("userData", JSON.stringify(response.data));
         sessionStorage.setItem("sessionActive", "true");
@@ -159,14 +141,14 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       await authService.logout();
-      
+
       localStorage.removeItem("userData");
       localStorage.removeItem("token");
       sessionStorage.removeItem("sessionActive");
       sessionStorage.clear();
-      
+
       setCurrentUser(null);
-      
+
       return { success: true };
     } catch (err) {
       setError(err.message);
@@ -186,11 +168,7 @@ export const AuthProvider = ({ children }) => {
     isVIP: currentUser?.role === "VIP" || currentUser?.isPremium,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
