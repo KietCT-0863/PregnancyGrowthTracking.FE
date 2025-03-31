@@ -12,18 +12,20 @@ const VipBenefits = () => {
   }
 
   const benefits = [
-    "Không có quảng cáo",
-    "Truy cập nội dung độc quyền",
-    "Ưu đãi đặc biệt cho các sự kiện",
-    "Tính năng độc quyền",
-    "AI hỏi đáp",
+    "Truy cập không giới hạn",
+    "Hỗ trợ 24/7",
+    "Hỗ trợ theo dõi thay kỳ",
+    "Lên lịch trình thăm khám ",  
+    "Ghi chú bác sĩ sau thăm khám",
+    "Tài liệu chăm sóc trẻ sơ sinh",
+    "Cộng động kết nối Mẹ Bầu",
   ]
 
   const comparisonData = [
     { benefit: "Không có quảng cáo", guest: false, member: true },
     { benefit: "Truy cập nội dung độc quyền", guest: false, member: true },
     { benefit: "Ưu đãi đặc biệt cho các sự kiện", guest: false, member: true },
-    { benefit: "Support trực tiếp", guest: false, member: true },
+    { benefit: "Tương tác cộng đồng ", guest: false, member: true },
   ]
 
   return (
