@@ -21,16 +21,28 @@ const API_URL =
   "https://pregnancy-growth-tracking-web-api-a6hxfqhsenaagthw.australiasoutheast-01.azurewebsites.net/api/Blog";
 
 const AVAILABLE_CATEGORIES = [
-  "french",
-  "fiction",
-  "english",
-  "history",
-  "magical",
-  "american",
-  "mystery",
-  "crime",
-  "love",
-  "classic",
+ " Sức khỏe thai kỳ",
+  "Dinh dưỡng mẹ bầu",
+  "Phát triển thai nhi",
+  "Triệu chứng thai kỳ",
+  "Xét nghiệm & siêu âm",
+  "Tập thể dục bầu",
+  "Chuẩn bị đồ sơ sinh",
+  "Sinh thường & sinh mổ",
+  "Lịch khám thai",
+  "Bệnh lý thai kỳ",
+  "Giảm căng thẳng",
+  "Tâm lý mẹ bầu",
+  "Đặt tên cho bé",
+  "Làm đẹp khi mang thai",
+  "Chuẩn bị tài chính",
+  "Lập kế hoạch sinh",  
+  "Chăm sóc trẻ sơ sinh",
+  "Nuôi con bằng sữa mẹ",
+  "Dạy thai nhi thông minh",  
+  "Dấu hiệu chuyển dạ",
+
+
 ];
 
 const EDITOR_CONFIG = {
