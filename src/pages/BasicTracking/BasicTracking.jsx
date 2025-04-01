@@ -622,23 +622,56 @@ function BasicTracking() {
                 </div>
                 
                 <div className="guide-section">
-                  <h3>Biểu đồ chỉ số chuẩn (WeeklyStatsChart)</h3>
+                  <h3>Biểu đồ chỉ số chuẩn </h3>
                   <p>Biểu đồ này hiển thị các giá trị tham khảo về HC, AC, FL và EFW theo từng tuần tuổi thai. Đây chỉ là các số liệu tham khảo, giúp bạn có cái nhìn tổng quan về khoảng giá trị hợp lý khi nhập các chỉ số.</p>
                   <p>Các đường biểu đồ thể hiện khoảng phát triển bình thường của thai nhi theo tuần tuổi dựa trên dữ liệu tham khảo.</p>
                 </div>
                 
                 <div className="guide-section">
-                  <h3>Hệ thống cảnh báo (AlertSection)</h3>
+                  <h3>Hệ thống cảnh báo </h3>
                   <p>Phần này sẽ hiển thị các cảnh báo khi các chỉ số bạn nhập vào nằm ngoài khoảng tham khảo bình thường. Lưu ý:</p>
                   <ul>
                     <li>Cảnh báo chỉ mang tính chất tham khảo, giúp bạn nhận biết các chỉ số có thể cần được bác sĩ kiểm tra kỹ hơn.</li>
                     <li>Một số cảnh báo có thể xuất hiện do sự khác biệt tự nhiên trong quá trình phát triển của mỗi thai nhi.</li>
                     <li>Luôn tham khảo ý kiến bác sĩ nếu bạn thấy bất kỳ cảnh báo nào.</li>
                   </ul>
+                </div>   
+                <div className="guide-section">
+                  <h3>Hướng dẫn cập nhật số đo thai nhi</h3>
+                  <div className="guide-content">
+                    <p className="guide-intro">
+                      Để theo dõi sự phát triển của thai nhi, bạn cần cập nhật các chỉ số đo lường định kỳ tại khung bên trái, dưới biểu đồ chính.
+                    </p>
+                    
+                    <div className="guide-steps">
+                      <h4>Các bước thực hiện:</h4>
+                      <ol>
+                        <li>Nhập ngày siêu âm</li>
+                        <li>Điền đầy đủ các chỉ số từ kết quả siêu âm</li>
+                        <li>Nhấn "Cập nhật" để lưu thông tin</li>
+                      </ol>
+                    </div>
+
+                    <div className="guide-notes">
+                      <h4>Lưu ý quan trọng:</h4>
+                      <ul>
+                        <li>Các chỉ số cần được cập nhật theo đúng đơn vị đo trong kết quả siêu âm</li>
+                        <li>Hệ thống sẽ tự động phân tích và đưa ra cảnh báo nếu có chỉ số bất thường</li>
+                        <li>Các cảnh báo chỉ mang tính chất tham khảo, giúp mẹ bầu chủ động theo dõi</li>
+                        <li>Mỗi thai nhi có thể có sự phát triển khác nhau, không nhất thiết phải lo lắng khi có cảnh báo</li>
+                        <li>Luôn tham khảo ý kiến bác sĩ trong quá trình theo dõi thai kỳ</li>
+                      </ul>
+                    </div>
+
+                    <div className="guide-warning">
+                      <p><strong>Quan trọng:</strong> Không tự ý thay đổi chế độ dinh dưỡng hay thuốc men khi thấy cảnh báo. 
+                        Hãy luôn trao đổi với bác sĩ để được tư vấn phù hợp.</p>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="guide-section">
-                  <h3>Biểu đồ tăng trưởng (GrowthChart)</h3>
+                  <h3>Biểu đồ tăng trưởng </h3>
                   <p>Biểu đồ này hiển thị các chỉ số HC, AC, FL và EFW của thai nhi bạn qua từng tuần tuổi thai dựa trên dữ liệu bạn đã nhập sau mỗi lần khám thai.</p>
                   <p>Bạn có thể:</p>
                   <ul>

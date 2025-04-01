@@ -416,7 +416,7 @@ const ChildInfoCard = ({
           <div className="update-info">
             <div className="update-date">
               <Clock className="icon" />
-              Cập nhật lần cuối: {latestUpdate ? format(new Date(latestUpdate), 'dd/MM/yyyy HH:mm') : 'Chưa có dữ liệu'}
+              Cập nhật lần cuối: {latestUpdate ? format(new Date(latestUpdate), 'dd/MM/yyyy ') : 'Chưa có dữ liệu'}
             </div>
             {selectedChild && (
               <motion.button 
